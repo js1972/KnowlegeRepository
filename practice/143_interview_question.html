@@ -301,8 +301,52 @@ Foo函数的第一句  getName = function () { alert (1); };  是一句函数赋
 此处考察了两个知识点，一个是变量作用域问题，一个是this指向问题。
 */
 Foo().getName();
+
+/*
+第四问
+
+直接调用getName函数，相当于 window.getName() ，因为这个变量已经被Foo函数执行时修改了，遂结果与第三问相同，为1
+*/
+
 getName();
+/*
+此处考察的是js的运算符优先级问题
+参考链接：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+通过查上表可以得知点（.）的优先级高于new操作，遂相当于是:
+
+new (Foo.getName)();
+
+所以实际上将getName函数作为了构造函数来执行，遂弹出2。
+
+*/
 new Foo.getName();
+
+/*
+首先看运算符优先级括号高于new，实际执行为
+
+(new Foo()).getName()
+遂先执行Foo函数，而Foo此时作为构造函数却有返回值，所以这里需要说明下js中的构造函数返回值问题。
+而在js中构造函数可以有返回值也可以没有。
+
+1、没有返回值则按照其他语言一样返回实例化对象。
+function F(){}
+new F();
+output: F{}
+2、若有返回值则检查其返回值是否为引用类型。如果是非引用类型，如基本类型（string,number,boolean,null,undefined）则与无返回值相同，实际返回其实例化对象。
+
+[图片]
+
+3、若返回值是引用类型，则实际返回值为这个引用类型。
+
+[图片]
+
+原题中，返回的是this，而this在构造函数中本来就代表当前实例化对象，遂最终Foo函数返回实例化对象。
+
+之后调用实例化对象的getName函数，因为在Foo构造函数中没有为实例化对象添加任何属性，遂到当前对象的原型对象（prototype）中寻找getName，找到了。
+
+遂最终输出3。
+
+*/
 new Foo().getName();
 new new Foo().getName();
 </script>
