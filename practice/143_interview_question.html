@@ -283,6 +283,23 @@ getName = function () { alert (4);};//最终的赋值再次覆盖function getNam
 getName();//最终输出4
 */
 getName(); // 4
+/*
+第三问的 Foo().getName(); 先执行了Foo函数，然后调用Foo函数的返回值对象的getName属性函数。
+
+Foo函数的第一句  getName = function () { alert (1); };  是一句函数赋值语句，注意它没有var声明，所以先向当前Foo函数作用域内寻找getName变量，没有。再向当前函数作用域上层，即外层作用域内寻找是否含有getName变量，找到了，也就是第二问中的alert(4)函数，将此变量的值赋值为 function(){alert(1)}。
+
+此处实际上是将外层作用域内的getName函数修改了。
+
+注意：此处若依然没有找到会一直向上查找到window对象，若window对象中也没有getName属性，就在window对象中创建一个getName变量。
+
+之后Foo函数的返回值是this，而JS的this问题博客园中已经有非常多的文章介绍，这里不再多说。
+
+简单的讲，this的指向是由所在函数的调用方式决定的。而此处的直接调用方式，this指向window对象。
+
+遂Foo函数返回的是window对象，相当于执行 window.getName() ，而window中的getName已经被修改为alert(1)，所以最终会输出1
+
+此处考察了两个知识点，一个是变量作用域问题，一个是this指向问题。
+*/
 Foo().getName();
 getName();
 new Foo.getName();
