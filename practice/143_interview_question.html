@@ -230,6 +230,58 @@ debugger;
 */
 
 Foo.getName(); // 2
+/*第二问，直接调用 getName 函数。既然是直接调用那么就是访问当前上文作用域内的叫getName的函数，所以跟1 2 3都没什么关系。此题有无数面试者回答为5。此处有两个坑，一是变量声明提升，二是函数表达式。
+
+变量声明提升
+
+即所有声明变量或声明函数都会被提升到当前函数的顶部。
+
+例如下代码:
+
+console.log('x' in window);//true
+var x;
+x = 0;
+
+代码执行时js引擎会将声明语句提升至代码最上方，变为：
+
+var x;
+console.log('x' in window);//true
+x = 0;
+
+函数表达式
+
+var getName 与 function getName 都是声明语句，区别在于 var getName 是函数表达式，而 function getName 是函数声明。
+函数表达式最大的问题，在于js会将此代码拆分为两行代码分别执行。
+
+例如下代码：
+
+console.log(x);//输出：function x(){}
+var x=1;
+function x(){}
+
+实际执行的代码为，先将 var x=1 拆分为 var x; 和 x = 1; 两行，再将 var x; 和 function x(){} 两行提升至最上方变成：
+
+var x;
+function x(){}
+console.log(x);
+x=1;
+
+所以最终函数声明的x覆盖了变量声明的x，log输出为x函数。
+同理，原题中代码最终执行时的是：
+
+function Foo() {
+    getName = function () { alert (1); };
+    return this;
+}
+var getName;//只提升变量声明
+function getName() { alert (5);}//提升函数声明，覆盖var的声明
+ 
+Foo.getName = function () { alert (2);};
+Foo.prototype.getName = function () { alert (3);};
+getName = function () { alert (4);};//最终的赋值再次覆盖function getName声明
+ 
+getName();//最终输出4
+*/
 getName(); // 4
 Foo().getName();
 getName();
