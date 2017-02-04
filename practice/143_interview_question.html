@@ -68,4 +68,14 @@ function fn() {};
 */
 
 </script>
+
+<script>
+function checkPalindrom(str) {  
+    return str == str.split('').reverse().join('');
+}
+
+var a = "i042416";
+var b = "i04240i";
+console.log(checkPalindrom(a), checkPalindrom(b)); // false, true
+</script>
 </html>
