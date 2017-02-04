@@ -1,0 +1,40 @@
+<html>
+<script>
+function object(o) {
+    function F(){}
+    F.prototype = o;
+    return new F();
+}
+function inheritPrototype(subC, superC) {
+	// Jerry 2017-02-04 16:51PM prototype's prototype points to superC.prototype
+    var prototype = object(superC.prototype); //创建对象
+    prototype.constructor = subC; //增强对象
+    subC.prototype = prototype; //指定对象
+}
+var BaseClass = function() {
+    this.className = "Base";
+};
+
+BaseClass.prototype = {
+    showName: function() {
+        alert(this.className);
+    }
+};
+var SubClass = function(name) {
+    BaseClass.call(this);
+    this.classDesc = "SubClass";
+    this.name = name;
+};
+
+inheritPrototype(SubClass, BaseClass);
+SubClass.prototype.showDesc = function() {
+    alert(this.classDesc);
+};
+
+var Jerry = new SubClass("Jerry");
+/*
+这个例子的高效率体现在它只调用了一次SuperType构造函数，并且因此避免了在SubType.prototype上面创建不必要的，多余的属性。于此同时，原型链还能保持不变，因此，还能够正常使用instanceof和isPrototypeOf()。开发人员普遍认为寄生组合式继承时引用类型最理想的继承范式。在雅虎的YUI框架的YAHOO.lang.extend()中，实现了寄生调用继承。
+*/
+debugger;
+</script>
+</html>
