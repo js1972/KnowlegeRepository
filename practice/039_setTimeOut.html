@@ -33,8 +33,64 @@ setTimeout(function() {
 
 究其原因，这是因为 JavaScript是单线程执行的。也就是说，在任何时间点，有且只有一个线程在运行
 JavaScript程序，无法同一时候运行多段代码。
+
+
+
+
+再来看看浏览器下的JavaScript。
+
+浏览器的内核是多线程的，它们在内核控制下相互配合以保持同步，一个浏览器至少实现三个常驻线程：JavaScript引擎线程，GUI渲染线程，浏览器事件触发线程。
+
+  ● JavaScript引擎是基于事件驱动单线程执行的，JavaScript引擎一直等待着任务队列中任务的到来，然后加以处理，浏览器无论什么时候都只有一个JavaScript线程在运行JavaScript程序。
+  ● GUI渲染线程负责渲染浏览器界面，当界面需要重绘（Repaint）或由于某种操作引发回流(Reflow)时，该线程就会执行。但需要注意，GUI渲染线程与JavaScript引擎是互斥的，当JavaScript引擎执行时GUI线程会被挂起，GUI更新会被保存在一个队列中等到JavaScript引擎空闲时立即被执行。
+  ● 事件触发线程，当一个事件被触发时，该线程会把事件添加到待处理队列的队尾，等待JavaScript引擎的处理。这些事件可来自JavaScript引擎当前执行的代码块如setTimeout、也可来自浏览器内核的其他线程如鼠标点击、Ajax异步请求等，但由于JavaScript的单线程关系，所有这些事件都得排队等待JavaScript引擎处理（当线程中没有执行任何同步代码的前提下才会执行异步代码）。
+
+到这里，我们再来回顾一下最初的例子：
+
+var start = new Date();  
+ 
+var end = 0;  
+ 
+setTimeout(function() {   
+ 
+  console.log(new Date() - start);  
+ 
+},  500);  
+ 
+while (new Date() - start <= 1000) {}
+
+虽然setTimeout的延时时间是500毫秒，可是由于while循环的存在，只有当间隔时间大于1000毫秒时，才会跳出while循环，也就是说，在1000毫秒之前，while循环都在占据着JavaScript线程。也就是说，只有等待跳出while后，线程才会空闲下来，才会去执行之前定义的setTimeout。
+
+最后 ，我们可以总结出，setTimeout只能保证在指定的时间后将任务(需要执行的函数)插入任务队列中等候，但是不保证这个任务在什么时候执行。一旦执行javascript的线程空闲出来，自行从队列中取出任务然后执行它。
+
+因为javascript线程并没有因为什么耗时操作而阻塞，所以可以很快地取出排队队列中的任务然后执行它，也是这种队列机制，给我们制造一个异步执行的假象。
+
+
 */
 
 while (new Date() - start <= 1000) {}
 </script>
+<script>
+function onloadfun(){
+    document.querySelector('#one').onkeydown = function() {   
+    document.querySelector('#one1').innerHTML = this.value;   
+};   
+ 
+document.querySelector('#second').onkeydown = function() {   
+  setTimeout(function() {   
+    document.querySelector('#second1').innerHTML = document.querySelector('#second').value;   }, 0);
+};
+}
+</script>
+<body onload="onloadfun()">
+    <p>one</p>
+    <input id="one"></input>
+
+    <span id="one1"></span>
+
+    <p>two</p>
+    <input id="second"></input>
+
+    <span id="second1"></span>
+</body>
 </html>
