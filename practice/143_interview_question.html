@@ -348,6 +348,18 @@ output: F{}
 
 */
 new Foo().getName();
+/*
+第七问, new new Foo().getName(); 同样是运算符优先级问题。
+
+最终实际执行为：
+
+new ((new Foo()).getName)();
+
+先初始化Foo的实例化对象，然后将其原型上的getName函数作为构造函数再次new。
+
+遂最终结果为3
+*/
+
 new new Foo().getName();
 </script>
 </html>

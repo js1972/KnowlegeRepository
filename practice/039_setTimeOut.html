@@ -17,6 +17,24 @@ function interval() {
        clearInterval(interv);
     }
 }
-var interv = setInterval(interval, 500);        
+// Jerry comment it out on 2017-02-04 10:41PM after dinner 初八
+// var interv = setInterval(interval, 500);        
+</script>
+
+<script>
+var start = new Date();  
+var end = 0;  
+ 
+setTimeout(function() {   
+  console.log(new Date() - start);  
+},  500);  
+/*
+可事实却是出乎你的意料，打印结果是这样的（也许你打印出来会不一样，但肯定会大于1000毫秒）：
+
+究其原因，这是因为 JavaScript是单线程执行的。也就是说，在任何时间点，有且只有一个线程在运行
+JavaScript程序，无法同一时候运行多段代码。
+*/
+
+while (new Date() - start <= 1000) {}
 </script>
 </html>
