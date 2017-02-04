@@ -122,6 +122,19 @@ document.querySelector('#second').onkeydown = function() {
     document.querySelector('#second1').innerHTML = document.querySelector('#second').value;   }, 0);
 };
 }
+
+/*
+setTimeout不止两个参数
+
+我们都知道，setTimeout的第一个参数是要执行的回调函数，第二个参数是延迟时间（如果省略，会由浏览器自动设置。在IE，FireFox中，第一次配可能给个很大的数字，100ms上下，往后会缩小到最小时间间隔，Safari，chrome，opera则多为10ms上下。）
+
+其实，setTimeout可以传入第三个参数、第四个参数….，它们表示神马呢？其实是用来表示第一个参数（回调函数）传入的参数。
+
+setTimeout(function(a, b){   
+  console.log(a);   // 3
+  console.log(b);   // 4
+},0, 3, 4);
+*/
 </script>
 <body onload="onloadfun()">
     <p>one</p>
