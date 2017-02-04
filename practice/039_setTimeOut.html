@@ -71,6 +71,47 @@ while (new Date() - start <= 1000) {}
 while (new Date() - start <= 1000) {}
 </script>
 <script>
+/*
+本意是立刻执行调用函数，但事实上，上面的代码并不是立即执行的，这是因为setTimeout有一个最小执行时间，当指定的时间小于该时间时，浏览器会用最小允许的时间作为setTimeout的时间间隔，也就是说即使我们把setTimeout的延迟时间设置为0，被调用的程序也没有马上启动。
+
+不同的浏览器实际情况不同，IE8和更早的IE的时间精确度是15.6ms。不过，随着HTML5的出现，在高级版本的浏览器（Chrome、ie9+等），定义的最小时间间隔是不得低于4毫秒，如果低于这个值，就会自动增加，并且在2010年及之后发布的浏览器中采取一致。
+
+所以说，当我们写为 setTimeout(fn,0) 的时候，实际是实现插队操作，要求浏览器“尽可能快”的进行回调，但是实际能多快就完全取决于浏览器了。
+
+那setTimeout(fn, 0)有什么用处呢？其实用处就在于我们可以改变任务的执行顺序！因为浏览器会在执行完当前任务队列中的任务，再执行setTimeout队列中积累的的任务。
+
+通过设置任务在延迟到0s后执行，就能改变任务执行的先后顺序，延迟该任务发生，使之异步执行。
+
+当你往两个表单输入内容时，你会发现未使用setTimeout函数的只会获取到输入前的内容，而使用setTimeout函数的则会获取到输入的内容。
+
+这是为什么呢？
+
+因为当按下按键的时候，JavaScript 引擎需要执行 keydown 的事件处理程序，然后更新文本框的 value 值，这两个任务也需要按顺序来，事件处理程序执行时，更新 value值（是在keypress后）的任务则进入队列等待，所以我们在 keydown 的事件处理程序里是无法得到更新后的value的，而利用 setTimeout(fn, 0)，我们把取 value 的操作放入队列，放在更新 value 值以后，这样便可获取出文本框的值。
+
+未使用setTimeout函数，执行顺序是：onkeydown => onkeypress => onkeyup
+
+使用setTimeout函数，执行顺序是：onkeydown => onkeypress => function => onkeyup
+
+虽然我们可以使用keyup来替代keydown，不过有一些问题，那就是长按时，keyup并不会触发。
+
+长按时，keydown、keypress、keyup的调用顺序：
+
+keydown
+ 
+keypress
+ 
+keydown
+ 
+keypress
+ 
+...
+ 
+keyup
+
+也就是说keyup只会触发一次，所以你无法用keyup来实时获取值。
+
+*/
+
 function onloadfun(){
     document.querySelector('#one').onkeydown = function() {   
     document.querySelector('#one1').innerHTML = this.value;   
