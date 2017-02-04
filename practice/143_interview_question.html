@@ -70,6 +70,9 @@ function fn() {};
 </script>
 
 <script>
+/*
+回文是指把相同的词汇或句子，在下文中调换位置或颠倒过来，产生首尾回环的情趣，叫做回文，也叫回环。比如 mamam redivider .
+*/
 function checkPalindrom(str) {  
     return str == str.split('').reverse().join('');
 }
@@ -77,5 +80,20 @@ function checkPalindrom(str) {
 var a = "i042416";
 var b = "i04240i";
 console.log(checkPalindrom(a), checkPalindrom(b)); // false, true
+
+function removeDuplicate(arr){
+  let hashTable = {};
+  let data = [];
+  for(let i=0,l=arr.length;i<l;i++) {
+    if(!hashTable[arr[i]]) {
+      hashTable[arr[i]] = true;
+      data.push(arr[i]);
+    }
+  }
+  return data;
+}
+
+var a = removeDuplicate([1,13,24,11,11,14,1,2,2]);
+console.log(a);
 </script>
 </html>
