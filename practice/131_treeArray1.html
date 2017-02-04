@@ -1,0 +1,33 @@
+<html>
+<script>
+function lowbit(x) { 
+	return x & (-x); 
+}
+var sum = [0,1,2,3,4,5];
+
+function update(index,val) {
+  for (var i = index; i <= cnt; i += lowbit(i))
+    sum[i] += val;
+}
+
+function getSum(index){
+  var ans = 0;
+  for (var i = index; i; i -= lowbit(i))
+    ans += sum[i];
+  return ans;
+}
+
+function main(){
+  for (var i = 1; i <= cnt; i++) {
+      update(i, 0);
+  }
+}
+
+//main();
+console.log(sum);
+console.log(getSum(1));  // sum 1 = 1
+sum[1] = getSum(1);
+
+console.log(getSum(2));
+</script>
+</html>

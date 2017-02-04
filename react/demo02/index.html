@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<!--
+   JSX 的基本语法规则：遇到 HTML 标签（以 < 开头），就用 HTML 规则解析；遇到代码块（以 { 开头），就用 JavaScript 规则解析。
+       Jerry 2016-02-21 16:19PM 还是熟悉的语法，回忆下JSP和BSP里的tag: 
+       {}必不可少
+-->
+<meta charset="UTF-8"/> 
+  <head>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.min.js"></script>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+
+      var names = ['Alice', 'Emily', 'Kate'];
+
+      ReactDOM.render(
+        <div>
+        {
+          names.map(function (name) {
+            debugger;
+            return <div>Hello, {name}!</div>
+          })
+        }
+        </div>,
+        document.getElementById('example')
+      );
+    </script>
+  </body>
+</html>

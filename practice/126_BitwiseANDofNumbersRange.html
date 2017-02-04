@@ -1,0 +1,61 @@
+<html>
+<script>
+/*
+http://www.cnblogs.com/zichi/p/4797739.html
+给出一个范围，[m, n]（0 <= m <= n <= 2147483647），返回这些数字的与运算结果。
+
+直接逐个做与运算，TLE，我们得发现高效解法。
+
+我们把[0, 15]用二进制码表示出来：
+
+0 0 0 0
+0 0 0 1
+0 0 1 0
+0 0 1 1
+0 1 0 0
+0 1 0 1
+0 1 1 0
+0 1 1 1
+1 0 0 0
+1 0 0 1
+1 0 1 0
+1 0 1 1
+1 1 0 0
+1 1 0 1
+1 1 1 0
+1 1 1 1
+仔细看，几个连续的二进制码肯定会有相同的前缀（前缀长度可能为0），比如以下的二进制码相同的前缀就是1 0:
+
+1 0 0 0
+1 0 0 1
+1 0 1 0
+1 0 1 1
+除了相同的前缀外，将之后的各位置为0即为所求：1 0 0 0，也就是8。如何求解这个相同前缀？只需要m和n同时右移，直到两数相等为止：
+
+*/
+/**
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
+ */
+var rangeBitwiseAnd = function(m, n) {
+  if (m === n)
+    return m;
+
+  var tmp = rangeBitwiseAnd(m >> 1, n >> 1);
+  return tmp << 1;
+};
+// 还有一种更巧妙的方法，将n的最右边的 1 bit 置为0，直到值不大于m即可：
+
+/**
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
+ */
+var rangeBitwiseAnd = function(m, n) {
+  while (m < n)
+    n = n & (n - 1);
+  return n;
+};
+</script>
+</html>

@@ -1,0 +1,20 @@
+<html>
+<script>
+var a = new Date(2015,9,1,0,0,0); // Thu Oct 01 2015 00:00:00 GMT+0800 (China Standard Time), local time
+console.log(a);
+
+console.log("utc month: " + a.getUTCMonth()); // 8
+console.log("month: " + a.getMonth()); // 9
+
+console.log("utc date: " + a.getUTCDate()); // 30, since UTC is still 09-30 at this time
+console.log("date: " + a.getDate()); // 1
+
+// a.getUTCHours(): 16
+
+// how to convert it to UTC time?
+/* UTC是最主要的世界时间标准，是经过平均太阳时(以格林威治时间GMT为准)、地轴运动修正后的新时标以及以「秒」为单位的国际原子时所综合精算而成的时间。UTC比GMT来得更加精准。其误差值必须保持在0.9秒以内，若大于0.9秒则由位于巴黎的国际地球自转事务中央局发布闰秒，使UTC与地球自转周期一致。不过日常使用中，GMT与UTC的功能与精确度是没有差别的。*/
+
+console.log("UTC time: " + a.toUTCString());// "Wed, 30 Sep 2015 16:00:00 GMT"
+debugger;
+</script>
+</html>

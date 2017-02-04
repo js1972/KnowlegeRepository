@@ -1,0 +1,117 @@
+<html>
+<script src="http://jsconsole.com/remote.js?8A4D0BED-EEAF-4831-8110-169FE71D6F60"></script>
+
+<script>
+
+function testInteger() {
+var a = -1.2223;
+ console.log(a ^ 0);  // -1
+ console.log(a | 0);  // -1
+ console.log(a > 0); // false
+ 
+ console.log(Math.round(a)); // -1
+ console.log(Math.floor(a)); // -2
+ console.log(Math.ceil(a));  // -1
+
+ (function() {
+    console.log(1); 
+    setTimeout(function(){console.log(2)}, 1000); 
+    setTimeout(function(){console.log(3)}, 0); 
+    console.log(4);
+})();
+}
+
+function testTimeout() {
+	(function() {
+    console.log(1); 
+    setTimeout(function(){console.log(2)}, 1000); 
+    setTimeout(function(){console.log(3)}, 0); 
+    console.log(4);
+})(); /* Jerry 2017-01-18 13:03PM @Shanghai 1, 4, 3 immediately, and later 2
+
+只要知道 Javascript 是单线程的语言， 一些异步事件是在主体 js 执行完之后执行即可，所以主体的 1、4 先输出，而后是 3、2，没有问题，因为 3 的定时设置比 2 早。
+*/
+}
+
+function isPalindrome(str) {
+    str = str.replace(/W/g, '').toLowerCase();
+    return str.split('').reverse().join('');
+}
+
+/* Jerry 2016-01-18 13:40PM
+Uncaught RangeError: Maximum call stack size exceeded
+*/
+function stackOverflow(list) {
+	var nextListItem = function() {
+    	var item = list.pop();
+ 
+    	if (item) {
+        	// process the list item...
+			 nextListItem(); // 10 ~ 1
+			// setTimeout( nextListItem, 0); // 1~10
+    	}
+    	console.log("poped up item: " + item);
+	}
+    nextListItem();
+}
+
+function getBigArray(num) {
+	var result = [];
+	for( var j = num; j >0; j--){
+		result.push(j);
+	}
+	return result;
+}
+
+function shortCut() {
+	console.log("0 || 1 = "+(0 || 1)); // 1
+	console.log("1 || 2 = "+(1 || 2)); // 1
+	console.log("0 & 1 = "+(0 && 1)); // 0
+	console.log("1 & 2 = "+(1 && 2)); // 2
+}
+
+function objectKey() {
+	/* Jerry 2016-01-18 13:48PM
+	我们知道，Javascript 中对象的 key 值，一定会是一个 string 值，如果不是，则会隐式地进行转换。当执行到 a[b]=123] 时，b 并不是一个 string 值，将 b 执行 toString() 方法转换（得到 “[object Object]“），a[c] 也是相同道理。所以代码其实可以看做这样执行：
+
+var a={},
+    b={key:'b'},
+    c={key:'c'};
+ 
+// a[b]=123;
+a["[object Object]"]=123;
+ 
+// a[c]=456;
+a["[object Object]"]=456;
+ 
+console.log(a["[object Object]"]);
+*/
+	var a={},
+    b={key:'b'},
+    c={key:'c'};
+ 
+	a[b]=123;
+	a[c]=456;
+ 	debugger;
+	console.log(a[b]);
+}
+
+function internalFuncName(num) {
+	var ans = (function(n){
+  		return ((n > 1) ? n * arguments.callee(n-1) : n)
+	})(num);
+ 
+	console.log(ans);
+}
+// testTimeout();
+
+/*console.log(isPalindrome("Hello world"));
+stackOverflow(getBigArray(10));
+console.log("finished"); */
+
+// shortCut();
+internalFuncName(5);
+
+// objectKey();
+</script>
+</html>

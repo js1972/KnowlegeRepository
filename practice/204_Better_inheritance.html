@@ -1,0 +1,33 @@
+<html>
+<script>
+
+Function.prototype.extend = function(parent) {
+	function dummy() {};
+	dummy.prototype = parent.prototype;
+	this.prototype = new dummy(); 
+	this.prototype.constructor = this; 
+}
+
+function Animal(name) {
+	this.sName = name;
+	console.log("constructor in Animal");
+}
+
+Animal.prototype.speak = function() {
+    console.log("My name is " + this.sName);
+};
+
+function Cat(name) {
+	Animal.call(this, name); 
+};
+
+Cat.extend(Animal); 
+
+var cat = new Cat("Jerry"); 
+cat.speak();
+
+console.log("cat is Cat?" + (cat instanceof Cat)); 
+console.log("cat is Animal?" + (cat instanceof Animal)); 
+console.log(cat.constructor);
+</script>
+</html>

@@ -1,0 +1,22 @@
+<html>
+<script>
+var timeoutTimes = 0;
+function timeout() {
+    timeoutTimes++;
+    console.log("count: " + timeoutTimes);
+    if (timeoutTimes < 10) {
+        setTimeout(timeout, 500);
+    }
+}
+// timeout();
+var intervalTimes = 0;
+function interval() {
+    intervalTimes++;
+    console.log("count: " + intervalTimes);
+    if (intervalTimes >= 10) {
+       clearInterval(interv);
+    }
+}
+var interv = setInterval(interval, 500);        
+</script>
+</html>

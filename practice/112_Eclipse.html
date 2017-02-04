@@ -1,0 +1,188 @@
+<html>
+ <head>
+     <script src="jQuery/jscex.jscexRequire.min.js" type="text/javascript"></script>
+ </head>
+ <body>
+ 
+ <style type="text/css">
+
+    input.css3btn
+
+    {
+
+        background: -moz-linear-gradient(270deg, #d2ebf8, #0c8ab5);
+
+        background: -webkit-linear-gradient(top, #d2ebf8, #0c8ab5);
+
+        background: -o-linear-gradient(top, #d2ebf8, #0c8ab5);
+
+        filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#000099CC', EndColorStr='#FF0087B4');
+
+        border-top: 1px solid #38538c;
+
+        border-right: 1px solid #1f2d4d;
+
+        border-bottom: 1px solid #151e33;
+
+        border-left: 1px solid #1f2d4d;
+
+        border-radius: 4px;
+
+        box-shadow: inset 0 1px 10px 1px #5c8bee, 0px 1px 0 #1d2c4d, 0 2px 0px #1f3053, 0 4px 4px 1px #111111;
+
+        color: #f0f0f0;
+
+        font: bold 20px "helvetica neue" , helvetica, arial, sans-serif;
+
+        padding: 10px 0 10px 0;
+
+        text-align: center;
+
+        text-shadow: 0px -1px 1px #1e2d4d;
+
+        width: 150px;
+
+        background-clip: padding-box;
+
+    }
+
+    input.css3btn:hover
+
+    {
+
+        box-shadow: inset 0 0px 20px 1px #87adff, 0px 1px 0 #1d2c4d, 0 3px 0px #1f3053, 0 4px 4px 1px #111111;
+
+        cursor: pointer;
+
+    }
+
+    input.css3btn:active
+
+    {
+
+        box-shadow: inset 0 1px 10px 1px #5c8bee, 0 1px 0 #1d2c4d, 0 2px 0 #1f3053, 0 4px 3px 0 #111111;
+
+        margin-top: 1px;
+
+    }
+
+</style>
+     <canvas id="myCanvas2" width="350" height="350" style="border: solid 15px #222; background-color: #111;
+
+        color: #CCC;">
+ Your browser does not support the canvas element.
+ </canvas>
+     <script>
+
+        var canvas;
+
+        var ctx;
+
+
+
+        var px = 0;
+
+        var py = 0;
+
+        function init() {
+
+            canvas = document.getElementById("myCanvas2");
+
+            ctx = canvas.getContext("2d");
+
+            ctx.strokeStyle = "#fff";
+
+            ctx.translate(70, 70);
+
+        }
+
+
+
+        init();
+
+        var i = 0;
+
+        function drawEllipse(x, y, w, h) {
+       ctx.clearRect(-canvas.width, -canvas.height, 2 * canvas.width, 2 * canvas.height);
+
+
+            var k = 0.5522848;
+
+            var ox = (w / 2) * k;
+
+            var oy = (h / 2) * k;
+
+            var xe = x + w;
+
+            var ye = y + h;
+
+            var xm = x + w / 2;
+
+            var ym = y + h / 2;
+
+            ctx.beginPath();
+
+            ctx.moveTo(x, ym);
+
+            ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+
+            ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+
+            ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+
+            ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+
+            ctx.stroke();
+
+            ctx.translate(x + 70, y + 100);
+
+            px = -70;
+
+            py = -100;
+
+            ctx.rotate(10 * Math.PI * 2 / 360);
+
+        }
+
+        var ct;
+
+        var drawAsync = eval(Jscex.compile("async", function (ct) {
+
+            while (true) {
+
+                drawEllipse(px, py, 140, 200)
+
+                $await(Jscex.Async.sleep(200, ct));
+
+            }
+
+
+
+        }))
+
+
+
+        function Button1_onclick() {
+
+            ct.cancel();
+
+        }
+
+
+
+        function Button2_onclick() {
+
+            ct = new Jscex.Async.CancellationToken();
+
+            drawAsync(ct).start();
+
+        }
+
+
+
+    </script>
+     <br />
+     <input id="Button2" class="css3btn" type="button" value="run" onclick="return Button2_onclick()" />
+     <input id="Button1" class="css3btn" type="button" value="stop" onclick="return Button1_onclick()" />
+ </body>
+ </html>

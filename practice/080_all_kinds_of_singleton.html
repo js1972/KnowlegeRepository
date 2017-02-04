@@ -1,0 +1,88 @@
+<html>
+<script>
+
+var Singleton = function() { 
+ var attr = 1, fn = function(){ console.log("I am executed in closure");}; 
+ return { 
+   method : function(){ fn(); }, 
+   getAttr : function(){ console.log("will be returned: " + attr ); return attr; } 
+ }; 
+}(); 
+
+Singleton.method(); 
+Singleton.getAttr(); 
+
+
+var LazySingleton = function(){ 
+var attr = 2, fn = function(){ console.log("I am LazySingleton function");}; 
+var obj = { 
+method : function(){ fn(); }, 
+getAttr : function(){ return attr; } 
+}; 
+function init(){ 
+return obj; 
+} 
+return { getInstance: init}; 
+}(); 
+
+
+LazySingleton.getInstance().method(); 
+console.log("LazySingleton: " + LazySingleton.getInstance().getAttr()); 
+
+function Universe() {
+    // 判断是否存在实例
+    if (typeof Universe.instance === 'object') {
+        return Universe.instance;
+    }
+    // 其它内容
+    this.start_time = 0;
+    this.bang = "Big";
+    // 缓存
+    Universe.instance = this;
+    // 隐式返回this
+}
+// 测试
+var uni = new Universe();
+var uni2 = new Universe();
+console.log(uni === uni2); // true
+
+function Universe2() {
+    // 缓存的实例
+    var instance = this;
+    // 其它内容
+    this.start_time = 0;
+    this.bang = "Big";
+    // 重写构造函数
+    Universe2 = function () {
+        return instance;
+    };
+}
+// 测试
+var un1i = new Universe2();
+var un1i2 = new Universe2();
+un1i.bang = "123";
+console.log(un1i === un1i2); // true
+console.log(un1i2.bang); // 123
+
+var Universe3;
+(function () {
+    var instance;
+    Universe3 = function Universe3() {
+        if (instance) {
+            return instance;
+        }
+        instance = this;
+        // 其它内容
+        this.start_time = 0;
+        this.bang = "Big";
+    };
+} ());
+//测试代码
+var a = new Universe3();
+var b = new Universe3();
+alert(a === b); // true
+a.bang = "123";
+alert(b.bang); // 123
+
+</script>
+</html>

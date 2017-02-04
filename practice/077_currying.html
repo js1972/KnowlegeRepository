@@ -1,0 +1,31 @@
+<html>
+<script>
+var curry = function( fn) {
+  var _args = [];
+  return function() {
+      if(arguments.length === 0 ){
+         return fn.apply( this, _args );
+      }
+      [].push.apply( _args, arguments);
+      return arguments.callee;
+  }
+};
+
+var monthly_cost = 0;
+
+var monthly_cost_fn = curry( function() {
+     for(var i = 0, c; c = arguments[i++]; ){
+         monthly_cost += c;
+     }
+     return monthly_cost;
+});
+
+monthly_cost_fn(10);
+monthly_cost_fn(20);
+monthly_cost_fn(30);
+monthly_cost_fn(40);
+console.log(monthly_cost_fn());
+
+
+</script>
+</html>

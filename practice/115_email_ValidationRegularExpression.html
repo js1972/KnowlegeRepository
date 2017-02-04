@@ -1,0 +1,11 @@
+<html>
+<script>
+   function isEmail(val){
+   var myreg = /^([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|_|.]?)*[a-zA-Z0-9]+.[a-zA-Z]{2,4}$/;
+   if(!myreg.test(val))
+   	return "not mail";
+   return "mail";
+   };
+   alert( isEmail("iaa$julying.com") );
+   </script>
+   </html>

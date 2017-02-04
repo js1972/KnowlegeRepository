@@ -1,0 +1,51 @@
+class ZCL_ZJERRY_SANDBOX_MPC_EXT definition
+  public
+  inheriting from ZCL_ZJERRY_SANDBOX_MPC
+  create public .
+
+public section.
+
+  methods DEFINE
+    redefinition .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_ZJERRY_SANDBOX_MPC_EXT IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ZJERRY_SANDBOX_MPC_EXT->DEFINE
+* +-------------------------------------------------------------------------------------------------+
+* | [!CX!] /IWBEP/CX_MGW_MED_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method DEFINE.
+    super->define( ).
+    zcl_fis_shlp_annotation=>create(
+      io_odata_model = model
+      io_vocan_model = vocab_anno_model
+      iv_namespace = 'sap'
+      iv_entitytype = 'Z_C_OrderType'
+      iv_property = 'order_status'
+      iv_search_help = space
+      iv_search_supported = abap_false
+      iv_search_help_field = space
+      iv_valuelist_entityset = 'OrderStatusEntitySet'
+      iv_valuelist_property = 'Code' ##NO_TEXT
+      )->add_display_parameter( iv_valuelist_property  = 'Text' ).
+
+    data(lo_txt_property) = model->get_entity_type( 'Z_C_OrderType' )->get_property( 'order_status' ).
+    lo_txt_property->set_value_list( /iwbep/if_mgw_odata_property=>gcs_value_list_type_property-fixed_values ).
+
+    data(lo_text_anno) = lo_txt_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' ).
+    lo_text_anno->add( iv_key = 'text' iv_value = 'order_status_text').
+
+    lo_txt_property = model->get_entity_type( 'OrderStatus' )->get_property( 'Code' ).
+    lo_txt_property->set_value_list( /iwbep/if_mgw_odata_property=>gcs_value_list_type_property-fixed_values ).
+
+    lo_text_anno = lo_txt_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( 'sap' ).
+    lo_text_anno->add( iv_key = 'text' iv_value = 'Text').
+  endmethod.
+ENDCLASS.

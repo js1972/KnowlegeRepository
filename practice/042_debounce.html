@@ -1,0 +1,28 @@
+<html>
+<script>
+Function.prototype.debounce = function(wait, immediate) {
+                var timeout, 
+                    func = this;
+                return function() {
+                        var context = this, args = arguments;
+                        var later = function() {
+                                timeout = null;
+                                if (!immediate) func.apply(context, args);
+                        };
+                        var callNow = immediate && !timeout;
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                        if (callNow) func.apply(context, args);
+                };
+        };
+var count = 0;
+var print = function() {
+	console.log("count: " + count++);
+}
+
+var newFunction = print.debounce(500);
+//for( var i = 0; i < 1000; i++)
+	newFunction();
+	newFunction();
+</script>
+</html>

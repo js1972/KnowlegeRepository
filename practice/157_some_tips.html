@@ -1,0 +1,27 @@
+<html>
+<script>
+function doSomething(){
+	document.writeln("do something");
+}
+
+function doSomething2(arg1) {   
+    Arg1 = arg1 || 10; // arg1 will have 10 as a default value if it’s not already set  
+} 
+
+var foo = 10;    
+foo == 10 && doSomething(); // is the same thing as if (foo == 10) doSomething();   
+
+foo == 5 || doSomething(); // is the same thing as if (foo != 5) doSomething();  
+
+var squares = [1,2,3,4].map(function (val) {    
+    return val * val;    
+});   
+// squares will be equal to [1, 4, 9, 16]   
+document.writeln(squares);
+document.writeln("\n");
+var num =2.443242342;  
+num = num.toFixed(4);  // num will be equal to 2.4432  
+document.writeln(num);
+</script>
+
+</html>

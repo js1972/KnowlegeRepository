@@ -1,0 +1,49 @@
+<html>
+<script>
+
+function factorial(n){
+  if(n ===1){
+     return 1;
+  }
+  console.log( "begin to call: " + n + " * " + " factorial(" + ( n- 1) + ")");
+
+  var result = factorial( n - 1);
+
+  console.log(" result of factorial( " + ( n -1 ) + ") is done:" + result);
+
+  console.log(" now calculate " + n + " * " + result);
+  return n * result;
+}
+
+
+function factorial2(n, total){
+   if(n ===1)
+       return total;
+   console.log("in factorial2, n = ", n + " total = " + total);
+   var a = n - 1;
+   var b = n * total;
+   console.log(" begin to call factorial(" + a + "," + b + ")");
+   return factorial2(a, b);
+}
+
+function currying(fn, n) {
+  return function(m){
+           return fn.call(this, m, n);
+         };
+}
+
+function tailFactorial2(n, total) {
+  if(n ===1)
+      return total;
+  return tailFactorial2(n -1, n * total);
+}
+
+const factorial3 = currying(tailFactorial2,1);
+
+var N = 10;
+console.log(factorial(N));
+console.log(factorial2(N,1)); 
+console.log(factorial3(N)); 
+
+</script>
+</html>

@@ -1,0 +1,54 @@
+<html>
+<script>
+function createClass(conf){
+	var fn, prototype, privates;
+    publics = conf.publics;
+    privates = conf.privates || new Object();
+    fn = function(fn){
+    	return function(){
+    		return fn.apply(privates, arguments);
+    	};
+    }(conf.constructor ||new Function());
+    
+    prototype = fn.prototype;
+    for(var publicName in publics){
+    	if(!publics.hasOwnProperty(publicName))
+    		continue;
+    	if(typeof publics[publicName]=="function")
+            prototype[publicName] = function(publicName){
+            	return function(){
+            		return publics[publicName].apply(privates, arguments);
+            	}
+            }(publicName);
+        else prototype[publicName] = publics[publicName];
+        if(!privates[publicName])
+            privates[publicName] = prototype[publicName];
+    }
+    return fn;
+}
+
+var klass = createClass({
+    constructor:function(){
+        console.log(this.message);// hello
+    },
+
+    publics:{
+        message:"world",
+        message2:"javascript",
+        sayHello:function(){return this.message;},
+        sayJavaScript:function(){return this.message2;},
+        sayYouCantSeeMe:function(){return this.message3;},
+        sayInteresting:function(msg){return this.interesting();}},
+
+    privates:{
+        message:"hello",
+        message3:"you cant see me",
+        interesting:function(){return "interesting";}
+    }
+});
+
+var instance = new klass();
+
+debugger;
+</script>
+</html>

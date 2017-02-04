@@ -1,0 +1,68 @@
+<html>
+<script>
+/*
+JavaScript 的 map 函数是遍历数组，同时转换每个元素的函数编程技术。它用 modified 元素创建了一个新数组并以回调的方式返回。关于我提到的修改或转换元素，实践表明，如果元素是对象(而不是原语),这只是克隆对象并不是从物理上改变了原生的。
+
+以下是该方法的声明：
+
+arr.map(callback[, thisArg])
+
+回调方法有三个参数，即 currentValue，index，和 array。
+*/
+function Jedi(name){
+    this.name = name;
+}
+ 
+var kit = new Jedi('Kit');
+var count = new Jedi('Count');
+var mace = new Jedi('Mace');
+ 
+var jedis = [kit,count,mace];
+ 
+var lastNames = ['Fisto','Dooku','Windu'];
+ 
+var jedisWithFullNames = jedis.map(function(currentValue,index,array){
+    var clonedJedi = (JSON.parse(JSON.stringify(currentValue)))
+    // Clone currentValue
+    clonedJedi.name = currentValue.name + " " + lastNames[index];
+    return clonedJedi;
+});
+ 
+/**
+Output:
+Kit Fisto
+Count Dooku
+Mace Windu
+*/
+
+jedisWithFullNames.map(function(currentValue){
+    console.log(currentValue.name);
+});
+
+Array.prototype.jerryMap = function(fun,thisArg){
+    if(typeof fun !== 'function'){
+        throw new Error("The first argument must be of type function");
+    }
+    var arr = [];
+    thisArg = (thisArg)?thisArg : this;
+ 
+    thisArg.forEach(function(element, index,array){
+        arr[arr.length] = fun.call(thisArg,element, index,array);
+    });
+ 
+    return arr;
+}
+
+var jedisWithFullNames2 = jedis.jerryMap(function(currentValue,index,array){
+    var clonedJedi = (JSON.parse(JSON.stringify(currentValue)))
+    // Clone currentValue
+    clonedJedi.name = currentValue.name + " " + lastNames[index];
+    return clonedJedi;
+});
+
+jedisWithFullNames2.map(function(currentValue){
+    console.log(currentValue.name);
+});
+
+</script>
+</html>

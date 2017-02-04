@@ -1,0 +1,27 @@
+<html> 
+<script>
+  function A(name) {
+    this.name = name;
+}
+
+function ObjectFactory() {
+
+  var obj = {};
+  var Constructor = Array.prototype.shift.call(arguments);
+
+  obj.__proto__ = typeof Constructor.prototype === 'number' ? Object.prototype
+
+  : Constructor.prototype;
+
+  var ret = Constructor.apply(obj, arguments);
+  return typeof ret === 'object' ? ret : obj;
+}
+
+var a = ObjectFactory(A, 'Jerry');
+
+alert(a.name); //Jerry
+
+var b = ObjectFactory(A, 1);
+alert(b.name);
+</script>
+</html >

@@ -1,0 +1,16 @@
+<html>
+<script>
+
+function test(){
+	test1();
+}
+
+window.onerror = function() {
+	debugger;
+	console.log(arguments);
+	return false;
+}
+
+test();
+</script>
+</html>

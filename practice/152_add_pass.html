@@ -1,0 +1,38 @@
+<html>
+<script>
+var add = function(n) {
+if(n === 5) 
+ return n;
+return n * add(n + 1);
+}
+console.log(add(3)); // 60
+/*
+3 * add(4)
+3 * 4 * add(5) = 3 * 4 * 4 = 60
+*/ 
+
+// Jerry 2016-01-31 10:26AM 这种solution是借助全局变量
+var add2 = function(n) {
+   ans *= n;
+return add2;
+}
+var ans = 1;
+ add2(5)(4)(3);
+ console.log(ans);
+
+// 因为要返回一个函数，又要实现值的累计，又不能外加变量，所以只能将累计的值作为参数传入。
+
+var add3 = function(a) {
+	var temp = function(b) {
+		return add3(a * b);
+	}
+	temp.toString = temp.valueOf = function() {
+ 		return a;
+ 	}
+	return temp;
+}
+
+document.write(add3(3)(4)(5));
+
+</script>
+</html>

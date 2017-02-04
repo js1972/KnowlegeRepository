@@ -1,0 +1,19 @@
+<html>
+<script>
+
+var f = (function(){
+	var x = 2;
+
+	return function(y) {
+				return x * y;
+			};
+	})();
+
+var x = 3;
+var y = 2;
+
+var z = f(x - y);
+alert(z); 
+
+</script>
+</html>

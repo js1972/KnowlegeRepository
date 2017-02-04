@@ -1,0 +1,22 @@
+<html>
+<script>
+var theThing = null; 
+
+var replaceThing = function () {  
+	var priorThing = theThing; 
+	var unused = function () { 
+		if (priorThing) {       
+			console.log("hi");     
+		}   
+    }; 
+    // 2016-04-30 11:55PM - perhaps the last Fiori blog
+    // 2016-05-01 10:38PM - second day of wedding
+    theThing = {     
+    				longStr: new Array(10000000).join('Jerry'),  // 
+                  	someMethod: function () {       
+                  		console.log("g");  
+                  	}   
+       			}; 
+};   
+setInterval(replaceThing, 4000); 
+</script>

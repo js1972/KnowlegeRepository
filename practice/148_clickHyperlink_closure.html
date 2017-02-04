@@ -1,0 +1,36 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<body>
+	<a href='#'> 第一个链接 </a>
+	</br>
+	<a href='#'> 第二个链接 </a>
+	</br>
+	<a href='#'> 第三个链接 </a>
+	</br>
+	<a href='#'> 第四个链接 </a>
+	</br>
+
+<a href='#'> 第5个链接 </a></br>
+<a href='#'> 第6个链接 </a></br>
+<a href='#'> 第7个链接 </a></br>
+<a href='#'> 第8个链接 </a></br>
+
+<script type="text/javascript">
+var lis = document.links;
+    for(var i =0, length = lis.length; i < length; i++) {
+      lis[i].index = i;
+      lis[i].onclick =function() {
+        alert(this.index);
+      };
+    }
+
+
+var lis2 = document.links;
+    for(var i = 4, length = lis2.length; i < length; i++) {
+      (function(i) {
+        lis2[i].onclick =function() {
+          alert(i +1);
+        };
+      })(i); 
+    }
+</script>
+</body>

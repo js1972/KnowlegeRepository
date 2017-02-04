@@ -1,0 +1,92 @@
+<html>
+<script>
+
+var test = function(var1, var2) {
+	console.log("Hello: " + var1 + " , " + var2);
+	var a = arguments;
+	var b = Array.prototype.slice.call(arguments, 0);
+	debugger;
+};
+
+test("Jerry", "Wang");
+
+var ab ={ slice:[].slice, push:[].push };
+debugger;
+
+ab[0]="hello";
+ab[1]="world";
+console.log( ab.slice().length );// 期望得到 2，但结果为 0
+ab.push("apple");
+console.log( ab.length );// 期望得到 3，但结果为 1
+console.log( ab[0], ab[1]);// 我们看到这里的 a[0] 已经被覆盖
+
+var c ={ length:2}, d ={ length:2, splice:[].splice };
+c[0]= d[0]="hello";
+c[1]= d[1]="world";
+console.log( c );
+console.log( d );
+
+/*
+我们经常需要把arguments当成数组来使用.
+1
+2
+3
+4
+(function(a,b,c){
+Array.prototype.push.call(arguments,3);
+alert(arguments.length)  //4, 成功添加了一个元素.
+})(0，1，2)
+为什么arguments可以被当成array的对象, 进行push操作. 为了搞清这个, 只有翻看引擎源码最靠谱.
+看看v8的实现.
+1
+2
+3
+4
+5
+6
+7
+8
+9
+functionArrayPush(){
+  varn=TO_UINT32(this.length);  //上例中, this是arguments
+  varm=%_ArgumentsLength();  
+  for(vari=0;i<m;i++){
+    this[i+n]=%_Arguments(i);	   //属性拷贝
+  }
+  this.length=n+m;	    //修正length
+  returnthis.length;
+}
+可以清楚的看到, 实际上push也就是一个属性拷贝的过程, 顺便修正了length属性. 至于this是谁, 并没有做任何校验. 因为TO_UINT32操作的存在, 甚至不需要this这个对象拥有length属性, 如果没有, 引擎会把length设置为0.
+不难看出, 只要满足这2个条件, 任何对象都可以冒充array调用push方法。
+1 此对象本身要可存取属性.
+2 length属性可读写.
+第1点很好理解, 前面说过了push就是一个属性拷贝的过程，看看下面的例子.
+1
+2
+3
+  vara=1;
+  Array.prototype.push.call(a,"first")
+  alert(a.length);//undefined
+第二点从v8的代码里也能清楚看到, 因为this.length = n + m;这一句的关系， 要求该对象的length属性是可写的. 回忆下function.length. 这个length就是一个只读的属性，表示function形参的个数. 所以如果使用下面的代码, 还是会有问题.
+1
+2
+3
+4
+  vara=function(){};
+  Array.prototype.push.call(a,"first");
+  alert(a[0])  //first， 属性拷贝的过程OK.
+  alert(a.length);// 0, a的length不可写
+另外，IE低版本中此对象必须有一个显式并且有效的length属性, 猜测是这些引擎中没有TO_UINT32这个操作, 待大哥们验证.
+来看看一个顺利的例子
+1
+2
+3
+4
+varobj={}
+Array.prototype.push.call(obj,''first" );
+alert ( obj.length ); //1
+alert( obj[0] ) //  'first"
+*/
+
+</script>
+</html>

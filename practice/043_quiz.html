@@ -1,0 +1,78 @@
+<html>
+<script>
+  console.log((function () { 
+        return typeof arguments; 
+    })()); // object
+
+  var answer = (function () { 
+        return typeof arguments; 
+    })();
+
+/*
+    var f = function g() {
+                return 23;
+            };
+        typeof g();
+        Uncaught reference error: g is not defined
+*/
+
+var a = (function (x) {
+            delete x;
+            return x;
+        })(1); // a = 1
+
+     var y = 1;
+     var x = y = typeof x;
+        console.log(x); // undefined
+
+/* 1. this is a self-executed function, passed-in argument is a function
+   2. the main function body is to calculate the execution result of passed in function,
+   in this example it is 1, so result is Number:
+   */
+ var b =     (function g(f) {
+ 			console.log("ready to execute the passed in function in main function: " + f);
+            return typeof f();
+        })(function () {
+        	console.log("Hello, I am arguments!!");
+            return 1;
+        });
+
+ var foo = {
+            bar: function () {
+            	//debugger; // this points to Arguments[1]
+                return this.baz;
+            },
+            baz: 1
+        };
+
+var c = (function () {
+	     // execute the passed in function
+            return typeof arguments[0]();
+        })(foo.bar);
+
+var f = (function f() {
+			console.log("return 1");
+			132
+			haha
+			tcode
+			/*this return will never be executed */
+            return "1";
+        }, function g() {
+        	console.log("return 2");
+            return 2;
+        })();
+
+ var j = 1;
+ if (function m() {
+ 	console.log("this line will never be called!");
+ }) {
+ j += typeof m;
+ }
+ console.log("j: " + j); // 1undefined
+
+ var q = [typeof q, typeof r][1];
+        typeof typeof q; // string
+
+ console.log("q: " + q);
+</script>
+</html>

@@ -1,0 +1,38 @@
+<html>
+<body id="hello">
+	</body>
+
+<script>
+!function() {
+	debugger;
+	window.$ = function(oID){
+		console.log("fake jQuery: " + oID);
+	}
+}();
+</script>
+
+<script src="jQuery/jquery1.7.1.js"></script>
+<script>
+jQuery.noConflict();
+</script>
+
+<script>
+
+
+jQuery(document).ready(function(){
+  console.log("hello");
+  debugger;
+  var query = jQuery.noConflict(true); // after this line jQuery is undefined
+  var bodyResult = query("#hello");
+  console.log(bodyResult.length);
+
+  $("#hello");
+  !function($){
+  	var result = $("#hello");
+  	debugger; // $ still points to jQuery in this context
+  }(query);
+});
+
+
+</script>
+</html>

@@ -1,0 +1,33 @@
+<html>
+<script>
+
+// sample:  injectedMixins.forEach(mixSpecIntoComponent.bind(null, Constructor));
+// 执行mixSpecIntoComponent
+function print(a,b,c){
+	console.log("Jerry: " + a + "-" + b + "-" + c);
+	console.log("this: " + this);
+}
+
+// 把[]的每个元素传入到forEach后的function并执行
+// 第一个参数是value，第二个value是index,第三个参数是把整个Array都传进去了。
+// 如果bind传入的是null，自动变成global的Windows this: [object Window]
+// bind如果变成2，上面print打印也就是2了
+// bind(value): value is undefined
+// forEach后面(print.bind())的上下文里访问不到[1,2,3]的value,index, whole Array了。
+// Scala会替换到forEach里自动assign的value，但是index和wholeArray仍然不变。
+// var b = [1,2,3].forEach(print.bind("null", "Scala"));
+var b = [1,2,3].forEach(print.bind("null", "Scala", "React"));
+
+var a = function Jerry(){
+	function embedded(){
+
+	}
+	this.name = "Scala";
+}
+
+var b = new a();
+debugger;
+</script>
+
+
+</html>

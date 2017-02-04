@@ -1,0 +1,16 @@
+<html>
+<script>
+var test = "#token=Be&access_token=fff&$id_token=ets&expires_in=3600&scope=full";
+
+var anotherTry = function(value) { 
+    var reg = /(?:^\#|&)(.*?)=(.*?)(?=&|$)/g; // 字符串结尾
+    var temp;
+    while((temp = reg.exec(value))!= null) {
+    	console.log("Key: " + temp[1] + " value: " + temp[2]);
+    }
+};
+
+anotherTry(test);
+debugger;
+</script>
+</html>

@@ -1,0 +1,23 @@
+<html>
+<style>
+/*
+.before:before{content:'you before'; 
+color:red;
+display:block;}*/
+/*
+//鼠标移至 div 上时，新内容出现。
+*/
+.before:hover:before{
+	content:'you before'; 
+	color:red;
+}
+a::before{content: attr(title)}
+
+</style>
+
+<div class="before"> me</div>
+<a href="http://www.segmentfault.com" title="Jerry Scala"></a>
+<script>
+</script>
+
+</html>

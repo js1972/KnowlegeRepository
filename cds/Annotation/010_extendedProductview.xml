@@ -1,0 +1,43 @@
+<core:View controllerName="nw.epm.refapps.st.prod.manage.ext.controller.ProductDetailReview" xmlns:core="sap.ui.core" xmlns="sap.m"
+	xmlns:suite="sap.suite.ui.commons" xmlns:viz="sap.viz.ui5.controls" xmlns:l="sap.ui.layout">
+	<!--Review Table -->
+	<Table id="reviewTable" class="sapUiTinyMarginTop" width="auto" updateFinished="onReviewsLoaded" growing="true" growingThreshold="10"
+		growingScrollToLoad="true" noDataText="{i18n|sap.suite.ui.generic.template.ObjectPage|SEPMRA_C_PD_Product>xfld.noEntriesFound}"
+		items="{path: 'to_CollaborativeReviewPost'}">
+		<columns>
+			<!-- Rating Indicator -->
+			<Column id="ratingIndicatorColumn" width="6rem" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline" hAlign="Left" vAlign="Top">
+				<header>
+					<Label id="ratingIndicatorLbl" text="{/#SEPMRA_C_PD_Product/to_CollaborativeReviewPost/ReviewRatingValue/@sap:label}"/>
+				</header>
+			</Column>
+			<!-- Name and Date -->
+			<Column id="nameAndDateColumn" width="20%" minScreenWidth="Tablet" demandPopin="true" hAlign="Left" vAlign="Top"/>
+			<!-- Comment -->
+			<Column id="commentColumn" width="55%" minScreenWidth="Tablet" demandPopin="true" hAlign="Left" vAlign="Top">
+				<header>
+					<Label id="commentLbl" text="{/#SEPMRA_C_PD_Product/to_CollaborativeReviewPost/ReviewPostText/@sap:label}"/>
+				</header>
+			</Column>
+			<!-- Links: Helpful, Edit and Delete -->
+			<Column id="linksColumn" width="12rem" minScreenWidth="Tablet" demandPopin="true" hAlign="Left" vAlign="Top"/>
+		</columns>
+		<ColumnListItem id="reviewListItem">
+			<cells >
+				<!-- Rating Indicator -->
+				<RatingIndicator id="ratingIndicatorControl" enabled="false" maxValue="5" value="{ReviewRatingValue}" iconSize='0.875rem'
+					class="sapMTableContentMargin"/>
+				<!-- Name and Date -->
+				<ObjectIdentifier id="nameAndDateObjIdent" class="sapMTableContentMargin"
+					title="{=${IsReviewOfCurrentUser} ? ${i18n|sap.suite.ui.generic.template.ObjectPage|SEPMRA_C_PD_Product>xtit.me} : ${UserDisplayName} }"
+					text="{path:'ReviewDateTime', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true, parseAsString: true} }"/>
+				<!-- Comment -->
+				<Text id="commentTxt" text="{ReviewPostText}" class="sapMTableContentMargin"/>
+				<l:VerticalLayout id="verticalLayoutLinks">
+					<Text id="helpfulCountTxt" class="sapMTableContentMargin sapUiTinyMarginBottom"
+						text="{parts:[{path: 'i18n|sap.suite.ui.generic.template.ObjectPage|SEPMRA_C_PD_Product>xfld.helpfulCount'}, {path: 'NumberOfAffirmativeAnswers'}], formatter: 'jQuery.sap.formatMessage'}"/>
+				</l:VerticalLayout>
+			</cells>
+		</ColumnListItem>
+	</Table>
+</core:View>

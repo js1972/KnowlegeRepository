@@ -1,0 +1,42 @@
+<html>
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+<style>
+.halfStyle {
+    position:relative;
+    display:inline-block;
+    font-size:20px; /* or any font size will work */
+    color: transparent; /* hide the base character */
+    overflow:hidden;
+    white-space: pre; /* to preserve the spaces from collapsing */
+}
+.halfStyle:before { /* creates the left part */
+    display:block;
+    z-index:1;
+    position:absolute;
+    top:0;
+    width: 30%;
+    content: attr(data-content); /* dynamic content for the pseudo element */
+    overflow:hidden;
+    pointer-events: none; /* so the base char is selectable by mouse */
+    color: #f00; /* for demo purposes */
+    text-shadow: 2px -2px 0px #af0; /* for demo purposes */
+}
+.halfStyle:after { /* creates the right part */
+    display:block;
+    direction: rtl; /* very important, will make the width to start from right */
+    position:absolute;
+    z-index:2;
+    top:0;
+    left:20%;
+    width: 30%;
+    content: attr(data-content); /* dynamic content for the pseudo element */
+    overflow:hidden;
+    pointer-events: none; /* so the base char is selectable by mouse */
+    color: #000; /* for demo purposes */
+    text-shadow: 2px 2px 0px #0af; /* for demo purposes */
+}
+</style>
+<body>
+	<button class="halfStyle" data-content="Hello" witdh = "200px">Hello</button>
+</body>
+</html>

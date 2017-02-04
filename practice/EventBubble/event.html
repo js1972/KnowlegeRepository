@@ -1,0 +1,73 @@
+<html>
+<script src="../jQuery/jquery1.7.1.js"></script>
+<script>
+	//<![CDATA[ 
+$(window).load(function(){
+var nodes = $('*'),
+    node = {};
+for (var i = 0; i < nodes.length; i++) {
+    node = nodes[i];
+
+    node.addEventListener('click', function (event) {
+        $('#EventListing').append('Bubble ' + (event.currentTarget.id || event.currentTarget.tagName) + '<br/>');
+    });
+
+    node.addEventListener('click', function (event) {
+        if (event.currentTarget != event.target) {
+            $('#EventListing ').append('Capture ' +  (event.currentTarget.id || event.currentTarget.tagName) + ' <br/>');
+            // test on 2015-06-06 validate event.stopPropagation
+            // event.stopPropagation();
+        }
+    }, true);
+}
+
+var div = $('#appendHere');
+
+$('#clickMe').on('click', function () {
+    var that = this;
+    div.append(checkForWindow(this));
+
+    setTimeout(function () {
+        div.append(checkForWindow(this));
+        div.append('<strong>that</strong> is the ' + that.tagName + '<br/>');
+    }, 300);
+});
+
+
+function checkForWindow(elm) {
+    if (elm instanceof Window) {
+        return 'this is the Window<br/>';
+    } else if (elm.tagName) {
+        return ('this is the ' + elm.tagName + '<br/>');
+    } else {
+        return ('this is ' + elm + '<br/>');
+    }
+}
+
+$('#button2').click(function () {
+    $('#button2').trigger('myCustomEvent', ['I triggered', "Hello"]);
+});
+
+$('#containerOuter').on('myCustomEvent', function (e, data) {
+    // arguments[0]: jQuery object. This is just a workaround.
+    var data1 = arguments[1] + arguments[2];
+    $('#insertText').append(data1);
+});
+
+
+});//]]>  
+</script>
+<div id="containerOuter" style="border: 1px solid black; width: 100px; padding: 20px">
+    <div id="containerInner" style="border: 1px solid black; width:80px; padding: 10px">
+        <button id="button1">1</button>
+        <button id="button2">2</button>
+    </div>
+    <div id="insertText" style="padding: 10px;"></div>
+</div>
+<br/>
+
+<div id="appendHere"></div>
+<button id="clickMe">Click Me</button>
+
+<div id="EventListing"></div>
+</html>

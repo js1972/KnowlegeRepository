@@ -1,0 +1,28 @@
+<html>
+<script>
+var countdown = function(timeout) {
+    var countUI = document.getElementById("count");
+    if(!!countUI) {
+        countUI.innerHTML = timeout;
+        if (timeout == 0) {
+            alert("end");
+        }
+        else {
+        	timeout--;
+            //setTimeout("countdown(" + timeout + ")", 1000);
+            setTimeout(function(){ 
+            	countdown(timeout)
+            }, 1000);
+        }
+    }
+}
+
+function init(){
+	//alert("Hello");
+	countdown(5);
+}
+</script>
+<body onload=init();>
+<div id="count">5</div>
+</body>
+</html>

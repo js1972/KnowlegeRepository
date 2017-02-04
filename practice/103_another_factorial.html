@@ -1,0 +1,20 @@
+<html>
+<script>
+const Y = f =>
+    (x => f(y => x(x)(y)))
+    (x => f(y => x(x)(y)))
+
+const factorial = Y(
+    f => n => n == 0 ? 1 : n * f(n - 1)
+)
+// http://jimliu.net/2015/10/15/functional-reverse-in-es6/
+
+
+function gcd(a, b) {
+    if (b == 0) return a
+    return gcd(b, a % b)
+}
+// 转换成箭头函数的话大概是这样
+gcd = (a, b) => b == 0 ? a : gcd(b, a % b)
+// 由于只让使用一个参数，需要改成curry形式：
+gcd = a => b => b == 0 ? a : gcd(b)(a % b)

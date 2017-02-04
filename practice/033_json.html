@@ -1,0 +1,84 @@
+<html>
+<script>
+/*
+规定键-值对中的键必须用双引号！同时规定键-值对中的值的取值有一定要求：
+JSON 值可以是：
+数字（整数或浮点数）
+字符串（在双引号中）
+逻辑值（true 或 false）
+数组（在方括号中）
+对象（在花括号中）
+null
+　　除以上6种外，再无其他，没有像js一样的undefined、NAN，JSON拒绝使用。
+*/
+// Jerry 2015-09-18 18:15PM tested also works
+var jsonStr = '{name: "hanzichi", "sex": "male"}';
+var ans = eval('(' + jsonStr + ')');
+console.log(ans.name, ans.sex);	// hanzichi male
+
+var jsonStr1 = '{"name": "hanzichi", "sex": "male"}';
+var obj = JSON.parse(jsonStr1);
+console.log(typeof obj, obj); // object Object {name: "hanzichi", sex: "male"} 
+
+var jsonStr2 = '{"name": "hanzichi", "sex": "male", "age": 10}';
+var obj2 = JSON.parse(jsonStr2, function(key, value) {
+  if(key === 'name') {
+    return 'my name is ' + value;
+  }
+  else{
+  	console.log(" key is not name: " + key);
+  }
+  return value;
+});
+console.log(typeof obj2, obj2); // object Object {name: "my name is hanzichi", sex: "male", age: 10} 
+
+// JS object -> Js String
+var obj3 = {name: 'hanzichi', sex: 'male', age: '10'};
+var jsonStr3 = JSON.stringify(obj3);
+console.log(jsonStr3);  // { "name":"hanzichi","sex":"male","age":"10"}
+
+//也可以加个参数，规定需要转化为json字符串的属性（数组形式，跟数组同名的js对象属性才会被转换）：
+var obj4 = {name: 'hanzichi', sex: 'male', age: '10'};
+var jsonStr4 = JSON.stringify(obj4, ['name']);
+console.log(jsonStr4);  // {"name":"hanzichi"}
+
+//第二个参数也可以是个函数，可以删选符合条件的属性（或者改变属性值，没有return表示放弃该属性，return的值表示该key在js//on字符串中的值）
+var obj5 = {name: 'hanzichi', sex: 'male', age: '10'};
+var jsonStr5 = JSON.stringify(obj5, function(key, value) {
+  if(key === 'name') {
+    return 'my name is ' + value;
+  }
+  else if( key === 'sex'){
+  		// do not return, discard this attribute
+  }
+  else
+  	return value;
+});
+console.log(jsonStr5);  // {"name":"my name is hanzichi","age":"10"} 
+
+//还可以有第三个参数，可以是数字或者字符串。
+//　　如果是数字的话，表示缩进，数字大小超过10了按10处理。
+var obj6 = {name: 'hanzichi', sex: 'male', age: '10'};
+var jsonStr6 = JSON.stringify(obj6, null, 4);
+console.log(jsonStr6);  
+
+/* will lead to following result
+// {
+//     "name": "hanzichi",
+//     "sex": "male",
+//     "age": "10"
+// }
+*/
+var obj7 = {name: 'hanzichi', sex: 'male', age: '10'};
+var jsonStr7 = JSON.stringify(obj7, null, 'pre');
+console.log(jsonStr7); 
+// {
+// pre"name": "hanzichi",
+// pre"sex": "male",
+// pre"age": "10"
+// }
+
+
+debugger; 
+</script>
+</html>

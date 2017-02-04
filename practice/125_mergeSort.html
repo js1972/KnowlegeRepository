@@ -1,0 +1,83 @@
+<html>
+<script>
+function merge(left, right) {
+  var tmp = [];
+
+  while (left.length && right.length) {
+    if (left[0] < right[0])
+      tmp.push(left.shift());
+    else
+      tmp.push(right.shift());
+  }
+
+  return tmp.concat(left, right);
+}
+
+function mergeSort(a) {
+  if (a.length === 1) 
+    return a;
+
+  var mid = ~~(a.length / 2);
+  var left = a.slice(0, mid);
+  var right = a.slice(mid);
+
+  return merge(mergeSort(left), mergeSort(right));
+}
+
+/*
+一个长度为n的数组最终会调用mergeSort() 2*n-1次，这意味着如果需要排序的数组长度很大会在某些栈小的浏览器上发生栈溢出错误。
+http://www.cnblogs.com/zichi/p/4796727.html
+
+
+var result = mergeSort([1,5,6,2,4,3]);
+var cnt = 0;
+try {
+  (function() {
+    cnt++;
+    arguments.callee();
+  })();
+} catch(e) {
+  console.log(e.message, cnt);//Maximum call stack size exceeded 35921
+}
+*/
+// no recursive
+function mergeNo(left, right) {
+  
+  var result = [];
+
+  while (left.length && right.length) {
+    if (left[0] < right[0])
+      result.push(left.shift());
+    else
+      result.push(right.shift());
+  }
+
+  console.log("not good: concat empty array!!");
+  return result.concat(left, right);
+}
+
+function mergeSortNo(a) {
+  if (a.length === 1)
+    return a;
+
+  var work = [];
+  for (var i = 0, len = a.length; i < len; i++)
+    work.push([a[i]]);
+
+  work.push([]); // 如果数组长度为奇数
+
+  for (var lim = len; lim > 1; lim = (lim + 1) / 2) {
+  	console.log("lim: " + lim);
+    for (var j = 0, k = 0; k < lim; j++, k += 2) 
+      work[j] = mergeNo(work[k], work[k + 1]);
+
+    work[j] = []; // 如果数组长度为奇数
+  }
+
+  return work[0];
+}
+
+console.log(mergeSortNo([1,5,6,2,4,3]));
+
+</script>
+</html>

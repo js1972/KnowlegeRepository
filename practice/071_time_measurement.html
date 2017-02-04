@@ -1,0 +1,21 @@
+<html>
+<body onload = test();>
+</body>
+<script>
+
+var append_doms = function() {
+    var d = new Date(); // dirty code - nothing to do with application logic!!!
+    for( var i = 0; i < 100000; i++) {
+    	var div = document.createElement( "div");
+        document.body.appendChild(div);
+    }
+    // dirty code - nothing to do with application logic!!!
+    console.log(" time consumed: " + ( new Date() - d));
+};
+
+function test() {
+	append_doms();
+}
+
+</script>
+</html>

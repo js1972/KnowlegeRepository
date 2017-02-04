@@ -1,0 +1,71 @@
+<html>
+<script>
+var length = 10;
+function fn() {
+  console.log(this.length);
+}
+
+var obj = {
+  length: 5,
+  method: function(fn) {
+    fn();
+    arguments[0]();
+  }
+};
+
+obj.method(fn, 1); 
+
+function fn2(a) {
+  console.log(a); 
+  var a = 2;
+  function a() {}
+  console.log(a); 
+}
+
+fn2(1);
+
+var f = true;
+if (f === true) {
+  var a1 = 10;
+}
+
+function fn() {
+  var b = 20;
+  c = 30;
+}
+
+fn();
+/*
+很长一段时间我都以为{...}内的新声明的变量是局部变量，后来我才发现function内的新声明的变量才是局部变量，而没有用var声明的变量在哪里都是全局变量。再次提醒切记只有function(){}内新声明的才能是局部变量，while{...}、if{...}、for(..) 之内的都是全局变量（除非本身包含在function内）。
+*/
+console.log(a1); // 10
+// console.log(b); // fn内的局部变量，外面访问不到。
+// console.log(c);
+/*
+其实{...}内的变量也会提前声明。于是代码还没执行前，a变量已经被声明，于是 'a' in window 返回true，a被赋值。
+*/
+if('a2' in window) {
+  var a2 = 10;
+}
+
+// alert(a2);
+
+/* Jerry 这道题弄过，装箱和拆箱。
+var a = 10;
+a.pro = 10; // 这个属性只有一瞬间起作用。下一句的a是一个新的对象了，所以pro属性为undefined
+console.log(a.pro + a);
+
+var s = 'hello';
+s.pro = 'world';
+console.log(s.pro + s);
+*/
+
+console.log(typeof fn); // function
+var fn;
+function fn() {};
+/*
+因为函数声明优于变量声明。我们知道在代码逐行执行前，函数声明和变量声明会提前进行，而函数声明又会优于变量声明，这里的优于可以理解为晚于变量声明后，如果函数名和变量名相同，函数声明就能覆盖变量声明。所以以上代码将函数声明和变量声明调换顺序还是一样结果。
+*/
+
+</script>
+</html>

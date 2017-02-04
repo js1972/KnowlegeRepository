@@ -1,0 +1,15 @@
+
+@ClientDependent: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED 
+define table function ztf_get_bp_detail 
+  with parameters @Environment.systemField: #CLIENT 
+                  clnt:abap.clnt, 
+                  bp_guidset: 
+                  bp_no:CRMT_PARTNER_NO
+  returns { client:s_mandt;
+            bp_guid: BU_PARTNER_GUID;
+            title:AD_TITLE;
+            name: BU_NAME1TX; 
+          } 
+  implemented by method 
+    zcl_amdp_bp_impl=>get_bp_detail;

@@ -1,0 +1,20 @@
+<html>
+<script>
+function test(){
+
+
+	setTimeout(function(){
+		var el = document.getElementById("div");
+ 		el.style.borderLeft = "10px"; //1次重排版
+  		el.style.borderRight = "20px"; //又1次重排版
+  		el.style.padding = "50px"; //还有1次重排版
+	}, 2000);
+	
+}
+</script>
+<body onload = "test()";>
+	<div id="div">
+		dd
+	</div>
+	</body>
+</html>

@@ -1,0 +1,22 @@
+<html>
+<script>
+var a1 = [1,2,3];
+var a2 = a1;
+
+a2.push(4);
+// check content of a1?? both are 1,2,3,4, it proves that = is pass by reference
+
+var a3 = a2.slice(); // deep copy
+a3.push(5);
+// 2016-04-08 10:33PM 彻底无语了
+// 2016-04-09 13:36PM suffer
+// 2016-05-03 19:12PM 
+// check content of a1, a2: still 1,2,3,4. not effected by a3.push
+// a3: 1,2,3,4,5
+var a4 = a3.slice(1); // 2,3,4,5
+
+var a5 = a4.slice(0); // = slice()
+
+var a6 = a5.concat([6,7]);
+
+</script>

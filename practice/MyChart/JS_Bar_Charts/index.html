@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>jChartFX Samples - Bar Charts</title>
+		<link rel="stylesheet" type="text/css" href="resources/presenter.css"/>
+		<link rel="stylesheet" type="text/css" href="http://www.jchartfx.com/libs/v7/current/styles/Palettes/jchartfx.palette.css"/>
+		<link rel="stylesheet" type="text/css" href="http://www.jchartfx.com/libs/v7/current/styles/Attributes/jchartfx.attributes.css"/>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" /> 
+	
+	</head>
+	<body>		
+		<div class="titlebar top">
+			<h3>jChartFX Samples</h3>
+			<h4>Bar Charts</h4>			
+		</div>
+		<div class="samplesnav">
+			<ul>
+			<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_SideBySideBars" id="container_SideBySideBars" ></div></div><h6>Side-by-side Bars</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_GanttBars" id="container_GanttBars" ></div></div><h6>Gantt Bars</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_BarWithNegativeValues" id="container_BarWithNegativeValues" ></div></div><h6>Bar with Negative Values</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_GanttWithNegativeValues" id="container_GanttWithNegativeValues" ></div></div><h6>Gantt with Negative Values</h6></a></li>
+				<li class="crop"><a><div class="thumb_container crop obj_type_chart" thumb_type="crop"><div class="container chart_container container_BarSeparation" id="container_BarSeparation" ></div></div><h6>Bar Separation</h6></a></li>
+				<li class="crop"><a><div class="thumb_container crop obj_type_chart" thumb_type="crop"><div class="container chart_container container_OverlappingBars" id="container_OverlappingBars" ></div></div><h6>Overlapping Bars</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_BarStacked" id="container_BarStacked" ></div></div><h6>Bar Stacked</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_GanttStacked" id="container_GanttStacked" ></div></div><h6>Gantt Stacked</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_BarStacked100Percent" id="container_BarStacked100Percent" ></div></div><h6>Bar Stacked 100 Percent</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_InitialValues" id="container_InitialValues" ></div></div><h6>Initial Values</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_Bar3DStacked" id="container_Bar3DStacked" ></div></div><h6>Bar 3D Stacked</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_Bar3DOblique" id="container_Bar3DOblique" ></div></div><h6>Bar 3D Oblique</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_Cylinder3DClustered" id="container_Cylinder3DClustered" ></div></div><h6>Cylinder 3D Clustered</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_Cylinder3DAngled" id="container_Cylinder3DAngled" ></div></div><h6>Cylinder 3D Angled</h6></a></li>
+				<li class="crop"><a><div class="thumb_container crop obj_type_chart" thumb_type="crop"><div class="container chart_container container_StackedCylinder" id="container_StackedCylinder" ></div></div><h6>Stacked Cylinder</h6></a></li>
+				<li class="icon"><a><div class="thumb_container icon obj_type_chart" thumb_type="icon"><div class="container chart_container container_Cube" id="container_Cube" ></div></div><h6>Cube</h6></a></li>			
+			</ul>
+		</div>
+		<div class="samplecontent">
+                        <h6 id="h6_chart_title"></h6>
+			<span class="description">
+				<p>Bar charts are the most common type of business chart and are especially useful for comparative analysis. You can use a bar chart to illustrate comparisons among individual items. Bar charts are also useful for comparing classes or groups of data.</p>
+			</span>			
+			<div class="chartcontainer">
+				<div id="currentChart"></div>
+			</div>
+			<div class=" info_wm">
+				<div class="d_info"><a href="http://support.softwarefx.com/jChartFX/article/1500134" target="_blank">How do I remove the watermark?</a></div>
+			</div>
+		</div>
+		<div class="code">
+			<div class="titlebar bottom">				
+			<div class="togglearrow arrowup"></div>
+				<ul class="navpills">
+					<li ><a class="html">HTML</a></li>
+					<li class="active"><a class="js">Javascript</a></li>
+					<li><a class="css">CSS</a></li>
+				</ul>
+			</div>
+			<ul class="tabscontent">
+				<li class="html ">
+					<pre>
+					</pre>
+				</li>
+				<li class="js active">
+					<pre></pre>
+				</li>
+				<li class="css">
+					<pre></pre>
+				</li>
+			</ul>
+		</div>
+		<!--  Helpers Divs -->
+		<div class="helper_div chart_container"></div>
+		<div class="helper_div radial_container"></div>
+		<div class="helper_div horizontal_container"></div>
+		<div class="helper_div vertical_container"></div>
+		<div class="helper_div digital_container"></div>
+		<div class="helper_div trend_container"></div>	
+		<div class="helper_div map_container"></div>			
+		<!--  Scripts -->
+		<script type="text/javascript" src="resources/jquery-1.7.1.js"></script> 
+		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+		<script type="text/javascript" src="http://www.jchartfx.com/libs/v7/current/js/jchartfx.full.js"></script>
+		<script type="text/javascript" src="resources/functions.js"></script> 
+		<script type="text/javascript" src="resources/presenter.js"></script>
+	</body>
+</html>

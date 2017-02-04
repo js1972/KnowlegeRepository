@@ -1,0 +1,46 @@
+<html>
+<script>
+
+function a1(x,y){
+	this.result = x + y;
+	return this.result;
+}
+
+var a = a1(1,2);
+
+console.log(a);
+
+var b = a1(1,2);
+a1 = 4;
+// b = a1(1,2); // error: a1 is not a function
+console.log(b);
+
+/*
+const add = x => y => x + y
+
+var c = add(1)(2);
+*/
+const pair = a => b => [a, b]
+
+var result = pair(1)(2);
+
+/*const add2 = ([a, b]) => a + b
+
+var b1 = add2([5, 3]);*/
+
+const two_steps = step1 => step2 => param =>{
+	console.log("param: " + param);
+    step2(step1(param));}
+
+const loop_on_array = arr => body => i => {
+	console.log("in loop_on_array: " + i);
+    i < arr.length ?
+    two_steps (body) (_ => loop_on_array(arr)(body)(i + 1)) (arr[i]) :
+    undefined};
+
+loop_on_array (["a", "b", "c", "d", "e"]) (item => console.log(item)) (0);
+
+
+
+</script>
+</html>

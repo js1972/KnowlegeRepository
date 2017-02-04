@@ -1,0 +1,23 @@
+<html>
+<script>
+function Employee(name) {
+	this._name = name;
+	Object.defineProperty(this, "name2", {
+		get : function() {
+			debugger;
+			return this._name;
+		},
+
+		set : function (v) {
+			debugger;
+			this._name = v + "Wu";
+		}
+	});
+}
+
+var oJerry = new Employee("Jerry");
+var name = oJerry.name2;
+
+oJerry.name2 = "Ji";
+</script>
+</html>

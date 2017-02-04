@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DIY One-way Data Binding with Backbone</title>
+    <script src="backbone/jquery-2.0.3.min.js"></script>
+    <script src="backbone/underscore.js"></script>
+    <script src="backbone/backbone.js"></script>
+  </head>
+  <body>
+    Name:<input id="textInput" type="text"/>
+    Hello <span id="nameSpan"></span>!
+
+    <script>
+
+      // Model
+      var model = new Backbone.Model({
+        name: ''
+      });
+
+      // View
+      model.on('change:name', function(){
+        $('#nameSpan').html(model.get('name'));
+      });
+
+      // Controller
+      $('#textInput').on('keyup', function(){
+        model.set('name', $('#textInput').val());
+      });
+
+    </script>
+  </body>
+</html>

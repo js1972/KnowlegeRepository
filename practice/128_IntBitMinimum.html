@@ -1,0 +1,68 @@
+<html>
+<script>
+/*
+原题来自《一道整数求值作业》：http://www.cnblogs.com/lookbackinside/p/4395030.html
+　　题目描述：给定一个整数 X，找到组成的数字和 X 完全相同的，且大于 X 的最小的那个数；若不存在这样的数，输出 0
+　　一开始把它想复杂了，后来想想只需将该数组成的数列从后往前枚举，然后判断当前位置往后的数列是否是降序即可，时间复杂度O（n），详细思路跟上文一致可以参考原文
+
+123- start
+132- if found, no necessary to continue since we are searching for minimum
+213
+231
+312
+321
+
+413
+431
+*/
+var a = 43125; // 要求的数字
+var s = a.toString();
+var len = s.length;
+/* 假设len = 3， 413， len - 2 = 1， 比价a[1]和a[2],即从右边开始比较，如果431, 那么指针
+继续前移， i-- = 0, 即a[0]和a[1].
+如果始终是前一位比后一位大，即整个数组都是降序排列，则找不到匹配，如431, 结束
+*/
+
+for(var i = len - 2; i >= 0; i--) {
+  if(s[i] >= s[i + 1]) 
+    continue;
+  /* 在内层循环里, i被锁定了。假设i = 1，
+  此时j = 2
+  s[j] = s[2] = 3, s[i] = s[1] = 1, 说明数组是升序排列，413，此时把13交换位置即得结果
+  */
+  for(var j = len - 1; j > i; j--) {
+    if(s[j] > s[i]) {
+      var index = j;
+      break;
+    }
+  }
+  break;
+}
+var arr = s.split('');
+
+function fa() {
+	console.log("a");
+}
+
+function fb() {
+	console.log("b");
+}
+// 先打印a，再打印b，最后打印test
+console.log("test", fa(), fb());
+
+if(i !== -1) {
+	/*var a = arr[index];
+	arr[index] = arr[i];
+	var temp = [a, arr[index]];
+	arr[i] = temp[0];*/
+	arr[i] = [arr[index], arr[index] = arr[i]][0];
+}
+
+// arr[i] = [arr[index], arr[index] = arr[i]][0];
+  var ans = arr.slice(0, i + 1).concat(arr.slice(i + 1).reverse()).join('');
+  var result2 = arr.join('');
+console.log(+ans);
+console.log("result2: " + result2);
+</script>
+
+</html>

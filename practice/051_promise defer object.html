@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+div {
+  height: 50px; width: 50px;
+  float: left; margin-right: 10px;
+  display: none; background-color: #090;
+}
+</style>
+  <script src="jQuery/jquery1.7.1.js"></script>
+</head>
+<body>
+ 
+<button>Go</button>
+<p>Ready...</p>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+ 
+ 
+<script>
+$("button").bind( "click", function() {
+  $("p").append( "Started...");
+ 
+  $("div").each(function( i ) {
+    $( this ).fadeIn().fadeOut( 1000 * (i+1) );
+    //$( this ).fadeIn().fadeOut( 1000  );
+  });
+ 
+
+  $( "div" ).promise("fx", {name:"Jerry"}).done(function(obj) {
+    $( "p" ).append( " Finished! " +  obj.name);
+  });
+});
+</script>
+ 
+</body>
+</html>

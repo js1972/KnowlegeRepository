@@ -1,0 +1,21 @@
+@AbapCatalog.sqlViewName: 'zbpvaluehelp'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'value help for account'
+define view Z_C_Account_Valuehelp as select from but000 {
+  @EndUserText.label: 'Partner Number'
+  key but000.partner,
+  but000.partner_guid,
+  @EndUserText.label: 'Partner Title'
+  case but000.title 
+     when '0001' then 'Ms.'
+     when '0002' then 'Mr.'
+     when '0003' then 'Company'
+     when '0004' then 'Mr and Mrs'
+     else 'Unknown'
+   end as partner_title,
+   @EndUserText.label: 'Last name'
+   but000.name_last,
+   @EndUserText.label: 'First name'
+   but000.name_first  
+} where type = '1'

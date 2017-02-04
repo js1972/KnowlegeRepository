@@ -1,0 +1,28 @@
+<html>
+<script>
+var  regexp = /aabb/g; //g可省
+// var  regexp = new Regexp("xyz","g"); //第二个参数可省 syntax error!!
+var str = "_a_x_x";
+var reg = /_(x)_(x)/;
+var result = reg.exec(str);
+
+var number = /^[0-9]+\.{0,1}[0-9]{0,2}$/;
+console.log( number.test("3435"));
+console.log( number.test("3435.34"));
+console.log( number.test("3435a"));
+
+var location2 = {
+	href: "http://www.baidu.com/?a=1&b=2"
+}
+var m = location2.href.match(/(\w+:)\/{0,3}([^\/]+)(?:(\/[^\?#]*))?(?:(\?[^#]+|.+))?(?:(#.*))?/);
+var res = {
+    protocol: m[1],
+    host: m[2],
+    path: m[3],
+    search: m[4],
+    hash: m[5]
+};
+console.log(res);
+debugger;
+</script>
+</html>

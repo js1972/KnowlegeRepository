@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="C:\MyUserData\jquery-1.7.1.js">
+    </script>
+    <script type="text/javascript" src="C:\MyUserData\jchartlib\jchartfx.system.js">
+    </script>
+    <script type="text/javascript" src="C:\MyUserData\jchartlib\jchartfx.coreVector.js">
+    </script>
+    <script type="text/javascript" src="C:\MyUserData\jchartlib\jchartfx.coreVector3D.js">
+    </script>
+    <script type="text/javascript" src="C:\MyUserData\jchartlib\jchartfx.advanced.js">
+    </script>
+    <script type="text/javascript" src="C:\MyUserData\jchartlib\jchartfx.gauge.js">
+    </script>
+    <script type="text/javascript" src="C:\MyUserData\jchartlib\jchartfx.motif.aurora.js">
+    </script>
+     <script type="text/javascript">
+        function initialize() { 
+        	var chart1 = new cfx.Chart();
+        	chart1.create('divChart1');
+        	chart1.setGallery(cfx.Gallery.Bar);
+			PopulateCarProduction(chart1);
+			chart1.getView3D().setEnabled(true);
+		    title = new cfx.TitleDockable();
+			title.setText("This is Jerry chart1");
+			chart1.getTitles().add(title);
+        }
+
+function PopulateCarProduction(chart) {
+        var items = [{
+            "Sedan": 1760,
+            "Coupe": 535,
+            "SUV": 695,
+            "Month": "Jan"
+        }, {
+            "Sedan": 1849,
+            "Coupe": 395,
+            "SUV": 688,
+            "Month": "Feb"
+        }, {
+            "Sedan": 2831,
+            "Coupe": 685,
+            "SUV": 1047,
+            "Month": "Mar"
+        }, {
+            "Sedan": 2851,
+            "Coupe": 984,
+            "SUV": 1652,
+            "Month": "Apr"
+        },  
+        {
+            "Sedan": 1519,
+            "Coupe": 1539,
+            "SUV": 1766,
+            "Month": "Jun"
+        }];
+    
+    
+        chart.setDataSource(items);
+    }
+ 
+    </script>
+     <link rel="stylesheet" type="text/css" href="C:\MyUserData\jchartcss\styles\Attributes\jchartfx.attributes.aurora.css" />
+    <link rel="stylesheet" type="text/css" href="C:\MyUserData\jchartcss\styles\Palettes\jchartfx.palette.aurora.css" />
+     <style type="text/css">
+
+      .jchartfx .Attribute3 {
+    fill: #FEFEFE;
+    stroke: #3C3E46;
+    }
+    .jchartfx .AxisY_Text {
+    fill: #FEFEFE;
+    }
+
+    .jchartfx .AxisX_Text {
+    fill: #FEFEFE;
+    }
+
+    .jchartfx .Title {
+fill: #FEFEFE;
+}
+
+.jchartfx .LegendItem {
+fill: #FEFEFE;
+}
+
+    </style>
+    
+}
+     </head>
+<body class="jchartfx_body">
+	<div class="jchartfx_container">
+            <div id="divChart1" style="width:990px;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
+
+        <script language="javascript">
+            $(document).ready(function ($) {
+                initialize();
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

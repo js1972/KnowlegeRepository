@@ -1,0 +1,101 @@
+<html>
+<script>
+function ListNode(val){
+	this.val = val;
+	this.next = null;	
+}
+
+function getNewNode(val) {
+	return new ListNode(val);
+}
+
+function makeList(){
+  var head = getNewNode("A");
+  var B = getNewNode("B");
+  var C = getNewNode("C");
+  var D = getNewNode("D");
+
+  insertNode(head, B);
+  insertNode(B, C);
+  insertNode(C, D);
+  return head;
+}
+
+function insertNode(root, next) {
+   root.next = next;
+}
+
+// 一个很容易想到的方法是用数组保存新构造每个节点，然后反向构造链表，输出：
+var reverseList = function(head) {
+  var ans = [];
+
+  while (head) {
+    var node = new ListNode(head.val);
+    ans.push(node);
+    head = head.next;
+  }
+
+  ans.reverse();
+
+  if (!ans.length)
+    returnnull;
+
+  for (var i = 0, len = ans.length; i < len - 1; i++) {
+    ans[i].next = ans[i + 1];
+  }
+
+  return ans[0];
+};
+
+function printList(head) {
+	while( head) {
+		console.log("Node: " + head.val);
+		head = head.next;
+	}
+}
+
+
+var reverseList2 = function(head) {
+  var pre = null;
+
+  while (head) {
+    var next = head.next;
+    head.next = pre;
+    pre = head;
+    head = next;
+  }
+
+  return pre;
+};
+
+/*递归是迭代的好兄弟，这道题的递归很巧妙，想起来也有点复杂。
+(1) A->B->C
+null <-A B->C
+(2)
+null <-A<-[B.. ] */
+var reverseList3 = function(head) {
+  if (head === null || head.next === null)
+    return head;
+
+  var next = head.next;
+  head.next = null;
+  var newHead = reverseList3(next);
+  next.next = head;
+
+  return newHead;
+};
+/*
+递归的精髓在于将next当做参数传入reverseList函数时，在下一次递归中对参数的操作，会反应在上次的参数值上。
+还是以1->2->3->4举例子，4次递归后（回溯前），其实是将引用链全部打破：
+1      2      3      4
+|      |      |      |
+nullnullnullnull
+然后再添加反向的引用链*/
+
+
+var head = makeList();
+var reverse = reverseList3(head);
+printList(reverse);
+
+</script>
+</html>

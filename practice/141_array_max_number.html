@@ -1,0 +1,96 @@
+<html>
+<script>
+
+function max1(a) {
+	return Math.max.apply(null, a);
+}
+
+function max2(a) {
+	return Math.max(a.toString()); // NaN
+}
+
+function max3(a){
+	return eval( 'Math.max(' + a.toString() + ')');
+}
+
+var a = [1,2,3,4,5];
+var a1 = max1(a);
+var a2 = max2(a);
+var a3 = max3(a);
+
+console.log(a1, a2, a3);
+
+// // 转化一个数字数组为function 数组，每个function都弹出对应的数字
+
+var a = [1, 2, 3, 4, 5, 6];
+var len = a.length;
+for(var i = 0; i < len; i++) {
+  var num = a[i];
+  (function(num) {
+    var f = function() {
+      console.log(num);
+    };
+    a[i] = f;
+  })(num);
+}
+ 
+for(var i = 0; i < len; i++)
+  a[i]();
+// 1
+// 2
+// 3
+// 4
+// 5
+// 6
+
+//// 给object数组进行排序，排序条件是每个元素对象的属性个数
+var a = {
+  name: 'hanzichi',
+  age: 10,
+  location: 'china'
+};
+ 
+var b = {
+  name: 'curry'
+};
+ 
+var c = {
+  name: 'kobe',
+  sex: 'male'
+};
+ 
+Object.prototype.getLength =  function() {
+  var num = 0;
+  for(var key in this) {
+    if(this.hasOwnProperty(key))
+      num++;
+  }
+  return num;
+};
+ 
+var arr = [a, b, c];
+arr.sort(function(a, b) {
+  return a.getLength() > b.getLength();
+});
+console.log(arr);
+
+var N = 10;
+(function(a, b) {
+  var c = a + b;
+  console.log(c);
+  if(c > N) return;
+  arguments.callee(b, c);
+})(-1, 1);
+
+function fn(n) {
+  var a = [];
+  a[0] = 0, a[1] = 1;
+  for(var i = 2; i < n; i++)
+    a[i] = a[i - 1] + a[i - 2];
+  for(var i = 0; i < n; i++)
+    console.log(a[i]);
+}
+
+fn(10);
+</script>
+</html>

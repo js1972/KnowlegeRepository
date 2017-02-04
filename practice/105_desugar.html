@@ -1,0 +1,20 @@
+<html>
+
+<script>
+// http://article.yeeyan.org/view/213582/179432
+// JavaScript中的后续传递风格
+// http://matt.might.net/articles/cps-conversion/
+// How to compile with continuations
+
+
+function cps_foo(x, return_point) {
+return return_point (x) ;
+}
+
+var handler = function(y) {
+	console.log(y);
+}
+
+!cps_foo("1", handler)();
+</script>
+</html>

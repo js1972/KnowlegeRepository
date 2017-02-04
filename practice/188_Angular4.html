@@ -1,0 +1,22 @@
+<html ng-app="nameApp">
+  <head>
+    <meta charset="utf-8">
+    <title>Angular.js Example</title>
+    <script src="angular/angular.js"></script>
+    <script>
+      var nameApp = angular.module('nameApp', []);
+      nameApp.controller('NameCtrl', function ($scope){
+        // Jerry 2016-06-06 14:37PM fill get.Scope.$new.isolate.$$childScopeClass with John Smith
+        $scope.firstName = 'John';
+        $scope.lastName = 'Smith';
+      });
+    </script>
+  </head>
+  <body ng-controller="NameCtrl">
+    First name:<input ng-model="firstName" type="text"/>
+    <br>
+    Last name:<input ng-model="lastName" type="text"/>
+    <br>
+    Hello {{firstName}} {{lastName}}
+  </body>
+</html>

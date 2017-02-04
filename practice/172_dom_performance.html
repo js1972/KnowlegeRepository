@@ -1,0 +1,21 @@
+<html>
+<body onload = "run()">
+<div id="container"></div>
+</body>
+<script>
+var NUM = 100;
+
+function run(){
+	setTimeout(insert, 2000);
+}
+function insert(){
+	var container = document.getElementById('container');
+	for( var i = 0; i < NUM; i++){
+		var sub = document.createElement("div");
+		sub.textContent = i;
+		container.appendChild(sub);
+
+	}
+}
+</script>
+</html>

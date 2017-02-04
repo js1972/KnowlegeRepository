@@ -1,0 +1,133 @@
+<html>
+<script>
+function foo(somthing){
+  console.log(this.a, somthing);
+}
+
+function bind1(fn,obj){
+  return function(){
+     return fn.apply(obj,arguments);
+  }
+}
+
+var obj = {
+  a:2
+};
+
+var bar = bind1(foo,obj);
+// return a new function, obj: a->2, foo: console.log(this.am something);
+// bar is a new function containing two closure: fn and obj
+var b = bar(3); // obj is contained in closure. a->2. When foo is called, this points to a2
+// 2 3 output.
+console.log(b); // 函数没有返回值的情况下默认返回undefined
+
+function foo2(a,b){
+this.val = a+b;
+}
+
+/*bind函数的第一个参数为null代表作用域不变，后面的不定参数将会和函数本身的参数按次序进行绑定，绑定之后执行函数只能从未绑定的参数开始传值。
+*/
+var bar = foo2.bind(null, 'p1');
+var baz = new bar('p2');
+console.log(baz.val);
+
+function foo3(){
+	console.log(this.ab);
+}
+
+var ab = 2;
+var o = { ab: 3, foo : foo3 };
+var p = { ab: 4 };
+/* 很少有人去关注赋值语句执行之后会返回什么结果，其实就是返回当前值。也就是说当括号内执行完赋值之/后，返回的是o对象中的foo函数, 调用该函数的对象是全局的windows，因此最后显示2，不是3
+*/ 
+(p.foo = o.foo)(); 
+
+var a = [];
+a[0] = 1;
+a['foobar'] = 2;
+// 当一个变量被声明后，扩充其属性并不会改变<原>数据类型
+console.log(a.length);
+console.log(a.foobar);
+
+jerry();
+var jerry = 0;
+function jerry(){
+console.log("Jerry ABAP"); // will be displayed
+}
+jerry = function(){
+console.log("Jerry Scala");
+};
+
+/* 声明的变量和命名函数都会被提升到代码的最前面，只不过声明的变量的赋值语句在代码中的位置不变。所以上面这段代码应该被理解为：
+
+
+var jerry;
+function jerry(){
+console.log(1);
+}
+jerry();
+jerry = 0;
+jerry = function(){
+console.log(2);
+};*/ 
+
+/* javascript并不是以代码段为作用域，而是以函数。
+再根据命名提升的原则，所以这段代码应该是这样的：
+
+function foo(){
+console.log('a');
+}
+functionfoo(){
+console.log('b');
+}
+foo();
+var a = true;
+if(a){
+}else{
+}
+
+*/ 
+tom();
+var tom = true;
+if(tom) {
+	function tom() {
+		console.log('a');
+	}
+} else {
+	function tom(){
+	console.log('b'); // will be printed out
+	}
+}
+/*
+label标签来定义表单控件间的关系,当用户选择该标签时，浏览器会自动将焦点转到和标签相关的表单控件上。
+*/
+
+function foo9() {
+  var val = 'hello';
+
+  function bar9() {
+    function baz9() {
+      window.val = 'world;'
+    }
+    baz9();
+    console.log(val); //=> hello
+  }
+  bar9();
+}
+debugger;
+var f = new Function('a', 'alert(a)'); f('test'); // 将会弹出窗口显示test
+foo9();
+
+</script>
+<style>
+div{
+width:20px; 
+margin:0 auto;
+}
+</style>
+<body>
+	<label for="Name">Number:</label> <input type=“text“name="Name" id="Name"/>
+<label>Date:<input type="text" name="B" /></label>
+<div>Jerry</div>
+	</body>
+</html>

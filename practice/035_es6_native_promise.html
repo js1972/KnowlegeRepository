@@ -1,0 +1,108 @@
+<html>
+<script>
+/*
+编程语言JavaScript是ECMAScript的实现和扩展，由ECMA（一个类似W3C的标准组织）参与进行标准化。ECMAScript定义了：
+
+语言语法 – 语法解析规则、关键字、语句、声明、运算符等。
+类型 – 布尔型、数字、字符串、对象等。
+原型和继承
+内建对象和函数的标准库 – JSON、Math、数组方法、对象自省方法等。
+ECMAScript标准不定义HTML或CSS的相关功能，也不定义类似DOM（文档对象模型）的Web API，这些都在独立的标准中进行定义。ECMAScript涵盖了各种环境中JS的使用场景，无论是浏览器环境还是类似node.js的非浏览器环境。
+
+新标准
+
+上周，ECMAScript语言规范第6版最终草案提请Ecma大会审查，这意味着什么呢？
+
+这意味着在今年夏天，我们将迎来最新的JavaScript核心语言标准。
+
+这无疑是一则重磅新闻。早在2009年，上一版ES5刚刚发布，自那时起，ES标准委员会一直在紧锣密鼓地筹备新的JS语言标准——ES6。
+
+ES6是一次重大的版本升级，与此同时，由于ES6秉承着最大化兼容已有代码的设计理念，你过去编写的JS代码将继续正常运行。事实上，许多浏览器已经支持部分ES6特性，并将继续努力实现其余特性。这意味着，在一些已经实现部分特性的浏览器中，你的JS代码已经可以正常运行。如果到目前为止你尚未遇到任何兼容性问题，那么你很有可能将不会遇到这些问题，浏览器正飞速实现各种新特性。
+*/
+function getData(d) {
+
+	console.log(" getData called: d = " + d );
+
+	console.log(" define a new function with two arguments: resolve and reject");
+	var promiseInput  = function(resolve22, reject, addbyJerry) {
+		console.log("promiseInput function is called!!!");
+
+        for( var ele in arguments){
+            // console.log("element: " + ele); // cannot print out correctly
+        }
+        for( var i = 0; i < arguments.length; i++) {
+            // console.log("element via []: " + arguments[i]);
+        }
+        setTimeout(function() {
+            console.log(" 1 seconds later, ready to call resolve with d = " + d); 
+            // var result = resolve22(d); 
+            // Jerry test 2015-09-20 12:01PM how about call reject???
+            if( 1 == 1) {
+                try {
+                    //var result1 = reject(d);
+                }
+                catch (e) {
+                    console.log(e);
+                }
+                var result = resolve22("Jerry passed in argument");
+                console.log(" 1 seconds reached now!! in resolve22, d: " + d);
+            }
+            else {
+                reject("Jerry rejected");
+            }
+            //console.log("resolve result: " + result);
+        }, 1000);
+    };
+
+    console.log(" create a new Promise instance and pass one function as arguments!");
+    var promiseInstance = new Promise(promiseInput);
+    return promiseInstance; 
+}
+
+var x = 2;
+
+/*getData(10)
+.then(function(num1){
+    x = 1 + num1;
+    return getData(30);
+})
+.then(function(num2){
+    var y = 1 + num2;
+    return getData("Meaning of life: " + (x + y));
+})
+.then(function(answer){
+    console.log(answer);
+});*/
+
+// var t1 = getData(10); // Jerry: immediately return
+
+/*var callBack = function(callBackVar) {
+    console.log("in Jerry's call back with input: " + callBackVar);
+    x = x + callBackVar;
+}*/
+
+console.log("getData is now returned, call its then method immediately");
+
+//t1.then(callBack(5));
+
+// getData(20).then(function() { console.log("My call back is finally called ok");});
+
+var callBack = function(callBackVar) {
+    console.log("in Jerry's call back with input: " + callBackVar);
+    x = x + callBackVar;
+};
+
+/*getData(15).then(function(callBackVar) {
+    console.log("in Jerry's call back with input: " + callBackVar);
+    x = x + callBackVar;
+    }); // still does not work
+*/
+// getData(15).then(callBack); // this works
+
+var a = getData(15);
+a.then(callBack).catch(function(arg) {
+    console.log("argument passed from reject: " + arg);
+}); // this also works!!
+
+</script>
+</html>

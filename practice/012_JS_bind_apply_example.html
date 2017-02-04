@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+    /*solution #1, the simple version of the bind implementation
+     Function.prototype.myBind = function(context) {
+     var self = this; // store the outter anonymous function (line below)
+     return function() {
+     return self.apply(context, arguments);
+     }
+     };
+     var obj = {
+     name: 'Ji Wu'
+     };
+
+     var func = function() {
+     alert(this.name); // Ji Wu
+    }.myBind(obj);
+     func();
+     */
+    // solution #2
+    Function.prototype.myBind = function() {
+        var self = this,
+                context = [].shift.call(arguments), // to get the context
+        // can also do: Array.prototype.shift.call(arguments);
+                args = [].slice.call(arguments); // to convert rest of the arguments elements into array
+
+        /*
+         in order to understand these 2 lines above, you will need understand javascript allows an object to "borrow" the method of another object,
+         example #1:
+         var A = function(name) {
+         this.name = name;
+         }
+         var B = function() {
+         A.apply(this, arguments);
+         }
+
+         example #2:
+         obj1 = {
+         name: 'Ji Wu',
+         greet: function() {
+         alert('Hello ' + this.name);
+         }
+         };
+         obj2 = {
+         name: 'Jerry Wang'
+         }
+         obj1.greet.call(obj2); // Hello Jerry Wang
+         */
+
+        return function() {
+            return self.apply(context, [].concat.call(args, [].slice.call(arguments))); // to concat arguments passed in from two calls
+        }
+    }
+
+    var obj = {
+        name: 'Ji Wu'
+    };
+
+    var func = function(a, b, c, d) {
+        alert(this.name); // Ji Wu
+        alert([a, b, c, d]); // 1,2,3,4
+    }.myBind(obj, 1, 2);
+    func(3, 4);
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<html>
+<script>
+// 2016-04-24 9:58AM 
+var test = ["0", "1", "2", "3", "4"];
+
+var Sorter = (function() {
+
+	var _total;
+	var _rotate_digit;
+	function _rotate(vector, rotate_digit) {
+		_total = vector.length;
+		_rotate_digit = rotate_digit;
+		if( _rotate_digit >= _total) {
+			alert("specify digit less than total length!");
+			// 2016-05-25 16:41PM APF
+			// 2016-05-26 19:45PM COIL
+			return;
+		}
+		for( var n = 0; n < rotate_digit; n++){
+			var left = n;
+			var right = rotate_digit + n;
+			while( right < _total) {
+				_swap( vector, left, right);
+				left = right;
+				right = right + rotate_digit;
+			}
+		}
+	};
+
+	// 2016-04-14 18:20PM continue smart template study
+	function _swap( vector, left, right) {
+		console.log( "swap left: " + left + " right:" + right);
+
+		if( left / _rotate_digit < 1 ){
+			console.log(" move left:" + left + " to temporary. Value: " + vector[left]);
+			_temp = vector[left];
+		}
+		if ( right + _rotate_digit >= _total ) {
+			vector[left] = vector[right];
+			vector[right] = _temp;
+			console.log("fill right from _temp, after swap: " + vector);
+			return;
+		}
+		vector[left] = vector[right];
+		console.log("after swap: " + vector);
+	};
+
+	var _temp = "";
+
+	return {
+		rotate: _rotate,
+		swap: _swap
+	};
+})();
+
+Sorter.rotate(test, 2);
+console.log(test);
+
+</script>
+</html>

@@ -1,0 +1,235 @@
+<html>
+<script>
+/*
+             A
+            / \
+           B   C
+              / \
+             D   E
+*/
+function TreeNode(val) {
+      this.val = val;
+      this.left = this.right = null;
+}
+
+function getNewNode(val) {
+	return new TreeNode(val);
+}
+
+function makeTree(){
+  var root = getNewNode("A");
+  var B = getNewNode("B");
+  addNode(root, B, true);
+  var C = getNewNode("C");
+  addNode(root, C, false);
+  var D = getNewNode("D");
+  addNode(C, D, true);
+  var E = getNewNode("E");
+  addNode(C, E, false);
+  return root;
+}
+
+function addNode(root, leaf, left) {
+   left == true? root.left = leaf: root.right = leaf;
+}
+
+/*
+ * @param {TreeNode} root
+ * @return {number[]}
+ 只需在递归部分的不同位置将节点value置入数组即可：
+ */
+ function dfs(root) {
+  if (!root) 
+  	return;
+
+  // 先序// ans.push(root.val);
+  console.log("Tree node: " + root.val);
+
+  dfs(root.left);
+
+  // 中序
+  // console.log("Tree node: " + root.val);
+  dfs(root.right);
+  // 后序// ans.push(root.val);
+}
+
+var peorderRecur = function(root) {
+	if (!root) 
+  		return;
+  	console.log("Tree node: " + root.val);
+
+  	dfs(root.left);
+
+  	dfs(root.right);
+}
+
+var root = makeTree();
+peorderRecur(root);
+// 中序： B -> A -> D -> C -> E
+//dfs(root);
+
+
+/*
+我们以下面一棵二叉树举例：
+      1
+    /  \
+   2    5
+  / \
+ 3   4
+如何用栈模拟遍历该二叉树？我们用 stack 数组模拟栈。
+将root入栈。此时 stack = [1]
+遍历root的子节点，将左子节点入栈。 stack = [1, 2]
+此时栈顶元素为 2，开始遍历它的子节点。左子节点为 3, 入栈。 stack = [1, 2, 3]
+此时栈顶元素为 3 ，它没有子节点，将它出栈。 stack = [1, 2]
+此时栈顶元素为 2，遍历它的子节点。左子节点已经被遍历，于是右子节点，入栈。 stack = [1, 2, 4]
+此时栈顶元素为 4，和 3 一样它也没有左右子节点，出栈。stack = [1, 2]
+此时栈顶元素为 2 , 当父亲节点的所有儿子节点都被删除时，父亲节点出栈，于是它出栈。 stack = [1]
+此时栈顶元素为 1，它的左子节点已经遍历，遍历右子节点，将 5 入栈。stack = [1, 5]
+此时栈顶元素为 5, 它没有子节点，出栈。 stack = [1]
+此时栈顶元素为 1, 它的子节点都被遍历过了，出栈。 stack=[]
+此时stack数组长度为0，迭代结束。
+
+*/
+
+var peorderTrraversal = function(root) {
+  if (!root) 
+  	return [];
+
+  var stack = [];  // 栈模拟
+  var ans = [];
+
+  stack.push(root);
+  ans.push(root.val);
+
+  while (stack.length) {
+    var elem = stack[stack.length - 1];
+    if (elem.left) {
+      ans.push(elem.left.val);
+      stack.push(elem.left);
+      elem.left = null;
+    } else if (elem.right) {
+      ans.push(elem.right.val);
+      stack.push(elem.right);
+      elem.right = null;
+    } else
+      stack.pop();
+  }
+
+  return ans;
+};
+
+var result = peorderTrraversal(root);
+console.log(result);
+
+var preorderTraversalSimplify = function(root) {
+  if (!root) 
+  	return [];
+
+  var stack = [];  // 栈模拟
+  var ans = [];
+
+  stack.push(root);
+
+  while (stack.length) {
+    var elem = stack.pop();
+    ans.push(elem.val);
+    
+    if (elem.right)
+      stack.push(elem.right);
+
+    if (elem.left)
+      stack.push(elem.left);
+  }
+
+  return ans;
+};
+
+var root = makeTree();
+result = preorderTraversalSimplify(root);
+console.log("simplified: " + result);
+
+/* 后续遍历
+和先序遍历略有不同的是，先序遍历是先遍历父节点，所以父节点的value值要在入栈的时候就放入ans数组，而后序遍历是最后遍历父节点，所以当父节点出栈时（此时左右子树都已经遍历完毕），把节点的value值放入ans数组即可：
+*/
+var postorderTraversal = function(root) {
+  if (!root) return [];
+
+  var stack = []  // 栈模拟
+    , ans = [];
+
+  stack.push(root);
+
+  while (stack.length) {
+    var elem = stack[stack.length - 1];
+    if (elem.left) {
+      stack.push(elem.left);
+      elem.left = null;
+    } else if (elem.right) {
+      stack.push(elem.right);
+      elem.right = null;
+    } else {
+        var a = stack.pop();
+        ans.push(a.val);
+      }
+  }
+  return ans;
+};
+
+var root = makeTree();
+result = postorderTraversal(root);
+console.log("post order: " + result);
+
+/*
+中序遍历
+
+中序遍历是三大遍历里最复杂的。先序遍历是先遍历父节点，所以节点入栈时存储value值，后序遍历是最后遍历父节点，所以节点出栈时存储value值，中序遍历呢？
+在leetcode中，中序遍历这题比先序和后序多了一个tag - hash table，而如何hash也正是本题难点。中序遍历是在父节点的左子树遍历完后，将父节点的value值存入ans数组的，那么如何判断左子树已经遍历完了呢？
+比如下面这棵二叉树：
+      1
+    /  \
+   2    5
+  / \
+ 3   4
+
+当遍历到 2 这个节点时，它有左节点，按照先序和后序遍历的做法，将左节点入栈，同时将 2 所在节点的left置为null，当节点 3 出栈后，判断 2 节点的左右子节点，这时发现左节点为null,说明已经遍历过了，于是 value=2 存入ans数组，然后 4 所在节点入栈，然后 4 再出栈，这时栈顶元素又是2，而这时再次判断左右子节点，发现左子节点为null，认为左子节点遍历过了，value=2再次存入ans数组! - Jerry 2016-01-21 20:39PM 重复插入了
+
+看到这里，你或许有点眉目了，我们不能用置为null来表示节点已经遍历，而应该用正确的hash方式，这里我用 elem.left=1 表示elem的左节点已经被遍历过了，用 elem.left=0 表示elem节点所在的值已经存入ans数组了。
+*/
+
+var inorderTraversal = function(root) {
+
+  if (!root) 
+  	return [];
+  
+  var stack = [], ans = [];
+
+  stack.push(root);
+
+  while (stack.length) {
+    var elem = stack[stack.length - 1];
+
+    if (elem.left === 1) {
+      elem.left = 0;
+      ans.push(elem.val);
+    } else if (elem.left) {
+      stack.push(elem.left);
+      elem.left = 1;
+    } else if (elem.left === null) {
+      elem.left = 1;
+    } else if (elem.right) {
+      stack.push(elem.right);
+      elem.right = null;
+    } else {
+      stack.pop();
+    }
+  }
+
+  return ans;
+};
+
+var root = makeTree();
+result = inorderTraversal(root);
+console.log("in order: " + result);
+
+</script>
+</html>

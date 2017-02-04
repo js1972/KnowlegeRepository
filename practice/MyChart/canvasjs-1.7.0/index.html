@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+window.onload = function () {
+	var chart = new CanvasJS.Chart("chartContainer",
+	{
+		title:{
+			//text: "ERCO Go Live Project Supported by Jerry"
+			text: "Issues organized by Application"
+		},
+		legend: {
+			maxWidth: 350,
+			itemWidth: 300
+		},
+		data: [
+		{
+			type: "pie",
+			showInLegend: true,
+			legendText: "{indexLabel}",
+			/*
+			dataPoints: [
+				{ y: 14, legendText: "Howto Question", indexLabel: "14" },
+				{ y: 14, legendText: "Software Issue",  indexLabel: "14" },
+				{ y: 3,  legendText: "Customizing",     indexLabel: "3" },
+				{ y: 2,  legendText: "Ask for ExtensionHook", indexLabel: "2"},
+				{ y: 1,  legendText: "UX",              indexLabel: "1" }
+			]
+			dataPoints: [
+				{ y: 19, legendText: "Solution proposed", indexLabel: "19" },
+				{ y: 7, legendText: "Fixed by ERCO",  indexLabel: "7" },
+				{ y: 6,  legendText: "Not complete",     indexLabel: "6" },
+				{ y: 2,  legendText: "Workaround proposed", indexLabel: "2"}
+			]*/
+			dataPoints: [
+				{ y: 23, legendText: "Opportunity", indexLabel: "23" },
+				{ y: 7, legendText: "Appointment",  indexLabel: "7" },
+				{ y: 4,  legendText: "Lead",     indexLabel: "4" }
+			]
+		}
+		]
+	});
+	chart.render();
+}
+</script>
+<script type="text/javascript" src="canvasjs.min.js"></script>
+</head>
+<body>
+<div id="chartContainer" style="height: 650px; width: 80%;"></div>
+</body>
+</html>

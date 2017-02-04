@@ -1,0 +1,29 @@
+<html>
+<script>
+
+function Foo () {
+this.value = 1;
+};
+
+Foo.prototype = {
+method: function() {}
+};
+
+function Bar(){
+	console.log("I am bar");
+}
+
+//设置Bar的原型为Foo()的实例
+Bar.prototype = new Foo();
+Bar.prototype.foo = 'Hello World';
+
+//修正Bar的constructor
+Bar.prototype.constructor = Bar;
+console.log(Bar.prototype.constructor);
+console.log(Bar.prototype.constructor == Bar);
+var test = new Bar();
+console.log( test instanceof Bar);
+
+debugger;
+</script>
+</html>

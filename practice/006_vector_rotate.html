@@ -1,0 +1,50 @@
+<html>
+<script>
+var test = ["0", "1", "2", "3", "4"];
+
+var Sorter = (function() {
+
+	var _total;
+	var _rotate_digit;
+	var _gcdNumber;
+    // 2016-04-22 10:19PM create with description done
+    // 2016-05-22 8:42AM 某！！
+	function _gcd(a,b) {
+		while( a != 0) {
+			if(a >= b) {
+				a -= b;
+			}
+			else {
+				var t = a;
+				a = b;
+				b = t;
+			}
+		}
+		return b;
+	};
+
+	function _rotate(vector, rotate_digit) {
+		_gcdNumber = _gcd(vector.length,rotate_digit);
+		for(var i = 0; i < _gcdNumber; i++) {
+			var temp = vector[i];
+			var first = i;
+			while(1) {
+				var second = ( first + rotate_digit) % vector.length;
+				if(second == i) 
+					break;
+				vector[first] = vector[second];
+				first = second;
+			}
+			vector[first] = temp;
+		}
+	}
+	return {
+		rotate: _rotate
+	};
+})();
+
+Sorter.rotate(test, 4);
+console.log(test);
+
+</script>
+</html>

@@ -1,0 +1,23 @@
+<html>
+<script>
+"use strict";
+function test(){
+	Object.defineProperty(window, "i", {
+    	get : function(){ debugger; }, // it will be triggered in for loop
+    	set : function(newValue){ 
+    		debugger;
+    		console.log("hey,global variable assign data hook triggered!");
+    		//window.i = newValue; 
+    	},
+    	enumerable : true,
+    	configurable : true
+	});
+
+	/*for( var i = 0; i < 5; i++)
+		console.log(i);*/
+	for( i = 0; i < 2; i++) 
+		console.log(i);
+};
+
+test();
+</script>

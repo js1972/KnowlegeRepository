@@ -1,0 +1,12 @@
+<html>
+<script>
+!(function test(){
+	var bi = con.bind({a: 1}, "Jerry");
+	bi();
+})();
+
+function con(a){
+	console.log("hello: " + a);
+}
+</script>
+</html>

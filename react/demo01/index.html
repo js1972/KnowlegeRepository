@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../build/react_source.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.js"></script>
+    <script>
+    // require("babel:verbose");
+    </script>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+    // without babel it will not work
+      ReactDOM.render(
+        <h1>Hello, world!</h1>,
+        document.getElementById('example')
+      );
+    </script>
+  </body>
+</html>

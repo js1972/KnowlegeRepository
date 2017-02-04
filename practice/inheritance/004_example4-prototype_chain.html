@@ -1,0 +1,38 @@
+<html>
+<script>
+/*
+原型链：ECMAScript中描述了原型链的概念，并将原型链作为实现继承的主要方法。其基本思想是利用原型让一个引用类型继承另一个引用类型的属性和方法。简单回顾一下构造函数、原型、实例的关系：每个构造函数都有一个原型对象，原型对象都包含一个指向构造函数的指针，而实例都包含一个指向原型对象的内部指针。那么，假如我们让原型对象等于另一个类型的实例，结果会怎么样呢？显然，此时的原型对象将包含一个指向另一个原型的指针，相应地，另一个原型中也包含着一个指向另一个构造函数的指针。假如另一个原型又是另一个类型的实例，那么上述关系依然成立，如此层层递进，就构成了实例与原型的链条。这就是所谓原型链的基本概念。
+*/
+function SuperType(){
+    this.property = true;
+}
+
+SuperType.prototype.getSuperValue =  function(){
+     return this.property;
+};
+
+function SubType(){
+   this.subproperty = false;
+}
+
+SubType.prototype = new SuperType();
+SubType.prototype.getSubValue = function(){
+    return this.subproperty;
+};
+
+var instance = new SubType();
+alert(instance.getSuperValue());//true
+alert(instance instanceof Object);//true
+alert(instance instanceof SuperType);//true
+alert(instance instanceof SubType);//true
+
+alert(Object.prototype.isPrototypeOf(instance));//true
+alert(SuperType.prototype.isPrototypeOf(instance));//true
+alert(SubType.prototype.isPrototypeOf(instance));//true
+
+/*
+原型链的问题：1、包含引用类型值的原型会被所有实例共享；2、不能向超类型的构造函数中传递参数。实践中很少会单独使用原型链。
+*/
+
+</script>
+</html>

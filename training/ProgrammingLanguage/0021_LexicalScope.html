@@ -1,0 +1,29 @@
+<html>
+<body onload = test();>
+<a href="#" id="closureTest0">link0</a><br />
+<a href="#" id="closureTest1">link1</a><br />
+<a href="#" id="closureTest2">link2</a><br />
+<a href="#" id="closureTest3">link3</a><br />	
+</body>
+<script>
+
+function test(){
+    for (var i = 0; i < 4; i++) {
+        var element = document.getElementById('closureTest' + i);
+        element .onclick = function(){
+            alert("clicked id: " + i);
+        }
+    }
+}
+
+function test1() {
+	for (var i = 0; i < 4; i++) {
+        var element = document.getElementById('closureTest' + i);
+        element .onclick = (function(index) {
+        	return function() {
+            	alert("clicked id: " + index);
+        	}})(i);
+    }
+}
+</script>
+</html>

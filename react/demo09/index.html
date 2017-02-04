@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8"/> 
+  <head>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.min.js"></script>
+  </head>
+  <body>
+    <script type="text/babel">
+      var NUM = 50;
+      var Input = React.createClass({
+        getInitialState: function() {
+          return {
+            Jerryvalue: 'Hello!'
+          };
+        },
+
+        handleChange: function(event) {
+          this.setState({
+            Jerryvalue: event.target.value
+          });
+        },
+        render: function () {
+          var value = this.state.Jerryvalue;
+          var arr = [];
+          for(var i = 0; i < NUM; i++){
+            arr.push(<p>{value}</p>);
+          }
+
+          return (
+            <div>
+            <input type="text" value={value} onChange={this.handleChange} />
+              {arr}
+              <p>{value}</p>
+            </div>
+          );
+        }
+      });
+
+      ReactDOM.render(<Input/>, document.body);
+    </script>
+  </body>
+</html>

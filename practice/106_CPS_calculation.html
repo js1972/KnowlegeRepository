@@ -1,0 +1,36 @@
+<html>
+<script>
+// Jerry 2015-12-24 17:26PM 
+// 后续传递风格（continuation-passing style
+// 没有过程被允许返回到它的调用者中——永远如此
+// 当一个过程（procedure）准备要“返回”到它的调用者中时，它在返回值时调用“当前后续（current 
+// continuation）”这一回调方法（由它的调用者提供）
+function fact(n,ret) {
+   if (n == 0)
+     ret(1) ;
+   else
+    fact(n-1, function (t0) {
+      ret(n * t0) }) ;
+}
+/*
+fact (5, function (n) {
+    console.log(n) ; // 120
+})
+*/
+
+function fact2(n,ret) {
+   tail_fact2(n,1,ret) ;
+}   
+function tail_fact2(n,a,ret) {
+   if (n == 0)
+     ret(a) ;
+   else
+     tail_fact2(n-1,n*a,ret) ;
+}
+
+fact2(5, function (n) {
+    console.log(n) ; // 120
+});
+
+</script>
+</html>

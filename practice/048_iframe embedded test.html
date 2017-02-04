@@ -1,0 +1,33 @@
+<html>
+<script src="./jquery_1.7.1.js">
+</script>
+
+<script>
+
+function register_event() {
+
+	var iframeList = $("iframe");
+	var frameDom = iframeList.get(0);
+
+	var test = frameDom.contentWindow.document.getElementsByTagName("img");
+
+	var img = frameDom.ownerDocument.body.getElementsByTagName("img");
+	var result = $("#result").get(0);
+
+	for( var i = 0;i < 2;i++) { 
+		$("<div><p>Hello11</p></div>").appendTo(result); 
+		/*b=b+"<a href="+a.src+" target=_blank><img border=0 src="+a.src+"></a><br>";};document.write(b)
+		*/
+	}
+	console.log("ok");
+};
+
+</script>
+
+<body onload="register_event()">
+	<p>hello</p>
+<iframe width=920 height=930 frameborder=1 scrolling=auto src="http://www.baidu.com" mce_src="URL"></iframe>
+
+<div id="result"></div>
+</body> 
+</html>

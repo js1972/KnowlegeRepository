@@ -1,0 +1,10 @@
+<html>
+<script>
+var input = "HTTPs://localhost:8080/sap/opu/odata/sap/CRM_ODATA//DocumentNoteCollection(h…t=datetime'2015-10-23T10%3A41%3A27',textLanguageID='FR',textObjectID='A002')";
+
+var temp = input.match(/^http.*CRM_ODATA\/+(.*)/i);
+var result = "/" + temp[1];
+console.log( result );
+debugger;
+</script>
+</html>

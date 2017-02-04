@@ -1,0 +1,893 @@
+<Page xmlns="sap.m" showHeader="false" showNavButton="false" showFooter="{ui&gt;/editable}" class="sapSmartTemplatesObjectPage" xmlns:build="sap.build" build:metadata="#pattern:ObjectPage">
+		<content>
+			<uxap:ObjectPageLayout xmlns:uxap="sap.uxap" id="objectPage" enableLazyLoading="false" showHeaderContent="{= !${ui&gt;/editable}}">
+				<uxap:headerTitle>
+					<uxap:ObjectPageHeader objectTitle="{path: 'ui&gt;/createMode', formatter: '.formatDefaultObjectTitle'} {path:'to_ProductTextInCurrentLang/Name',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255','nullable':'false'}}" objectSubtitle="{path:'Product',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10','nullable':'false'}}" objectImageURI="{path:'ProductPictureURL',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}" showPlaceholder="false" markLocked="{= ${HasDraftEntity} &amp;&amp; ${IsActiveEntity} &amp;&amp; !!${DraftAdministrativeData/InProcessByUser}}" markLockedPress="onPressDraftInfo" markChanges="{= ${HasDraftEntity} &amp;&amp; ${IsActiveEntity} &amp;&amp; !${DraftAdministrativeData/InProcessByUser}}" markChangesPress="onPressDraftInfo" build:metadata="#pattern:Header;prop:objectTitle:Title;prop:objectSubtitle:Description;prop:imageSource:ImageSource:{path:'ProductPictureURL',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}">
+
+						<uxap:actions>
+
+							<!-- Custom Action Breakout -->
+							
+								
+							
+
+							
+								
+									
+										<Button id="action::SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities::SEPMRA_C_PD_ProductCopy" text="" press="onCallAction" enabled="{ui&gt;/enabled}" visible="{= !${ui&gt;/editable} &amp;&amp; ${path: 'IsActiveEntity'} }" build:metadata="#pattern:ActionButton;staticProp:text:Label;">
+											<customData>
+												<core:CustomData xmlns:core="sap.ui.core" key="Type" value="com.sap.vocabularies.UI.v1.DataFieldForAction"/>
+												
+												<core:CustomData xmlns:core="sap.ui.core" key="Action" value="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/SEPMRA_C_PD_ProductCopy"/>
+												<core:CustomData xmlns:core="sap.ui.core" key="Label" value=""/>
+											</customData>
+										</Button>
+									
+								
+
+							
+								
+
+							
+								
+
+							
+
+							
+								<Button id="edit" text="{i18n&gt;EDIT}" type="Emphasized" enabled="{ui&gt;/enabled}" press="onEdit" visible="{= !${ui&gt;/editable}}"/>
+							
+
+							
+							    <Button id="delete" text="{i18n&gt;DELETE}" enabled="{ui&gt;/enabled}" press="onDelete" visible="{= !${ui&gt;/editable}}">
+								    <customData>
+									    <core:CustomData xmlns:core="sap.ui.core" value="Bottom"/>
+								    </customData>
+							    </Button>
+							
+							
+							
+								
+							
+								
+							
+								
+							
+							<uxap:ObjectPageHeaderActionButton icon="sap-icon://action" enabled="{ui&gt;/enabled}" press="onShareObjectPageActionButtonPress" importance="High">
+							</uxap:ObjectPageHeaderActionButton>
+						</uxap:actions>
+
+						<uxap:navigationBar>
+							<Bar>
+								<contentLeft>
+									<Button id="back" icon="sap-icon://nav-back" press="onBack" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:popoverBelow="true" tooltip="{i18n&gt;BACK}"/>
+								</contentLeft>
+								<contentMiddle>
+									<Text id="objectTypeName" text="Product" build:metadata="#pattern:Header;prop:text:HeaderBarText">
+									<!-- Helper -->
+									<customData> <core:CustomData xmlns:core="sap.ui.core" id="idObjectTitle" key="objectTitle" value="{path:'to_ProductTextInCurrentLang/Name',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255','nullable':'false'}}" writeToDom="false"/> </customData>
+                                    </Text>
+								</contentMiddle>
+							</Bar>
+						</uxap:navigationBar>
+					</uxap:ObjectPageHeader>
+				</uxap:headerTitle>
+				<uxap:headerContent>
+					
+							<Image id="objectImage" src="{path:'ProductPictureURL',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}" class="sapSmartTemplatesObjectPageHeaderImage" build:metadata="#pattern:Header;prop:src:ImageSource"/>
+						
+					
+							
+								<l:VerticalLayout xmlns:l="sap.ui.layout" id="dataPoint::Price" class="sapSmartTemplatesObjectPageDataPoint" build:metadata="#pattern:Header&gt;&gt;KPI;">
+									<Label id="dataPoint::Price::Label" labelFor="dataPoint::Price::Value" text="Price:" class="sapSmartTemplatesObjectPageDataPointLabel" build:metadata="#pattern:Header&gt;&gt;KPI;staticProp:text:Title;condition:dataPoint&gt;RecordType:com.sap.vocabularies.UI.v1.DataPoint"/>
+									<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="dataPoint::Price::Value" editable="false" uomEditable="false" enabled="true" value="{path:'Price',type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':'16','scale':'3'}}" class="sapSmartTemplatesObjectPageDataPointNumericValue" build:metadata="#pattern:Header&gt;&gt;KPI;prop:value:Value;prop:currency:Currency:">
+										
+									</sfi:SmartField>
+								</l:VerticalLayout>
+							
+								<l:VerticalLayout xmlns:l="sap.ui.layout" id="dataPoint::ProductCategory" class="sapSmartTemplatesObjectPageDataPoint" build:metadata="#pattern:Header&gt;&gt;KPI;">
+									<Label id="dataPoint::ProductCategory::Label" labelFor="dataPoint::ProductCategory::Value" text="Category:" class="sapSmartTemplatesObjectPageDataPointLabel" build:metadata="#pattern:Header&gt;&gt;KPI;staticProp:text:Title;condition:dataPoint&gt;RecordType:com.sap.vocabularies.UI.v1.DataPoint"/>
+									<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="dataPoint::ProductCategory::Value" editable="false" uomEditable="false" enabled="true" value="{path:'ProductCategory',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'40','nullable':'false'}}" class="sapSmartTemplatesObjectPageDataPointTextualValue" build:metadata="#pattern:Header&gt;&gt;KPI;prop:value:Value;prop:currency:Currency:">
+										
+									</sfi:SmartField>
+								</l:VerticalLayout>
+							
+						
+				</uxap:headerContent>
+				<uxap:sections>
+					
+						
+							
+								
+									
+										
+
+										<uxap:ObjectPageSection id="ProductCollectionFacetID::Section" title="{@i18n&gt;@GeneralInformation}" visible="true" build:metadata="#pattern:Section;staticProp:title:Title">
+											<uxap:subSections>
+												<uxap:ObjectPageSubSection title=" ">
+													<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|SEPMRA_C_PD_Product|ProductCollectionFacetID">
+														
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartForm.fragment.xml
+        @param {Collection(UI.Facet)} [facet]
+    -->
+
+	<sfo:SmartForm xmlns:sfo="sap.ui.comp.smartform" id="ProductCollectionFacetID::Form" editable="{ui&gt;/editable}" class="sapSmartTemplatesSmartForm" visible="{= !${parameter&gt;/isDraftEnabled} &amp;&amp; ${path: 'groupFacet&gt;Target/AnnotationPath', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.isSelf'} === false ? '{= !${ui&gt;/createMode} ? true : false }' : true}" flexEnabled="true" entityType="SEPMRA_C_PD_ProductType, SEPMRA_I_ProductCategoryType" build:metadta="#pattern:Form;">
+		<sfo:customData>
+           	<core:CustomData key="defaultInputFieldDisplayBehaviour" value="descriptionAndId"/>
+           	<core:CustomData key="defaultDropDownDisplayBehaviour" value="descriptionOnly"/>
+           	<core:CustomData key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+		</sfo:customData>
+		<sfo:layout>
+			<sfo:Layout columnsM="1" columnsL="3" labelSpanS="12" labelSpanM="12" labelSpanL="12" singleGroupFullSize="false"/>
+		</sfo:layout>
+		<!-- If the given facet has subfacets... -->
+		
+				
+					
+						<sfo:Group id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::FormGroup" binding="{}" label="{@i18n&gt;@GeneralInformation}" build:metadata="#pattern:FormGroup;staticProp:label:Title;condition:target&gt;AnnotationType:com.sap.vocabularies.UI.v1.FieldGroup">
+							
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::Product::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::Product::Field" value="{path:'Product',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::ProductCategory::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::ProductCategory::Field" value="{path:'ProductCategory',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'40','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::Supplier::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::Supplier::Field" value="{path:'Supplier',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::Price::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::GeneralInformation::Price::Field" value="{path:'Price',type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':'16','scale':'3'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+								
+						</sfo:Group>
+					
+				
+					
+						<sfo:Group id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::FormGroup" binding="{}" label="{@i18n&gt;@TechnicalData}" build:metadata="#pattern:FormGroup;staticProp:label:Title;condition:target&gt;AnnotationType:com.sap.vocabularies.UI.v1.FieldGroup">
+							
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::ProductBaseUnit::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::ProductBaseUnit::Field" value="{path:'ProductBaseUnit',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'3','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Depth::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Depth::Field" value="{path:'Depth',type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':'13','scale':'3'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Width::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Width::Field" value="{path:'Width',type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':'13','scale':'3'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Height::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Height::Field" value="{path:'Height',type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':'13','scale':'3'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Weight::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.FieldGroup::TechnicalData::Weight::Field" value="{path:'Weight',type:'sap.ui.model.odata.type.Decimal',constraints:{'precision':'13','scale':'3'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+								
+						</sfo:Group>
+					
+				
+					
+						<sfo:Group id="to_ProductCategory::com.sap.vocabularies.UI.v1.Identification::FormGroup" binding="{to_ProductCategory}" label="{@i18n&gt;@ProductCategory}" build:metadata="#pattern:FormGroup;staticProp:label:Title;condition:target&gt;AnnotationType:com.sap.vocabularies.UI.v1.FieldGroup">
+							
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_ProductCategory::com.sap.vocabularies.UI.v1.Identification::MainProductCategory::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_ProductCategory::com.sap.vocabularies.UI.v1.Identification::MainProductCategory::Field" value="{path:'MainProductCategory',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'40'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_ProductCategory::com.sap.vocabularies.UI.v1.Identification::ProductCategory::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_ProductCategory::com.sap.vocabularies.UI.v1.Identification::ProductCategory::Field" value="{path:'ProductCategory',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'40','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+								
+						</sfo:Group>
+					
+				
+			
+	</sfo:SmartForm>
+
+
+		
+
+
+
+													</core:ExtensionPoint>
+												</uxap:ObjectPageSubSection>
+											</uxap:subSections>
+										</uxap:ObjectPageSection>
+
+										
+									
+								
+									
+										
+
+										<uxap:ObjectPageSection id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Section" title="{@i18n&gt;@ProductDescription}" visible="true" build:metadata="#pattern:Section;staticProp:title:Title">
+											<uxap:subSections>
+												<uxap:ObjectPageSubSection title=" ">
+													<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|SEPMRA_C_PD_Product|to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification">
+														
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartForm.fragment.xml
+        @param {Collection(UI.Facet)} [facet]
+    -->
+
+	<sfo:SmartForm xmlns:sfo="sap.ui.comp.smartform" id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Form" editable="{ui&gt;/editable}" class="sapSmartTemplatesSmartForm" visible="{= !${parameter&gt;/isDraftEnabled} &amp;&amp; ${path: 'groupFacet&gt;Target/AnnotationPath', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.isSelf'} === false ? '{= !${ui&gt;/createMode} ? true : false }' : true}" flexEnabled="true" entityType="SEPMRA_C_PD_ProductTextType" build:metadta="#pattern:Form;">
+		<sfo:customData>
+           	<core:CustomData key="defaultInputFieldDisplayBehaviour" value="descriptionAndId"/>
+           	<core:CustomData key="defaultDropDownDisplayBehaviour" value="descriptionOnly"/>
+           	<core:CustomData key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+		</sfo:customData>
+		<sfo:layout>
+			<sfo:Layout columnsM="1" columnsL="3" labelSpanS="12" labelSpanM="12" labelSpanL="12" singleGroupFullSize="false"/>
+		</sfo:layout>
+		<!-- If the given facet has subfacets... -->
+		
+				
+					
+						<sfo:Group id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::FormGroup" binding="{ path : 'to_ProductTextInOriginalLang', parameters : { expand : 'to_Language'} }">
+							
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Name::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Name::Field" value="{path:'Name',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Description::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Description::Field" value="{path:'Description',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Language::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_ProductTextInOriginalLang::com.sap.vocabularies.UI.v1.Identification::Language::Field" value="{path:'Language',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'2','nullable':'false'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+								
+						</sfo:Group>
+					
+				
+			
+	</sfo:SmartForm>
+
+
+		
+
+
+
+													</core:ExtensionPoint>
+												</uxap:ObjectPageSubSection>
+											</uxap:subSections>
+										</uxap:ObjectPageSection>
+
+										
+									
+								
+									
+										
+
+										<uxap:ObjectPageSection id="to_ProductText::com.sap.vocabularies.UI.v1.LineItem::Section" title="{@i18n&gt;@ProductDescriptions}" visible="true" build:metadata="#pattern:Section;staticProp:title:Title">
+											<uxap:subSections>
+												<uxap:ObjectPageSubSection title=" ">
+													<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|SEPMRA_C_PD_Product|to_ProductText::com.sap.vocabularies.UI.v1.LineItem">
+														
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+					
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartTable.fragment.xml
+        @param {UI.Facet} [facet]
+        @param {edm.EntitySet} [entitySet]
+        @param {edm.EntityType} [entityType]
+    -->
+
+	
+		
+			
+				
+					<st:SmartTable xmlns:st="sap.ui.comp.smarttable" id="to_ProductText::com.sap.vocabularies.UI.v1.LineItem::Table" persistencyKey="to_ProductText::com.sap.vocabularies.UI.v1.LineItem::Table" tableBindingPath="to_ProductText" fitContainer="false" useOnlyOneSolidToolbar="true" enableAutoBinding="true" showRowCount="true" beforeRebindTable="onBeforeRebindTable" dataReceived="onDataReceived" useVariantManagement="false" tableType="ResponsiveTable" useExportToExcel="true" useTablePersonalisation="true" entitySet="SEPMRA_C_PD_ProductText" class="sapSmartTemplatesSmartTable" demandPopin="true" noData="{i18n&gt;NOITEMS}" build:metadata="#pattern:Table;bindingContext:columns:Items:{to_ProductText};">
+						<st:customData>
+							<core:CustomData key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+							
+								
+									
+								
+							
+						</st:customData>
+						<st:customToolbar>
+							<OverflowToolbar design="Transparent">
+								<ToolbarSpacer/>
+								<!-- Custom Action Breakout -->
+								
+									
+								
+								
+									
+								
+									
+								
+									
+								
+								
+									<OverflowToolbarButton id="to_ProductText::com.sap.vocabularies.UI.v1.LineItem::addEntry" icon="sap-icon://add" press="addEntry" visible="{ui&gt;/editable}" tooltip="{i18n&gt;ADD}" text="{i18n&gt;ADD}"/>
+								
+							</OverflowToolbar>
+						</st:customToolbar>
+						<Table id="to_ProductText::com.sap.vocabularies.UI.v1.LineItem::responsiveTable" fixedLayout="false" growing="true" growingThreshold="10" mode="None">
+							
+	<!--
+		@classdesc
+		@name: Name: sap.suite.ui.generic.template.fragments.TableColumns.fragment.xml
+		@description:
+		    - visualizes one column (header and data)
+		@param {UI.LineItem} [collection]
+		@param {Edm.EntitySet} [listEntitySet]
+	-->
+
+	<columns>
+		
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;Language&quot;, &quot;leadingProperty&quot;:&quot;Language&quot;, &quot;additionalProperty&quot;:&quot;to_Language/Language_Text&quot;, &quot;sortProperty&quot;:&quot;Language&quot;, &quot;filterProperty&quot;:&quot;Language&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/High;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+			
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;Name&quot;, &quot;leadingProperty&quot;:&quot;Name&quot;, &quot;sortProperty&quot;:&quot;Name&quot;, &quot;filterProperty&quot;:&quot;Name&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/High;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+			
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;Description&quot;, &quot;leadingProperty&quot;:&quot;Description&quot;, &quot;sortProperty&quot;:&quot;Description&quot;, &quot;filterProperty&quot;:&quot;Description&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/Medium;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+			
+					
+					<core:ExtensionPoint name="ResponsiveTableColumnsExtension|SEPMRA_C_PD_ProductText|to_ProductText::com.sap.vocabularies.UI.v1.LineItem"/>
+				
+	</columns>
+	<items>
+		<ColumnListItem type="Navigation" press="onListNavigate">
+			<cells>
+				
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="ObjectIdentifier" value="{Language}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="" value="{Name}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="" value="{Description}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+									
+							<core:ExtensionPoint name="ResponsiveTableCellsExtension|SEPMRA_C_PD_ProductText|to_ProductText::com.sap.vocabularies.UI.v1.LineItem"/>
+						
+			</cells>
+		</ColumnListItem>
+	</items>
+
+						</Table>
+					</st:SmartTable>
+				
+			
+		
+	
+
+				
+		
+
+
+
+													</core:ExtensionPoint>
+												</uxap:ObjectPageSubSection>
+											</uxap:subSections>
+										</uxap:ObjectPageSection>
+
+										
+									
+								
+									
+										
+
+										<uxap:ObjectPageSection id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::Section" title="{@i18n&gt;@Supplier}" visible="true" build:metadata="#pattern:Section;staticProp:title:Title">
+											<uxap:subSections>
+												<uxap:ObjectPageSubSection title=" ">
+													<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|SEPMRA_C_PD_Product|to_Supplier::com.sap.vocabularies.UI.v1.Identification">
+														
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartForm.fragment.xml
+        @param {Collection(UI.Facet)} [facet]
+    -->
+
+	<sfo:SmartForm xmlns:sfo="sap.ui.comp.smartform" id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::Form" editable="{ui&gt;/editable}" class="sapSmartTemplatesSmartForm" visible="{= !${parameter&gt;/isDraftEnabled} &amp;&amp; ${path: 'groupFacet&gt;Target/AnnotationPath', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.isSelf'} === false ? '{= !${ui&gt;/createMode} ? true : false }' : true}" flexEnabled="true" entityType="SEPMRA_C_PD_SupplierType" build:metadta="#pattern:Form;">
+		<sfo:customData>
+           	<core:CustomData key="defaultInputFieldDisplayBehaviour" value="descriptionAndId"/>
+           	<core:CustomData key="defaultDropDownDisplayBehaviour" value="descriptionOnly"/>
+           	<core:CustomData key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+		</sfo:customData>
+		<sfo:layout>
+			<sfo:Layout columnsM="1" columnsL="3" labelSpanS="12" labelSpanM="12" labelSpanL="12" singleGroupFullSize="false"/>
+		</sfo:layout>
+		<!-- If the given facet has subfacets... -->
+		
+				
+					
+						<sfo:Group id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::FormGroup" binding="{to_Supplier}">
+							
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::CompanyName::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::CompanyName::Field" value="{path:'CompanyName',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'80'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::EmailAddress::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::EmailAddress::Field" value="{path:'EmailAddress',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::PhoneNumber::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="to_Supplier::com.sap.vocabularies.UI.v1.Identification::PhoneNumber::Field" value="{path:'PhoneNumber',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'30'}}" url="" change="onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+								
+						</sfo:Group>
+					
+				
+			
+	</sfo:SmartForm>
+
+
+		
+
+
+
+													</core:ExtensionPoint>
+												</uxap:ObjectPageSubSection>
+											</uxap:subSections>
+										</uxap:ObjectPageSection>
+
+										
+									
+								
+									
+										
+
+										<uxap:ObjectPageSection id="to_EmployeeContact::com.sap.vocabularies.Communication.v1.Contact::Section" title="{@i18n&gt;@Contacts}" visible="true" build:metadata="#pattern:Section;staticProp:title:Title">
+											<uxap:subSections>
+												<uxap:ObjectPageSubSection title=" ">
+													<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|SEPMRA_C_PD_Product|to_EmployeeContact::com.sap.vocabularies.Communication.v1.Contact">
+														
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+					
+	
+		
+			<VBox class="sapSmartTemplatesObjectPageContactsListContainer">
+				<List id="to_EmployeeContact::com.sap.vocabularies.Communication.v1.Contact::ContactsList" items="{to_EmployeeContact}" growing="true" growingThreshold="12" class="sapSmartTemplatesObjectPageContactsList" noDataText="{i18n&gt;NOITEMS}">
+					<CustomListItem class="sapSmartTemplatesObjectPageContactsListItem">
+						<HBox>
+							
+									<Image src="{path:'EmployeePictureURL',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}" width="3rem" height="3rem" densityAware="false" class="sapUiSmallMarginTopBottom"/>
+								
+							<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom">
+								<Link text="{path:'FormattedName',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'88'}}" press="onContactDetails" class="sapSmartTemplatesObjectPageContactsListContactTitle"/>
+								<Text text="{path:'OrganizationRole',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'22'}}" class="sapSmartTemplatesObjectPageContactsListContactSubTitle"/>
+							</VBox>
+						</HBox>
+					</CustomListItem>
+				</List>
+				
+	<QuickView class="sapSmartTemplatesObjectPageContactsQuickView" placement="Auto">
+		<QuickViewPage header="{i18n&gt;CONTACT_INFO}" icon="{path:'EmployeePictureURL',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}" title="{path:'FormattedName',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'88'}}" description="{path:'OrganizationRole',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'22'}}">
+			<QuickViewGroup heading="{i18n&gt;CONTACT_DETAILS}">
+
+				<QuickViewGroupElement label="{i18n&gt;CONTACT_JOB_TITLE}" type="text" value="{path:'JobTitle',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'9'}}" visible="true"/>
+
+				<QuickViewGroupElement label="{i18n&gt;CONTACT_DEPARTMENT}" type="text" value="{path:'CompanyName',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'80'}}" visible="true"/>
+
+				<QuickViewGroupElement label="{i18n&gt;CONTACT_EMAIL}" type="email" value="{path:'EmailAddress',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'255'}}" visible="true"/>
+
+				<QuickViewGroupElement label="{i18n&gt;CONTACT_PHONE}" type="phone" value="{path:'PhoneNumber',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'30'}}" visible="true"/>
+
+				<QuickViewGroupElement label="{i18n&gt;CONTACT_MOBILE}" type="phone" value="{path:'MobilePhoneNumber',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'30'}}" visible="true"/>
+
+				<QuickViewGroupElement label="{i18n&gt;CONTACT_FAX}" type="text" value="{path:'FaxNumber',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'30'}}" visible="true"/>
+
+			</QuickViewGroup>
+		</QuickViewPage>
+	</QuickView>
+
+			</VBox>
+		
+	
+
+				
+		
+
+
+
+													</core:ExtensionPoint>
+												</uxap:ObjectPageSubSection>
+											</uxap:subSections>
+										</uxap:ObjectPageSection>
+
+										
+									
+								
+							
+						
+					
+				</uxap:sections>
+			</uxap:ObjectPageLayout>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button id="showMessages" text="{model: 'message', path : '/', formatter : '.showMessagesButtonText'}" press="onShowMessages" type="Emphasized" icon="sap-icon://message-popup" visible="{model: 'message', path : '/', formatter : '.showMessagesButton'}"/>
+				<Label id="draftStatus" text="{model: 'ui', path : '/draftStatus'}" class="sapSmartTemplatesObjectDraftStatus"/>
+
+				<ToolbarSpacer/>
+
+				<!-- Custom Action Breakout -->
+				
+					
+				
+
+				
+					
+						
+							<Button id="footerAction::SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities::SEPMRA_C_PD_ProductCopy" text="" press="onCallAction" enabled="{ui&gt;/enabled}" visible="{path: 'IsActiveEntity'}">
+								<customData>
+									<core:CustomData xmlns:core="sap.ui.core" key="Type" value="com.sap.vocabularies.UI.v1.DataFieldForAction"/>
+									
+									<core:CustomData xmlns:core="sap.ui.core" key="Action" value="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/SEPMRA_C_PD_ProductCopy"/>
+									<core:CustomData xmlns:core="sap.ui.core" key="Label" value=""/>
+								</customData>
+							</Button>
+						
+					
+				
+					
+				
+					
+				
+				
+						<Button id="activate" text="{i18n&gt;SAVE}" type="Emphasized" enabled="{ui&gt;/enabled}" press="onActivate" visible="{ui&gt;/editable}"/>
+						<!--
+						<Button text="{i18n>CONTINUE_LATER}" press="onContinueLater" enabled="{ui>/enabled}"
+								visible="{ui>/editable}"/>
+						-->
+						<Button id="discard" text="{i18n&gt;CANCEL}" press="onDiscardDraft" enabled="{ui&gt;/enabled}" visible="{ui&gt;/editable}"/>
+					
+				
+			</OverflowToolbar>
+		</footer>
+	</Page>

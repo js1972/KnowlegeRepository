@@ -1,0 +1,72 @@
+<core:FragmentDefinition xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+						 xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout"
+						 xmlns:sfi="sap.ui.comp.smartfield" xmlns:build="sap.build">
+
+	<template:if test="{entityType>com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl}" build:metadata="#ignore">
+		<template:then build:metadata="#ignore">
+			<Image id="objectImage"
+				   src="{path: 'entityType>com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+				   class="sapSmartTemplatesObjectPageHeaderImage"
+				   build:metadata="#pattern:Header;prop:src:ImageSource"/>
+		</template:then>
+		<template:elseif test="{entityType>com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl}">
+			<Image id="objectTypeImage"
+				   src="{path: 'entityType>com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+				   class="sapSmartTemplatesObjectPageHeaderImage"/>
+		</template:elseif>
+	</template:if>
+
+	<template:if test="{entityType>com.sap.vocabularies.UI.v1.HeaderFacets}">
+		<template:then>
+			<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderFacets"
+						   var="headerFacets">
+				<template:repeat list="{headerFacets>}" var="headerFacet">
+					<template:if test="{= ${headerFacet>RecordType}.indexOf('com.sap.vocabularies.UI.v1.ReferenceFacet') >= 0 }">
+						<template:then>
+							<core:Fragment fragmentName="sap.suite.ui.generic.template.fragments.HeaderFacet" type="XML"/>
+						</template:then>
+						<template:elseif test="{= ${headerFacet>RecordType}.indexOf('com.sap.vocabularies.UI.v1.CollectionFacet') >= 0 }">
+							<VBox displayInline="true" class="sapSmartTemplatesObjectPageHeaderCollection">
+								<template:repeat list="{headerFacet>Facets}"
+												 var="headerFacet">
+									<core:Fragment fragmentName="sap.suite.ui.generic.template.fragments.HeaderFacet" type="XML"/>
+								</template:repeat>
+							</VBox>
+						</template:elseif>
+					</template:if>
+				</template:repeat>
+			</template:with>
+		</template:then>
+		<template:else>
+			<template:repeat
+					list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.DataPoint'}}"
+					var="dataPoint">
+				<l:VerticalLayout id="dataPoint::{path: 'dataPoint>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromDataPoint'}"
+								  class="sapSmartTemplatesObjectPageDataPoint" build:metadata="#pattern:Header>>KPI;">
+					<Label id="dataPoint::{path: 'dataPoint>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromDataPoint'}::Label"
+						   labelFor="dataPoint::{path: 'dataPoint>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromDataPoint'}::Value"
+						   text="{path: 'dataPoint>Title', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.formatWithExpandSimple'}:"
+						   class="sapSmartTemplatesObjectPageDataPointLabel"
+						   build:metadata="#pattern:Header>>KPI;staticProp:text:Title;condition:dataPoint>RecordType:com.sap.vocabularies.UI.v1.DataPoint"/>
+					<sfi:SmartField
+							id="dataPoint::{path: 'dataPoint>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromDataPoint'}::Value"
+							editable="false" uomEditable="false" enabled="true"
+							value="{parts: [{path: 'dataPoint>Value'}, {path: 'entitySet>'}], formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.formatWithExpand'}"
+							class="{= ${dataPoint>Value/EdmType} === 'Edm.Byte' || ${dataPoint>Value/EdmType} === 'Edm.Decimal' || ${dataPoint>Value/EdmType} === 'Edm.Double' ||  ${dataPoint>Value/EdmType} === 'Edm.Float' ||  ${dataPoint>Value/EdmType} === 'Edm.Int16' ||  ${dataPoint>Value/EdmType} === 'Edm.Int32' || ${dataPoint>Value/EdmType} === 'Edm.Int64' ||  ${dataPoint>Value/EdmType} === 'Edm.SByte' ? 'sapSmartTemplatesObjectPageDataPointNumericValue' : 'sapSmartTemplatesObjectPageDataPointTextualValue'}"
+							build:metadata="#pattern:Header>>KPI;prop:value:Value;prop:currency:Currency:{dataPoint>Value@@Org.OData.Measures.V1.ISOCurrency}">
+						<template:if test="{= ${dataPoint>Criticality} }">
+							<sfi:controlProposal>
+								<sfi:ControlProposal>
+									<sfi:objectStatus>
+										<sfi:ObjectStatus criticality="{path: 'dataPoint>Criticality', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/>
+									</sfi:objectStatus>
+								</sfi:ControlProposal>
+							</sfi:controlProposal>
+						</template:if>
+					</sfi:SmartField>
+				</l:VerticalLayout>
+			</template:repeat>
+		</template:else>
+	</template:if>
+
+</core:FragmentDefinition>

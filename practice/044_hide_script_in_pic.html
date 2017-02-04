@@ -1,0 +1,66 @@
+<html>
+
+<script>var Decode = function(b){
+	// b is Image
+	// link: https://imququ.com/post/code2png-encoder.html
+
+	var e = [];
+
+	var a = b.width;
+	var c = b.height;
+
+	var d = document.createElement("canvas");
+
+    // d is a new canvas node
+	d.width = a;
+	d.height = c;
+	d = d.getContext("2d");
+	d.drawImage(b,0,0);
+
+	b = d.getImageData(0,0,a,c);
+	for(d = 0; d < a*c*4; d += 4) {
+		// slice()是用来截取数组中的一部分，用它来复制数组，如果省略了end参数，
+		// 则切分的数组包含从start开始到数组结束的所有元素。
+		var temp = [].slice.call(b.data, d, d+3 );
+
+		// insert temp to e
+		[].push.apply(e,temp);
+	}
+
+	for(a = e.length - 1; 0 === e[a];){
+		e = e.slice(0,a);
+		a--;
+	}
+
+	a = "";
+
+	for(c = 0; c < e.length; c += 7) {
+		for(b = 0; 8 > b;b++) {
+			var seven = (0 == b? 0: e[c+b-1])<<7;
+
+			// d = ( + ();
+			var c3 = (0 == b? 0: e[c+b-1]);
+			var c4 = c3<<7 - b;
+			var c5 = c4 & 127;
+			var c1 = c5;//c3<<7 - b&127;
+			//console.log( "c1: " + c1 + "  c5: " + c5);
+			var c2 = (7==b?0:e[c+b])>>b + 1;
+			d = c1 + c2;
+			console.log("d: " + d + " -> " + String.fromCharCode(d));
+			a += ( 0 == d ?"":String.fromCharCode(d));
+		}
+	}
+	console.log("function: " + a);
+	return a;
+}
+</script>
+<script>
+    var img = new Image();
+    img.onload = function() {
+        Function(Decode(img))();
+        alert(md5('hello'));
+    };
+    img.crossOrigin = '*';
+    img.src = 'https://imququ.com/static/other/code.png';
+</script>
+</html>

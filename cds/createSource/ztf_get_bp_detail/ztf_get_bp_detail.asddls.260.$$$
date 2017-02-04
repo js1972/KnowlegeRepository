@@ -1,0 +1,14 @@
+
+@ClientDependent: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED 
+define table function ztf_get_bp_detail 
+  with parameters @Environment.systemField: #CLIENT 
+                  clnt:abap.clnt, 
+                  bp_no:CRMT_PARTNER_NO
+  returns { client:s_mandt;
+            bp_guid: BU_PARTNER_GUID, 
+            connid:s_conn_id; 
+            cityfrom:s_from_cit; 
+            cityto:s_to_city; } 
+  implemented by method 
+    zcl_amdp_provider_impl=>GET_SCARR_SPFLI_FOR_CDS;

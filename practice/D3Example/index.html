@@ -1,0 +1,252 @@
+
+<!-- source code from http://jsfiddle.net/jarvisjiang/wh877/ -->
+
+<!-- Author: http://m.blog.csdn.net/blog/zxlvxj/44065561 -->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+svg, g {
+  pointer-events: all;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.title {
+  text-anchor: middle;
+  font-weight: 700;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.linecircle {
+  fill: green;
+}
+.linecircle:hover {
+  fill: steelblue;
+}
+.flag {
+  stroke: gray;
+  stroke-dasharray: 5;
+  stroke-width: 1.5;
+  display: none;
+  pointer-events: none;
+}
+.tips {
+  pointer-events: none;
+  display: none;
+}
+.tips-border {
+  fill: #F3E4E4;
+  stroke: gray;        
+  stroke-width: 2;
+}
+.grid .tick {
+  stroke: lightgrey;
+  opacity: 0.7;
+}
+.grid path {
+  stroke-width: 0;
+}
+
+</style>
+<script src="d3/d3.v3.js"></script>
+<body>
+<span id="more-5049"></span>
+<script>
+//map() 方法返回一个由原数组中的每个元素调用一个指定方法后的返回值组成的新数组。
+var data = Array.apply(0, Array(31)).map(function(item, i) {
+    i++;
+    return {date: '2013-12-' + (i < 10 ? '0' + i : i), pv: parseInt(Math.random() * 100)}
+});
+debugger;
+
+  // 定义circle的半径
+  var r0 = 5,
+    r1 = 8;
+
+  // 定义动画持续时间
+  var duration = 500;
+  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = document.body.clientWidth - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+// here %Y-%m-%d is used as template
+  var parseDate = d3.time.format('%Y-%m-%d').parse;
+  // check the type of this parseDate: a function???
+  debugger;
+/* 横坐标是日期，这里使用d3.time自动帮我们在时间和字符串之间做转换。y轴使用普通的线性缩放坐标轴。其实这里的x和y也是一个function，后续会用到。
+domain规定了坐标轴上值的范围，d3.extent从数组里选出最小值和最大值，d3.max选数组里面最大值。range规定了坐标轴端点的位置，svg的坐标原点是左上角，向右为正，向下为正，而y轴正方向为由下向上，所以(0, height)才是图表的坐标原点。
+然后使用d3的axis定制坐标轴
+*/
+
+    var x = d3.time.scale().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
+
+    // check the content of x and y:
+    debugger;
+    // orient有四个参数（left、right、top、bottom）定义了坐标轴的位置
+    // ticks定义了坐标轴上除最小值和最大值以外最多有多少个刻度，因为一个月最多有31天，ticks(30)就足以展示每天的刻度了
+    var xAxis = d3.svg.axis().scale(x).orient('bottom').tickFormat(d3.time.format('%d')).ticks(30);
+    var yAxis = d3.svg.axis().scale(y).orient('left').ticks(20);
+
+    // TODO: check content of xAxis and yAxis:
+    debugger;
+
+    /* 有了坐标轴之后我们可以加上图表的主体部分了，pv图应该是一条折线图。怎么加折线呢，d3提供了丰富的图表元素，需要折线只需要append(‘path’)即可，了解svg的都知道，path的d属性是最重要的，决定了折线的“路径”，这里就不详细讲解path了。
+我们只有一个数组的数据，怎么转化成需要的d呢，别担心，d3帮我们做了这部分工作。首先需要用d3.svg.line生成一个“线条函数”，然后将数据传给该函数即可生成我们想要的d，我们需要做的就是定制这个“线条函数”的两条坐标轴分别由数据的哪部分决定。
+
+设置了x坐标轴由date属性决定，y坐标轴由pv属性决定，最后还调用了interpolate，该方法会改变线条相邻两点之间的链接方式以及是否闭合，接受的参数有linear，step-before，step-after，basis，basis-open，basis-closed，bundle，cardinal，cardinal-open，cardinal-closed，monotone。
+*/
+    var line = d3.svg.line()
+            .x(function(d) { 
+              return x(d.date); })
+            .y(function(d) { 
+              return y(d.pv); })
+            .interpolate('monotone');
+    // check this line variable
+    debugger;
+
+    var flagLine = d3.svg.line()
+                    .x(function(d) { return x(d.x); })
+                    .y(function(d) { return y(d.y); });
+    // TODO: check flagLine
+    debugger;
+
+    var container = d3.select('body')
+                    .append('svg')
+                    .attr('width', width + margin.left + margin.right)
+                    .attr('height', height + margin.top + margin.bottom);
+
+    var svg;
+
+    show();
+    function show() {
+        debugger;
+        svg = container.append('g')
+                .attr('class', 'content')
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        function draw() {
+            debugger;
+            data.forEach(function(d) {
+                debugger;
+                d.dayText = d.date;
+                d.date = parseDate(d.date);
+                d.pv = +d.pv;
+            });
+            x.domain(d3.extent(data, function(d) { 
+              return d.date; }));
+            y.domain([0, d3.max(data, function(d) { 
+              return d.pv; })]);
+
+            svg.append('text').attr('class', 'title').text('2013年12月PV').attr('x', width / 2).attr('y', 0);
+            // 然后就可以把坐标轴加进svg容器了
+            svg.append('g').attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + height + ')') // 增加坐标值说明
+                .call(xAxis).append('text').text('日期')
+                .attr('transform', 'translate(' + (width - 20) + ', 0)');
+            svg.append('g').attr('class', 'y axis').call(yAxis).append('text').text('次/天');
+
+            // “线条函数”生成好了，可以应用到path上了
+            var path = svg.append('path').attr('class', 'line').attr('d', line(data));
+
+            //增加圆圈
+
+            /* 因为circle不止一个，需要使用selectAll，而circle现在是还不存在的。selectAll(‘circle’)的作用可以理解成先预定若干个circle的位置，等有数据了再插入svg容器里。
+enter就表明有数据来了，将每个circle放到单独的g里面，这里没有特殊的用意，就像html里面习惯用div来装其他元素一样。*/
+
+            var g = svg.selectAll('circle').data(data).enter()
+                    .append('g').append('circle').attr('class', 'linecircle')
+                    .attr('cx', line.x()).attr('cy', line.y()).attr('r', r0)
+                    .on('mouseover', function() {
+                        d3.select(this).transition().duration(duration).attr('r', r1);
+                    }).on('mouseout', function() {
+                        d3.select(this).transition().duration(duration).attr('r', r0);
+                    });
+            var tips = svg.append('g').attr('class', 'tips');
+
+            tips.append('rect').attr('class', 'tips-border').attr('width', 200)
+                .attr('height', 50).attr('rx', 10).attr('ry', 10);
+
+            var wording1 = tips.append('text').attr('class', 'tips-text')
+                                .attr('x', 10).attr('y', 20).text('');
+            var wording2 = tips.append('text').attr('class', 'tips-text')
+                            .attr('x', 10).attr('y', 40).text('');
+
+            container.on('mousemove', function() {
+                debugger;
+                var m = d3.mouse(this),
+                cx = m[0] - margin.left;
+                showWording(cx);
+                d3.select('.tips').style('display', 'block');
+            }).on('mouseout', function() {
+                debugger;
+                d3.select('.tips').style('display', 'none');
+            });
+
+
+            function redrawLine(cx, cy) {
+                debugger;
+                if (cx < 0) 
+                    d3.select('.flag').style('display', 'none');
+                else 
+                    d3.select('.flag').attr('x1', cx).attr('x2', cx).style('display', 'block');
+                showWording(cx);
+            }
+
+            function showTips(cx, cy) {
+                debugger;
+                cy -= 50;
+                if(cy < 0) cy += 100;
+                d3.select('.tips')
+                    .attr('transform', 'translate(' + cx + ',' + cy + ')')
+                    .style('display', 'block');
+            }
+
+            function showWording(cx) {
+              debugger;
+              //x.invert(cx)跟据传入的横坐标数值返回该横坐标的实际数据上的值，在本例中返回一个日期。
+                var x0 = x.invert(cx);
+
+                //下面的i是根据返回的日期反向得到data数组中的元素位置。有了这个i一切都好办了
+                var i = (d3.bisector(function(d) {return d.date;}).left)(data, x0, 1);
+
+                var d0 = data[i - 1],
+                d1 = data[i] || {},
+                //接下来的代码是为了判断鼠标在两个日期之间离哪个更近。
+                d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+
+                function formatWording(d) {
+                    return '日期：' + d3.time.format('%Y-%m-%d')(d.date);
+                }
+                wording1.text(formatWording(d));
+                wording2.text('PV：' + d.pv);
+
+                var x1 = x(d.date),
+                  y1 = y(d.pv);
+
+                // 处理超出边界的情况
+                var dx = x1 > width ? x1 - width + 200 : x1 + 200 > width ? 200 : 0;
+                var dy = y1 > height ? y1 - height + 50 : y1 + 50 > height ? 50 : 0;
+                x1 -= dx;
+                y1 -= dy;
+                d3.select('.tips').attr('transform', 'translate(' + x1 + ',' + y1 + ')');
+            }
+        }
+
+        draw();
+    }
+</script>

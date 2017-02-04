@@ -1,0 +1,21 @@
+<html>
+<body onload = test()>
+</body>
+<script>
+
+function test() {
+var iframe = document.createElement('iframe');
+iframe.id = 'testframe';
+iframe.name = 'testframe';
+iframe.src = 'http://www.baidu.com/';
+var fn = function() { alert('onload'); };
+if (iframe.attachEvent) {
+	iframe.attachEvent('onload', fn);
+} else {
+	iframe.onload = fn;
+}
+document.body.insertBefore(iframe, document.body.firstChild);
+}
+</script>
+
+</html>

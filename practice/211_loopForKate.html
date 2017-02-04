@@ -1,0 +1,53 @@
+<html>
+<script>
+function getTestData(){
+	return {
+		odataOuter: {
+			odata: {
+						SalesPlanguid1:{
+						id: 1,
+						value: 2
+					},
+					SalesPlanguid2:{
+						id: 2,
+						value: 3
+					},
+					otherData1:{
+						id: 3,
+						value: 4
+					},
+					otherData2:{
+						id: 4,
+						value: 5
+					}
+				}
+		},
+		sdata:{
+			junk:{
+				name: "rabbish"
+			}
+		}
+	};
+}
+
+// this function parses and return all object in an array format which has name specified by searchKey
+function getSalesPlan(testData, searchKey, output){
+	var result = [];
+	var properties = Object.entries(testData);
+	for( var i = 0; i < properties.length; i++){
+		if( ( properties[i][0].indexOf(searchKey) == -1 ) && ( typeof properties[i][1] === 'object') ){
+			getSalesPlan(properties[i][1], searchKey, output);
+		}
+		else if ( typeof properties[i][1] === 'object') {
+			output.push(properties[i][1]);
+		}
+	}
+}
+
+var testData = getTestData();
+var output = [];
+getSalesPlan(testData, "SalesPlan", output);
+// Jerry: check content of variable output in Chrome debugger
+debugger;
+</script>
+</html>

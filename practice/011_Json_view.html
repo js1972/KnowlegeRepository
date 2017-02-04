@@ -1,0 +1,50 @@
+<html>
+<script>
+function output(inp) {
+document.body.appendChild(document.createElement('pre')).innerHTML = inp;
+}
+
+function syntaxHighlight(json) {
+	debugger;
+	console.log("original json: " + json);
+json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+console.log("json after conversion: " + json);
+return json.replace(/("(\u[a-zA-Z0-9]|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+		console.log("Matched: " + match);
+		var cls = 'number';
+		if (/^"/.test(match)) { // start with "
+			if (/:$/.test(match)) { // end with :
+				cls = 'key';
+			} else {
+				cls = 'string';
+			}
+		} else if (/true|false/.test(match)) {
+			cls = 'boolean';
+		} else if (/null/.test(match)) {
+			cls = 'null';
+		}
+		return '<span class="' + cls + '">' + match + '</span>';
+	});
+}
+
+var obj = {
+num: 1234,
+str: 'ok',
+arr: [1,2,3,4,5,6],
+obj: {
+name: 'tom',
+age: 10,
+like: ['a', 'b']
+}
+};
+
+function start() {
+	var str = JSON.stringify(obj, undefined, 90);
+	output(syntaxHighlight(str));
+};
+
+</script>
+<body onload=start();>
+<p>Hello</p>
+</body>
+</html>

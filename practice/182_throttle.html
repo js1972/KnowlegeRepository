@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>测试函数节流</title>
+    <style>
+        #container{
+            width: 100%;
+            height: 200px;
+            border: 1px solid #646464;
+            color: #000000;
+        }
+    </style>
+
+</head>
+<body >
+    <div id="container"></div>
+</body>
+<script>
+function throttle(func){
+    var timer;
+    return function(){
+        console.log("In Throttle wrapper...");
+        var context = this;
+        var args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function(){
+            func.apply(context,args);
+        },1000);
+    }
+    
+}
+
+    function alertSomething(){
+        console.log("您的鼠标正在移动");
+    };
+    document.getElementById("container").onmousemove =  
+    throttle(alertSomething);
+</script>
+</html>

@@ -1,0 +1,42 @@
+<html>
+<script>
+
+function Aggregation(name) {
+	this.mAggregationName = name;
+}
+
+var oItemAgg = new Aggregation("item"); // so far, Aggregation oject has no available method
+
+debugger;
+
+Aggregation.prototype.generate = function(add, prototype) {
+	// var that = this, n = that.mAggregationName;
+	
+	add("getAggregation", prototype, function() { 
+		console.log(" getAggregation should be implemented here!"); 
+	});
+}
+
+function add(name, proto, fn){
+	if ( !proto[name] ) {
+		proto[name] =  fn;
+	}
+}
+
+oItemAgg.generate(add, Aggregation.prototype);
+
+oItemAgg.getAggregation();
+			
+debugger;
+
+var Sub = function(name) {  
+	Aggregation.call(this, name);
+	// sub own logic here 
+};  
+
+Sub.prototype = new Aggregation();  
+
+var subAggregation = new Sub("Sub");
+
+debugger;
+</script>

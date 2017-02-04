@@ -1,0 +1,93 @@
+<html>
+<script>
+var s = 'hello world';
+var pattern = /(hello)/;
+var ans = pattern.exec(s);
+console.log(ans);
+/*
+0: "hello"
+1: "hello"
+index: 0
+input: "hello world"
+length: 2
+*/
+
+// 子表达式出现场景
+//　　在exec中数组输出子表达式所匹配的值：
+
+var s = 'hello world';
+var pattern = /(h(e)llo)/;
+var ans = pattern.exec(s);
+console.log(ans); // ["hello", "hello", "e", index: 0, input: "hello world"] 
+// e 变成index 2了
+
+// 在replace中作为替换值引用：
+/*
+子表达式的序号问题
+　　简单地说：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。
+复杂地说：分组0对应整个正则表达式实际上组号分配过程是要从左向右扫描两遍的：第一遍只给未命名组分配，第二遍只给命名组分配－－因此所有命名组的组号都大于未命名的组号。可以使用(?:exp)这样的语法来剥夺一个分组对组号分配的参与权．
+*/
+var s = 'hello world';
+var pattern = /(h\w*o)\s*(w\w*d)/;
+var ans = s.replace(pattern, '$2HAHA$1')
+console.log(ans); // worldHAHAhello 
+
+pattern = /(?:h\w*o)\s*(w\w*d)/;
+var ans2 = s.replace(pattern, '$2HAHA$1')
+console.log(ans2); // $2HAHAworld, world成为第一个被匹配的组 
+// 因为只有一个组被匹配，所以$2也就为空了。
+
+ /*如果我们要找连续两个一样的字符，比如要找两个连续的c，可以这样/c{2}/，如果要找两个连续的单词hello，可以这样/(hello){2}/，但是要在一个字符串中找连续两个相同的任意单词呢，比如一个字符串hellohellochinaworldworld，我要找的是hello和world，怎么找？
+
+　　这时候就要用后向引用。看具体例子：*/
+
+var s = 'hellohellochinaworldworld';
+/*
+如果不加/g:
+["hellohello", "hello", index: 0, input: "hellohellochinaworldworld"]
+
+这里的\1就表示和匹配模式中的第一个子表达式（分组）一样的内容，\2表示和第二个子表达式（如果有的话）一样的内容，\3 \4 以此类推。（也可以自己命名，详见参考文献）
+
+*/
+var pattern = /(\w+)\1/g;
+var a = s.match(pattern);
+console.log(a);	// ["hellohello", "worldworld"] 
+
+do {
+	/*
+	第一次进来，打印 ["hellohello", "hello"]
+	第二次进来，打印 ["worldworld", "world"]
+	然后还要打印一次： ["worldworld", "world", index: 15, input: "hellohellochinaworldworld"]
+	*/
+	ans = pattern.exec(s);
+	console.log(ans); 
+} 
+while(ans);
+
+var s = 'hellohellochinaworldworld';
+var pattern = /(\w+)\1/g;
+var ans = [];
+s.replace(pattern, function(a, b) {
+	/*
+	a = hellohello, b = hello
+	a = worldworld, b = world
+	*/
+	ans.push(b);
+});
+console.log(ans);	// ["hello", "world"] 
+
+var a = 'aaabbbcccaaabbbcccccc'.split('');
+a.sort();
+var s = a.join('');
+var pattern = /(\w)\1*/g;
+var a = s.match(pattern);
+a.sort(function(a, b) {
+    return a.length < b.length;
+});
+var letter = a[0][0];
+var num = a[0].length;
+console.log(letter + ': ' + num);
+
+
+</script>
+</html>

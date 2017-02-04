@@ -1,0 +1,48 @@
+<html>
+<!--
+<body onload = load();>-->
+	<body>
+<script>
+var DOMReady = function(a, b, c) {
+  b = document
+  c = 'addEventListener'
+  b[c] ? b[c]('DocumentContentLoaded', a) : window.attachEvent('onload', a)
+}
+
+// 测试不work
+DOMReady(function () {
+  alert('The DOM is Ready!');
+});
+</script>
+<script>
+
+function load(){
+(function(doc, script) {
+  var js,
+      fjs = doc.getElementsByTagName(script)[0],
+      frag = doc.createDocumentFragment(),
+      add = function(url, id) {
+          if (doc.getElementById(id)) {return;}
+          js = doc.createElement(script);
+          js.src = url;
+          /* 这样写很妙，避免了
+          if(id){
+          	 js.id = id;
+          }*/
+          id && (js.id = id);
+          frag.appendChild( js );
+      };
+
+    // Google+ button
+    add('https://apis.google.com/js/plusone.js');
+    // Facebook SDK
+    add('//connect.facebook.net/en_US/all.js#xfbml=1&appId=200103733347528', 'facebook-jssdk');
+    // Twitter SDK
+    add('//platform.twitter.com/widgets.js');
+
+    fjs.parentNode.insertBefore(frag, fjs);
+}(document, 'script'));
+}
+</script>
+</body>
+</html>

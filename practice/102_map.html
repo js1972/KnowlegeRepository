@@ -1,0 +1,24 @@
+<html>
+<script>
+var a = [1,2,3,4];
+
+var b = a.map( x => x + 1);
+
+
+Array.prototype.jerrymap = f => arr =>
+    arr.length === 0 ?
+    [] :
+    [f(arr[0])].concat(Array.prototype.jerrymap(f)(arr.slice(1)));
+
+Array.prototype.jerrymap2 = f =>
+    this.length === 0 ?
+    [] :
+    [f(this[0])].concat(Array.prototype.jerrymap2(f)(this.slice(1)));
+
+var d = [].jerrymap(x=>x+1)(a);
+
+
+
+debugger;
+</script>
+</html>

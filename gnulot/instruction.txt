@@ -1,0 +1,6 @@
+set xlabel "Try time"
+set ylabel "Consumed time£¨unit:milli-second£©"
+set title "Select task Performance comparison: Original VS Optimized implementation"
+set xrange [0.5:10.5]
+set xtics 1,1,10
+plot "data/opentask.dat" using 1:2 w lp pt 5 title "Original","data/opentask.dat" using 1:3 w lp pt 7 title "Optimized"

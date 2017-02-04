@@ -1,0 +1,21 @@
+<html>
+<script>
+Function.prototype.uncurrying = function() {
+     var _this = this;
+     return function() {
+            return Function.prototype.call.apply( _this, arguments);
+     };
+};
+
+var obj = {};
+var push = Array.prototype.push.uncurrying();
+push( obj, "first");
+console.log(obj.length);
+console.log(obj[0]);
+
+var obj1 = {};
+Array.prototype.push.call( obj1, "first");
+Array.prototype.push.call( obj1, "second");
+debugger;
+</script>
+</html>

@@ -1,0 +1,28 @@
+<core:FragmentDefinition xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+						 xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:uxap="sap.uxap">
+
+	<template:if test="{path: 'parameter>/settings/routeConfig/name', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.hasBreadCrumbs'}">
+
+		<uxap:breadCrumbsLinks>
+			<template:repeat list="{parameter>/settings/componentData/preprocessorsData/breadCrumbs}" var="breadCrumb">
+				<template:repeat list="{entitySet>/dataServices/schema/0/entityContainer/0/entitySet}"
+								 var="tmpEntitySet">
+					<template:if test="{parts: [{path: 'tmpEntitySet>'}, {path: 'breadCrumb>'}], formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.matchesBreadCrumb'}">
+						<template:with path="tmpEntitySet>entityType"
+									   helper="sap.ui.model.odata.AnnotationHelper.gotoEntityType"
+									   var="tmpEntityType">
+
+							<Link text="{path: 'tmpEntityType>com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
+								<customData>
+									<core:CustomData key="entitySet" value="{tmpEntitySet>name}"/>
+								</customData>
+							</Link>
+						</template:with>
+					</template:if>
+				</template:repeat>
+			</template:repeat>
+		</uxap:breadCrumbsLinks>
+
+	</template:if>
+
+</core:FragmentDefinition>

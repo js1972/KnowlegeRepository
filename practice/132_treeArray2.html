@@ -1,0 +1,98 @@
+<html>
+<script>
+/*n = 5， l(5) = 1, 所以c[5]即为a[5],
+var l = lowerbit(n);
+var result = a[l];
+while (l > 1) {
+  result += a[l];
+  l--
+} */
+
+function lowbit(x) { 
+	return x & (-x); 
+}
+
+
+/*
+0: 0 
+1: 1 C1 = A1 = 1
+2: 3 C2 = A1 + A2 = 1 + 2 = 3
+3: 1 C3 = A3 = 3
+4: 10 C4 = A1 + A2 + A3 + A4 = 1 + 2 + 3 + 4 = 10
+5: 1 C5 = A5 = 5
+6: 3 C6 = A5 + A6 = 5 + 6 = 11
+*/
+
+function generate(N) {
+  var result = [];
+  for( var i = 0; i <= N; i++){
+    result.push(i);
+  }
+  return result;
+}
+
+var SUM = [0];
+var NUM = 100;
+var raw = generate(NUM);
+
+function getCn(index){
+  var ans = raw[index];
+  var n = lowbit(index) - 1;
+  while( n > 0 ) {
+  	ans = ans + raw[--index];
+    n--;
+  }
+  return ans;
+}
+
+for( var i = 1 ; i < raw.length; i++){
+	//console.log("C[" + i + "]:" + ( SUM[i] = getCn(i)));
+  SUM[i] = getCn(i);
+}
+// console.log(SUM);
+
+function getSum(index){
+  var ans = 0;
+  for (var i = index; i; i -= lowbit(i))
+    ans += SUM[i];
+  return ans;
+}
+
+function traditionalAdd(index) {
+  var sum = 0;
+  for( var i = 0; i <= index; i++){
+    sum += raw[i];
+  }
+  return sum;
+}
+/*
+132_treeArray2.html:74 new: 4.862ms
+2016-01-21 19:48:51.076 132_treeArray2.html:80 old: 6885.436ms
+*/
+console.time("new");
+// console.log("new : " + getSum(NUM)); // 6
+for( var i = 1; i < NUM; i++){
+  getSum(i);
+}
+console.timeEnd("new");
+console.time("old");
+// console.log("traditional: " + traditionalAdd(NUM)); 
+for( var i = 1; i < NUM; i++){
+  traditionalAdd(i);
+}
+console.timeEnd("old");
+/*
+  1 A1 = 1
+  3 A1 + A2 = 1 + 2 = 3
+  3 A3 = 3
+  7 A3 + A4 = 3 + 4 = 7
+  5 A5 = 5
+  11 A5 + A6 = 5 + 6 = 11
+  7  A7 = 7,
+  36 A1 + A2 + A3 + A4 .. + A8 = 1 + 2 + 3 + 4 .. + 8 
+*/
+
+
+
+</script>
+</html>

@@ -1,0 +1,38 @@
+<html>
+<script>
+Number.prototype.add = function (x) {
+  return this + x;
+};
+
+/* 上面代码中，调用方法之所以写成8['add']，而不是8.add，是因为数值后面的点，会被解释为小数点，而不是点运算符。
+　　将数值放在圆括号中，就可以使用点运算符调用方法了。
+*/
+
+console.log(8['add'](2));
+
+console.log((8).add(2));
+console.log(8..add(2));
+Number.prototype.subtract = function (x) {
+  return this - x;
+};
+
+console.log((8).add(2).subtract(4));
+console.log(8["add"](2)["subtract"](4));
+
+// ES5规定，每个对象的属性都有一个取值方法get，用来自定义该属性的读取操作。
+Number.prototype = Object.defineProperty(
+  Number.prototype, "double", {
+    get: function (){return (this + this)} 
+  }
+);
+
+Number.prototype =  Object.defineProperty(
+  Number.prototype, "square", {
+    get: function (){return (this * this)} 
+  }
+);
+
+console.log((8).double.square);
+console.log(8["double"]["square"]);
+</script>
+</html>

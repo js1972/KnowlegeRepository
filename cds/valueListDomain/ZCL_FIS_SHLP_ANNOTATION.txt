@@ -1,0 +1,1691 @@
+class ZCL_FIS_SHLP_ANNOTATION definition
+  public
+  final
+  create public .
+
+public section.
+
+  types:
+    begin of TS_SEARCH_HELP,
+      shlpname type shlpname,
+      shlptype type ddshlptyp,
+    end of ts_search_help .
+  types:
+    ty_tt_tabname_fieldname type standard table of ddtbfd with default key .
+  types:
+    tt_search_helps type standard table of shlpname with default key .
+  types:
+    begin of ts_entity_annotation,
+        entity_id TYPE /iwbep/if_mgw_med_odata_types=>ty_e_med_entity_id,
+        name      TYPE string,
+        value     TYPE string,
+    end of ts_entity_annotation .
+
+  constants GC_CH type CHAR6 value 'VL_CH_' ##NO_TEXT.
+  constants GC_CT type CHAR6 value 'VL_CT_' ##NO_TEXT.
+  constants GC_FV type CHAR6 value 'VL_FV_' ##NO_TEXT.
+  constants GC_SH type CHAR6 value 'VL_SH_' ##NO_TEXT.
+
+  class-methods ENTITY_TYPE_NAME
+    importing
+      !IV_SHLPNAME type SHLPNAME
+      !IV_SHLPTYPE type DDSHLPTYP default 'SH'
+    returning
+      value(RV_ODATA_NAME) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME .
+  class-methods FIXED_VALUES
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_SHLPNAME type SHLPNAME
+      !IV_SHLPTYPE type DDSHLPTYP default 'SH'
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods SEARCH_HELP
+    importing
+      !IV_ENTITYSET_NAME type CSEQUENCE
+    returning
+      value(RS_SEARCH_HELP) type TS_SEARCH_HELP .
+  class-methods PROPERTY_NAME
+    importing
+      !IV_FIELDNAME type CSEQUENCE
+    returning
+      value(RV_PROPERTY_NAME) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME .
+  methods ADD_INOUT_PARAMETER
+    importing
+      !IV_PROPERTY type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION .
+  methods ADD_IN_PARAMETER
+    importing
+      !IV_PROPERTY type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION .
+  methods ADD_DISPLAY_PARAMETER
+    importing
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION .
+  methods ADD_OUT_PARAMETER
+    importing
+      !IV_PROPERTY type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION .
+  class-methods GET_VOCAN_PROVIDER_TEXTS
+    importing
+      !IV_LANGUAGE type SY-LANGU
+      !IT_VOCAN_TEXT_KEYS type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_VOCAN_TEXTS
+    changing
+      !CT_VOCAN_TEXTS_OBJ type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_OBJ_VOCAN_TEXTS
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION.
+  class-methods CREATE
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+      !IV_ENTITYTYPE type STRING
+      !IV_PROPERTY type STRING
+      !IV_SEARCH_HELP type SHLPNAME optional
+      !IV_SEARCH_SUPPORTED type ABAP_BOOL optional
+      !IV_SEARCH_HELP_FIELD type FIELDNAME optional
+      !IV_QUALIFIER type STRING optional
+      !IV_LANGUAGE_DEPENDENT_LABELS type ABAP_BOOL optional
+      !IV_LABEL type CSEQUENCE optional
+      !IV_VALUELIST_ENTITYSET type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+      !IV_VALUELIST_SERVICE_NAME type /IWBEP/MED_GRP_TECHNICAL_NAME optional
+      !IV_VALUELIST_SERVICE_VERSION type /IWBEP/MED_GRP_VERSION default 1
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION
+.
+  class-methods CREATE_FOR_ALL
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+      !IV_LANGUAGE_DEPENDENT_LABELS type ABAP_BOOL optional
+      !IV_RECURSION type ABAP_BOOL default 'X'
+      !IT_FIELDS type TY_TT_TABNAME_FIELDNAME optional
+      !IT_EXCLUDED_FIELDS type TY_TT_TABNAME_FIELDNAME optional
+      !IT_EXCLUDED_SEARCH_HELPS type TT_SEARCH_HELPS optional
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+protected section.
+private section.
+
+  types:
+    tt_private_annotation TYPE SORTED TABLE OF ts_entity_annotation WITH UNIQUE KEY entity_id name .
+
+  data MO_PARAMETERS type ref to /IWBEP/IF_MGW_VOCAN_COLLECTION .
+  class-data SO_TEXT_ANNOTATION type ref to ZCL_FIS_TEXT_ANNOTATION .
+  class-data SV_TEXT_FROM_PROVIDER type ABAP_BOOL value ABAP_FALSE ##NO_TEXT.
+  class-data SV_DATA_ELEMENT_TEXT type ABAP_BOOL value ABAP_FALSE ##NO_TEXT.
+
+  class-methods TEXT_METHOD_IS_AVAILABLE
+    returning
+      value(RV_TEXT_METHOD) type ABAP_BOOL .
+  class-methods SET_LABEL_FROM_TEXT_ELEMENT
+    importing
+      value(IV_LANGUAGE_DEPENDENT_LABELS) type ABAP_BOOL .
+  class-methods SEARCH_HELP_IS_USABLE
+    importing
+      !IS_SEARCH_HELP type SHLP_DESCR
+    returning
+      value(RV_IS_USABLE) type ABAP_BOOL .
+  class-methods ADD_ENTITY_TYPE
+    importing
+      !IV_ANNOTATED_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      value(IS_SEARCH_HELP) type SHLP_DESCR
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_RECURSION type ABAP_BOOL optional
+    exporting
+      !EV_VALUELIST_ENTITYSET type STRING
+    changing
+      !CT_TYPES type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_ENTITY_TYPES
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods ADJUST_KEYS
+    changing
+      !CS_SEARCH_HELP type SHLP_DESCR .
+  methods ADD_FILTERONLY_PARAMETER
+    importing
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION .
+  class-methods ENTITY_SET_NAME
+    importing
+      !IS_SEARCH_HELP type SHLP_DESCR
+    returning
+      value(RV_ODATA_NAME) type STRING .
+  class-methods DDIC_NAME
+    importing
+      !IV_ODATA_NAME type CSEQUENCE
+    returning
+      value(RV_DDIC_NAME) type SHLPNAME .
+  class-methods ODATA_NAME
+    importing
+      !IV_DDIC_NAME type CSEQUENCE
+    returning
+      value(RV_ODATA_NAME) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME .
+  class-methods CREATE_ONE
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+      !IV_ENTITYTYPE type STRING
+      !IV_PROPERTY type STRING
+      !IV_QUALIFIER type STRING optional
+      !IV_LABEL type CSEQUENCE optional
+      !IV_VALUE_LIST_TYPE type CHAR1 optional
+      !IV_VALUELIST_ENTITYTYPE type /IWBEP/MED_EXTERNAL_NAME optional
+      !IV_VALUELIST_ENTITYSET type STRING
+      !IV_VALUELIST_SERVICE_NAME type /IWBEP/MED_GRP_TECHNICAL_NAME optional
+      !IV_VALUELIST_SERVICE_VERSION type /IWBEP/MED_GRP_VERSION default 1
+      !IV_SEARCH_SUPPORTED type ABAP_BOOL
+    returning
+      value(RO_ANNOTATION) type ref to ZCL_FIS_SHLP_ANNOTATION .
+  class-methods GET_SEARCH_HELPS_FROM_DTEL_DOM
+    importing
+      !IV_FIELDNAME type FIELDNAME
+    returning
+      value(RT_SEARCH_HELP) type SHLP_DESCT .
+  class-methods GET_SEARCH_HELPS
+    importing
+      !IV_FIELDNAME type FIELDNAME
+      !IV_STRUCTNAME type TABNAME
+    returning
+      value(RT_SEARCH_HELP) type SHLP_DESCT .
+ENDCLASS.
+
+
+
+CLASS ZCL_FIS_SHLP_ANNOTATION IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_FIS_SHLP_ANNOTATION->ADD_DISPLAY_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_VALUELIST_PROPERTY          TYPE        STRING
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method add_display_parameter.
+    data:
+      lo_record type ref to /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly' ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>ADD_ENTITY_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ANNOTATED_ENTITY_TYPE       TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+* | [--->] IS_SEARCH_HELP                 TYPE        SHLP_DESCR
+* | [--->] IO_ODATA_MODEL                 TYPE REF TO /IWBEP/IF_MGW_ODATA_MODEL
+* | [--->] IV_RECURSION                   TYPE        ABAP_BOOL(optional)
+* | [<---] EV_VALUELIST_ENTITYSET         TYPE        STRING
+* | [<-->] CT_TYPES                       TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_ENTITY_TYPES
+* | [!CX!] /IWBEP/CX_MGW_MED_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD add_entity_type.
+    DATA:
+      ls_type        LIKE LINE OF ct_types,
+      lo_entity_type TYPE REF TO /iwbep/if_mgw_odata_entity_typ,
+      lo_entity_set  TYPE REF TO /iwbep/if_mgw_odata_entity_set,
+      lv_text_key    TYPE string,
+      lo_property    TYPE REF TO /iwbep/if_mgw_odata_property.
+
+    CHECK search_help_is_usable( is_search_help ) = abap_true.
+
+    ev_valuelist_entityset = entity_set_name( is_search_help ).
+
+    ls_type-name = ev_valuelist_entityset.
+    READ TABLE ct_types TRANSPORTING NO FIELDS WITH KEY name = ls_type-name.
+    IF sy-subrc = 0.
+      " been here, done this
+      ev_valuelist_entityset = ls_type-name.
+      RETURN.
+    ELSEIF iv_annotated_entity_type(6) = gc_ch
+        OR iv_annotated_entity_type(6) = gc_ct
+        OR iv_annotated_entity_type(6) = gc_sh.
+      " don't add value list entity sets for our artificial types
+      CLEAR ev_valuelist_entityset.
+      RETURN.
+    ENDIF.
+
+    ls_type-external_name = ls_type-name.
+    ls_type-attribute_struct = is_search_help-intdescr-selmethod.
+
+    lo_entity_type = io_odata_model->create_entity_type( ls_type-external_name ).
+    lo_entity_type->set_is_value_list( abap_true ).    "Filter 20.05.15
+    lo_entity_set = lo_entity_type->create_entity_set( ls_type-external_name ).
+    lo_entity_set->set_creatable( abap_false ).
+    lo_entity_set->set_updatable( abap_false ).
+    lo_entity_set->set_deletable( abap_false ).
+    lo_entity_set->create_annotation( /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )->add(
+      iv_key   = 'countable'  ##NO_TEXT
+      iv_value = 'false'      ##NO_TEXT
+    ).
+    IF is_search_help-shlptype = 'CH' OR is_search_help-shlptype = 'CT'.
+      " create entity set annotated as "aggregate", i.e. $select will trigger SELECT DISTINCT
+      lo_entity_set->create_annotation( /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+      )->add(
+        iv_key   = 'semantics'  ##NO_TEXT
+        iv_value = /iwbep/if_ana_odata_types=>gcs_ana_odata_semantic_value-query-aggregate && ``
+      ).
+    ENDIF.
+
+    " TODO: try to detect which CHAR field is the text field for the last key field
+    " TODO: then add a sap:text annotation to the last key field pointing to the text field
+    " TODO: should be easy for check tables with text table (CT): the text field is the only field from the text table
+
+    adjust_keys( CHANGING cs_search_help = is_search_help ).
+
+    SORT is_search_help-fieldprop BY shlpselpos.
+
+    LOOP AT is_search_help-fieldprop REFERENCE INTO DATA(ld_fieldprop).
+      READ TABLE is_search_help-fielddescr REFERENCE INTO DATA(ld_fielddescr) WITH KEY fieldname = ld_fieldprop->fieldname.
+
+      lo_property = lo_entity_type->create_property(
+        iv_property_name  = odata_name( ld_fielddescr->fieldname )
+        iv_abap_fieldname = ld_fielddescr->fieldname ).
+
+
+      lo_property->bind_data_element( ld_fielddescr->rollname && `` ).
+
+      IF ld_fielddescr->convexit IS NOT INITIAL.
+        lo_property->set_conversion_exit( ld_fielddescr->convexit ).
+        lo_property->enable_conversion( ).
+      ENDIF.
+
+      IF ld_fielddescr->keyflag = abap_true.
+        lo_property->set_is_key( ).
+      ENDIF.
+
+      IF ld_fieldprop->shlpinput = abap_false AND ld_fieldprop->shlpselpos = '00'.
+        lo_property->set_filterable( abap_false ).
+      ENDIF.
+
+      IF ld_fielddescr->datatype = 'CUKY'.
+        lo_property->set_semantic( 'currency-code' ). "#EC NOTEXT
+        IF ld_fielddescr->keyflag = abap_true.
+          " ISO codes in TCURC are not unique, so we have to use the internal SAP codes here
+          lo_property->disable_conversion( ).
+        ENDIF.
+      ENDIF.
+
+      " set sap:label based on mapped data element
+      lo_property->set_text_key(
+        iv_text_key = so_text_annotation->get_mapped_dtel( ld_fielddescr->rollname )
+        iv_text_object_type = 'B'
+        iv_create = abap_true ).
+
+      IF so_text_annotation->is_annotated_by_gw( ) EQ abap_true.
+        lv_text_key = so_text_annotation->get_mapped_dtel( ld_fielddescr->rollname ).
+        " heading text
+        lo_property->set_text_key(
+          iv_text_key = lv_text_key
+          iv_text_object_type = 'B'                         "#EC NOTEXT
+          iv_text_element_type = 'H'                        "#EC NOTEXT
+          iv_create = abap_true ).
+        " quickinfo text
+        lo_property->set_text_key(
+          iv_text_key = lv_text_key
+          iv_text_object_type = 'B'                         "#EC NOTEXT
+          iv_text_element_type = 'Q'                        "#EC NOTEXT
+          iv_create = abap_true ).
+        " F1 summary
+        lo_property->set_text_key(
+          iv_text_key = lv_text_key
+          iv_text_object_type = 'B'                         "#EC NOTEXT
+          iv_text_element_type = 'S' ).                     "#EC NOTEXT
+        " F1 documentation
+        lo_property->set_text_key(
+          iv_text_key = lv_text_key
+          iv_text_object_type = 'B'                         "#EC NOTEXT
+          iv_text_element_type = 'D' ).                     "#EC NOTEXT
+      ENDIF.
+
+      CASE ld_fielddescr->inttype.
+        WHEN cl_abap_typedescr=>typekind_string.
+          lo_property->set_type_edm_string( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+        WHEN cl_abap_typedescr=>typekind_char.
+          " TODO: add more domains that are used as Boolean with 'X' = true, ' ' = false
+          IF ld_fielddescr->domname = 'AS4FLAG'
+          OR ld_fielddescr->domname = 'XFELD'
+          OR ( ld_fielddescr->domname CP '*BOOL*' AND ld_fielddescr->leng = 1 ).
+            lo_property->set_type_edm_boolean( ).
+          ELSE.
+            lo_property->set_type_edm_string( ).
+            IF ld_fielddescr->lowercase = abap_false.
+              lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+                iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+              )->add(
+                iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-display_format
+                iv_value = 'UpperCase'          ##NO_TEXT
+             ).
+            ENDIF.
+          ENDIF.
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+          lo_property->set_internal_length( ld_fielddescr->intlen + 0 ).
+          lo_property->set_maxlength( ld_fielddescr->outputlen + 0 ).
+        WHEN cl_abap_typedescr=>typekind_packed.
+          lo_property->set_type_edm_decimal( ).
+          lo_property->set_precison( ld_fielddescr->decimals + 0 ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+          lo_property->set_internal_length( ld_fielddescr->intlen + 0 ).
+          lo_property->set_maxlength( 2 * ld_fielddescr->intlen - 1 ).
+        WHEN cl_abap_typedescr=>typekind_date.
+          lo_property->set_type_edm_datetime( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+          lo_property->set_internal_length( ld_fielddescr->intlen + 0 ).
+          lo_property->set_maxlength( ld_fielddescr->outputlen + 0 ).
+          lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+            iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+          )->add(
+            iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-display_format
+            iv_value = 'Date'          ##NO_TEXT
+         ).
+        WHEN cl_abap_typedescr=>typekind_num.
+          lo_property->set_type_edm_string( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+          lo_property->set_internal_length( ld_fielddescr->intlen + 0 ).
+          lo_property->set_maxlength( ld_fielddescr->outputlen + 0 ).
+          " TODO: new annotation for NUMC?
+          lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+            iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+          )->add(
+            iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-display_format
+            iv_value = 'NonNegative'
+         ).
+        WHEN cl_abap_typedescr=>typekind_int.
+          lo_property->set_type_edm_int32( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+        WHEN cl_abap_typedescr=>typekind_int2.
+          lo_property->set_type_edm_int16( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+        WHEN cl_abap_typedescr=>typekind_int1.
+          lo_property->set_type_edm_byte( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+        WHEN cl_abap_typedescr=>typekind_float
+          OR cl_abap_typedescr=>typekind_decfloat16
+          OR cl_abap_typedescr=>typekind_decfloat34.
+          lo_property->set_type_edm_double( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+        WHEN cl_abap_typedescr=>typekind_xstring.
+          lo_property->set_type_edm_binary( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+          lo_property->set_maxlength( ld_fielddescr->outputlen + 0 ).
+        WHEN cl_abap_typedescr=>typekind_hex.
+          lo_property->set_type_edm_binary( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+          lo_property->set_internal_length( ld_fielddescr->intlen + 0 ).
+          lo_property->set_maxlength( ld_fielddescr->outputlen + 0 ).
+        WHEN cl_abap_typedescr=>typekind_time.
+          lo_property->set_type_edm_time( ).
+          lo_property->set_internal_type( ld_fielddescr->inttype ).
+        WHEN OTHERS.
+          lo_property->set_type_edm_string( ).
+          lo_property->set_internal_type( cl_abap_typedescr=>typekind_string ).
+      ENDCASE.
+    ENDLOOP.
+
+    DATA(lt_types) = CAST /iwbep/if_mgw_odata_re_model( io_odata_model )->get_entity_types( ).
+    READ TABLE lt_types INTO ls_type WITH KEY name = ls_type-name.
+    " Adding ValueList annotations to entity types created for search helps
+    " approximately doubles the size of the metadata document, so we suppress the properties:
+    if iv_recursion is initial.
+      CLEAR ls_type-properties. "non recursive
+     endif.
+    INSERT ls_type INTO TABLE ct_types.
+  ENDMETHOD.                                             "#EC CI_VALPAR
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_FIS_SHLP_ANNOTATION->ADD_FILTERONLY_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_VALUELIST_PROPERTY          TYPE        STRING
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method add_filteronly_parameter.
+    data:
+      lo_record type ref to /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterFilterOnly' ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_FIS_SHLP_ANNOTATION->ADD_INOUT_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_PROPERTY                    TYPE        STRING
+* | [--->] IV_VALUELIST_PROPERTY          TYPE        STRING
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD add_inout_parameter.
+    DATA:
+      lo_record TYPE REF TO /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterInOut' ).
+    lo_record->create_property( 'LocalDataProperty' )->create_simple_value( )->set_property_path( iv_property ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+*    mv_search_focus = iv_property.
+*    lo_record->create_property( 'SearchFocus' )->create_simple_value( )->set_string( mv_search_focus ).
+
+
+    ro_annotation = me.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_FIS_SHLP_ANNOTATION->ADD_IN_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_PROPERTY                    TYPE        STRING
+* | [--->] IV_VALUELIST_PROPERTY          TYPE        STRING
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method add_in_parameter.
+    data:
+      lo_record type ref to /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterIn' ).
+    lo_record->create_property( 'LocalDataProperty' )->create_simple_value( )->set_property_path( iv_property ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_FIS_SHLP_ANNOTATION->ADD_OUT_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_PROPERTY                    TYPE        STRING
+* | [--->] IV_VALUELIST_PROPERTY          TYPE        STRING
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method add_out_parameter.
+    data:
+      lo_record type ref to /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterOut' ).
+    lo_record->create_property( 'LocalDataProperty' )->create_simple_value( )->set_property_path( iv_property ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>ADJUST_KEYS
+* +-------------------------------------------------------------------------------------------------+
+* | [<-->] CS_SEARCH_HELP                 TYPE        SHLP_DESCR
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method adjust_keys.
+    data:
+      lt_fields     type standard table of dfies,
+      ld_fielddescr type ref to dfies,
+      lv_no_imp_exp type abap_bool,
+      lv_key_found  type abap_bool.
+
+    case cs_search_help-intdescr-selmtype.
+      when 'X'.
+* Note 2248734 some SH end up without Keys when field modified is checked
+*        return. " fielddescr->keyflag is correct for X
+        call function 'DDIF_FIELDINFO_GET'
+          exporting
+            tabname   = cs_search_help-intdescr-selmethod
+          tables
+            dfies_tab = lt_fields
+          exceptions
+            others    = 0.
+
+        loop at lt_fields reference into data(ld_fields) where keyflag = abap_true.
+          read table cs_search_help-fielddescr reference into ld_fielddescr with key fieldname = ld_fields->fieldname.
+          check sy-subrc = 0.
+          ld_fielddescr->keyflag = abap_true.
+          lv_key_found = abap_true.
+        endloop.
+
+      when 'T' or 'V'.
+        " make sure all table key fields are marked as key
+
+        call function 'DDIF_FIELDINFO_GET'
+          exporting
+            tabname   = cs_search_help-intdescr-selmethod
+          tables
+            dfies_tab = lt_fields
+          exceptions
+            others    = 0.
+
+        loop at lt_fields reference into data(ld_field) where keyflag = abap_true.
+          read table cs_search_help-fielddescr reference into ld_fielddescr with key fieldname = ld_field->fieldname.
+          check sy-subrc = 0.
+          ld_fielddescr->keyflag = abap_true.
+          lv_key_found = abap_true.
+        endloop.
+
+        if lv_key_found = abap_false and cs_search_help-intdescr-selmtype = 'V'.
+        " the key flag is sometimes set for no field at all
+         loop at cs_search_help-fielddescr reference into ld_fielddescr where keyflag = abap_true.
+          lv_key_found = abap_true.
+          exit.
+         endloop.
+        endif.
+*      when 'V'.
+*        " the key flag is sometimes set for no field at all
+*        loop at cs_search_help-fielddescr reference into ld_fielddescr where keyflag = abap_true.
+*          lv_key_found = abap_true.
+*          exit.
+*        endloop.
+    endcase.
+
+    if lv_key_found = abap_false.
+      " no key determined, so every property is key if it is an input or output parameter
+      loop at cs_search_help-fielddescr reference into ld_fielddescr.
+        READ TABLE cs_search_help-fieldprop REFERENCE INTO DATA(ld_fieldprop) WITH KEY fieldname = ld_fielddescr->fieldname.
+        if sy-subrc = 0 and ( ld_fieldprop->shlpoutput = abap_true or ld_fieldprop->shlpinput = abap_true ).
+         ld_fielddescr->keyflag = abap_true.
+         lv_no_imp_exp = abap_true.
+        endif.
+      endloop.
+      if lv_no_imp_exp = abap_false.
+        " no key determined, so every property is key
+       loop at cs_search_help-fielddescr reference into ld_fielddescr.
+         ld_fielddescr->keyflag = abap_true.
+       endloop.
+      endif.
+    endif.
+
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>CREATE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IO_ODATA_MODEL                 TYPE REF TO /IWBEP/IF_MGW_ODATA_MODEL
+* | [--->] IO_VOCAN_MODEL                 TYPE REF TO /IWBEP/IF_MGW_VOCAN_MODEL
+* | [--->] IV_NAMESPACE                   TYPE        STRING
+* | [--->] IV_ENTITYTYPE                  TYPE        STRING
+* | [--->] IV_PROPERTY                    TYPE        STRING
+* | [--->] IV_SEARCH_HELP                 TYPE        SHLPNAME(optional)
+* | [--->] IV_SEARCH_SUPPORTED            TYPE        ABAP_BOOL(optional)
+* | [--->] IV_SEARCH_HELP_FIELD           TYPE        FIELDNAME(optional)
+* | [--->] IV_QUALIFIER                   TYPE        STRING(optional)
+* | [--->] IV_LANGUAGE_DEPENDENT_LABELS   TYPE        ABAP_BOOL(optional)
+* | [--->] IV_LABEL                       TYPE        CSEQUENCE(optional)
+* | [--->] IV_VALUELIST_ENTITYSET         TYPE        STRING
+* | [--->] IV_VALUELIST_PROPERTY          TYPE        STRING
+* | [--->] IV_VALUELIST_SERVICE_NAME      TYPE        /IWBEP/MED_GRP_TECHNICAL_NAME(optional)
+* | [--->] IV_VALUELIST_SERVICE_VERSION   TYPE        /IWBEP/MED_GRP_VERSION (default =1)
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* | [!CX!] /IWBEP/CX_MGW_MED_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+method create.
+  data:
+    ls_search_help      type shlp_descr_t,
+    lv_search_supported type abap_bool,
+    lv_valuelist_entitytype TYPE /IWBEP/MED_EXTERNAL_NAME,
+    lv_VALUE_LIST_TYPE_PROPERTY type /iwbep/mgw_med_prop_value_list value 'S',
+    lv_label            type string.
+    DATA lo_entity_type            TYPE REF TO /iwbep/if_mgw_odata_entity_typ."Note 2304243
+
+  if iv_search_help is not initial.
+    call function 'F4IF_GET_SHLP_DESCR'
+      exporting
+        shlpname = iv_search_help
+      importing
+        shlp     = ls_search_help.
+    if ls_search_help-intdescr-issimple = abap_false.
+      raise exception type cx_fatal_Exception.
+*        exporting
+*          textid   = cx_fis_error=>invalid_search_help
+*          shlpname = iv_search_help.
+    endif.
+    lv_search_supported = ls_search_help-intdescr-autosuggest.
+  else.
+    lv_search_supported = iv_search_supported.
+  endif.
+
+  if iv_label is supplied.
+    lv_label = iv_label.
+  else.
+    lv_label = ls_search_help-intdescr-ddtext.
+  endif.
+
+*  move iv_valuelist_entityset to lv_valuelist_entitytype.                                                        "Note 2304243
+  lv_valuelist_entitytype = substring( val = iv_valuelist_entityset len = strlen( iv_valuelist_entityset ) - 3 ). "Note 2304243
+  TRY.                                                                                                            "Note 2304243
+        lo_entity_type = io_odata_model->get_entity_type( iv_entity_name = lv_valuelist_entitytype ).             "Note 2304243
+        lo_entity_type->set_is_value_list( abap_true ).                                                           "Note 2304243
+      CATCH /iwbep/cx_mgw_med_exception.                                                                          "Note 2304243
+  ENDTRY.                                                                                                         "Note 2304243
+
+  IF lv_valuelist_entitytype(6) = ZCL_FIS_SHLP_ANNOTATION=>gc_fv.
+      lv_VALUE_LIST_TYPE_PROPERTY = 'F'.
+  ENDIF.
+* check if data_element_text_method is available
+  text_method_is_available( ).
+
+  set_label_from_text_element( IV_LANGUAGE_DEPENDENT_LABELS ).
+
+  ro_annotation = create_one( io_odata_model               = io_odata_model
+                              io_vocan_model               = io_vocan_model
+                              iv_namespace                 = iv_namespace
+                              iv_entitytype                = iv_entitytype
+                              iv_property                  = iv_property
+                              iv_qualifier                 = iv_qualifier
+                              iv_valuelist_entityset       = iv_valuelist_entityset
+                              iv_valuelist_service_name    = iv_valuelist_service_name
+                              iv_valuelist_service_version = iv_valuelist_service_version
+                              iv_label                     = lv_label
+                              iv_value_list_type           = lv_VALUE_LIST_TYPE_PROPERTY
+                              iv_valuelist_entitytype      = lv_valuelist_entitytype
+                              iv_search_supported          = lv_search_supported ).
+
+  ro_annotation->add_inout_parameter(
+    iv_property           = iv_property
+    iv_valuelist_property = iv_valuelist_property
+  ).
+
+endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>CREATE_FOR_ALL
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IO_ODATA_MODEL                 TYPE REF TO /IWBEP/IF_MGW_ODATA_MODEL
+* | [--->] IO_VOCAN_MODEL                 TYPE REF TO /IWBEP/IF_MGW_VOCAN_MODEL
+* | [--->] IV_NAMESPACE                   TYPE        STRING
+* | [--->] IV_LANGUAGE_DEPENDENT_LABELS   TYPE        ABAP_BOOL(optional)
+* | [--->] IV_RECURSION                   TYPE        ABAP_BOOL (default ='X')
+* | [--->] IT_FIELDS                      TYPE        TY_TT_TABNAME_FIELDNAME(optional)
+* | [--->] IT_EXCLUDED_FIELDS             TYPE        TY_TT_TABNAME_FIELDNAME(optional)
+* | [--->] IT_EXCLUDED_SEARCH_HELPS       TYPE        TT_SEARCH_HELPS(optional)
+* | [!CX!] /IWBEP/CX_MGW_MED_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+METHOD CREATE_FOR_ALL.
+  DATA:
+    lv_structname             TYPE tabname,
+    lv_whitelisted_only       TYPE abap_bool,
+    lo_annotation             TYPE REF TO ZCL_FIS_SHLP_ANNOTATION,
+    lo_entity_type            TYPE REF TO /iwbep/if_mgw_odata_entity_typ,
+    lo_complex_type           TYPE REF TO /iwbep/if_mgw_odata_cmplx_type,
+    lo_property               TYPE REF TO /iwbep/if_mgw_odata_property,
+    lo_re_property            TYPE REF TO /iwbep/if_mgw_odata_re_prop,
+    lt_search_helps           TYPE shlp_descr_tab_t,
+    lt_search_helps_rds       TYPE shlp_descr_tab_t,
+    ld_search_help            TYPE REF TO shlp_descr_t,
+    lv_qualifier              TYPE string,
+    ld_property_rds           TYPE REF TO /iwbep/if_mgw_odata_re_prop=>ty_t_mgw_odata_properties,
+    lv_default_help           TYPE shlp_descr_t-shlpname,
+    lv_valuelist_entityset    TYPE string,
+    lv_valuelist_entitytype   TYPE /iwbep/med_external_name,
+    lt_data_elements          TYPE tt_private_annotation,
+    ls_data_element           TYPE LINE OF tt_private_annotation,
+    lo_odata_model            TYPE REF TO /iwbep/cl_mgw_odata_model,
+    lv_fieldname              TYPE fieldname,
+    lv_shlpname               TYPE shlpname,
+    l_tabix                   TYPE sy-tabix,
+    lt_properties_transl_name TYPE TABLE OF /iwbep/if_mgw_med_odata_types=>ty_s_med_entity_type,
+    ls_property_transl_name   TYPE /iwbep/if_mgw_med_odata_types=>ty_s_med_entity_type,
+
+    BEGIN OF ls_domain,
+      search_help TYPE shlp_descr_t,
+      property    TYPE /iwbep/if_mgw_med_odata_types=>ty_s_med_property,
+    END OF ls_domain,
+    lt_domains LIKE HASHED TABLE OF ls_domain WITH UNIQUE KEY search_help-shlpname.
+
+  DATA: lv_ext_name TYPE char40,
+        lv_name     TYPE char40.
+  DATA lo_model TYPE REF TO /iwbep/if_mgw_odata_re_model.
+  DATA lo_entity_type_recursive TYPE REF TO /iwbep/if_mgw_odata_re_etype.
+  DATA lo_entity_type_descr_tab TYPE REF TO cl_abap_tabledescr.
+  DATA lt_properties TYPE /iwbep/if_mgw_odata_re_prop=>ty_t_mgw_odata_properties.
+  DATA ls_property_rds TYPE LINE OF /iwbep/if_mgw_odata_re_prop=>ty_t_mgw_odata_properties.
+  FIELD-SYMBOLS <fs_property> LIKE LINE OF lt_properties.
+  DATA:ls_entity_order TYPE abap_sortorder.
+  DATA ld_local_data_property TYPE REF TO /iwbep/if_mgw_med_odata_types=>ty_s_med_property.
+
+* check if data_element_text_method is available
+  text_method_is_available( ).
+
+  set_label_from_text_element( iv_language_dependent_labels ).
+
+  so_text_annotation = ZCL_FIS_TEXT_ANNOTATION=>create( io_odata_model ).
+
+  IF lines( it_fields ) > 0.
+    lv_whitelisted_only = abap_true.
+  ENDIF.
+
+  " process structure binding of all entity types and complex types
+  DATA(lt_types) = CAST /iwbep/if_mgw_odata_re_model( io_odata_model )->get_entity_types( ).
+  DATA(lt_complex_types) = CAST /iwbep/if_mgw_odata_re_model( io_odata_model )->get_complex_types( ).
+  APPEND LINES OF lt_complex_types TO lt_types.
+
+  LOOP AT lt_types REFERENCE INTO DATA(ld_type)." where attribute_struct np '*=>*'.
+    lv_structname = ld_type->attribute_struct.
+
+    " check whether to process this structure
+    IF lv_whitelisted_only = abap_true.
+      READ TABLE it_fields TRANSPORTING NO FIELDS WITH KEY tabname = lv_structname.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+    ENDIF.
+    READ TABLE it_excluded_fields TRANSPORTING NO FIELDS WITH KEY tabname = lv_structname fieldname = space.
+    IF sy-subrc = 0.
+      CONTINUE.
+    ENDIF.
+
+    lo_model ?= io_odata_model.
+    "BEGIN: Get type R and type X separately, I039500, 2015.08.03, ER9K052520
+    DATA lo_complex_entity_type_re TYPE REF TO /iwbep/if_mgw_odata_re_cplxtyp.
+    CASE ld_type->type.
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_container_type-data_object.
+        lo_entity_type_recursive = lo_model->get_entity_type_by_tech_name( ld_type->name ).
+        lt_properties = lo_entity_type_recursive->get_properties( ).
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_container_type-complex.
+        lo_complex_entity_type_re = lo_model->get_complex_type( ld_type->name ).
+        lt_properties = lo_complex_entity_type_re->get_properties( ).
+      WHEN OTHERS.
+        "Exception to be handled
+    ENDCASE.
+    "END: Get type R and type X separately, I039500, 2015.08.03, ER9K052520
+
+* translate external_name
+    REFRESH lt_properties_transl_name.
+    LOOP AT ld_type->properties INTO DATA(ls_property_chng) .
+      DATA(lv_external_name) = odata_name( ls_property_chng-external_name ).
+      ls_property_chng-external_name = lv_external_name.
+      MOVE-CORRESPONDING ls_property_chng TO ls_property_transl_name.
+      APPEND ls_property_transl_name TO lt_properties_transl_name.
+    ENDLOOP.
+
+    " process all properties of the entity type
+    LOOP AT ld_type->properties REFERENCE INTO DATA(ld_property).
+      DATA(lv_property_name) = 'PRCTR'."FOR Debugging
+      IF ld_property->name = lv_property_name.
+        ASSERT 1 = 1.
+      ENDIF.
+      " check whether to process this structure component
+      IF lv_whitelisted_only = abap_true.
+        READ TABLE it_fields TRANSPORTING NO FIELDS WITH KEY tabname = lv_structname fieldname = ld_property->name.
+        IF sy-subrc <> 0.
+          READ TABLE it_fields TRANSPORTING NO FIELDS WITH KEY tabname = lv_structname fieldname = space.
+          IF sy-subrc <> 0.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+      READ TABLE it_excluded_fields TRANSPORTING NO FIELDS WITH KEY tabname = lv_structname fieldname = ld_property->name.
+      IF sy-subrc = 0.
+        CONTINUE.
+      ENDIF.
+
+      IF lv_structname IS NOT INITIAL.
+        lt_search_helps = get_search_helps( iv_fieldname   = ld_property->name && ``
+                                            iv_structname  = lv_structname ).
+      ELSE.
+        READ TABLE lt_properties INTO ls_property_rds WITH TABLE KEY technical_name = ld_property->name.
+        IF sy-subrc = 0.
+          TRY.
+              ls_entity_order-name = ls_property_rds-property->get_data_element( ).
+            CATCH /iwbep/cx_mgw_med_exception.
+              assert 1 = 1.
+          ENDTRY.
+          SPLIT ls_entity_order-name AT |-| INTO DATA(lv_viewname) lv_fieldname.
+          IF lv_fieldname IS NOT INITIAL.
+*            Begin of note 2271111
+            READ TABLE it_excluded_fields TRANSPORTING NO FIELDS WITH KEY tabname = lv_viewname fieldname = lv_fieldname.
+            IF sy-subrc = 0.
+              CONTINUE.
+            ENDIF.
+*            End of 2271111
+            lt_search_helps = get_search_helps( iv_fieldname   = lv_fieldname && ``
+                                        iv_structname  = CONV #( lv_viewname ) ).
+          ELSE.
+            MOVE ls_entity_order-name TO lv_fieldname.
+            " recursive case: get search help for data element or domain
+            CALL METHOD get_search_helps_from_dtel_dom
+              EXPORTING
+                iv_fieldname   = lv_fieldname
+              RECEIVING
+                rt_search_help = lt_search_helps.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      " we currently only support these four search help types
+      DELETE lt_search_helps WHERE shlptype <> 'SH'
+                               AND shlptype <> 'CH' AND shlptype <> 'CT'
+                               AND shlptype <> 'FV'.
+
+      " mark first search help that supports autosuggest as default => no qualifier
+      READ TABLE lt_search_helps REFERENCE INTO ld_search_help WITH KEY intdescr-autosuggest = abap_true.
+      IF sy-subrc = 0.
+        lv_default_help = ld_search_help->shlpname.
+      ELSE.
+        READ TABLE lt_search_helps REFERENCE INTO ld_search_help INDEX 1.
+        IF sy-subrc = 0.
+          lv_default_help = ld_search_help->shlpname.
+        ENDIF.
+      ENDIF.
+
+      LOOP AT lt_search_helps REFERENCE INTO ld_search_help.
+        READ TABLE it_excluded_search_helps TRANSPORTING NO FIELDS WITH KEY table_line = ld_search_help->shlpname.
+        IF sy-subrc = 0.
+          CONTINUE.
+        ENDIF.
+
+        lv_shlpname = 'FARP_T005S'.
+        IF ld_search_help->shlpname  = lv_shlpname.
+          ASSERT 1 = 1.
+        ENDIF.
+
+        CASE ld_search_help->shlptype.
+          WHEN 'SH' OR 'CH' OR 'CT'.
+*            IF ld_search_help->intdescr-selmethod IS INITIAL.
+*              CONTINUE.
+*            ENDIF.
+
+            add_entity_type( EXPORTING iv_annotated_entity_type = ld_type->external_name
+                                       io_odata_model           = io_odata_model
+                                       is_search_help           = ld_search_help->*
+                                       iv_recursion              = iv_recursion
+                             IMPORTING ev_valuelist_entityset   = lv_valuelist_entityset
+                             CHANGING  ct_types                 = lt_types ).
+
+            CHECK lv_valuelist_entityset IS NOT INITIAL.
+
+            IF ld_search_help->shlpname = lv_default_help.
+              CLEAR lv_qualifier.
+            ELSE.
+              lv_qualifier = odata_name( ld_search_help->shlpname ).
+            ENDIF.
+
+            MOVE lv_valuelist_entityset TO lv_valuelist_entitytype.
+            lo_annotation = create_one( io_odata_model         = io_odata_model
+                                        io_vocan_model         = io_vocan_model
+                                        iv_namespace           = iv_namespace
+                                        iv_entitytype          = ld_type->external_name && ``
+                                        iv_property            = ld_property->external_name && ``
+                                        iv_qualifier           = lv_qualifier
+                                        iv_label               = ld_search_help->intdescr-ddtext
+                                        iv_value_list_type     = 'S'"/IWBEP/IF_MGW_ODATA_PROPERTY=>GCS_VALUE_LIST_TYPE_PROPERTY-STANDARD
+                                        iv_valuelist_entitytype = lv_valuelist_entitytype
+                                        iv_valuelist_entityset = lv_valuelist_entityset
+                                        iv_search_supported    = ld_search_help->intdescr-autosuggest ).
+
+            SORT ld_search_help->fieldprop BY shlplispos.
+            LOOP AT ld_search_help->fieldprop REFERENCE INTO DATA(ld_fieldprop).
+              " Structure field is NOT bound to search help parameter
+              " - part of hit list                   => DisplayOnly
+              " Structure field is bound to search help parameter
+              " - input parameter or selection field => In
+              " - output parameter or hit list field => Out
+              " - both of the above                  => InOut
+              READ TABLE ld_search_help->interface REFERENCE INTO DATA(ld_interface) WITH KEY shlpfield = ld_fieldprop->fieldname.
+              IF sy-subrc <> 0.
+                " not in interface of collective search help, so no structure binding
+                IF ld_fieldprop->shlplispos <> '00'.
+                  lo_annotation->add_display_parameter( odata_name( ld_fieldprop->fieldname ) ).
+                ENDIF.
+              ELSE.
+*                READ TABLE ld_type->properties REFERENCE INTO DATA(ld_local_data_property) WITH KEY name = ld_interface->valfield.
+
+                "BEGIN: I039500, 2015.08.05, assigne local data property only when valfield is not empty, ER9K052520
+*                READ TABLE lt_properties_transl_name REFERENCE INTO DATA(ld_local_data_property_1) WITH KEY name = ld_interface->valfield.
+*                IF sy-subrc = 0.
+*                  l_tabix = sy-tabix.
+*                ELSE.
+*                  READ TABLE lt_properties_transl_name REFERENCE INTO DATA(ld_local_data_property_2) WITH KEY external_name = ld_interface->valfield.
+*                  IF sy-subrc = 0.
+*                    l_tabix = sy-tabix.
+*                  ENDIF.
+*                ENDIF.
+*                READ TABLE ld_type->properties REFERENCE INTO DATA(ld_local_data_property) INDEX l_tabix.
+*                IF sy-subrc <> 0.
+                CLEAR ld_local_data_property.
+                l_tabix = -1.
+                IF ld_interface->valfield IS NOT INITIAL.
+                  READ TABLE lt_properties_transl_name TRANSPORTING NO FIELDS WITH KEY name = ld_interface->valfield.
+                  IF sy-subrc = 0.
+                    l_tabix = sy-tabix.
+                  ELSE.
+                    READ TABLE lt_properties_transl_name TRANSPORTING NO FIELDS WITH KEY external_name = ld_interface->valfield.
+                    IF sy-subrc = 0.
+                      l_tabix = sy-tabix.
+                    ENDIF.
+                  ENDIF.
+                  IF l_tabix <> -1.
+                    READ TABLE ld_type->properties REFERENCE INTO ld_local_data_property INDEX l_tabix.
+                  ENDIF.
+                ENDIF.
+
+                IF ld_interface->valfield IS INITIAL OR ld_local_data_property IS INITIAL.
+                "END: I039500, 2015.08.05, assigne local data property only when valfield is not empty, ER9K052520
+
+                  " not bound to entity type property, so no field transport
+                  IF ld_fieldprop->shlplispos <> '00'.
+                    lo_annotation->add_display_parameter( odata_name( ld_fieldprop->fieldname ) ).
+                  ENDIF.
+                ELSE.
+                  IF ld_fieldprop->shlpinput = abap_true OR ld_fieldprop->shlpselpos <> '00'.
+                    " In or InOut
+                    IF ld_fieldprop->shlpoutput = abap_true OR ld_fieldprop->shlplispos <> '00'.
+                      lo_annotation->add_inout_parameter(
+                        iv_property           = ld_local_data_property->external_name && ``
+                        iv_valuelist_property = odata_name( ld_fieldprop->fieldname ) ).
+                    ELSE.
+                      lo_annotation->add_in_parameter(
+                        iv_property           = ld_local_data_property->external_name && ``
+                        iv_valuelist_property = odata_name( ld_fieldprop->fieldname ) ).
+                    ENDIF.
+                  ELSEIF ld_fieldprop->shlpoutput = abap_true OR ld_fieldprop->shlplispos <> '00'.
+                    lo_annotation->add_out_parameter(
+                      iv_property           = ld_local_data_property->external_name && ``
+                      iv_valuelist_property = odata_name( ld_fieldprop->fieldname ) ).
+                  ELSEIF ld_fieldprop->shlplispos <> '00'.
+                    lo_annotation->add_display_parameter( odata_name( ld_fieldprop->fieldname ) ).
+                  ENDIF.
+                ENDIF.
+              ENDIF.
+            ENDLOOP.
+
+          WHEN 'FV'. " domain fixed values
+            CHECK ld_property->core_type <> /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-boolean.
+            MOVE  entity_set_name( ld_search_help->* ) TO lv_valuelist_entitytype.
+            ZCL_FIS_SHLP_ANNOTATION=>create_one(
+              io_odata_model         = io_odata_model
+              io_vocan_model         = io_vocan_model
+              iv_namespace           = iv_namespace
+              iv_entitytype          = ld_type->external_name && ``
+              iv_property            = ld_property->external_name && ``
+              iv_label               = ld_search_help->intdescr-title
+              iv_value_list_type     = 'F'"/iwbep/if_mgw_med_odata_types=>gcs_value_list_type_property-fixed_values
+              iv_valuelist_entitytype = lv_valuelist_entitytype
+              iv_valuelist_entityset =  entity_set_name( ld_search_help->* )   "entity_set_name( ld_search_help->shlpname )
+              iv_search_supported    = abap_false
+            )->add_inout_parameter(
+              iv_property            = ld_property->external_name && ``
+              iv_valuelist_property  = 'Code' ##NO_TEXT
+            )->add_display_parameter( 'Text' ).
+
+            ls_domain-search_help = ld_search_help->*.
+            ls_domain-property = ld_property->*.
+            INSERT ls_domain INTO TABLE lt_domains.
+
+        ENDCASE.
+      ENDLOOP.
+    ENDLOOP.
+  ENDLOOP.
+
+  LOOP AT lt_domains REFERENCE INTO DATA(ld_domain).
+*    lo_entity_type = io_odata_model->create_entity_type( entity_set_name( ld_domain->search_help-shlpname ) && `` ).
+    lo_entity_type = io_odata_model->create_entity_type( entity_set_name( ld_domain->search_help ) && `` ).
+    lo_entity_type->set_is_value_list( abap_true ).  "Filter 20.05.15
+*    lo_entity_type->create_entity_set( entity_set_name( ld_domain->search_help-shlpname ) && ``
+    lo_entity_type->create_entity_set( entity_set_name( ld_domain->search_help ) && ``
+)->create_annotation( /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)->add(
+  iv_key   = 'semantics'     ##NO_TEXT
+  iv_value = 'fixed-values'  ##NO_TEXT
+).
+
+    lo_property = lo_entity_type->create_property(
+      iv_property_name  = 'Code'        ##NO_TEXT
+      iv_abap_fieldname = 'DOMVALUE_L' ).
+    lo_property->set_is_key( ).
+    CASE ld_domain->property-core_type.
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-string.
+        lo_property->set_type_edm_string( ).
+        lo_property->set_maxlength( ld_domain->property-length ).
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-int32.
+        lo_property->set_type_edm_int32( ).
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-int16.
+        lo_property->set_type_edm_int16( ).
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-byte.
+        lo_property->set_type_edm_byte( ).
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-sbyte.
+        lo_property->set_type_edm_sbyte( ).
+      WHEN /iwbep/if_mgw_med_odata_types=>gcs_edm_data_types-decimal.
+        lo_property->set_type_edm_decimal( ).
+        lo_property->set_maxlength( 2 * ld_domain->property-internal_length - 1 ).
+        lo_property->set_precison( ld_domain->property-decimals ).
+    ENDCASE.
+    lo_property->set_internal_type( ld_domain->property-internal_type ).
+    lo_property->set_internal_length( ld_domain->property-internal_length ).
+    lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace = /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )->add(
+      iv_key   = 'text'
+      iv_value = 'Text' ##NO_TEXT
+    ).
+    lo_property->set_label_from_text_element(
+      iv_text_element_symbol = 'VAL'
+      iv_text_element_container = 'ZCL_FIS_SHLP_ANNOTATION'
+    ).
+
+    lo_property = lo_entity_type->create_property(
+      iv_property_name  = 'Text'       ##NO_TEXT
+      iv_abap_fieldname = 'DDTEXT' ).
+    lo_property->set_internal_type( 'C' ).
+    lo_property->set_maxlength( 60 ).
+    lo_property->set_type_edm_string( ).
+    lo_property->set_maxlength( 60 ).
+    lo_property->set_text_key(
+      iv_text_key         = 'DD07V-DDTEXT'
+      iv_text_object_type = 'B'
+      iv_create           = abap_true ).
+
+  ENDLOOP.
+
+*    SET RUN TIME ANALYZER OFF.
+ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>CREATE_ONE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IO_ODATA_MODEL                 TYPE REF TO /IWBEP/IF_MGW_ODATA_MODEL
+* | [--->] IO_VOCAN_MODEL                 TYPE REF TO /IWBEP/IF_MGW_VOCAN_MODEL
+* | [--->] IV_NAMESPACE                   TYPE        STRING
+* | [--->] IV_ENTITYTYPE                  TYPE        STRING
+* | [--->] IV_PROPERTY                    TYPE        STRING
+* | [--->] IV_QUALIFIER                   TYPE        STRING(optional)
+* | [--->] IV_LABEL                       TYPE        CSEQUENCE(optional)
+* | [--->] IV_VALUE_LIST_TYPE             TYPE        CHAR1(optional)
+* | [--->] IV_VALUELIST_ENTITYTYPE        TYPE        /IWBEP/MED_EXTERNAL_NAME(optional)
+* | [--->] IV_VALUELIST_ENTITYSET         TYPE        STRING
+* | [--->] IV_VALUELIST_SERVICE_NAME      TYPE        /IWBEP/MED_GRP_TECHNICAL_NAME(optional)
+* | [--->] IV_VALUELIST_SERVICE_VERSION   TYPE        /IWBEP/MED_GRP_VERSION (default =1)
+* | [--->] IV_SEARCH_SUPPORTED            TYPE        ABAP_BOOL
+* | [<-()] RO_ANNOTATION                  TYPE REF TO ZCL_FIS_SHLP_ANNOTATION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD create_one.
+    DATA:
+      lo_ann_target TYPE REF TO /iwbep/if_mgw_vocan_ann_target,
+      lo_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+      lo_record     TYPE REF TO /iwbep/if_mgw_vocan_record.
+
+    " should have used builder pattern and passed this and the two models to constructor of builder
+*    if sv_namespace is initial.                             "Note 2181616
+*      sv_namespace = iv_namespace.                          "Note 2181616
+*      io_odata_model->set_schema_namespace( sv_namespace ). "Note 2181616
+*    endif.                                                  "Note 2181616
+    io_odata_model->set_schema_namespace( iv_namespace ).  "Note 2181616
+
+    DATA: lv_entitytype TYPE /iwbep/med_external_name, "Filter 20.05.15
+          lv_property   TYPE /iwbep/med_external_name. "Filter 20.05.15
+
+    MOVE: iv_entitytype TO lv_entitytype, "Filter 20.05.15
+          iv_property   TO lv_property.   "Filter 20.05.15
+
+*    CHECK text_method_is_available( ) = abap_true.
+
+    TRY.
+        DATA(lo_property) = io_odata_model->get_entity_type( lv_entitytype )->get_property( lv_property ). "Filter 20.05.15
+        lo_property->set_value_list( iv_value_list_type = iv_value_list_type ). "Filter 20.05.15
+      CATCH /iwbep/cx_mgw_med_exception.
+    ENDTRY.
+
+    TRY.
+        DATA(lo_complex_type_property) = io_odata_model->get_complex_type( lv_entitytype )->get_property( lv_property )."Filter 20.05.15
+        lo_complex_type_property->set_value_list( iv_value_list_type = iv_value_list_type ).                            "Filter 20.05.15
+      CATCH /iwbep/cx_mgw_med_exception.
+    ENDTRY.
+    DATA(lv_target) = iv_namespace && '.' && iv_entitytype && '/' && iv_property.
+*if lv_target = 'FAR_CUSTOMER_LINE_ITEMS.VL_SH_GL_ACCT_CC_NO/BUKRS' or  lv_target = 'FAR_CUSTOMER_LINE_ITEMS.UpdatableItem/CompanyCode'.
+    IF lv_target = 'FAR_CUSTOMER_LINE_ITEMS.Item/Region'.
+      ASSERT 1 = 1.
+    ENDIF.
+
+    lo_ann_target = io_vocan_model->create_annotations_target(
+                      iv_target = iv_namespace && '.' && iv_entitytype && '/' && iv_property
+                      iv_qualifier = iv_qualifier ).
+    lo_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.ValueList' ).
+
+    IF iv_valuelist_entitytype IS NOT INITIAL.                            "Filter 20.05.15
+      lo_annotation->set_value_list_et_name( iv_valuelist_entitytype ).   "Filter 20.05.15
+    ENDIF.
+
+    lo_record = lo_annotation->create_record( ).
+
+    IF iv_label IS NOT INITIAL.
+      IF sv_data_element_text = abap_false.
+        lo_record->create_property( 'Label' )->create_simple_value( )->set_string( iv_label && `` )        ##NO_TEXT.
+      ELSE.
+        DATA(lo_simple_value) = lo_record->create_property( 'Label' )->create_simple_value( ). ##NO_TEXT
+        lo_simple_value->set_string( iv_label && `` )        ##NO_TEXT.
+        TRY.
+            lo_simple_value->set_string_from_provider( CONV #( iv_valuelist_entitytype ) )   ##NO_TEXT.
+          CATCH /iwbep/cx_mgw_med_exception.
+        ENDTRY.
+      ENDIF.
+    ENDIF.
+    lo_record->create_property( 'CollectionPath' )->create_simple_value( )->set_string( iv_valuelist_entityset ).
+
+    IF iv_valuelist_service_name IS NOT INITIAL.
+      DATA(lv_path) = `../..`.
+      IF iv_valuelist_service_name(1) <> '/'.
+        lv_path = lv_path && '/sap/'.
+      ENDIF.
+      lv_path = lv_path && iv_valuelist_service_name.
+      IF iv_valuelist_service_version <> 1.
+        lv_path = lv_path && |;v={ iv_valuelist_service_version ALPHA = OUT WIDTH = 1 }|.
+      ENDIF.
+      lv_path = lv_path && '/'.
+      lo_record->create_property( 'CollectionRoot' )->create_simple_value( )->set_string( lv_path ).
+    ENDIF.
+
+    IF iv_search_supported = abap_true.
+      lo_record->create_property( 'SearchSupported' )->create_simple_value( )->set_boolean( abap_true ).
+    ENDIF.
+
+    CREATE OBJECT ro_annotation.
+    ro_annotation->mo_parameters = lo_record->create_property( 'Parameters' )->create_collection( )      ##NO_TEXT.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>DDIC_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ODATA_NAME                  TYPE        CSEQUENCE
+* | [<-()] RV_DDIC_NAME                   TYPE        SHLPNAME
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method ddic_name.
+    rv_ddic_name = iv_odata_name.
+    translate rv_ddic_name using 'x/'.
+    translate rv_ddic_name to upper case.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>ENTITY_SET_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IS_SEARCH_HELP                 TYPE        SHLP_DESCR
+* | [<-()] RV_ODATA_NAME                  TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method entity_set_name.
+    rv_odata_name = entity_type_name( iv_shlpname = is_search_help-shlpname
+                                      iv_shlptype = is_search_help-shlptype ).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>ENTITY_TYPE_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_SHLPNAME                    TYPE        SHLPNAME
+* | [--->] IV_SHLPTYPE                    TYPE        DDSHLPTYP (default ='SH')
+* | [<-()] RV_ODATA_NAME                  TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method entity_type_name.
+    rv_odata_name = 'VL_' && iv_shlptype && '_' && odata_name( iv_shlpname ).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>FIXED_VALUES
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IO_ODATA_MODEL                 TYPE REF TO /IWBEP/IF_MGW_ODATA_MODEL
+* | [--->] IV_SHLPNAME                    TYPE        SHLPNAME
+* | [--->] IV_SHLPTYPE                    TYPE        DDSHLPTYP (default ='SH')
+* | [!CX!] /IWBEP/CX_MGW_MED_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method fixed_values.
+    io_odata_model->get_entity_set( entity_type_name( iv_shlpname = iv_shlpname
+                                                      iv_shlptype = iv_shlptype )
+    )->create_annotation( /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )->add( iv_key   = 'semantics'     ##NO_TEXT
+            iv_value = 'fixed-values'  ##NO_TEXT
+    ).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>GET_SEARCH_HELPS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FIELDNAME                   TYPE        FIELDNAME
+* | [--->] IV_STRUCTNAME                  TYPE        TABNAME
+* | [<-()] RT_SEARCH_HELP                 TYPE        SHLP_DESCT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_search_helps.
+
+    DATA: ls_top_search_help TYPE shlp_descr_t.
+
+    CLEAR ls_top_search_help.
+    CALL FUNCTION 'DD_SHLP_GET_HELPMETHOD'
+      EXPORTING
+        tabname   = iv_structname
+        fieldname = iv_fieldname
+      CHANGING
+        shlp      = ls_top_search_help
+      EXCEPTIONS
+        OTHERS    = 1.
+
+    CHECK sy-subrc = 0.
+
+    IF ls_top_search_help-intdescr-issimple = abap_true.
+      INSERT ls_top_search_help INTO TABLE rt_search_help.
+    ELSE.
+      " collective search help - resolve into elementary search helps
+      CALL FUNCTION 'DD_SHLP_EXPAND_HELPMETHOD'
+        EXPORTING
+          shlp_top = ls_top_search_help
+        IMPORTING
+          shlp_tab = rt_search_help.
+    ENDIF.
+
+  ENDMETHOD.                                             "#EC CI_VALPAR
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>GET_SEARCH_HELPS_FROM_DTEL_DOM
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FIELDNAME                   TYPE        FIELDNAME
+* | [<-()] RT_SEARCH_HELP                 TYPE        SHLP_DESCT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_search_helps_from_dtel_dom.
+
+    DATA:
+      lv_name         TYPE ddobjname,
+      lv_shlp_name    TYPE shlpname,
+      lv_fieldname    TYPE char30,
+      ls_dd04v        TYPE dd04v,
+      ls_dd01v        TYPE dd01v,
+      ls_dd02v        TYPE dd02v,
+      ls_shlp         TYPE shlp_descr_t,
+      ls_interface    TYPE LINE OF ddshifaces,
+      lt_fixed_values TYPE  TABLE OF dd07v.
+
+    MOVE iv_fieldname TO lv_name.
+
+    CALL FUNCTION 'DDIF_DTEL_GET'
+      EXPORTING
+        name          = lv_name
+      IMPORTING
+        dd04v_wa      = ls_dd04v
+      EXCEPTIONS
+        illegal_input = 1
+        OTHERS        = 2.
+
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+    IF ls_dd04v IS NOT INITIAL.
+      IF ls_dd04v-shlpname IS NOT INITIAL.
+        WRITE ls_dd04v-shlpname TO lv_shlp_name.
+        CALL FUNCTION 'F4IF_GET_SHLP_DESCR'
+          EXPORTING
+            shlpname = lv_shlp_name
+*           shlptype = 'SH'
+          IMPORTING
+            shlp     = ls_shlp.
+
+        READ TABLE ls_shlp-interface INTO ls_interface WITH KEY shlpfield = ls_dd04v-shlpfield.
+        IF sy-subrc = 0.
+          MOVE ls_dd04v-shlpfield TO ls_interface-valfield.
+          MODIFY ls_shlp-interface FROM ls_interface TRANSPORTING valfield
+               WHERE shlpfield = ls_dd04v-shlpfield.
+        ENDIF.
+
+        IF ls_shlp-intdescr-issimple = abap_true.
+          INSERT ls_shlp INTO TABLE rt_search_help.
+        ELSE.
+          " collective search help - resolve into elementary search helps
+          CALL FUNCTION 'DD_SHLP_EXPAND_HELPMETHOD'
+            EXPORTING
+              shlp_top = ls_shlp
+            IMPORTING
+              shlp_tab = rt_search_help.
+        ENDIF.
+      ELSEIF ls_dd04v-entitytab IS NOT INITIAL.
+        "if Data type has check table --> construct one line for RT_search_help for type "CT" or "CH"
+        " - check if check table has text table
+        CHECK ls_dd04v-entitytab IS NOT INITIAL.
+        MOVE ls_dd04v-entitytab TO lv_shlp_name.
+        CALL FUNCTION 'F4IF_GET_SHLP_DESCR'
+          EXPORTING
+            shlpname = lv_shlp_name
+            shlptype = gc_ch+3(2)
+          IMPORTING
+            shlp     = ls_shlp.
+        IF ls_dd04v-shlpfield IS NOT INITIAL.
+          MOVE ls_dd04v-shlpfield TO  lv_fieldname.
+        ELSE.
+          MOVE ls_dd04v-rollname TO  lv_fieldname.
+        ENDIF.
+        IF lv_fieldname IS NOT INITIAL.
+          READ TABLE ls_shlp-interface INTO ls_interface WITH KEY shlpfield = lv_fieldname.
+          IF sy-subrc = 0.
+            MOVE lv_fieldname TO ls_interface-valfield.
+            MODIFY ls_shlp-interface FROM ls_interface TRANSPORTING valfield
+                 WHERE shlpfield = lv_fieldname.
+          ENDIF.
+        ENDIF.
+        IF ls_shlp-shlpname IS NOT INITIAL.
+          IF ls_shlp-intdescr-ddtext IS INITIAL AND ls_shlp-intdescr-selmethod IS NOT INITIAL.
+* Set text from text table
+            CALL FUNCTION 'DDIF_TABL_GET'
+              EXPORTING
+                name     = ls_shlp-intdescr-texttab
+                langu    = sy-langu
+              IMPORTING
+                dd02v_wa = ls_dd02v.
+          ENDIF.
+          INSERT ls_shlp INTO TABLE rt_search_help.
+        ENDIF.
+      ENDIF.
+    ELSE.
+* Domain
+      CALL FUNCTION 'DDIF_DOMA_GET'
+        EXPORTING
+          name      = lv_name
+        IMPORTING
+          dd01v_wa  = ls_dd01v
+        TABLES
+          dd07v_tab = lt_fixed_values
+        EXCEPTIONS
+          OTHERS    = 2.
+      IF sy-subrc <> 0.
+        RETURN.
+      ENDIF.
+      CHECK ls_dd01v IS NOT INITIAL.
+      "if domain has fixed values --> construct one line for RT_search_help for type "FV"
+      " - ld_search_help->intdescr-title
+      " - ld_search_help->shlpname
+      " - ld_search_help->shlptype = 'FV'
+      IF lt_fixed_values[] IS NOT INITIAL.
+        MOVE: lv_name TO ls_shlp-shlpname,
+         'FV' TO ls_shlp-shlptype,
+         ls_dd01v-ddtext TO ls_shlp-intdescr-title.
+        INSERT ls_shlp INTO TABLE rt_search_help.
+      ELSE.
+        "if domain has check table --> construct one line for RT_search_help for type "CT" or "CH"
+        " - check if check table has text table
+        CHECK ls_dd01v-entitytab IS NOT INITIAL.
+        MOVE ls_dd01v-entitytab TO lv_shlp_name.
+        CALL FUNCTION 'F4IF_GET_SHLP_DESCR'
+          EXPORTING
+            shlpname = lv_shlp_name
+            shlptype = gc_ch+3(2)
+          IMPORTING
+            shlp     = ls_shlp.
+
+        IF ls_shlp-shlpname IS NOT INITIAL.
+          IF ls_shlp-intdescr-ddtext IS INITIAL AND ls_shlp-intdescr-selmethod IS NOT INITIAL.
+* Set text from text table
+            CALL FUNCTION 'DDIF_TABL_GET'
+              EXPORTING
+                name     = ls_shlp-intdescr-texttab
+                langu    = sy-langu
+              IMPORTING
+                dd02v_wa = ls_dd02v.
+          ENDIF.
+*          add text
+          INSERT ls_shlp INTO TABLE rt_search_help.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.                                             "#EC CI_VALPAR
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>GET_VOCAN_PROVIDER_TEXTS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_LANGUAGE                    TYPE        SY-LANGU
+* | [--->] IT_VOCAN_TEXT_KEYS             TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_VOCAN_TEXTS
+* | [<-->] CT_VOCAN_TEXTS_OBJ             TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_OBJ_VOCAN_TEXTS
+* | [!CX!] /IWBEP/CX_MGW_MED_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+METHOD get_vocan_provider_texts.
+
+  DATA:
+    lv_search_help    TYPE shlpname,
+    ls_shlp           TYPE shlp_descr_t,
+    lv_doma           TYPE ddobjname,
+    ls_dd01v          TYPE dd01v,
+    lv_fieldname      TYPE fieldname,
+    lv_ddtext         TYPE as4text,
+    lv_tabname        TYPE ddobjname, ls_dd02v TYPE dd02v,
+    ls_vocan_text_obj TYPE /iwbep/if_mgw_med_odata_types=>ty_s_med_obj_vocan_text,
+    ls_vocan_text     TYPE /iwbep/if_mgw_med_odata_types=>ty_s_med_vocan_text.
+
+  LOOP AT it_vocan_text_keys INTO ls_vocan_text.
+    CLEAR: ls_vocan_text_obj.
+    CASE ls_vocan_text-txt_object_id(6).
+      WHEN ZCL_FIS_SHLP_ANNOTATION=>gc_fv.
+        CLEAR: lv_doma, ls_dd01v.
+        MOVE ls_vocan_text-txt_object_id+6 TO lv_doma.
+        CALL FUNCTION 'DDIF_DOMA_GET'
+          EXPORTING
+            name          = lv_doma
+            state         = 'A'
+            langu         = sy-langu
+          IMPORTING
+            dd01v_wa      = ls_dd01v
+          EXCEPTIONS
+            illegal_input = 1
+            OTHERS        = 2.
+        IF sy-subrc <> 0.
+          CONTINUE.
+        ENDIF.
+        MOVE ls_dd01v-ddtext TO ls_vocan_text_obj-text.
+      WHEN ZCL_FIS_SHLP_ANNOTATION=>gc_sh.
+        CLEAR: lv_search_help, ls_shlp.
+        MOVE ls_vocan_text-txt_object_id+6 TO lv_search_help.
+        CASE lv_search_help.
+          WHEN 'KREDA'.
+            ls_vocan_text_obj-text = TEXT-001.
+          WHEN 'KREDI'.
+            ls_vocan_text_obj-text = TEXT-002.
+          WHEN 'KREDK'.
+            ls_vocan_text_obj-text = TEXT-003.
+          WHEN 'KREDL'.
+            ls_vocan_text_obj-text = TEXT-004.
+          WHEN 'KREDP'.
+            ls_vocan_text_obj-text = TEXT-005.
+          WHEN 'KREDT'.
+            ls_vocan_text_obj-text = TEXT-006.
+          WHEN 'KREDY'.
+            ls_vocan_text_obj-text = TEXT-007.
+          WHEN 'KREDX'.
+            ls_vocan_text_obj-text = TEXT-008.
+          WHEN 'KREDC'.
+            ls_vocan_text_obj-text = TEXT-009.
+          WHEN 'KREDE'.
+            ls_vocan_text_obj-text = TEXT-010.
+          WHEN 'KREDM'.
+            ls_vocan_text_obj-text = TEXT-011.
+          WHEN 'KREDW'.
+            ls_vocan_text_obj-text = TEXT-012.
+          WHEN 'KRED_ES'.
+            ls_vocan_text_obj-text = TEXT-013.
+          WHEN 'RELIFNRCN'.
+            ls_vocan_text_obj-text = TEXT-014.
+          WHEN 'KREDM_E'.
+            ls_vocan_text_obj-text = TEXT-015.
+          WHEN 'KRED_ES_SIMPLE'.
+            ls_vocan_text_obj-text = TEXT-016.
+          WHEN 'KRED_ES_ADVANCED'.
+            ls_vocan_text_obj-text = TEXT-017.
+          WHEN OTHERS.
+            CALL FUNCTION 'F4IF_GET_SHLP_DESCR'
+              EXPORTING
+                shlpname = lv_search_help
+              IMPORTING
+                shlp     = ls_shlp.
+            MOVE ls_shlp-intdescr-ddtext TO ls_vocan_text_obj-text.
+        ENDCASE.
+      WHEN ZCL_FIS_SHLP_ANNOTATION=>gc_ct OR ZCL_FIS_SHLP_ANNOTATION=>gc_ch.
+        CLEAR: lv_search_help, ls_shlp,
+               lv_tabname, ls_dd02v.
+        MOVE ls_vocan_text-txt_object_id+6 TO lv_tabname.
+        CALL FUNCTION 'DDIF_TABL_GET'
+          EXPORTING
+            name          = lv_tabname
+            state         = 'A'
+            langu         = sy-langu
+          IMPORTING
+            dd02v_wa      = ls_dd02v
+          EXCEPTIONS
+            illegal_input = 1
+            OTHERS        = 2.
+        IF sy-subrc <> 0.
+          CONTINUE.
+        ENDIF.
+        MOVE ls_dd02v-ddtext TO ls_vocan_text_obj-text.
+      WHEN OTHERS.
+        ASSERT 1 = 2.
+    ENDCASE.
+
+    CHECK ls_vocan_text_obj-text IS NOT INITIAL.
+    MOVE ls_vocan_text-entity_id_ref TO ls_vocan_text_obj-entity_id.
+    INSERT ls_vocan_text_obj INTO TABLE ct_vocan_texts_obj.
+  ENDLOOP.
+
+ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>ODATA_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_DDIC_NAME                   TYPE        CSEQUENCE
+* | [<-()] RV_ODATA_NAME                  TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method odata_name.
+    rv_odata_name = iv_ddic_name.
+    translate rv_odata_name to upper case.
+    translate rv_odata_name using '/x'.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>PROPERTY_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FIELDNAME                   TYPE        CSEQUENCE
+* | [<-()] RV_PROPERTY_NAME               TYPE        /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method property_name.
+    rv_property_name = odata_name( iv_fieldname ).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_FIS_SHLP_ANNOTATION=>SEARCH_HELP
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ENTITYSET_NAME              TYPE        CSEQUENCE
+* | [<-()] RS_SEARCH_HELP                 TYPE        TS_SEARCH_HELP
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method search_help.
+    check iv_entityset_name(6) = gc_ch
+       or iv_entityset_name(6) = gc_ct
+       or iv_entityset_name(6) = gc_fv
+       or iv_entityset_name(6) = gc_sh.
+
+    rs_search_help-shlpname = ddic_name( iv_entityset_name+6 ).
+    rs_search_help-shlptype = iv_entityset_name+3(2).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>SEARCH_HELP_IS_USABLE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IS_SEARCH_HELP                 TYPE        SHLP_DESCR
+* | [<-()] RV_IS_USABLE                   TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method search_help_is_usable.
+    clear rv_is_usable.
+
+    " search help must have at least one inout parameter
+    " TODO: this logic is repeated in CREATE_FOR_ALL
+*      rv_is_usable = abap_true. "Note 2215728
+*    check 1 = 2.                "Note 2215728
+    loop at is_search_help-fieldprop reference into data(ld_fieldprop).
+      " Structure field is NOT bound to search help parameter
+      " - part of hit list                   => DisplayOnly
+      " Structure field is bound to search help parameter
+      " - input parameter or selection field => In
+      " - output parameter or hit list field => Out
+      " - both of the above                  => InOut
+      read table is_search_help-interface reference into data(ld_interface) with key shlpfield = ld_fieldprop->fieldname.
+      check sy-subrc = 0.
+      " in interface of collective search help
+*      check ld_fieldprop->shlpinput = abap_true or ld_fieldprop->shlpselpos <> '00'.
+*      check ld_fieldprop->shlpoutput = abap_true or ld_fieldprop->shlplispos <> '00'.
+      check ld_fieldprop->shlpinput = abap_true  or ld_fieldprop->shlplispos <> '00'.
+      check ld_fieldprop->shlpoutput = abap_true or ld_fieldprop->shlpselpos <> '00'.
+      " found an InOut parameter => usable
+      rv_is_usable = abap_true.
+    endloop.
+
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>SET_LABEL_FROM_TEXT_ELEMENT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_LANGUAGE_DEPENDENT_LABELS   TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD SET_LABEL_FROM_TEXT_ELEMENT.
+
+    SV_DATA_ELEMENT_TEXT = IV_LANGUAGE_DEPENDENT_LABELS.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Private Method ZCL_FIS_SHLP_ANNOTATION=>TEXT_METHOD_IS_AVAILABLE
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RV_TEXT_METHOD                 TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD text_method_is_available.
+    TYPE-POOLS abap.
+    DATA: l_type_descr TYPE REF TO cl_abap_typedescr,
+          l_cls_descr  TYPE REF TO cl_abap_objectdescr.
+    FIELD-SYMBOLS:  <l_meth> TYPE LINE OF abap_methdescr_tab.
+    CHECK 1 = 2.
+    CHECK sv_text_from_provider = abap_false.
+    CALL METHOD cl_abap_objectdescr=>describe_by_name
+      EXPORTING
+        p_name         = '/IWBEP/IF_MGW_VOCAN_SIMPLE_VAL' ##NO_TEXT
+      RECEIVING
+        p_descr_ref    = l_type_descr
+      EXCEPTIONS
+        type_not_found = 1
+        OTHERS         = 2.
+
+    IF sy-subrc = 0.
+      IF l_type_descr IS NOT INITIAL.
+        TRY.
+            l_cls_descr ?= l_type_descr.
+
+*---- get methods
+            LOOP AT l_cls_descr->methods
+               ASSIGNING <l_meth>
+               WHERE
+                 name EQ 'SET_STRING_FROM_PROVIDER' ##NO_TEXT."
+              sv_text_from_provider = abap_true.
+              EXIT.
+            ENDLOOP.
+        ENDTRY.
+      ENDIF.
+    ENDIF.
+    rv_text_method = sv_text_from_provider.
+  ENDMETHOD.
+ENDCLASS.

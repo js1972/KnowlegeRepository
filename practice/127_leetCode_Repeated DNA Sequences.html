@@ -1,0 +1,92 @@
+<html>
+<script>
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// http://www.cnblogs.com/zichi/p/4797739.html
+var findRepeatedDnaSequences = function(s) {
+  var hash = {}
+    , ans = 0;
+
+  var result = [];
+  for (var i = 0, len = s.length; i < len; i++) {
+    var str = s.substr(i, 10);
+    if (str.length < 10) break;
+    if (!hash[str]) 
+      hash[str] = 1;
+    else{// if (hash[str] === 1)
+      hash[str]++, ans++;
+      if(( hash[str] > 1) && (!result.contains(str))){
+      	// 终于知道原因了，重复add了。
+      	console.log("adding: " + str);
+      	result.push(str);
+      }
+  	}
+  }
+  console.log("result length 0: " + result.length);
+  return result;
+};
+console.log(findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTTCCCCCAAAAACCCCCAAAAA"));
+
+var findRepeatedDnaSequences2 = function(s) {
+  var hash = new Set()
+    , hash_ans = new Set()
+    , ans = [];
+
+  for (var i = 0, len = s.length; i < len; i++) {
+    var str = s.substr(i, 10);
+    if (str.length < 10) break;
+    if (!hash.has(str)) 
+      hash.add(str);
+    else {
+      // 说明hash里已经有str了。即str这是第二次出现了。
+      if (!hash_ans.has(str)) {
+        hash_ans.add(str);
+        ans.push(str);
+      }
+    }
+  }
+  console.log("result 1 length: " + ans.length);
+  return ans;
+};
+console.log(findRepeatedDnaSequences2("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTTCCCCCAAAAACCCCCAAAAA"));
+
+/*
+如果只有两种字符，我们便可以用0和1分别代替字符，组成一个二进制码，然后用一个整数代替这个二进制码完成哈希。但是不幸的是，现在有四个字符，如何？4进制？4进制的确是个好办法，但是操作起来不方便，我们可以用两位二进制码代替一位四进制码，比如我们分别用0 1 2 3表示A C G T，用两位的二进制码00 01 10 11代替0 1 2 3。
+*/
+var findRepeatedDnaSequences3 = function(s) {
+  var map = []
+    , hash = new Set()
+    , hash_ans = new Set()
+    , ans = [];
+
+  map['A'] = 0, map['C'] = 1, map['G'] = 2, map['T'] = 3;
+  
+  var tmp = 0;
+  for (var i = 0, len = s.length; i < len; i++) {
+    tmp = tmp << 2 | map[s[i]];
+    if (i < 9) continue;
+    if (i > 9) tmp = tmp & 0xfffff;
+
+    if (!hash.has(tmp)) 
+      hash.add(tmp);
+    else {
+      if (!hash_ans.has(tmp)) {
+        hash_ans.add(tmp);
+        ans.push(s.substring(i - 9, i + 1));
+      }
+    }
+  }
+
+  return ans;
+};
+console.log(findRepeatedDnaSequences3("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTTCCCCCAAAAACCCCCAAAAA"));
+</script>
+</html>

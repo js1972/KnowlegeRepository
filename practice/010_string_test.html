@@ -1,0 +1,34 @@
+<html>
+<script>
+
+var src = "http://github/host/git-ui-debug=false";
+var bDebugSources = /git-ui-debug=(true|x|X)/.test(src);
+
+console.log(bDebugSources); // false
+
+src = "http://github/host/git-ui-debug=X";
+bDebugSources = /git-ui-debug=(true|x|X)/.test(src);
+
+console.log(bDebugSources); // true
+
+var match = src.match(/git-ui-debug=(true|x|X)/);
+console.log(match);
+/* ["git-ui-debug=X"--完整匹配的string, "X"-第一组(true|x|X), index: 19, input: "http://github/host/git-ui-debug=X"] */
+
+var url = "http://github/host:ui-cachebuster.js";
+
+var result = url.match(/\/(?:ui-cachebuster\/)?([^\/]+)\.js/);
+debugger;
+console.log("exe10 : "  + result); // /host:ui-cachebuster.js,host:ui-cachebuster
+
+var sDebugUrl = url.replace(/\/(?:ui-cachebuster\/)?([^\/]+)\.js/, '/$1-dbg.js');
+console.log(sDebugUrl);
+
+var url1 = "http://github/host:ui-cachebuster/aa.js";
+result = url1.match(/\/(?:ui-cachebuster\/)?([^\/]+)\.js/); 
+/* ["/aa.js", "aa", index: 33, input: "http://github/host:ui-cachebuster/aa.js"] */
+console.log(result);
+debugger;
+
+</script>
+</html>

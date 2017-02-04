@@ -1,0 +1,26 @@
+<html>
+<script>
+var a = {n: 1};
+a.x = (a = {n: 2});    // modified here
+console.log(a.x);
+
+var b = 10;        
+
+function fn() {
+    b = 30;
+    return 20;
+}
+
+/*
+Jerry 2016-01-20 17:05PM 如果真的先计算fn里的值，那么30 + 40 = 70,实际结果却为50
+这个人有点瓜。b = 30只在function scope内生效
+*/
+var c = b + ( fn() * 2 );
+/*
+输出30，我们猜测JavaScript是从左到右运算的（事实也确实如此）。先取出a在内存中的值（10），然后执行fn函数，返回20（同时改变了a的值），10+20=30。
+*/
+console.log(c);
+
+
+</script>
+</html>

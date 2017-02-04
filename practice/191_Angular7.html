@@ -1,0 +1,18 @@
+<html ng-app="nameApp">
+  <head>
+    <meta charset="utf-8">
+    <title>Angular.js Example</title>
+    <script src="angular/angular.js"></script>
+    <script>
+      var nameApp = angular.module('nameApp', []);
+      nameApp.controller('NameCtrl', function ($scope){
+        $scope.Ionames = ['Larry', 'Curly', 'Moe'];
+      });
+    </script>
+  </head>
+  <body ng-controller="NameCtrl">
+    <ul>
+      <li ng-repeat="nameF in Ionames">{{nameF}}</li>
+    </ul>
+  </body>
+</html>

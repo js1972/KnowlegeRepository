@@ -1,0 +1,11 @@
+<html>
+<script>
+var f = function g() { 
+	return 23; // display g in callstack
+	// if g is removed, callstack displays f instead.
+};
+
+f();
+console.log("Jerry" + typeof g);
+</script>
+</html>

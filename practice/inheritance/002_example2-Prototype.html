@@ -1,0 +1,58 @@
+<html>
+<script>
+
+/*
+无论什么时候，只要创建了一个新函数，就会根据一组特定的规则为该函数创建一个prototype属性。在默认情况下，所有prototype属性都会自动获得一个constructor（构造函数）属性，这个属性包含一个指向prototype属性所在函数的指针。Person.prototype.constructor指向Person。创建了自定义的构造函数之后，其原型属性默认只会取得constructor属性；至于其他方法，则都是从object继承而来的。当调用构造函数创建一个新实例后，该实例的内部将包含一个指针（内部属性），指向构造函数的原型属性。在很多实现中，这个内部属性的名字是_proto_。不过，要明确的真正重要一点，就是这个链接存在于实例与构造函数的原型属性之间，而不是存在于实例与构造函数之间。
+*/
+
+function Person(){
+}
+
+/*
+Person.prototype.name = "Nicholas";
+Person.prototype.age = 29;
+Person.prototype.job = "Software Engineer";
+Person.prototype.sayName = function(){
+    alert(this.name);
+};*/
+
+// 2017-02-04 1:37PM - another alternative
+Person.prototype = {
+    name : "Nicholas",
+    age : 29,
+    job: "Software Engineer",
+    sayName : function(){
+         alert(this.name);
+    }
+};
+
+var person1 = new Person();
+/* 这种方法的问题：在上面代码中，我们将Person.prototype设置为等于一个以对象字面量形式创建的新对象。本质上完全重写了默认的prototype对象，因此constructor属性也就变成了新对象的属性指向Object构造函数，不再指向Person函数。
+
+person1.constructor: 指向function Object(){native code}
+
+纠正方法：
+Person.prototype = {
+     constructor : Person, -----------------------
+     name : "Nicholas",
+     age : 29,
+     job : "Software Engineer",
+     friends : ["Shelby","Court"],
+     sayName : function(){
+           alert(this.name);
+     }
+};
+
+*/
+person1.sayName();//"Nicholas"
+var person2 = new Person();
+person2.sayName();//"Nicholas"
+
+alert(person1.sayName == person2.sayName);//true
+alert(Person.prototype.isPrototypeOf(person1));//true
+alert(Person.prototype.isPrototypeOf(person2));//true
+
+
+
+</script>
+</html>

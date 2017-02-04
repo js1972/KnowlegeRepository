@@ -1,0 +1,31 @@
+<html>
+<script>
+
+function factorial(n){
+  if(n ===1) {
+     return 1;
+  }
+  return n *factorial(n -1);
+}
+
+
+function tailFactorial(n, total) {
+ if(n ===1)
+    return total;
+ return tailFactorial(n -1, n * total);
+}
+
+function factorial2(n) {
+  return tailFactorial(n,1);
+}
+
+var N = 20;
+console.time("normal recursive");
+console.log(factorial(N));
+console.timeEnd("normal recursive");
+console.time("tail recursive");
+console.log(factorial2(N));
+console.timeEnd("tail recursive");
+
+</script>
+</html>

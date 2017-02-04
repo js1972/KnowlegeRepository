@@ -1,0 +1,22 @@
+<html>
+<script>
+function print(id){
+	console.log( "hello: " + id);
+}
+
+function start(){
+	print("Jerry");
+	inject();
+	print("Jerry");
+}
+
+function inject(){
+	var oldFunction = print;
+	print = function(id){
+		oldFunction(id);
+		console.log("post");
+	};
+}
+start();
+</script>
+</html>

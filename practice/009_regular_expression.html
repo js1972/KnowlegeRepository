@@ -1,0 +1,53 @@
+<html>
+<script>
+var reConfigurator = /^(.*\/)?download\/configurator[\/\?]/;
+var bb = "sdfsdf/download/configurator/asd";
+var c = bb.match(reConfigurator);
+
+/* 数组第一个内容是整个匹配的字符串，第二个内容是匹配的第一组 
+ ["sdfsdf/download/configurator/", "sdfsdf/"] */
+console.log(c); 
+
+reConfigurator = /^(.*\/)?d1ownload\/configurator[\/\?]/;
+c = bb.match(reConfigurator);
+
+console.log(c); // null
+
+/*
+匹配输入字符串的开始位置。要匹配 "^" 字符本身，请使用 "\^"
+（）：标记一个子表达式的开始和结束位置。要匹配小括号，请使用 "\(" 和 "\)"
+.: 匹配除了换行符（\n）以外的任意一个字符。要匹配小数点本身，请使用 "\."
+*: 修饰匹配次数为 0 次或任意次。要匹配 "*" 字符本身，请使用 "\*", 注意不要和/混淆。
+？: 修饰匹配次数为 0 次或 1 次。要匹配 "?" 字符本身，请使用 "\?"
+$:与字符串结束的地方匹配，不匹配任何字符
+
+使用方括号 [ ] 包含一系列字符，能够匹配其中任意一个字符。用 [^ ] 包含一系列字符，则能够匹配其中字符之外的任意一个字符。同样的道理，虽然可以匹配其中任意一个，但是只能是一个，不是多个。
+| : 左右两边表达式之间 "或" 关系，匹配左边或者右边
+
+( ):
+(1). 在被修饰匹配次数的时候，括号中的表达式可以作为整体被修饰
+(2). 取匹配结果的时候，括号中的表达式匹配到的内容可以被单独得到
+*/
+var reBootScripts = /^(.*\/)?(UILoggingAPI(-dbg)(.*)?)\.js([?#]|$)/;
+
+var src = "UILoggingAPI-dbg.sdfs.js#aaa";
+
+var d = src.match(reBootScripts);
+
+/* result: 
+输入一共5组
+2016-05-08 13:08PM
+["UILoggingAPI-dbg.sdfs.js#", undefined, "UILoggingAPI-dbg.sdfs", "-dbg", ".sdfs", "#", index: 0, input: "UILoggingAPI-dbg.sdfs.js#aaa"] */
+
+console.log(d, d.length);
+
+src = "github/" + src;
+
+var e = src.match(reBootScripts);
+debugger;
+/* 
+["github/UILoggingAPI-dbg.sdfs.js#"---全匹配, "github/"第一组(.*\/), "UILoggingAPI-dbg.sdfs",--第二组(UILoggingAPI(-dbg)(.*)?) "-dbg"---第三组(-dbg), ".sdfs"--第四组(.*), "#"---第五组([?#]|$), index: 0, input: "github/UILoggingAPI-dbg.sdfs.js#aaa"] 6
+*/ 
+console.log("after: ", e, e.length);
+</script>
+</html>

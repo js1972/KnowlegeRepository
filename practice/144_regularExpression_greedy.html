@@ -1,0 +1,15 @@
+<html>
+<script>
+var s = 'hello world welcome to my world';
+var pattern = /hello.*world/;
+var ans = pattern.exec(s);
+console.log(ans)  // ["hello world welcome to my world", index: 0, input: "hello world welcome to my world"] 
+var pattern2 = /hello.*?world/;
+ans = pattern2.exec(s);
+// http://www.cnblogs.com/zichi/p/4343009.html#4
+
+// 那么我需要最短的匹配怎么办？很简单，加个‘？’即可，这就是传说中的懒惰匹配，即匹配到了，就
+// 不往后找了。
+console.log(ans)  // ["hello world", index: 0, input: "hello world welcome to my world"] 
+</script>
+</html>

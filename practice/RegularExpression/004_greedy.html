@@ -1,0 +1,12 @@
+<html>
+<script>
+
+var str = "AB1111BA111BA";
+var reg = /AB[\s\S]+BA/;
+console.log(str.match(reg));
+
+str = "AB1111BA111BA";
+reg = /AB[\s\S]+?BA/;
+console.log(str.match(reg));
+</script>
+</html>

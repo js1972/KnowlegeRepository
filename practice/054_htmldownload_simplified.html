@@ -1,0 +1,17 @@
+<html>
+<body>
+    <textarea id="content">Type code here</textarea>
+    <p><a id="save-btn" href="" download="noname.txt">Save</a></p>
+    <script>
+      var content, btn;
+      content = document.querySelector( "#content" );
+      btn = document.querySelector( "#save-btn" );
+      content.addEventListener( "change", function(){
+        var f = function(){
+          btn.setAttribute( "href", "data:text/paint; utf-8," + content.value );
+        }
+        return f(), f;
+      }() ); 
+    </script>
+</body>
+</html>

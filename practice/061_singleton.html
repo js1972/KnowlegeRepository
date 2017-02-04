@@ -1,0 +1,21 @@
+<html>
+
+<body onload = test();>
+<script>
+
+function test() {
+var createMask = function(){
+    var mask;
+    return function(){
+	return mask||( mask = document.body.appendChild(document.createElement('div')))
+    }
+  }();
+
+ var a1 = createMask();
+ var a2 = createMask();
+
+ console.log( a1 === a2);
+}
+</script>
+</body>
+</html>

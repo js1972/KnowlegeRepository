@@ -1,0 +1,22 @@
+<html>
+<script>
+var person = {
+name:"dwqs",
+age:20,
+interesting:"coding",
+blog: "www.ido321.com"
+};
+//定义sex属性，writable是false,所以不能修改
+Object.defineProperty(person,"sex",{
+writable:false,
+value:"male"
+});
+console.log(person.sex); //male
+
+//在严格模式下出错，非严格模式赋值被忽略
+person.sex = "Jerry";
+console.log(person.sex); 
+var prop = Object.getOwnPropertyDescriptor(person,"sex");
+debugger;
+</script>
+</html>

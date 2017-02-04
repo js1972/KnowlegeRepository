@@ -1,0 +1,39 @@
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<p>单个字符</p>
+<style>
+.halfStyle {
+    position:relative;
+    display:inline-block;
+    font-size:80px; /*  任何宽度都可以 */
+    color: black; /* 任何颜色，或透明 */
+    overflow:hidden;
+    white-space: pre; /* 处理空格 */
+}
+.halfStyle:before {
+    display:block;
+    z-index:1;
+    position:absolute;
+    top:0;
+    left:0;
+    width: 50%;
+    content: attr(data-content); /* 伪元素的动态获取内容 */
+    overflow:hidden;
+    color: #f00;
+}
+</style>
+<span class="halfStyle lazy " data-content="思">思</span>
+<span class="halfStyle lazy " data-content="爱">爱</span>
+<span class="halfStyle lazy " data-content="普">普</span>
+<span class="halfStyle lazy " data-content="加">加</span>
+
+<hr/>
+<p>用脚本自动美化：</p>
+
+<span class="textToHalfStyle lazy ">测试程序。</span>
+<script>
+
+</script>
+</html>

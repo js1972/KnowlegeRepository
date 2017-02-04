@@ -1,0 +1,57 @@
+<core:View xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+		   xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:semantic="sap.m.semantic" xmlns:ushell="sap.ushell.ui"
+		   xmlns:build="sap.build" xmlns:st="sap.suite.ui.generic.template"
+		   controllerName="sap.suite.ui.generic.template.ListReport.view.ListReport">
+	<!--
+		@classdesc
+		@name: Name: sap.ui.generic.template.fragments.ListReport.view.xml
+		@description:
+			- This template creates a page containing a analytical or responsive table for entries of the given entity set
+			- The attribute parameter>aggregationBinding can be used to set filter and expand options for the table
+		@namespace {http://docs.oasis-open.org/odata/ns/edm} [edm]
+		@param {edm.EntitySet} [entitySet]
+		@param [parameter] {
+			"aggregationBinding",
+			"entitySet",
+			"entityType",
+			"sap-ui-debug"
+		}-->
+
+	<st:lib.FlexEnabler/>
+	<template:with path="entitySet>entityType" helper="sap.ui.model.odata.AnnotationHelper.gotoEntityType"
+				   var="entityType">
+		<semantic:FullscreenPage id="page" title="{i18n>PAGEHEADER}" showNavButton="true" navButtonPress="._templateEventHandlers.onBack"
+								 busyIndicatorDelay="0" enableScrolling="true"
+								 class="sapSmartTemplatesListReportPageOverflow"
+								 build:metadata="#pattern:ListReport;staticProp:title:Title">
+			<semantic:content>
+				<VBox fitContainer="true">
+					<core:Fragment fragmentName="sap.suite.ui.generic.template.ListReport.view.fragments.SmartFilterBar"
+								   type="XML"/>
+					<core:Fragment fragmentName="sap.suite.ui.generic.template.ListReport.view.fragments.SmartTable"
+								   type="XML"/>
+					<!-- Helper -->
+					<customData>
+						<core:CustomData id="idEntityTypeName" key="entityTypeName" writeToDom="false"
+										 value="{path: 'entityType>com.sap.vocabularies.UI.v1.HeaderInfo/TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					</customData>
+				</VBox>
+			</semantic:content>
+
+			<semantic:sendEmailAction>
+				<semantic:SendEmailAction id="shareEmail" press="._templateEventHandlers.onShareEmailPress"/>
+			</semantic:sendEmailAction>
+			<semantic:shareInJamAction>
+				<semantic:ShareInJamAction id="shareInJam" visible="{share>/isShareInJamActive}"
+										   press="._templateEventHandlers.onShareInJamPress"/>
+			</semantic:shareInJamAction>
+			<semantic:saveAsTileAction>
+				<ushell:footerbar.AddBookmarkButton id="shareTile" title="{i18n>PAGEHEADER}"
+													tileIcon="{share>/bookmarkIcon}"
+													customUrl="{share>/bookmarkCustomUrl}"
+													serviceUrl="{share>/bookmarkServiceUrl}"/>
+			</semantic:saveAsTileAction>
+		</semantic:FullscreenPage>
+	</template:with>
+
+</core:View>

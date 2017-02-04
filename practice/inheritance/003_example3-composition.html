@@ -1,0 +1,30 @@
+<html>
+<script>
+
+/*
+构造函数模式用于定义实例属性，而原型模式用于定义方法和共享的属性。结果，每个实例都会有自己的一份实例属性和副本，但同时又共享这对方法的引用，最大限度地节省了内存。另外，这种混成模式还支持向构造函数传递参数，可谓是集两种模式之长。这种模式是目前在ECMAScript中使用最广泛、认同度最高的一种创建自定义类型的方法。
+*/
+
+function Person(name,age,job){
+     this.name = name;
+     this.age = age;
+     this.job = job;
+     this.friends = ["Shelby","Court"];
+}
+
+Person.prototype = {
+    constructor : Person,
+    sayName : function(){
+         alert(this.name);
+    }
+}
+
+var person1 = new Person("Nicholas",29,"Software Engineer");
+var person2 = new Person("Greg",29,"Doctor");
+
+person1.friends.push("Van");
+alert(person1.friends === person2.friends);//false
+alert(person1.sayName === person2.sayName);//true
+
+</script>
+</html>

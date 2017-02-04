@@ -1,0 +1,31 @@
+<html>
+<script>
+Function.prototype.bind2 = function( context ) {
+    var _this = this;
+    _args = Array.prototype.slice.call(arguments, 1);
+    return function() {
+      return _this.apply( context, _args.concat( Array.prototype.slice.call( arguments)));
+    };
+}
+
+function print(va, va2) {
+	console.log(this.name + " ok: " + va + "," + va2);
+} 
+
+var after = print.bind2({ name: "Jerry"});
+
+Function.prototype.bind3 = function( context ) {
+    var _this = this;
+    // _args = Array.prototype.slice.call(arguments, 1);
+    return function() {
+      return _this.apply( context, arguments);
+    };
+}
+
+after("in Shanghai", "9:20PM");
+
+var before = print.bind3( { name: "Ji"});
+before("In Tokyo", "7:26PM");
+
+</script>
+</html>

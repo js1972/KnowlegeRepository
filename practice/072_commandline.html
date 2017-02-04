@@ -1,0 +1,42 @@
+<html>
+<script>
+
+// Priority: ActiveX > HTML5 > Flash > Form(default)
+function isActiveXSupported(){
+	//...
+	return false;
+}
+
+function isHTML5Supported(){
+	//...
+	return false;
+}
+
+function isFlashSupported(){
+	//...
+	return false;
+}
+
+var uploadAPI;
+if ( isActiveXSupported()) {
+	// lots of initialization work
+	uploadAPI = { "name": "ActiveX"};
+}
+else if( isHTML5Supported()) {
+	// lots of initialization work
+	uploadAPI = { "name": "HTML5"};
+}
+else if( isFlashSupported()) {
+	// lots of initialization work
+	uploadAPI = { "name": "Flash"};
+}
+else {
+	// lots of initialization work
+	uploadAPI = { "name": "Form"};
+}
+
+console.log(uploadAPI);
+
+
+</script>
+</html>

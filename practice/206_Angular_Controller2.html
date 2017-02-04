@@ -1,0 +1,31 @@
+<html ng-app>
+  <head>
+    <meta charset="utf-8">
+    <title>Angular.js Example</title>
+    <script src="angular/angular.js"></script>
+    <script>
+      function NameCtrl($scope){
+        $scope.names = ['ABAP', 'Java'];
+        $scope.addName = function() {
+          if( $scope.names.indexOf($scope.enteredName) != -1){
+            alert("duplicate key is not allowed in list: " + $scope.enteredName);
+            $scope.enteredName = '';
+            return;
+          }
+          $scope.names.push($scope.enteredName);
+          $scope.enteredName = '';
+        };
+    }
+    </script>
+  </head>
+  <body ng-controller="NameCtrl">
+    <ul>
+      <li ng-repeat="name in names">{{name}}
+      </li>
+    </ul>
+    <form ng-submit="addName()">
+      <input type="text" ng-model="enteredName">
+      <input type="submit" value="add">
+    </form>
+  </body>
+</html>

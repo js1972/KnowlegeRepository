@@ -1,0 +1,42 @@
+<html>
+<!-- http://www.bkjia.com/webzh/944275.html -->
+<body>
+<p>Lion</p>
+<p>Tiger</p>
+<p>Leopard</p>
+</body>
+<script src="d3/d3.v3.js"></script>
+<script>
+//定义数组
+var dataset = [3, 6, 9];
+
+//选择body中的p元素
+var p = d3.select("body").selectAll("p");
+
+//绑定数据到选择集
+var update = p.data(dataset);
+
+//输出绑定的结果
+console.log(update);
+/*
+update：数组长度 = 元素数量
+enter：数组长度 > 元素数量
+exit：数组长度 < 元素数量
+这三个单词的含义可能很难理解，update的原意为“更新”，enter的原意为“进入”，exit的原意为“退出”，直译的结果很难表现所需的意思。其实，在数据可视化中，手中的数据通常都是要进行可视化的，而没有绑定数据的元素是没有用的。那么对于这三个单词，我们可以理解为：如果数组长度大于元素数量，则多余的数组项“即将进入可视化（enter）”；如果数组长度小于元素数量，则多余的元素“即将退出可视化（exit）”；如果数组长度等于元素数量，元素上的数据“得到了更新（update）”。
+
+*/
+
+var dataset2 = [3, 6, 9, 12, 15];
+var p = d3.select("body").selectAll("p");
+var update2 = p.data(dataset2);
+console.log(update2); // 3,6,9, since we have only THREE elements
+console.log(update2.enter()); // 12,15
+console.log(update2.exit()); // null
+
+/*可以看到enter部分中，D3已经为多余的数组项12和15预留了位置，用于将来的操作。enter部分中还有一个update变量，指向update部分。本次绑定中，没有多余的元素，所以exit中没有内容。如果将数组换成：
+
+var dataset = [3];
+则exit部分的输出结果如图6所示，可以看到多出的两个p元素。
+*/
+debugger;
+</script>

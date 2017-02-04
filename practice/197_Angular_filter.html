@@ -1,0 +1,30 @@
+<html ng-app="countryApp">
+  <head>
+    <meta charset="utf-8">
+    <title>Angular.js Example</title>
+    <script src="angular/angular.js"></script>
+    <script>
+      var countryApp = angular.module('countryApp', []);
+      countryApp.controller('CountryCtrl', ['$scope', function (scope){
+        scope.countries = [
+          {"name": "China", "population": 1359821000},
+          {"name": "India", "population": 1205625000},
+          {"name": "United States of America","population": 312247000}
+        ];
+      }]);
+    </script>
+  </head>
+  <body ng-controller="CountryCtrl">
+    Search:<input ng-model="query" type="text"/>
+    <table>
+      <tr>
+        <th>Country</th>
+        <th>Population</th>
+      </tr>
+      <tr ng-repeat="country in countries | filter:query">
+        <td>{{country.name}}</td>
+        <td>{{country.population}}</td>
+      </tr>
+    </table>
+  </body>
+</html>

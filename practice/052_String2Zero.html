@@ -1,0 +1,26 @@
+<html>
+<script>
+/*
+今天看到某大牛之前写的某段代码里，用到了"| 0"这种写法将字符串取整。这本来没什么，很多人都这样做，但他那段代码里处理的是一个时间戳。如：
+"1325239449538" | 0;
+
+结果是-1905444926，这显然不是我们想要的。这个问题产生的原因是：A | B是将A、B先ToInt32再运算，返回结果是32位符号型整数。只要A超过2147483647，也就是231-1，就杯具了。
+另一个常用的parseInt函数也容易发生杯具，如：
+parseInt(0.0000001);
+在大部分浏览器上，结果是1（新版firefox会得到0），这也显然不符合预期。原因是parseInt(A)第一步会执行ToString(A)。上面的例子中，0.0000001会转成"1e-7" */
+
+var a = "012";
+console.log("typeof a: " + typeof a);
+var b = a | 0;
+
+console.log(b);
+console.log("typeof b: " + typeof b);
+
+var c = parseInt(a,10);
+console.log(c + " typeof c: " + typeof c);
+
+console.log("parseInt(0.0000001): " + parseInt(0.0000001));
+
+console.log("toString: " + 0.0000001.toString());
+</script>
+</html>

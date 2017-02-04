@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<html> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+<title>snake</title> 
+
+<style type="text/css"> 
+body { overflow:hidden; text-align:center; background-color:lavender; } 
+div#main { position:relative; overflow:hidden; margin:10px auto; border: 1px solid green; width:400px; height:400px; } 
+div#main div { position:absolute; font-size:0; background-color:green; width:10px; height:10px; } 
+div#main div#head { background-color:red; } 
+div#main div#food { background-color:green; } 
+</style> 
+</head> 
+<body> 
+
+<div id="main"><div id="head"></div><div id="food" style='visibility:hidden;'></div></div> 
+
+<script type="text/javascript"> 
+var w=40, h=40, n=10, m=200; 
+var S={},X=[],B=[],L=[],T=[],dirs=[-1,-w,1,w],dir=2,ifood=-5,pause,f,timer,D=document; 
+function rnd(){return Math.floor(Math.random()*w*h)} 
+function newd(i){var div=main.appendChild(D.createElement("div"));p(div,i);return div;} 
+function p(o,i){o.style.left=L[i]+'px';o.style.top=T[i]+'px';} 
+function m(o,dir){p(o,i);} 
+function $(id){ return D.getElementById(id); } 
+function cli(){ clearInterval(tmr); } 
+function sei(m){ tmr=setInterval(Main,m); } 
+
+function Main(){ 
+    if(pause)return; 
+    var ox=X[0],x=ox%w,y=(ox-x)/h,eat,die; 
+    X[0]+=dirs[dir]; 
+    if(x==0&&dir==0||x==w-1&&dir==2||y==0&&dir==1||y==h-1&&dir==3)die='Died'; 
+    else if(S[X[0]])die='died'; 
+    if(die){ 
+        cli(); 
+        alert(die+'/n/ndied'+(B.length-1)+'died'); 
+        restart(); 
+        return; 
+    } 
+    if(ifood==X[0]){ 
+        eat=true; 
+        food.style.visibility='hidden'; 
+        ifood=-5; 
+        B.unshift(newd(ox)); 
+    }else if(ifood==-1){ 
+        while(S[ifood=rnd()]); 
+        food.style.visibility='visible'; 
+        p(food,ifood); 
+    }else if(ifood<-1){ifood++} 
+    p(head,X[0]); 
+    X.unshift(X[0]); 
+    X[1]=ox; 
+    S[X[0]]=true; 
+    if(!eat){delete S[X.pop()];B.unshift(B.pop());p(B[0],ox);} 
+} 
+D.onkeydown=function(evt){ 
+    var c=(evt||window.event).keyCode-37; 
+    if(c==-24)pause=!pause; 
+    else if(c>=0&&c<4){ 
+        if(dir==c){if(!f){f=true;cli();sei(m/2)}} 
+        else if(dir%2!=c%2)dir=c; 
+    } 
+} 
+D.onkeyup=function(evt){ 
+    var c=(evt||window.event).keyCode-37; 
+    if(dir==c&&f){f=false;cli();sei(m)} 
+} 
+
+for(var i=w*h-1;i>=0;i--){L[i]=i%w*n, T[i]=(i-i%w)*n/h} 
+var main=$("main"), head=$("head"), food=$("food"); 
+function restart(){ 
+S={},X=[],B=[],dir=2,ifood=-5,pause=f=false; 
+while(main.childNodes.length>2)main.removeChild(main.lastChild); 
+food.style.visibility='hidden'; 
+X[1]=w*h/2; 
+X[0]=X[1]+1; 
+p(head,X[0]); 
+B[0]=newd(X[1]); 
+S[X[0]]=S[X[1]]=true; 
+sei(m); 
+} 
+restart(); 
+</script> 
+</body> 
+</html> 

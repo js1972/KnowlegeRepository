@@ -1,0 +1,139 @@
+Jerry trace RenderManager.writeContro id: loadingDialog
+Jerry trace RenderManager.writeContro id: loadingDialog-busyLabel
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: loadingDialog
+Jerry trace RenderManager.writeContro id: loadingDialog-busyLabel
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: shellPage-Opportunity-manageOpportunity
+Jerry trace RenderManager.writeContro id: application-Opportunity-manageOpportunity
+Jerry trace RenderManager.writeContro id: application-Opportunity-manageOpportunity-content
+Jerry trace RenderManager.writeContro id: __xmlview48
+Jerry trace RenderManager.writeContro id: __xmlview48--fioriContent
+Jerry trace RenderManager.writeContro id: __xmlview49
+Jerry trace RenderManager.writeContro id: __xmlview49--MainSplitContainer
+Jerry trace RenderManager.writeContro id: __xmlview49--MainSplitContainer-Master
+Jerry trace RenderManager.writeContro id: __xmlview50
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview50--page
+Jerry trace RenderManager.writeContro id: __bar73
+Jerry trace RenderManager.writeContro id: __button328
+Jerry trace RenderManager.writeContro id: __button328-img
+Jerry trace RenderManager.writeContro id: __label48
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __bar74
+Jerry trace RenderManager.writeContro id: __field24
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview50--list
+Jerry trace RenderManager.writeContro id: __xmlview50--MAIN_LIST_ITEM
+Jerry trace RenderManager.writeContro id: __xmlview50--MAIN_LIST_ITEM-titleText
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview50--list-trigger
+Jerry trace RenderManager.writeContro id: __bar72
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __button330
+Jerry trace RenderManager.writeContro id: __button330-img
+Jerry trace RenderManager.writeContro id: __button331
+Jerry trace RenderManager.writeContro id: __button331-img
+Jerry trace RenderManager.writeContro id: __xmlview49--MainSplitContainer-Detail
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __indicator36
+Jerry trace RenderManager.writeContro id: loadingDialog
+Jerry trace RenderManager.writeContro id: __icon0
+Jerry trace RenderManager.writeContro id: loadingDialog-busyLabel
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview49--MainSplitContainer-Detail
+Jerry trace RenderManager.writeContro id: __xmlview51
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--S3_Header
+Jerry trace RenderManager.writeContro id: __bar77
+Jerry trace RenderManager.writeContro id: __label51
+Jerry trace rtl: true
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityHeader
+Jerry trace RenderManager.writeContro id: __xmlview51--icntabVLayout
+Jerry trace RenderManager.writeContro id: __xmlview51--icntabHLayout
+Jerry trace RenderManager.writeContro id: __xmlview51--icntab
+Jerry trace RenderManager.writeContro id: __xmlview51--icntab--header
+Jerry trace RenderManager.writeContro id: __xmlview51--icntab--header-arrowScrollLeft
+Jerry trace RenderManager.writeContro id: __xmlview51--info-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--tab_salesarea-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--tab_product-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--tab_notes_v2-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--tab_attachment-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--salesTeam-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--tab_competitor-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--tab_transactionHistory-icon
+Jerry trace RenderManager.writeContro id: __xmlview51--icntab--header-arrowScrollRight
+Jerry trace SimpleFormRenderer control id: __xmlview51--opportunityID_form
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityID_form
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityID_form--Form
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityID_form--Layout
+Jerry trace RenderManager.writeContro id: __container50--Grid
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityType_label1
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityType_Text1
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityID_label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityID_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityStartDate_label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityStartDate_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityCloseDate_label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityCloseDate_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityStatus_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityStatus_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityStage_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityStage_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityCoS_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityCoS_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityPriority_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityPriority_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityWhtdVolume_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityWhtdVolume_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityTotalNetValue_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityTotalNetValue_Text
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityForecast_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityForecast_Switch
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--opportunityLogChange_Label
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __xmlview51--log
+Jerry trace RenderManager.writeContro id: __bar76
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: __button337
+Jerry trace RenderManager.writeContro id: __button338
+Jerry trace RenderManager.writeContro id: __button339
+Jerry trace RenderManager.writeContro id: __button344
+Jerry trace RenderManager.writeContro id: __button344-img
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: loadingDialog
+Jerry trace RenderManager.writeContro id: loadingDialog-busyLabel
+Jerry trace rtl: true
+Jerry trace RenderManager.writeContro id: shell-header
+Jerry trace rtl: true

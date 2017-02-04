@@ -1,0 +1,2590 @@
+<!--This view provides an overview of
+ a) Inspection Lots
+ b) Operations
+ c) Physical Samples
+ d) Inspection Characteristics
+ User can vary the display of setting according to user's preference, and able to save it at local storage .
+ User can use filter selection to filter the work list, effective for all tabs
+ -->
+<mvc:View controllerName="i2d.qm.inspresults.records1.controller.Worklist" id="qr_WorkList" xmlns:core="sap.ui.core"
+	xmlns:customChart="i2d.qm.inspresults.records1.customcontrol.viz"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:fb="sap.ui.comp.filterbar"
+	xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:l="sap.ui.layout" xmlns:mchart="sap.suite.ui.microchart" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:variant="sap.ui.comp.variants" xmlns="sap.m">
+	<Page id="qr_WorkList_Page" title="{i18n>masterPageTitle}">
+		<content>
+			<l:VerticalLayout width="100%">
+				<!--
+					MVariantManagement extend from VariantManagement, used to do temporary fixing for a child dependency missing issue.
+					Should be replaced when fixed version released.
+				-->
+				<!-- FilterBar information showing type of variant`s selected and add custom varinats
+				User can use filter selection to filter the work list, effective for all tabs-->
+				<smartFilterBar:SmartFilterBar class="sapUiNoContentPadding" entityType="C_Qm_Inspectlot_FilterbarType" filterBarExpanded="true"
+					id="qr_filterBar" persistencyKey="workListSmartFilterBar" showClearButton="true" showClearOnFB="true">
+					<smartFilterBar:customData>
+						<core:CustomData key="dateFormatSettings" value='\{"UTC":true}'/>
+					</smartFilterBar:customData>
+					<smartFilterBar:controlConfiguration>
+						<smartFilterBar:ControlConfiguration groupId="_BASIC" key="InspectionLot" label="{i18n>QM_FIELD_INSPECTION_LOT}"
+							preventInitialDataFetchInValueHelpDialog="false"/>
+						<smartFilterBar:ControlConfiguration groupId="_BASIC" key="Plant" label="{i18n>QM_FIELD_PLANT}"
+							preventInitialDataFetchInValueHelpDialog="false"/>
+						<smartFilterBar:ControlConfiguration groupId="_BASIC" key="Material" label="{i18n>QM_FIELD_MATERIAL}"
+							preventInitialDataFetchInValueHelpDialog="false"/>
+						<smartFilterBar:ControlConfiguration groupId="_BASIC" key="InspectionLotOrigin" label="{i18n>QM_FIELD_INSPECTION_LOT_ORIGIN}"
+							preventInitialDataFetchInValueHelpDialog="false"/>
+						<smartFilterBar:ControlConfiguration groupId="_BASIC" key="InspectionLotEndDate" label="{i18n>QM_FIELD_INSPECTION_LOT_END_DATE}"
+							preventInitialDataFetchInValueHelpDialog="false"/>
+						<smartFilterBar:ControlConfiguration key="SalesOrdStockWBSElement" label="{i18n>QM_FIELD_WBS_ELMNT_ASSIGNED_TO_SALES_ORD_STK}"
+							preventInitialDataFetchInValueHelpDialog="false"/>
+					</smartFilterBar:controlConfiguration>
+				</smartFilterBar:SmartFilterBar>
+			</l:VerticalLayout>
+			<!-- Load all the views strictly maintain the order .
+			 User can vary the display of setting according to user's preference, and able to save it .
+             Results should include all open inspection lot & all long term inspection lots .-->
+			<IconTabBar select="onIconTabBarPressed" upperCase="true">
+				<items>
+					<IconTabFilter count="{workListView>/inspectionLotCount}" id="qr_WorkListId-InspectionLot" key="InspectionLot"
+						text="{i18n>masterPage.tab.inspectonLot}">
+						<smartTable:SmartTable beforeRebindTable="onInspLotSMTableBeforeRebind" customData:p13nDialogSettings='{filter:{visible:false}}'
+							enableAutoBinding="true" entitySet="InspectionLotsSet" id="inspectionLotSmartTable" persistencyKey="SmartTableInspLot"
+							smartFilterId="qr_filterBar" tableType="ResponsiveTable" useExportToExcel="false" useTablePersonalisation="true" useVariantManagement="true">
+							<smartTable:layoutData>
+								<FlexItemData growFactor="1"/>
+							</smartTable:layoutData>
+							<!-- Load Header information showing type of variant selected,search fields and other settings of a table   -->
+							<smartTable:customToolbar>
+								<OverflowToolbar>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<SearchField search="onInspectionLotSearch" showRefreshButton="false" width="30%"/>
+									<Button press="onAddSample" id="qr_addSampleInspectionLot" text="{i18n>masterPage.footer.addSample}" type="Transparent"/>
+									<Button press="onAddCharacteristic" id="qr_addCharInspectionLot" text="{i18n>masterPage.footer.addChar}" type="Transparent"/>
+									<Button press="toggleMultiSelect" text="{i18n>QM_MULTI_SELECT}" type="Transparent"/>
+								</OverflowToolbar>
+							</smartTable:customToolbar>
+							<Table class="sapUiNoContentPadding" growing="true" growingFinished="onTableGrowingFinished" growingScrollToLoad="false"
+								growingThreshold="20" id="inspectionLotTable" inset="true" selectionChange="onInspectionLotChange"
+								updateFinished="onUpdateFinished">
+								<columns>
+									<!-- Inspection Lot Coloumn Name -->
+									<Column demandPopin="true" id="QR_INL_InspectionLot" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLot","leadingProperty": "InspectionLot","sortProperty": "InspectionLot","filterProperty": "InspectionLot"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT}"/>
+									</Column>
+									<!-- Material Details Name  -->
+									<Column demandPopin="true" id="QR_INL_Material" minScreenWidth="Large" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Material","leadingProperty": "Material","sortProperty": "Material","filterProperty": "Material"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL}"/>
+									</Column>
+									<!-- Batch Coloumn Name-->
+									<Column demandPopin="true" id="QR_INL_Batch" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Batch","leadingProperty": "Batch","sortProperty": "Batch","filterProperty": "Batch"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH}"/>
+									</Column>
+									<!-- Physical Sample Coloumn Name-->
+									<Column demandPopin="true" id="QR_INL_PhysicalSample" minScreenWidth="Large" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialSampleCount","leadingProperty": "MaterialSampleCount","filterProperty": "MaterialSampleCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PHYSICAL_SAMPLE_COUNT} " textAlign="Center"/>
+									</Column>
+									<!-- InspectionChar Coloumn Name-->
+									<Column demandPopin="true" id="QR_INL_InspectionCharactristic" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspCharCount","leadingProperty": "InspCharCount","filterProperty": "InspCharCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CHARACTERISTIC_COUNT}"/>
+									</Column>
+									<!-- Progress bar showing all InspectionProgress-->
+									<Column demandPopin="true" id="QR_INL_InspectionProgress" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ChPrgsItems","leadingProperty": "ChPrgsItems"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PROGRESS_OF_CHARACTERISTIC}"/>
+									</Column>
+									<!-- Chart showing all InspectionOperation-->
+									<Column demandPopin="true" id="QR_INL_InspectionOperation" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "OpPrgsItems","leadingProperty": "OpPrgsItems"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PROGRESS_OF_OPERATION}"/>
+									</Column>
+									<!-- Chart showing all InspectionCompletion-->
+									<Column demandPopin="true" id="QR_INL_InspectionCompletion" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "OpCmptItems","leadingProperty": "OpCmptItems"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_OPERATION_COMPLETION}"/>
+									</Column>
+									<!-- Inspection Lot End Date-->
+									<Column demandPopin="true" id="QR_INL_EndDate" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotEndDate","leadingProperty": "InspectionLotEndDate","sortProperty": "InspectionLotEndDate","filterProperty": "InspectionLotEndDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_END_DATE}"/>
+									</Column>
+									<!-- WBS Element for Valuated Sales Order Stock-->
+									<Column demandPopin="true" id="QR_INL_SalesOrdStockWBSElement" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrdStockWBSElement","leadingProperty": "SalesOrdStockWBSElement","sortProperty": "SalesOrdStockWBSElement","filterProperty": "SalesOrdStockWBSElement"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_WBS_ELMNT_ASSIGNED_TO_SALES_ORD_STK}"/>
+									</Column>
+									<!-- Plant -->
+									<Column demandPopin="true" id="QR_INL_Plant" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Plant","leadingProperty": "Plant","sortProperty": "Plant","filterProperty": "Plant"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PLANT}"/>
+									</Column>
+									<!-- Inspection Type -->
+									<Column demandPopin="true" id="QR_INL_InspectionType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotType","leadingProperty": "InspectionLotType","sortProperty": "InspectionLotType","filterProperty": "InspectionLotType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_TYPE}"/>
+									</Column>
+									<!-- Inspection Lot Origin -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotOrigin" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotOrigin","leadingProperty": "InspectionLotOrigin","sortProperty": "InspectionLotOrigin","filterProperty": "InspectionLotOrigin"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_ORIGIN}"/>
+									</Column>
+									<!-- Inspection Lot Object Short Text -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotObjectText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotObjectText","leadingProperty": "InspectionLotObjectText","sortProperty": "InspectionLotObjectText","filterProperty": "InspectionLotObjectText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_OBJECT_TEXT}"/>
+									</Column>
+									<!-- Material Quality Authorization Group -->
+									<Column demandPopin="true" id="QR_INL_MaterialQualityAuthorizationGroup" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MatlQualityAuthorizationGroup","leadingProperty": "MatlQualityAuthorizationGroup","sortProperty": "MatlQualityAuthorizationGroup","filterProperty": "MatlQualityAuthorizationGroup"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATL_QUALITY_AUTHORIZATION_GROUP}"/>
+									</Column>
+									<!-- Goods Receipt Blocked Stock -->
+									<Column demandPopin="true" id="QR_INL_GoodsReceiptIsMovedToBlkdStock" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "GoodsReceiptIsMovedToBlkdStock","leadingProperty": "GoodsReceiptIsMovedToBlkdStock","filterProperty": "GoodsReceiptIsMovedToBlkdStock"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_GOODS_RECEIPT_IS_MOVED_TO_BLKD_STOCK}"/>
+									</Column>
+									<!-- Quantity in Inspection Stock -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotHasQuantity" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotHasQuantity","leadingProperty": "InspectionLotHasQuantity","filterProperty": "InspectionLotHasQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_HAS_QUANTITY}"/>
+									</Column>
+									<!-- Inspection Lot Approval  -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotApproval" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotApproval","leadingProperty": "InspectionLotApproval","filterProperty": "InspectionLotApproval"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_APPROVAL}"/>
+									</Column>
+									<!-- Digital Signature  Insp. Lot in Results Recording -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotDigitalSignatureForResultRecording" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "InspLotDigitalSgntrResultsRecg","leadingProperty": "InspLotDigitalSgntrResultsRecg","filterProperty": "InspLotDigitalSgntrResultsRecg"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_DIGITAL_SGNTR_IN_RESULTS_RECORDING}"/>
+									</Column>
+									<!-- Digital Signature in Usage Decision -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotDigitalSignatureInUsageDecision" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotDigitalSgntrInUsgeDcsn","leadingProperty": "InspLotDigitalSgntrInUsgeDcsn","filterProperty": "InspLotDigitalSgntrInUsgeDcsn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_DIGITAL_SGNTR_IN_USGE_DCSN}"/>
+									</Column>
+									<!-- Inspection Lot Creation Date -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotCreationDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotCreatedOnLocalDate","leadingProperty": "InspLotCreatedOnLocalDate","filterProperty": "InspLotCreatedOnLocalDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATION_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Creation Time -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotCreationTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotCreatedOnLocalTime","leadingProperty": "InspLotCreatedOnLocalTime","filterProperty": "InspLotCreatedOnLocalTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Created Name -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotCreatedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedBy","leadingProperty": "InspectionLotCreatedBy","sortProperty": "InspectionLotCreatedBy","filterProperty": "InspectionLotCreatedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATED_BY}"/>
+									</Column>
+									<!-- Data Record Creation Date -->
+									<Column demandPopin="true" id="QR_INL_DataRecordCreationDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedOn","leadingProperty": "InspectionLotCreatedOn","sortProperty": "InspectionLotCreatedOn","filterProperty": "InspectionLotCreatedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DATA_RECORD_CREATION_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Creation Date -->
+									<Column demandPopin="true" id="QR_INL_LotCreationTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedOnTime","leadingProperty": "InspectionLotCreatedOnTime","sortProperty": "InspectionLotCreatedOnTime","filterProperty": "InspectionLotCreatedOnTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_LOT_CREATION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Changed Name -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotChangedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangedBy","leadingProperty": "InspectionLotChangedBy","sortProperty": "InspectionLotChangedBy","filterProperty": "InspectionLotChangedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Change Date -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotChangeDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangeDate","leadingProperty": "InspectionLotChangeDate","sortProperty": "InspectionLotChangeDate","filterProperty": "InspectionLotChangeDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGE_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Change Time -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotChangeTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangeTime","leadingProperty": "InspectionLotChangeTime","sortProperty": "InspectionLotChangeTime","filterProperty": "InspectionLotChangeTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGE_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Start Date -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotStartDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotStartDate","leadingProperty": "InspectionLotStartDate","sortProperty": "InspectionLotStartDate","filterProperty": "InspectionLotStartDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_START_DATE}"/>
+									</Column>
+									<!-- Bill of Operations Type / Task List Type -->
+									<Column demandPopin="true" id="QR_INL_BillOfOperationsType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BillOfOperationsType","leadingProperty": "BillOfOperationsType","filterProperty": "BillOfOperationsType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BILL_OF_OPERATIONS_TYPE}"/>
+									</Column>
+									<!-- Bill of Operations / Task List Group -->
+									<Column demandPopin="true" id="QR_INL_BillOfOperations" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BillOfOperationsGroup","leadingProperty": "BillOfOperationsGroup","sortProperty": "BillOfOperationsGroup","filterProperty": "BillOfOperationsGroup"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BILL_OF_OPERATIONIS}"/>
+									</Column>
+									<!-- Bill of Operations Usage / Task List Usage -->
+									<Column demandPopin="true" id="QR_INL_BillOfOperationsUsage" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BillOfOperationsUsage","leadingProperty": "BillOfOperationsUsage","filterProperty": "BillOfOperationsUsage"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BILL_OF_OPERATIONS_USAGE}"/>
+									</Column>
+									<!-- Task List Group Variant -->
+									<Column demandPopin="true" id="QR_INL_BillOfOperationsVariant" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BillOfOperationsVariant","leadingProperty": "BillOfOperationsVariant","filterProperty": "BillOfOperationsVariant"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BILL_OF_OPERATIONS_VARIANT}"/>
+									</Column>
+									<!-- Inspection Lot Valid From -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotValidFromDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotSelectionValidFromDate","leadingProperty": "InspLotSelectionValidFromDate","filterProperty": "InspLotSelectionValidFromDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_VALID_FROM_DATE}"/>
+									</Column>
+									<!-- Manufacturing Order -->
+									<Column demandPopin="true" id="QR_INL_ManufacturingOrder" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ManufacturingOrder","leadingProperty": "ManufacturingOrder","filterProperty": "ManufacturingOrder"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURING_ORDER}"/>
+									</Column>
+									<!-- Production Version -->
+									<Column demandPopin="true" id="QR_INL_ProductionVersion" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ProductionVersion","leadingProperty": "ProductionVersion","filterProperty": "ProductionVersion"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PRODUCTION_VERSION}"/>
+									</Column>
+									<!-- Customer (Ship-To Party) -->
+									<Column demandPopin="true" id="QR_INL_Customer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Customer","leadingProperty": "Customer","sortProperty": "Customer","filterProperty": "Customer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CUSTOMER}"/>
+									</Column>
+									<!-- Number of Manufacturer -->
+									<Column demandPopin="true" id="QR_INL_Manufacturer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Manufacturer","leadingProperty": "Manufacturer","sortProperty": "Manufacturer","filterProperty": "Manufacturer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURER}"/>
+									</Column>
+									<!-- Manufacturer Part Number -->
+									<Column demandPopin="true" id="QR_INL_ManufacturerPartNmbr" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ManufacturerPartNmbr","leadingProperty": "ManufacturerPartNmbr","filterProperty": "ManufacturerPartNmbr"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURER_PART_NMBR}"/>
+									</Column>
+									<!-- Material Revision Level Revision -->
+									<Column demandPopin="true" id="QR_INL_MaterialRevisionLevel" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialRevisionLevel","leadingProperty": "MaterialRevisionLevel","filterProperty": "MaterialRevisionLevel"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_REVISION_LEVEL}"/>
+									</Column>
+									<!-- Material Batch Management Required -->
+									<Column demandPopin="true" id="QR_INL_MaterialIsBatchManaged" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialIsBatchManaged","leadingProperty": "MaterialIsBatchManaged","filterProperty": "MaterialIsBatchManaged"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_IS_BATCH_MANAGED}"/>
+									</Column>
+									<!-- Batch Storage Location -->
+									<Column demandPopin="true" id="QR_INL_BatchStorageLocation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BatchStorageLocation","leadingProperty": "BatchStorageLocation","filterProperty": "BatchStorageLocation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH_STORAGE_LOCATION}"/>
+									</Column>
+									<!-- Material Comp Is Special Stock -->
+									<Column demandPopin="true" id="QR_INL_MaterialCompIsSpecialStock" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialCompIsSpecialStock","leadingProperty": "MaterialCompIsSpecialStock","filterProperty": "MaterialCompIsSpecialStock"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_COMP_IS_SPECIAL_STOCK}"/>
+									</Column>
+									<!-- Purchasing Organization -->
+									<Column demandPopin="true" id="QR_INL_PurchasingOrganization" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingOrganization","leadingProperty": "PurchasingOrganization","filterProperty": "PurchasingOrganization"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_ORGANIZATION}"/>
+									</Column>
+									<!-- Purchasing Document Number -->
+									<Column demandPopin="true" id="QR_INL_PurchasingDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingDocument","leadingProperty": "PurchasingDocument","sortProperty": "PurchasingDocument","filterProperty": "PurchasingDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_DOCUMENT}"/>
+									</Column>
+									<!-- Purchasing Document Item -->
+									<Column demandPopin="true" id="QR_INL_PurchasingDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingDocumentItem","leadingProperty": "PurchasingDocumentItem","sortProperty": "PurchasingDocumentItem","filterProperty": "PurchasingDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Delivery Schedule Line -->
+									<Column demandPopin="true" id="QR_INL_ScheduleLine" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ScheduleLine","leadingProperty": "ScheduleLine","filterProperty": "ScheduleLine"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SCHEDULE_LINE}"/>
+									</Column>
+									<!-- Accounting Document Type -->
+									<Column demandPopin="true" id="QR_INL_AccountingDocumentType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "AccountingDocumentType","leadingProperty": "AccountingDocumentType","filterProperty": "AccountingDocumentType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_ACCOUNTING_DOCUMENT_TYPE}"/>
+									</Column>
+									<!-- Material Document Year Material -->
+									<Column demandPopin="true" id="QR_INL_MaterialDocumentYear" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocumentYear","leadingProperty": "MaterialDocumentYear","sortProperty": "MaterialDocumentYear","filterProperty": "MaterialDocumentYear"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT_YEAR}"/>
+									</Column>
+									<!-- Number of Material Document -->
+									<Column demandPopin="true" id="QR_INL_MaterialDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocument","leadingProperty": "MaterialDocument","sortProperty": "MaterialDocument","filterProperty": "MaterialDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT}"/>
+									</Column>
+									<!-- Material Document Item -->
+									<Column demandPopin="true" id="QR_INL_MaterialDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocumentItem","leadingProperty": "MaterialDocumentItem","filterProperty": "MaterialDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Material Document Posting Date -->
+									<Column demandPopin="true" id="QR_INL_MatlDocLatestPostgDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MatlDocLatestPostgDate","leadingProperty": "MatlDocLatestPostgDate","sortProperty": "MatlDocLatestPostgDate","filterProperty": "MatlDocLatestPostgDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATL_DOC_LATEST_POSTG_DATE}"/>
+									</Column>
+									<!-- Goods Movement Type -->
+									<Column demandPopin="true" id="QR_INL_GoodsMovementType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "GoodsMovementType","leadingProperty": "GoodsMovementType","sortProperty": "GoodsMovementType","filterProperty": "GoodsMovementType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_GOODS_MOVEMENT_TYPE}"/>
+									</Column>
+									<!-- Inspection Lot Plant -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotPlant" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotPlant","leadingProperty": "InspectionLotPlant","sortProperty": "InspectionLotPlant","filterProperty": "InspectionLotPlant"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_PLANT}"/>
+									</Column>
+									<!-- Inspection Lot Storage -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotStorageLocation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotStorageLocation","leadingProperty": "InspectionLotStorageLocation","sortProperty": "InspectionLotStorageLocation","filterProperty": "InspectionLotStorageLocation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_STORAGE_LOCATION}"/>
+									</Column>
+									<!-- Sales Order Number -->
+									<Column demandPopin="true" id="QR_INL_SalesOrder" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrder","leadingProperty": "SalesOrder","sortProperty": "SalesOrder","filterProperty": "SalesOrder"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SALES_ORDER}"/>
+									</Column>
+									<!-- Sales Order Item -->
+									<Column demandPopin="true" id="QR_INL_SalesOrderItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrderItem","leadingProperty": "SalesOrderItem","sortProperty": "SalesOrderItem","filterProperty": "SalesOrderItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SALES_ORDER_ITEM}"/>
+									</Column>
+									<!-- Delivery Document -->
+									<Column demandPopin="true" id="QR_INL_DeliveryDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryDocument","leadingProperty": "DeliveryDocument","sortProperty": "DeliveryDocument","filterProperty": "DeliveryDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_DOCUMENT}"/>
+									</Column>
+									<!-- Delivery Document Item -->
+									<Column demandPopin="true" id="QR_INL_DeliveryDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryDocumentItem","leadingProperty": "DeliveryDocumentItem","sortProperty": "DeliveryDocumentItem","filterProperty": "DeliveryDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Delivery Category -->
+									<Column demandPopin="true" id="QR_INL_DeliveryCategory" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryCategory","leadingProperty": "DeliveryCategory","filterProperty": "DeliveryCategory"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_CATEGORY}"/>
+									</Column>
+									<!-- Route -->
+									<Column demandPopin="true" id="QR_INL_Route" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Route","leadingProperty": "Route","filterProperty": "Route"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_ROUTE}"/>
+									</Column>
+									<!-- Bill-To Party Country -->
+									<Column demandPopin="true" id="QR_INL_BillToPartyCountry" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BillToPartyCountry","leadingProperty": "BillToPartyCountry","filterProperty": "BillToPartyCountry"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BILL_TO_PARTY_COUNTRY}"/>
+									</Column>
+									<!-- Sold-To Party -->
+									<Column demandPopin="true" id="QR_INL_SoldToParty" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SoldToParty","leadingProperty": "SoldToParty","sortProperty": "SoldToParty","filterProperty": "SoldToParty"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SOLD_TO_PARTY}"/>
+									</Column>
+									<!-- Sales Organization -->
+									<Column demandPopin="true" id="QR_INL_SalesOrganization" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrganization","leadingProperty": "SalesOrganization","sortProperty": "SalesOrganization","filterProperty": "SalesOrganization"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SALES_ORGANIZATION}"/>
+									</Column>
+									<!-- Material By Customer -->
+									<Column demandPopin="true" id="QR_INL_MaterialByCustomer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialByCustomer","leadingProperty": "MaterialByCustomer","filterProperty": "MaterialByCustomer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_BY_CUSTOMER}"/>
+									</Column>
+									<!-- Inspection Lot Text -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotText","leadingProperty": "InspectionLotText","sortProperty": "InspectionLotText","filterProperty": "InspectionLotText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_TEXT}"/>
+									</Column>
+									<!-- Additional Characteristics Recorded for Inspection Lot -->
+									<Column demandPopin="true" id="QR_INL_InspLotNmbrAdditionalRecordedCharc" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotNmbrAddlRecordedCharc","leadingProperty": "InspLotNmbrAddlRecordedCharc","filterProperty": "InspLotNmbrAddlRecordedCharc"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_NMBR_ADD_RECORDED_CHARC}"/>
+									</Column>
+									<!-- Number of Short Term Characteristics -->
+									<Column demandPopin="true" id="QR_INL_InspLotNmbrOpenShortTermCharc" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotNmbrOpenShortTermCharc","leadingProperty": "InspLotNmbrOpenShortTermCharc","sortProperty": "InspLotNmbrOpenShortTermCharc","filterProperty": "InspLotNmbrOpenShortTermCharc"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_NMBR_OPEN_SHORT_TERM_CHARC}"/>
+									</Column>
+									<!-- Number of Long Term Characteristics -->
+									<Column demandPopin="true" id="QR_INL_InspLotNmbrOpenLongTermCharc" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotNmbrOpenLongTermCharc","leadingProperty": "InspLotNmbrOpenLongTermCharc","sortProperty": "InspLotNmbrOpenLongTermCharc","filterProperty": "InspLotNmbrOpenLongTermCharc"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_NMBR_OPEN_LONG_TERM_CHARC}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Inspection -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotQuantity" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQuantity","leadingProperty": "InspectionLotQuantity","sortProperty": "InspectionLotQuantity","filterProperty": "InspectionLotQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_QUANTITY}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Base -->
+									<Column demandPopin="true" id="QR_INL_InspLotQuantityUnit" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQuantityUnit","leadingProperty": "InspectionLotQuantityUnit","filterProperty": "InspectionLotQuantityUnit"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QUANTITY_UNIT}"/>
+									</Column>
+									<!-- Number of Containers -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotNumberContainers" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotContainer","leadingProperty": "InspectionLotContainer","filterProperty": "InspectionLotContainer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_NUMBER_CONTAINERS}"/>
+									</Column>
+									<!-- Inspection Lot Container -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotContainerUnit" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotContainerUnit","leadingProperty": "InspectionLotContainerUnit","filterProperty": "InspectionLotContainerUnit"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CONTAINER_UNIT}"/>
+									</Column>
+									<!-- Sample Size -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotNumberSamples" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotSampleQuantity","leadingProperty": "InspectionLotSampleQuantity","filterProperty": "InspectionLotSampleQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_NUMBER_SAMPLES}"/>
+									</Column>
+									<!-- Sample Unit -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotSampleUnit" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotSampleUnit","leadingProperty": "InspectionLotSampleUnit","filterProperty": "InspectionLotSampleUnit"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_SAMPLE_UNIT}"/>
+									</Column>
+									<!-- Quantity Posted to Free -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToFree" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToFree","leadingProperty": "InspLotQtyToFree","filterProperty": "InspLotQtyToFree"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_FREE}"/>
+									</Column>
+									<!-- Quantity Posted to Scrap -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToScrap" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToScrap","leadingProperty": "InspLotQtyToScrap","filterProperty": "InspLotQtyToScrap"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_SCRAP}"/>
+									</Column>
+									<!-- Quantity Posted to Sample -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToSample" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToSample","leadingProperty": "InspLotQtyToSample","filterProperty": "InspLotQtyToSample"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_SAMPLE}"/>
+									</Column>
+									<!-- Quantity Posted to Blocked -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToBlocked" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToBlocked","leadingProperty": "InspLotQtyToBlocked","filterProperty": "InspLotQtyToBlocked"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_BLOCKED}"/>
+									</Column>
+									<!-- Quantity Posted to Reserves -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToReserves" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToReserves","leadingProperty": "InspLotQtyToReserves","filterProperty": "InspLotQtyToReserves"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_RESERVES}"/>
+									</Column>
+									<!-- Quantity Posted to Another Material -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToAnotherMaterial" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToAnotherMaterial","leadingProperty": "InspLotQtyToAnotherMaterial","filterProperty": "InspLotQtyToAnotherMaterial"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_ANOOTHER_MATERIAL}"/>
+									</Column>
+									<!-- Quantity Posted to Material -->
+									<Column demandPopin="true" id="QR_INL_InspLotMaterialPostedTo" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotMaterialPostedTo","leadingProperty": "InspLotMaterialPostedTo","filterProperty": "InspLotMaterialPostedTo"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_MATERIAL_POSTED_TO}"/>
+									</Column>
+									<!-- Batch Transferred To  -->
+									<Column demandPopin="true" id="QR_INL_InspLotBatchTransferredTo" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotBatchTransferredTo","leadingProperty": "InspLotBatchTransferredTo","filterProperty": "InspLotBatchTransferredTo"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_BATCH_TRANSFERRED_TO}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Returned to Supplier -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyReturnedToSupplier" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyReturnedToSupplier","leadingProperty": "InspLotQtyReturnedToSupplier","filterProperty": "InspLotQtyReturnedToSupplier"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_RETURNED_TO_SUPPLIER}"/>
+									</Column>
+									<!-- Inspection Lot Quantity to Special Stock -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToSpecialStock" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToSpecialStock","leadingProperty": "InspLotQtyToSpecialStock","filterProperty": "InspLotQtyToSpecialStock"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_SPECIAL_STOCK}"/>
+									</Column>
+									<!-- Inspection Lot Quantity to Other Stock -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToOtherStock" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToOtherStock","leadingProperty": "InspLotQtyToOtherStock","filterProperty": "InspLotQtyToOtherStock"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_ANOTHER_STOCK}"/>
+									</Column>
+									<!-- Inspection Lot Quantity to Be Posted -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyToBePosted" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyToBePosted","leadingProperty": "InspLotQtyToBePosted","filterProperty": "InspLotQtyToBePosted"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_TO_BE_POSTED}"/>
+									</Column>
+									<!-- Inspection Lot Sample Quantity for Long Term Characteristics -->
+									<Column demandPopin="true" id="QR_INL_InspLotSmplQltyForLongTermChar" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotSmplQtyForLongTermChar","leadingProperty": "InspLotSmplQtyForLongTermChar","filterProperty": "InspLotSmplQtyForLongTermChar"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_SMPL_QLTY_FOR_LONG_TERM_CHAR}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Actually Inspected -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyInspected" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyInspected","leadingProperty": "InspLotQtyInspected","filterProperty": "InspLotQtyInspected"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_INSPECTED}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Destroyed -->
+									<Column demandPopin="true" id="QR_INL_InspLotQltyDestroyed" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotQtyDestroyed","leadingProperty": "InspLotQtyDestroyed","filterProperty": "InspLotQtyDestroyed"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QLTY_DESTROYED}"/>
+									</Column>
+									<!-- Inspection Lot Actual Quantity  -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotActualQuantity" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotActualQuantity","leadingProperty": "InspectionLotActualQuantity","sortProperty": "InspectionLotActualQuantity","filterProperty": "InspectionLotActualQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_ACTUAL_QUANTITY}"/>
+									</Column>
+									<!-- Inspection Lot Defective Quantity -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotDefectiveQuantity" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotDefectiveQuantity","leadingProperty": "InspectionLotDefectiveQuantity","filterProperty": "InspectionLotDefectiveQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_DEFECTIVE_QUANTITY}"/>
+									</Column>
+									<!-- Inspection Lot Scrap Ratio -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotScrapRatio" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotScrapRatio","leadingProperty": "InspectionLotScrapRatio","filterProperty": "InspectionLotScrapRatio"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_SCRAP_RATIO}"/>
+									</Column>
+									<!-- Order Number of Appraisal Cost -->
+									<Column demandPopin="true" id="QR_INL_QualityCostCollector" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "QualityCostCollector","leadingProperty": "QualityCostCollector","sortProperty": "QualityCostCollector","filterProperty": "QualityCostCollector"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_QLTY_COST_ORDER_FOR_APPRAISAL_COST}"/>
+									</Column>
+									<!-- Account Assignment Category -->
+									<Column demandPopin="true" id="QR_INL_AccountAssignmentCategory" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "AccountAssignmentCategory","leadingProperty": "AccountAssignmentCategory","filterProperty": "AccountAssignmentCategory"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_ACCOUNT_ASSIGNMENT_CATEGORY}"/>
+									</Column>
+									<!-- Cost Center -->
+									<Column demandPopin="true" id="QR_INL_CostCenter" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "CostCenter","leadingProperty": "CostCenter","sortProperty": "CostCenter","filterProperty": "CostCenter"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_COST_CENTER}"/>
+									</Column>
+									<!-- Profit Center -->
+									<Column demandPopin="true" id="QR_INL_ProfitCenter" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ProfitCenter","leadingProperty": "ProfitCenter","filterProperty": "ProfitCenter"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PROFIT_CENTER}"/>
+									</Column>
+									<!-- Business Area -->
+									<Column demandPopin="true" id="QR_INL_BusinessArea" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "BusinessArea","leadingProperty": "BusinessArea","filterProperty": "BusinessArea"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BUSINESS_AREA}"/>
+									</Column>
+									<!-- G/L Account Number -->
+									<Column demandPopin="true" id="QR_INL_GLAccount" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "GLAccount","leadingProperty": "GLAccount","filterProperty": "GLAccount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_GL_ACCOUNT}"/>
+									</Column>
+									<!-- Controlling Area -->
+									<Column demandPopin="true" id="QR_INL_ControllingArea" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ControllingArea","leadingProperty": "ControllingArea","sortProperty": "ControllingArea","filterProperty": "ControllingArea"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CONTROLLING_AREA}"/>
+									</Column>
+									<!-- Company Code -->
+									<Column demandPopin="true" id="QR_INL_CompanyCode" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "CompanyCode","leadingProperty": "CompanyCode","sortProperty": "CompanyCode","filterProperty": "CompanyCode"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_COMPANY_CODE}"/>
+									</Column>
+									<!-- Serial Number Profile Serial -->
+									<Column demandPopin="true" id="QR_INL_SerialNumberProfile" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SerialNumberProfile","leadingProperty": "SerialNumberProfile","filterProperty": "SerialNumberProfile"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SERIAL_NUMBER_PROFILE}"/>
+									</Column>
+									<!-- Inspection Lot External Inspection -->
+									<Column demandPopin="true" id="QR_INL_InspLotExternalNumber" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotExternalNumber","leadingProperty": "InspLotExternalNumber","filterProperty": "InspLotExternalNumber"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_EXTERNNAL_NUMBER}"/>
+									</Column>
+									<!-- Inspection Lot Usage Code -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionValuation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionValuation","leadingProperty": "InspLotUsageDecisionValuation","sortProperty": "InspLotUsageDecisionValuation","filterProperty": "InspLotUsageDecisionValuation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_VALUATION}"/>
+									</Column>
+									<!-- Inspection Lot Quality Score -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotQualityScore" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQualityScore","leadingProperty": "InspectionLotQualityScore","sortProperty": "InspectionLotQualityScore","filterProperty": "InspectionLotQualityScore"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QUALITY_SCORE}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Catalog -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionCatalog" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionCatalog","leadingProperty": "InspLotUsageDecisionCatalog","filterProperty": "InspLotUsageDecisionCatalog"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CATALOG}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Selected Set -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionSelectedSet" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsgeDcsnSelectedSet","leadingProperty": "InspLotUsgeDcsnSelectedSet","filterProperty": "InspLotUsgeDcsnSelectedSet"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_SELECTED_SET}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Code Group -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionCodeGroup" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionCodeGroup","leadingProperty": "InspLotUsageDecisionCodeGroup","sortProperty": "InspLotUsageDecisionCodeGroup","filterProperty": "InspLotUsageDecisionCodeGroup"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CODE_GROUP}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Code -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotUsageDecisionCode" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotUsageDecisionCode","leadingProperty": "InspectionLotUsageDecisionCode","sortProperty": "InspectionLotUsageDecisionCode","filterProperty": "InspectionLotUsageDecisionCode"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_USAGE_DECISION_CODE}"/>
+									</Column>
+									<!-- Inspection Lot Dynamic Valuation Rule -->
+									<Column demandPopin="true" id="QR_INL_InspLotDynamicValuation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsgeDcsnDynValuation","leadingProperty": "InspLotUsgeDcsnDynValuation","sortProperty": "InspLotUsgeDcsnDynValuation","filterProperty": "InspLotUsgeDcsnDynValuation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_DYNAMIC_VALUATION}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Follow-Up Action -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionFollowUpAction" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsgeDcsnFollowUpAction","leadingProperty": "InspLotUsgeDcsnFollowUpAction","filterProperty": "InspLotUsgeDcsnFollowUpAction"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_FOLLOW_UP_ACTION}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decided By -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotUsageDecidedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotUsageDecidedBy","leadingProperty": "InspectionLotUsageDecidedBy","sortProperty": "InspectionLotUsageDecidedBy","filterProperty": "InspectionLotUsageDecidedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_USAGE_DECIDED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decided On -->
+									<Column demandPopin="true" id="QR_INL_InspectionLotUsageDecidedOn" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotUsageDecidedOn","leadingProperty": "InspectionLotUsageDecidedOn","sortProperty": "InspectionLotUsageDecidedOn","filterProperty": "InspectionLotUsageDecidedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_USAGE_DECIDED_ON}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Time -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionTime","leadingProperty": "InspLotUsageDecisionTime","sortProperty": "InspLotUsageDecisionTime","filterProperty": "InspLotUsageDecisionTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Changed By -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionChangedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionChangedBy","leadingProperty": "InspLotUsageDecisionChangedBy","sortProperty": "InspLotUsageDecisionChangedBy","filterProperty": "InspLotUsageDecisionChangedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CHANGED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Changed On -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionChangedOn" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionChangedOn","leadingProperty": "InspLotUsageDecisionChangedOn","sortProperty": "InspLotUsageDecisionChangedOn","filterProperty": "InspLotUsageDecisionChangedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CHANGED_ON}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Changed Time -->
+									<Column demandPopin="true" id="QR_INL_InspLotUsageDecisionChangedTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsgeDcsnChangedTime","leadingProperty": "InspLotUsgeDcsnChangedTime","sortProperty": "InspLotUsgeDcsnChangedTime","filterProperty": "InspLotUsgeDcsnChangedTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISSION_CHANGED_TIME}"/>
+									</Column>
+									<!-- Supplier -->
+									<Column demandPopin="true" id="QR_INL_Supplier" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Supplier","leadingProperty": "Supplier","sortProperty": "Supplier","filterProperty": "Supplier"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SUPPLIER}"/>
+									</Column>
+									<!-- Vendor Batch -->
+									<Column demandPopin="true" id="QR_INL_BATCH_BY_SUPPLIER" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "BatchBySupplier","leadingProperty": "BatchBySupplier"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH_BY_SUPPLIER}"/>
+									</Column>
+								</columns>
+								<items>
+									<!-- Declare Column List Items -->
+									<ColumnListItem id="inspectionLotTableItems" press="onWorkListItemPress" type="{workListView>/InspectionLotListItemType}">
+										<cells>
+											<Text text="{InspectionLot}"/>
+											<Text text="{Material}"/>
+											<Text text="{Batch}"/>
+											<Text text="{MaterialSampleCount}"/>
+											<Text text="{InspCharCount}"/>
+											<customChart:Comparison data="{ChPrgsItems}" height="20rem" showLabel="false"/>
+											<l:Grid content="{OpPrgsItems}" defaultSpan="XL1 L1 M1 S1" hSpacing="0" vSpacing="0">
+												<l:content>
+													<mchart:ColumnMicroChart height="1.25rem" press="press" width="65%">
+														<mchart:columns >
+															<mchart:ColumnMicroChartData color="{color}" value="1"></mchart:ColumnMicroChartData>
+														</mchart:columns>
+													</mchart:ColumnMicroChart>
+												</l:content>
+											</l:Grid>
+											<l:Grid content="{OpCmptItems}" defaultSpan="XL1 L1 M1 S1" hSpacing="0" vSpacing="0">
+												<l:content>
+													<mchart:ColumnMicroChart height="1.25rem" press="press" width="65%">
+														<mchart:columns >
+															<mchart:ColumnMicroChartData color="{color}" value="1"></mchart:ColumnMicroChartData>
+														</mchart:columns>
+													</mchart:ColumnMicroChart>
+												</l:content>
+											</l:Grid>
+											<ObjectStatus state="{ path: 'InspectionLotEndDate', formatter: '.formatter.lotEndDateStatus'}"
+												text="{path: 'InspectionLotEndDate', formatter: '.formatter.oLotNumberOfDays'}"/>
+											<Text text="{SalesOrdStockWBSElement}"/>
+											<Text text="{Plant}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotType'},
+													{path: 'InspectionLotTypeText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotOrigin'},
+													{path: 'InspectionLotOriginText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{InspectionLotObjectText}"/>
+											<Text text="{
+												parts: [
+													{path: 'MatlQualityAuthorizationGroup'},
+													{path: 'MatlQltyAuthorizationGrpText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{GoodsReceiptIsMovedToBlkdStock}"/>
+											<Text text="{InspectionLotHasQuantity}"/>
+											<Text text="{InspectionLotApproval}"/>
+											<Text text="{InspLotDigitalSgntrResultsRecg}"/>
+											<Text text="{InspLotDigitalSgntrInUsgeDcsn}"/>
+											<Text text="{ path: 'InspLotCreatedOnLocalDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspLotCreatedOnLocalTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspectionLotCreatedBy}"/>
+											<Text text="{ path: 'InspectionLotCreatedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspectionLotCreatedOnTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspectionLotChangedBy}"/>
+											<Text text="{ path: 'InspectionLotChangeDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspectionLotChangeTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{ path: 'InspectionLotStartDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{
+												parts: [
+													{path: 'BillOfOperationsType'},
+													{path: 'BillOfOperationsTypeName'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{BillOfOperationsGroup}"/>
+											<Text text="{
+												parts: [
+													{path: 'BillOfOperationsUsage'},
+													{path: 'BillOfOperationsUsageDesc'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{BillOfOperationsVariant}"/>
+											<Text text="{ path: 'InspLotSelectionValidFromDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ManufacturingOrder}"/>
+											<Text text="{ProductionVersion}"/>
+											<Text text="{Customer}"/>
+											<Text text="{Manufacturer}"/>
+											<Text text="{ManufacturerPartNmbr}"/>
+											<Text text="{MaterialRevisionLevel}"/>
+											<Text text="{MaterialIsBatchManaged}"/>
+											<Text text="{BatchStorageLocation}"/>
+											<Text text="{MaterialCompIsSpecialStock}"/>
+											<Text text="{PurchasingOrganization}"/>
+											<Text text="{PurchasingDocument}"/>
+											<Text text="{PurchasingDocumentItem}"/>
+											<Text text="{ScheduleLine}"/>
+											<Text text="{AccountingDocumentType}"/>
+											<Text text="{MaterialDocumentYear}"/>
+											<Text text="{MaterialDocument}"/>
+											<Text text="{MaterialDocumentItem}"/>
+											<Text text="{ path: 'MatlDocLatestPostgDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{GoodsMovementType}"/>
+											<Text text="{InspectionLotPlant}"/>
+											<Text text="{InspectionLotStorageLocation}"/>
+											<Text text="{SalesOrder}"/>
+											<Text text="{SalesOrderItem}"/>
+											<Text text="{DeliveryDocument}"/>
+											<Text text="{DeliveryDocumentItem}"/>
+											<Text text="{DeliveryCategory}"/>
+											<Text text="{Route}"/>
+											<Text text="{BillToPartyCountry}"/>
+											<Text text="{SoldToParty}"/>
+											<Text text="{SalesOrganization}"/>
+											<Text text="{MaterialByCustomer}"/>
+											<Text text="{InspectionLotText}"/>
+											<Text text="{InspLotNmbrAddlRecordedCharc}"/>
+											<Text text="{InspLotNmbrOpenShortTermCharc}"/>
+											<Text text="{InspLotNmbrOpenLongTermCharc}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotQuantity'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspectionLotQuantityUnit}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotContainer'},
+													{path: 'InspLotContainerUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspectionLotContainerUnit}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotSampleQuantity'},
+													{path: 'InspLotSampleQtyUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspectionLotSampleUnit}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToFree'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToScrap'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToSample'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToBlocked'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToReserves'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToAnotherMaterial'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspLotMaterialPostedTo}"/>
+											<Text text="{InspLotBatchTransferredTo}"/>											
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyReturnedToSupplier'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToSpecialStock'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToOtherStock'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyToBePosted'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotSmplQtyForLongTermChar'},
+													{path: 'InspLotSampleQtyUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyInspected'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspLotQtyDestroyed'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotActualQuantity'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotDefectiveQuantity'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspectionLotScrapRatio}"/>
+											<Text text="{QualityCostCollector}"/>
+											<Text text="{AccountAssignmentCategory}"/>
+											<Text text="{CostCenter}"/>
+											<Text text="{ProfitCenter}"/>
+											<Text text="{BusinessArea}"/>
+											<Text text="{GLAccount}"/>
+											<Text text="{ControllingArea}"/>
+											<Text text="{CompanyCode}"/>
+											<Text text="{SerialNumberProfile}"/>
+											<Text text="{InspLotExternalNumber}"/>
+											<ObjectStatus state="{ path: 'InspLotUsageDecisionValuation', formatter: '.formatter.codeValuationStatus'}"
+														  text="{path: 'InspLotUsageDecisionValuation', formatter: '.formatter.codeValuation'}"/>
+											<Text text="{InspectionLotQualityScore}"/>
+											<Text text="{InspLotUsageDecisionCatalog}"/>
+											<Text text="{InspLotUsgeDcsnSelectedSet}"/>
+											<Text text="{InspLotUsageDecisionCodeGroup}"/>
+											<Text text="{InspectionLotUsageDecisionCode}"/>
+											<Text text="{InspLotUsgeDcsnDynValuation}"/>
+											<Text text="{InspLotUsgeDcsnFollowUpAction}"/>
+											<Text text="{InspectionLotUsageDecidedBy}"/>
+											<Text text="{ path: 'InspectionLotUsageDecidedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspLotUsageDecisionTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspLotUsageDecisionChangedBy}"/>
+											<Text text="{ path: 'InspLotUsageDecisionChangedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspLotUsgeDcsnChangedTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{Supplier}"/>
+											<Text text="{BatchBySupplier}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</smartTable:SmartTable>
+					</IconTabFilter>
+					<!-- Load all the views strictly maintain the order .
+			 User can vary the display of setting according to user's preference, and able to save it .
+             Results should include all open inspection lot & all long term operation .-->
+					<IconTabFilter count="{workListView>/operationsLotCount}" id="qrWorkListId-Operations" key="Operation"
+						text="{i18n>masterPage.tab.operation}">
+						<smartTable:SmartTable beforeRebindTable="onOperationSMTableBeforeRebind" customData:p13nDialogSettings='{filter:{visible:false}}'
+							enableAutoBinding="true" entitySet="InspectionLotsByOperationSet" id="inspLotByOperationSmartTable"
+							persistencyKey="SmartTableInspLotByOperation" smartFilterId="qr_filterBar" tableType="ResponsiveTable" useExportToExcel="false"
+							useTablePersonalisation="true" useVariantManagement="true">
+							<smartTable:layoutData>
+								<FlexItemData growFactor="1"/>
+							</smartTable:layoutData>
+							<!-- Load Header information showing type of variant selected,search fields and other settings of a table   -->
+							<smartTable:customToolbar>
+								<OverflowToolbar>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<SearchField search="onOperationsSearch" showRefreshButton="false" width="30%"/>
+									<Button press="onAddSample" id="qr_addSampleOperation" text="{i18n>masterPage.footer.addSample}" type="Transparent"/>
+									<Button press="onAddCharacteristic" id="qr_addCharOperation" text="{i18n>masterPage.footer.addChar}" type="Transparent"/>
+									<Button press="toggleMultiSelect" text="{i18n>QM_MULTI_SELECT}" type="Transparent"/>
+								</OverflowToolbar>
+							</smartTable:customToolbar>
+							<Table class="sapUiNoContentPadding" growing="true" growingFinished="onTableGrowingFinished" growingScrollToLoad="false"
+								growingThreshold="20" id="operationsTable" inset="true" selectionChange="onInspectionLotChange"
+								updateFinished="onUpdateFinished">
+								<columns>
+									<!-- Inspection Lot -->
+									<Column demandPopin="true" id="QR_OP_InspectionLot" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLot","leadingProperty": "InspectionLot","sortProperty": "InspectionLot","filterProperty": "InspectionLot"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT}"/>
+									</Column>
+									<!-- Operation -->
+									<Column demandPopin="true" id="QR_OP_Operation" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionOperation","leadingProperty": "InspectionOperation","sortProperty": "InspectionOperation","filterProperty": "InspectionOperation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_OPERATION}"/>
+									</Column>
+									<!-- Operation Description -->
+									<Column demandPopin="true" id="QR_OP_OperationDescription" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "OperationText","leadingProperty": "OperationText","sortProperty": "OperationText","filterProperty": "OperationText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_OPERATION_DESCRIPTION}"/>
+									</Column>
+									<!-- Material Details Name  -->
+									<Column demandPopin="true" id="QR_OP_Material" minScreenWidth="Large" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Material","leadingProperty": "Material","sortProperty": "Material","filterProperty": "Material"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL}"/>
+									</Column>
+									<!-- Batch -->
+									<Column demandPopin="true" id="QR_OP_Batch" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Batch","leadingProperty": "Batch","sortProperty": "Batch","filterProperty": "Batch"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH}"/>
+									</Column>
+									<!-- Physical Sample -->
+									<Column demandPopin="true" id="QR_OP_PhysicalSample" minScreenWidth="Large" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialSampleCount","leadingProperty": "MaterialSampleCount","filterProperty": "MaterialSampleCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PHYSICAL_SAMPLE_COUNT} " textAlign="Center"/>
+									</Column>
+									<!-- InspectionChar Count -->
+									<Column demandPopin="true" id="QR_OP_InspectionCharactristic" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspCharCount","leadingProperty": "InspCharCount","filterProperty": "InspCharCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CHARACTERISTIC_COUNT}"/>
+									</Column>
+									<!-- Progress bar showing all InspectionProgress-->
+									<Column demandPopin="true" id="QR_OP_InspectionProgress" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ChPrgsItemsByOp","leadingProperty": "ChPrgsItemsByOp"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PROGRESS_OF_CHARACTERISTIC}"/>
+									</Column>
+									<!-- Chart showing all InspectionCompletion-->
+									<Column demandPopin="true" id="QR_OP_InspectionCompletion" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspOpUsageDecisionValuation","leadingProperty": "InspOpUsageDecisionValuation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_OPERATION_COMPLETION}"/>
+									</Column>
+									<!-- Inspection Lot End Date-->
+									<Column demandPopin="true" id="QR_OP_EndDate" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotEndDate","leadingProperty": "InspectionLotEndDate","sortProperty": "InspectionLotEndDate","filterProperty": "InspectionLotEndDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_END_DATE}"/>
+									</Column>
+									<!-- Supplier-->
+									<Column demandPopin="true" id="QR_OP_Supplier" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Supplier","leadingProperty": "Supplier","sortProperty": "Supplier","filterProperty": "Supplier"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SUPPLIER}"/>
+									</Column>
+									<!-- Plant -->
+									<Column demandPopin="true" id="QR_OP_Plant" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Plant","leadingProperty": "Plant","sortProperty": "Plant","filterProperty": "Plant"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PLANT}"/>
+									</Column>
+									<!-- Inspection Type -->
+									<Column demandPopin="true" id="QR_OP_InspectionType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotType","leadingProperty": "InspectionLotType","sortProperty": "InspectionLotType","filterProperty": "InspectionLotType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_TYPE}"/>
+									</Column>
+									<!-- Inspection Lot Origin -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotOrigin" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotOrigin","leadingProperty": "InspectionLotOrigin","sortProperty": "InspectionLotOrigin","filterProperty": "InspectionLotOrigin"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_ORIGIN}"/>
+									</Column>
+									<!-- Inspection Lot Object Short Text -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotObjectText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotObjectText","leadingProperty": "InspectionLotObjectText","sortProperty": "InspectionLotObjectText","filterProperty": "InspectionLotObjectText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_OBJECT_TEXT}"/>
+									</Column>
+									<!-- Inspection Lot Creation Date -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotCreationDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotCreatedOnLocalDate","leadingProperty": "InspLotCreatedOnLocalDate","filterProperty": "InspLotCreatedOnLocalDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATION_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Creation Time -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotCreationTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotCreatedOnLocalTime","leadingProperty": "InspLotCreatedOnLocalTime","filterProperty": "InspLotCreatedOnLocalTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Created Name -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotCreatedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedBy","leadingProperty": "InspectionLotCreatedBy","sortProperty": "InspectionLotCreatedBy","filterProperty": "InspectionLotCreatedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATED_BY}"/>
+									</Column>
+									<!-- Data Record Creation Date -->
+									<Column demandPopin="true" id="QR_OP_DataRecordCreationDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedOn","leadingProperty": "InspectionLotCreatedOn","sortProperty": "InspectionLotCreatedOn","filterProperty": "InspectionLotCreatedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DATA_RECORD_CREATION_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Creation Date -->
+									<Column demandPopin="true" id="QR_OP_LotCreationTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedOnTime","leadingProperty": "InspectionLotCreatedOnTime","sortProperty": "InspectionLotCreatedOnTime","filterProperty": "InspectionLotCreatedOnTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_LOT_CREATION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Changed Name -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotChangedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangedBy","leadingProperty": "InspectionLotChangedBy","sortProperty": "InspectionLotChangedBy","filterProperty": "InspectionLotChangedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Change Date -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotChangeDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangeDate","leadingProperty": "InspectionLotChangeDate","sortProperty": "InspectionLotChangeDate","filterProperty": "InspectionLotChangeDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGE_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Change Time -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotChangeTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangeTime","leadingProperty": "InspectionLotChangeTime","sortProperty": "InspectionLotChangeTime","filterProperty": "InspectionLotChangeTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGE_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Start Date -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotStartDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotStartDate","leadingProperty": "InspectionLotStartDate","sortProperty": "InspectionLotStartDate","filterProperty": "InspectionLotStartDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_START_DATE}"/>
+									</Column>
+									<!-- Manufacturing Order -->
+									<Column demandPopin="true" id="QR_OP_ManufacturingOrder" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ManufacturingOrder","leadingProperty": "ManufacturingOrder","filterProperty": "ManufacturingOrder"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURING_ORDER}"/>
+									</Column>
+									<!-- Production Version -->
+									<Column demandPopin="true" id="QR_OP_ProductionVersion" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ProductionVersion","leadingProperty": "ProductionVersion","filterProperty": "ProductionVersion"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PRODUCTION_VERSION}"/>
+									</Column>
+									<!-- Customer (Ship-To Party) -->
+									<Column demandPopin="true" id="QR_OP_Customer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Customer","leadingProperty": "Customer","sortProperty": "Customer","filterProperty": "Customer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CUSTOMER}"/>
+									</Column>
+									<!-- Number of Manufacturer -->
+									<Column demandPopin="true" id="QR_OP_Manufacturer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Manufacturer","leadingProperty": "Manufacturer","sortProperty": "Manufacturer","filterProperty": "Manufacturer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURER}"/>
+									</Column>
+									<!-- Material Revision Level Revision -->
+									<Column demandPopin="true" id="QR_OP_MaterialRevisionLevel" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialRevisionLevel","leadingProperty": "MaterialRevisionLevel","filterProperty": "MaterialRevisionLevel"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_REVISION_LEVEL}"/>
+									</Column>
+									<!-- Batch Storage Location -->
+									<Column demandPopin="true" id="QR_OP_BatchStorageLocation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BatchStorageLocation","leadingProperty": "BatchStorageLocation","sortProperty":"BatchStorageLocation","filterProperty": "BatchStorageLocation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH_STORAGE_LOCATION}"/>
+									</Column>
+									<!-- Purchasing Document Number -->
+									<Column demandPopin="true" id="QR_OP_PurchasingDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingDocument","leadingProperty": "PurchasingDocument","filterProperty": "PurchasingDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_DOCUMENT}"/>
+									</Column>
+									<!-- Purchasing Document Item -->
+									<Column demandPopin="true" id="QR_OP_PurchasingDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingDocumentItem","leadingProperty": "PurchasingDocumentItem","filterProperty": "PurchasingDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Delivery Schedule Line -->
+									<Column demandPopin="true" id="QR_OP_ScheduleLine" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ScheduleLine","leadingProperty": "ScheduleLine","filterProperty": "ScheduleLine"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SCHEDULE_LINE}"/>
+									</Column>
+									<!-- Accounting Document Type -->
+									<Column demandPopin="true" id="QR_OP_AccountingDocumentType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "AccountingDocumentType","leadingProperty": "AccountingDocumentType","filterProperty": "AccountingDocumentType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_ACCOUNTING_DOCUMENT_TYPE}"/>
+									</Column>
+									<!-- Material Document Year Material -->
+									<Column demandPopin="true" id="QR_OP_MaterialDocumentYear" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocumentYear","leadingProperty": "MaterialDocumentYear","sortProperty": "MaterialDocumentYear","filterProperty": "MaterialDocumentYear"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT_YEAR}"/>
+									</Column>
+									<!-- Number of Material Document -->
+									<Column demandPopin="true" id="QR_OP_MaterialDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocument","leadingProperty": "MaterialDocument","sortProperty": "MaterialDocument","filterProperty": "MaterialDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT}"/>
+									</Column>
+									<!-- Material Document Item -->
+									<Column demandPopin="true" id="QR_OP_MaterialDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocumentItem","leadingProperty": "MaterialDocumentItem","filterProperty": "MaterialDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Sales Order Number -->
+									<Column demandPopin="true" id="QR_OP_SalesOrder" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrder","leadingProperty": "SalesOrder","sortProperty": "SalesOrder","filterProperty": "SalesOrder"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SALES_ORDER}"/>
+									</Column>
+									<!-- Sales Order Item -->
+									<Column demandPopin="true" id="QR_OP_SalesOrderItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrderItem","leadingProperty": "SalesOrderItem","filterProperty": "SalesOrderItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SALES_ORDER_ITEM}"/>
+									</Column>
+									<!-- Delivery Document -->
+									<Column demandPopin="true" id="QR_OP_DeliveryDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryDocument","leadingProperty": "DeliveryDocument","sortProperty": "DeliveryDocument","filterProperty": "DeliveryDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_DOCUMENT}"/>
+									</Column>
+									<!-- Delivery Document Item -->
+									<Column demandPopin="true" id="QR_OP_DeliveryDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryDocumentItem","leadingProperty": "DeliveryDocumentItem","filterProperty": "DeliveryDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Inspection Lot Text -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotText","leadingProperty": "InspectionLotText","sortProperty": "InspectionLotText","filterProperty": "InspectionLotText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_TEXT}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Inspection -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotQuantity" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQuantity","leadingProperty": "InspectionLotQuantity","sortProperty": "InspectionLotQuantity","filterProperty": "InspectionLotQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_QUANTITY}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Base -->
+									<Column demandPopin="true" id="QR_OP_InspLotQuantityUnit" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQuantityUnit","leadingProperty": "InspectionLotQuantityUnit","filterProperty": "InspectionLotQuantityUnit"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QUANTITY_UNIT}"/>
+									</Column>
+									<!-- Inspection Lot Usage Code -->
+									<Column demandPopin="true" id="QR_OP_InspLotUsageDecisionValuation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotUsageDecisionValuation","leadingProperty": "InspLotUsageDecisionValuation","sortProperty": "InspLotUsageDecisionValuation","filterProperty": "InspLotUsageDecisionValuation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_VALUATION}"/>
+									</Column>
+									<!-- Inspection Lot Quality Score -->
+									<Column demandPopin="true" id="QR_OP_InspectionLotQualityScore" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQualityScore","leadingProperty": "InspectionLotQualityScore","sortProperty": "InspectionLotQualityScore","filterProperty": "InspectionLotQualityScore"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QUALITY_SCORE}"/>
+									</Column>
+									<!-- Inspection Operation Usage Decision Selected Set -->
+									<Column demandPopin="true" id="QR_OP_InspOpUsgeDcsnSelectedSet" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsgeDcsnSelectedSet","leadingProperty": "InspOpUsgeDcsnSelectedSet","sortProperty": "InspOpUsgeDcsnSelectedSet","filterProperty": "InspOpUsgeDcsnSelectedSet"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_SELECTED_SET}"/>
+									</Column>
+									<!-- Usage Decision Code Group -->
+									<Column demandPopin="true" id="QR_OP_UsageDecisionCodeGroup" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "UsageDecisionCodeGroup","leadingProperty": "UsageDecisionCodeGroup","sortProperty": "UsageDecisionCodeGroup","filterProperty": "UsageDecisionCodeGroup"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CODE_GROUP}"/>
+									</Column>
+									<!-- Usage Decision Code -->
+									<Column demandPopin="true" id="QR_OP_UsageDecisionCode" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "UsageDecisionCode","leadingProperty": "UsageDecisionCode","sortProperty": "UsageDecisionCode","filterProperty": "UsageDecisionCode"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_USAGE_DECISION_CODE}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Follow-Up Action -->
+									<Column demandPopin="true" id="QR_OP_InspLotUsageDecisionFollowUpAction" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsgeDcsnFollowUpAction","leadingProperty": "InspOpUsgeDcsnFollowUpAction","filterProperty": "InspOpUsgeDcsnFollowUpAction"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_FOLLOW_UP_ACTION}"/>
+									</Column>
+									<!-- Inspection Operation Usage Decided By -->
+									<Column demandPopin="true" id="QR_OP_InspectionOpUsageDecidedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionOpUsageDecidedBy","leadingProperty": "InspectionOpUsageDecidedBy","sortProperty": "InspectionOpUsageDecidedBy","filterProperty": "InspectionOpUsageDecidedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_USAGE_DECIDED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Operation Usage Decided On -->
+									<Column demandPopin="true" id="QR_OP_InspOpUsageDecidedOn" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsageDecidedOn","leadingProperty": "InspOpUsageDecidedOn","sortProperty": "InspOpUsageDecidedOn","filterProperty": "InspOpUsageDecidedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_USAGE_DECIDED_ON}"/>
+									</Column>
+									<!-- Inspection Lot Operation Usage Decision Time -->
+									<Column demandPopin="true" id="QR_OP_InspOpUsageDecisionTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsageDecisionTime","leadingProperty": "InspOpUsageDecisionTime","sortProperty": "InspOpUsageDecisionTime","filterProperty": "InspOpUsageDecisionTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Changed By -->
+									<Column demandPopin="true" id="QR_OP_InspOpUsageDecisionChangedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsageDecisionChangedBy","leadingProperty": "InspOpUsageDecisionChangedBy","sortProperty": "InspOpUsageDecisionChangedBy","filterProperty": "InspOpUsageDecisionChangedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CHANGED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Changed On -->
+									<Column demandPopin="true" id="QR_OP_InspOpUsageDecisionChangedOn" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsageDecisionChangedOn","leadingProperty": "InspOpUsageDecisionChangedOn","sortProperty": "InspOpUsageDecisionChangedOn","filterProperty": "InspOpUsageDecisionChangedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISION_CHANGED_ON}"/>
+									</Column>
+									<!-- Inspection Lot Usage Decision Changed Time -->
+									<Column demandPopin="true" id="QR_OP_InspLotUsageDecisionChangedTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOpUsgeDcsnChangedTime","leadingProperty": "InspOpUsgeDcsnChangedTime","sortProperty": "InspOpUsgeDcsnChangedTime","filterProperty": "InspOpUsgeDcsnChangedTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_USAGE_DECISSION_CHANGED_TIME}"/>
+									</Column>
+									<!-- System Status -->
+									<Column demandPopin="true" id="QR_OP_SystemStatus" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SystemStatus","leadingProperty": "SystemStatus","sortProperty":"SystemStatus","filterProperty": "SystemStatus"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SYSTEM_STATUS}"/>
+									</Column>
+									<!-- User Status -->
+									<Column demandPopin="true" id="QR_OP_UserStatus" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "UserStatus","leadingProperty": "UserStatus","sortProperty":"UserStatus","filterProperty": "UserStatus"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_USER_STATUS}"/>
+									</Column>
+									<!-- Work Center -->
+									<Column demandPopin="true" id="QR_OP_WorkCenter" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "WorkCenter","leadingProperty": "WorkCenter","sortProperty":"WorkCenter","filterProperty": "WorkCenter"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_WORK_CENTER}"/>
+									</Column>
+									<!-- Work Center Plant -->
+									<Column demandPopin="true" id="QR_OP_WorkCenterPlant" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "WorkCenterPlant","leadingProperty": "WorkCenterPlant","sortProperty":"WorkCenterPlant","filterProperty": "WorkCenterPlant"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_WORK_CENTER_PLANT}"/>
+									</Column>
+									<!-- Work Center Text -->
+									<Column demandPopin="true" id="QR_OP_WorkCenterText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "WorkCenterText","leadingProperty": "WorkCenterText","sortProperty":"WorkCenterText","filterProperty": "WorkCenterText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_WORK_CENTER_TEXT}"/>
+									</Column>
+								</columns>
+								<items>
+									<!-- Declare Column List Items -->
+									<ColumnListItem id="operationsTableItems" press="onWorkListItemPress" type="{workListView>/OperationListItemType}">
+										<cells>
+											<Text text="{InspectionLot}"/>
+											<Text text="{InspectionOperation}"/>
+											<Text text="{OperationText}"/>
+											<Text text="{Material}"/>
+											<Text text="{Batch}"/>
+											<Text text="{MaterialSampleCount}"/>
+											<Text text="{InspCharCount}"/>
+											<customChart:Comparison data="{ChPrgsItemsByOp}" height="20rem" showLabel="false"/>
+											<ObjectStatus state="{ path: 'InspOpUsageDecisionValuation', formatter: '.formatter.codeValuationStatus'}"
+												text="{path: 'InspOpUsageDecisionValuation', formatter: '.formatter.codeValuation'}"/>
+											<ObjectStatus state="{ path: 'InspectionLotEndDate', formatter: '.formatter.lotEndDateStatus'}"
+												text="{path: 'InspectionLotEndDate', formatter: '.formatter.oLotNumberOfDays'}"/>
+											<Text text="{Supplier}"/>
+											<Text text="{Plant}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotType'},
+													{path: 'InspectionLotTypeText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotOrigin'},
+													{path: 'InspectionLotOriginText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{InspectionLotObjectText}"/>
+											<Text text="{ path: 'InspLotCreatedOnLocalDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspLotCreatedOnLocalTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspectionLotCreatedBy}"/>
+											<Text text="{ path: 'InspectionLotCreatedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspectionLotCreatedOnTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspectionLotChangedBy}"/>
+											<Text text="{ path: 'InspectionLotChangeDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspectionLotChangeTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{ path: 'InspectionLotStartDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ManufacturingOrder}"/>
+											<Text text="{ProductionVersion}"/>
+											<Text text="{Customer}"/>
+											<Text text="{Manufacturer}"/>
+											<Text text="{MaterialRevisionLevel}"/>
+											<Text text="{BatchStorageLocation}"/>
+											<Text text="{PurchasingDocument}"/>
+											<Text text="{PurchasingDocumentItem}"/>
+											<Text text="{ScheduleLine}"/>
+											<Text text="{AccountingDocumentType}"/>
+											<Text text="{MaterialDocumentYear}"/>
+											<Text text="{MaterialDocument}"/>
+											<Text text="{MaterialDocumentItem}"/>
+											<Text text="{SalesOrder}"/>
+											<Text text="{SalesOrderItem}"/>
+											<Text text="{DeliveryDocument}"/>
+											<Text text="{DeliveryDocumentItem}"/>
+											<Text text="{InspectionLotText}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotQuantity'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspectionLotQuantityUnit}"/>
+											<Text text="{InspLotUsageDecisionValuation}"/>
+											<Text text="{InspectionLotQualityScore}"/>
+											<Text text="{InspOpUsgeDcsnSelectedSet}"/>
+											<Text text="{UsageDecisionCodeGroup}"/>
+											<Text text="{UsageDecisionCode}"/>
+											<Text text="{InspOpUsgeDcsnFollowUpAction}"/>
+											<Text text="{InspectionOpUsageDecidedBy}"/>
+											<Text text="{ path: 'InspOpUsageDecidedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspOpUsageDecisionTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspOpUsageDecisionChangedBy}"/>
+											<Text text="{ path: 'InspOpUsageDecisionChangedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspOpUsgeDcsnChangedTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{SystemStatus}"/>
+											<Text text="{UserStatus}"/>
+											<Text text="{WorkCenter}"/>
+											<Text text="{WorkCenterPlant}"/>
+											<Text text="{WorkCenterText}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</smartTable:SmartTable>
+					</IconTabFilter>
+					<!-- Load all the views strictly maintain the order .
+			 User can vary the display of setting according to user's preference, and able to save it .
+             Results should include all open inspection lot & all long term PhysicalSample .-->
+					<IconTabFilter count="{workListView>/PhysicalSampleLotCount}" id="qrWorkListId-PhysicalSample" key="PhysicalSample"
+						text="{i18n>masterPage.tab.samples}">
+						<smartTable:SmartTable beforeRebindTable="onMtrSmplSMTableBeforeRebind" customData:p13nDialogSettings='{filter:{visible:false}}'
+							enableAutoBinding="true" entitySet="InspectionlotsByMtrSmplSet" id="inspLotByMtrSmplSmartTable" persistencyKey="SmartTableInspLotByMtrSmpl"
+							smartFilterId="qr_filterBar" tableType="ResponsiveTable" useExportToExcel="false" useTablePersonalisation="true" useVariantManagement="true">
+							<smartTable:layoutData>
+								<FlexItemData growFactor="1"/>
+							</smartTable:layoutData>
+							<!-- Load Header information showing type of variant selected,search fields and other settings of a table   -->
+							<smartTable:customToolbar>
+								<OverflowToolbar>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<SearchField search="physicalSamplesSearch" showRefreshButton="false" width="30%"/>
+									<Button press="onAddSample" id="qr_addSamplePhysicalSample" text="{i18n>masterPage.footer.addSample}" type="Transparent"/>
+									<Button press="onAddCharacteristic" id="qr_addCharPhysicalSample" text="{i18n>masterPage.footer.addChar}" type="Transparent"/>
+									<Button press="toggleMultiSelect" text="{i18n>QM_MULTI_SELECT}" type="Transparent"/>
+								</OverflowToolbar>
+							</smartTable:customToolbar>
+							<Table class="sapUiNoContentPadding" growing="true" growingFinished="onTableGrowingFinished" growingScrollToLoad="false"
+								growingThreshold="20" id="physicalSampleTable" inset="true" selectionChange="onInspectionLotChange"
+								updateFinished="onUpdateFinished">
+								<columns >
+									<!-- Inspection Lot -->
+									<Column demandPopin="true" id="QR_PS_InspectionLot" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLot","leadingProperty": "InspectionLot","sortProperty": "InspectionLot","filterProperty": "InspectionLot"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT}"/>
+									</Column>
+									<!-- Inspection Lot Details Text  -->
+									<Column demandPopin="true" id="QR_PS_PhysicalSample" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialSample","leadingProperty": "MaterialSample","sortProperty": "MaterialSample","filterProperty": "MaterialSample"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PHYSICAL_SAMPLE}"/>
+									</Column>
+									<!-- Operation Count -->
+									<Column demandPopin="true" id="QR_PS_Operation" minScreenWidth="Large" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspOperationCount","leadingProperty": "InspOperationCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_OPERATION_COUNT}"/>
+									</Column>
+									<!-- Material Details Text  -->
+									<Column demandPopin="true" id="QR_PS_Material" minScreenWidth="Large" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Material","leadingProperty": "Material","sortProperty": "Material","filterProperty": "Material"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL}"/>
+									</Column>
+									<!-- InspectionPlant  Details Text  -->
+									<Column demandPopin="true" id="QR_PS_Batch" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Batch","leadingProperty": "Batch","sortProperty": "Batch","filterProperty": "Batch"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH}"/>
+									</Column>
+									<Column demandPopin="true" id="QR_PS_InspectionCharactristic" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspCharCount","leadingProperty": "InspCharCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CHARACTERISTIC_COUNT}"/>
+									</Column>
+									<Column demandPopin="true" id="QR_PS_InspectionProgress" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ChPrgsItemsByMs","leadingProperty": "ChPrgsItemsByMs"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PROGRESS_OF_CHARACTERISTIC}"/>
+									</Column>
+									<!-- Inspection Lot End Date  -->
+									<Column demandPopin="true" id="QR_PS_EndDate" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotEndDate","leadingProperty": "InspectionLotEndDate","sortProperty": "InspectionLotEndDate","filterProperty": "InspectionLotEndDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_END_DATE}"/>
+									</Column>
+									<!-- Material Name  -->
+									<Column demandPopin="true" id="QR_PS_MaterialName" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialName","leadingProperty": "MaterialName","sortProperty": "MaterialName","filterProperty": "MaterialName"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_NAME}"/>
+									</Column>
+									<!-- Supplier-->
+									<Column demandPopin="true" id="QR_PS_Supplier" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Supplier","leadingProperty": "Supplier","sortProperty": "Supplier","filterProperty": "Supplier"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SUPPLIER}"/>
+									</Column>
+									<!-- Plant -->
+									<Column demandPopin="true" id="QR_PS_Plant" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "Plant","leadingProperty": "Plant","sortProperty": "Plant","filterProperty": "Plant"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PLANT}"/>
+									</Column>
+									<!-- Inspection Type -->
+									<Column demandPopin="true" id="QR_PS_InspectionType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotType","leadingProperty": "InspectionLotType","sortProperty": "InspectionLotType","filterProperty": "InspectionLotType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_TYPE}"/>
+									</Column>
+									<!-- Inspection Lot Origin -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotOrigin" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotOrigin","leadingProperty": "InspectionLotOrigin","sortProperty": "InspectionLotOrigin","filterProperty": "InspectionLotOrigin"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_ORIGIN}"/>
+									</Column>
+									<!-- Inspection Lot Object Short Text -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotObjectText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotObjectText","leadingProperty": "InspectionLotObjectText","sortProperty": "InspectionLotObjectText","filterProperty": "InspectionLotObjectText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_OBJECT_TEXT}"/>
+									</Column>
+									<!-- Inspection Lot Creation Date -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotCreationDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotCreatedOnLocalDate","leadingProperty": "InspLotCreatedOnLocalDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATION_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Creation Time -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotCreationTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspLotCreatedOnLocalTime","leadingProperty": "InspLotCreatedOnLocalTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Created Name -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotCreatedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedBy","leadingProperty": "InspectionLotCreatedBy","sortProperty": "InspectionLotCreatedBy","filterProperty": "InspectionLotCreatedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CREATED_BY}"/>
+									</Column>
+									<!-- Data Record Creation Date -->
+									<Column demandPopin="true" id="QR_PS_DataRecordCreationDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedOn","leadingProperty": "InspectionLotCreatedOn","sortProperty": "InspectionLotCreatedOn","filterProperty": "InspectionLotCreatedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DATA_RECORD_CREATION_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Creation Date -->
+									<Column demandPopin="true" id="QR_PS_LotCreationTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotCreatedOnTime","leadingProperty": "InspectionLotCreatedOnTime","sortProperty": "InspectionLotCreatedOnTime","filterProperty": "InspectionLotCreatedOnTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_LOT_CREATION_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Changed Name -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotChangedBy" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangedBy","leadingProperty": "InspectionLotChangedBy","sortProperty": "InspectionLotChangedBy","filterProperty": "InspectionLotChangedBy"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGED_BY}"/>
+									</Column>
+									<!-- Inspection Lot Change Date -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotChangeDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangeDate","leadingProperty": "InspectionLotChangeDate","sortProperty": "InspectionLotChangeDate","filterProperty": "InspectionLotChangeDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGE_DATE}"/>
+									</Column>
+									<!-- Inspection Lot Change Time -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotChangeTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotChangeTime","leadingProperty": "InspectionLotChangeTime","sortProperty": "InspectionLotChangeTime","filterProperty": "InspectionLotChangeTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_CHANGE_TIME}"/>
+									</Column>
+									<!-- Inspection Lot Start Date -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotStartDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotStartDate","leadingProperty": "InspectionLotStartDate","sortProperty": "InspectionLotStartDate","filterProperty": "InspectionLotStartDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_START_DATE}"/>
+									</Column>
+									<!-- Manufacturing Order -->
+									<Column demandPopin="true" id="QR_PS_ManufacturingOrder" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ManufacturingOrder","leadingProperty": "ManufacturingOrder","filterProperty": "ManufacturingOrder"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURING_ORDER}"/>
+									</Column>
+									<!-- Production Version -->
+									<Column demandPopin="true" id="QR_PS_ProductionVersion" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "ProductionVersion","leadingProperty": "ProductionVersion","filterProperty": "ProductionVersion"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PRODUCTION_VERSION}"/>
+									</Column>
+									<!-- Customer (Ship-To Party) -->
+									<Column demandPopin="true" id="QR_PS_Customer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Customer","leadingProperty": "Customer","sortProperty": "Customer","filterProperty": "Customer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CUSTOMER}"/>
+									</Column>
+									<!-- Number of Manufacturer -->
+									<Column demandPopin="true" id="QR_PS_Manufacturer" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "Manufacturer","leadingProperty": "Manufacturer","sortProperty": "Manufacturer","filterProperty": "Manufacturer"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MANUFACTURER}"/>
+									</Column>
+									<!-- Material Revision Level Revision -->
+									<Column demandPopin="true" id="QR_PS_MaterialRevisionLevel" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialRevisionLevel","leadingProperty": "MaterialRevisionLevel","filterProperty": "MaterialRevisionLevel"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_REVISION_LEVEL}"/>
+									</Column>
+									<!-- Batch Storage Location -->
+									<Column demandPopin="true" id="QR_PS_BatchStorageLocation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "BatchStorageLocation","leadingProperty": "BatchStorageLocation","sortProperty": "BatchStorageLocation","filterProperty": "BatchStorageLocation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_BATCH_STORAGE_LOCATION}"/>
+									</Column>
+									<!-- Purchasing Document Number -->
+									<Column demandPopin="true" id="QR_PS_PurchasingDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingDocument","leadingProperty": "PurchasingDocument","filterProperty": "PurchasingDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_DOCUMENT}"/>
+									</Column>
+									<!-- Purchasing Document Item -->
+									<Column demandPopin="true" id="QR_PS_PurchasingDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "PurchasingDocumentItem","leadingProperty": "PurchasingDocumentItem","filterProperty": "PurchasingDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PURCHASING_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Delivery Schedule Line -->
+									<Column demandPopin="true" id="QR_PS_ScheduleLine" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ScheduleLine","leadingProperty": "ScheduleLine","filterProperty": "ScheduleLine"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SCHEDULE_LINE}"/>
+									</Column>
+									<!-- Accounting Document Type -->
+									<Column demandPopin="true" id="QR_PS_AccountingDocumentType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "AccountingDocumentType","leadingProperty": "AccountingDocumentType","filterProperty": "AccountingDocumentType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_ACCOUNTING_DOCUMENT_TYPE}"/>
+									</Column>
+									<!-- Material Document Year Material -->
+									<Column demandPopin="true" id="QR_PS_MaterialDocumentYear" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocumentYear","leadingProperty": "MaterialDocumentYear","sortProperty": "MaterialDocumentYear","filterProperty": "MaterialDocumentYear"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT_YEAR}"/>
+									</Column>
+									<!-- Number of Material Document -->
+									<Column demandPopin="true" id="QR_PS_MaterialDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocument","leadingProperty": "MaterialDocument","sortProperty": "MaterialDocument","filterProperty": "MaterialDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT}"/>
+									</Column>
+									<!-- Material Document Item -->
+									<Column demandPopin="true" id="QR_PS_MaterialDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "MaterialDocumentItem","leadingProperty": "MaterialDocumentItem","filterProperty": "MaterialDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_MATERIAL_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Sales Order Number -->
+									<Column demandPopin="true" id="QR_PS_SalesOrder" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "SalesOrder","leadingProperty": "SalesOrder","sortProperty": "SalesOrder","filterProperty": "SalesOrder"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SALES_ORDER}"/>
+									</Column>
+									<!-- Delivery Document -->
+									<Column demandPopin="true" id="QR_PS_DeliveryDocument" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryDocument","leadingProperty": "DeliveryDocument","sortProperty": "DeliveryDocument","filterProperty": "DeliveryDocument"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_DOCUMENT}"/>
+									</Column>
+									<!-- Delivery Document Item -->
+									<Column demandPopin="true" id="QR_PS_DeliveryDocumentItem" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "DeliveryDocumentItem","leadingProperty": "DeliveryDocumentItem","filterProperty": "DeliveryDocumentItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_DELIVERY_DOCUMENT_ITEM}"/>
+									</Column>
+									<!-- Inspection Lot Text -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotText" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotText","leadingProperty": "InspectionLotText","sortProperty": "InspectionLotText","filterProperty": "InspectionLotText"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_TEXT}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Inspection -->
+									<Column demandPopin="true" id="QR_PS_InspectionLotQuantity" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQuantity","leadingProperty": "InspectionLotQuantity","sortProperty": "InspectionLotQuantity","filterProperty": "InspectionLotQuantity"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSPECTION_LOT_QUANTITY}"/>
+									</Column>
+									<!-- Inspection Lot Quantity Base -->
+									<Column demandPopin="true" id="QR_PS_InspLotQuantityUnit" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionLotQuantityUnit","leadingProperty": "InspectionLotQuantityUnit","filterProperty": "InspectionLotQuantityUnit"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_INSP_LOT_QUANTITY_UNIT}"/>
+									</Column>
+									<!-- System Status -->
+									<Column demandPopin="true" id="QR_PS_SystemStatus" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "SystemStatus","leadingProperty": "SystemStatus","filterProperty": "SystemStatus"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SYSTEM_STATUS}"/>
+									</Column>
+									<!-- User Status -->
+									<Column demandPopin="true" id="QR_PS_UserStatus" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "UserStatus","leadingProperty": "UserStatus","filterProperty": "UserStatus"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_USER_STATUS}"/>
+									</Column>
+									<!-- Material Sample Type -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleType" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleType","leadingProperty": "MaterialSampleType","sortProperty":"MaterialSampleType","filterProperty": "MaterialSampleType"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_PHYSICAL_SAMPLE_TYPE}"/>
+									</Column>
+									<!-- Material Sample Category -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleCategory" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleCategory","leadingProperty": "MaterialSampleCategory","sortProperty":"MaterialSampleCategory","filterProperty": "MaterialSampleCategory"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_CATEGORY}"/>
+									</Column>
+									<!-- Material Sample Storage Location -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleStorageLocation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleStorageLocation","leadingProperty": "MaterialSampleStorageLocation","sortProperty":"MaterialSampleStorageLocation","filterProperty": "MaterialSampleStorageLocation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_LOCATION}"/>
+									</Column>
+									<!-- Material Sample Changed On -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleChangedOn" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleChangedOn","leadingProperty": "MaterialSampleChangedOn","sortProperty":"MaterialSampleChangedOn","filterProperty": "MaterialSampleChangedOn"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_CHANGE_DATE}"/>
+									</Column>
+									<!-- Material Sample Drawing Location -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleDrawingLocation" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleDrawingLocation","leadingProperty": "MaterialSampleDrawingLocation","sortProperty":"MaterialSampleDrawingLocation","filterProperty": "MaterialSampleDrawingLocation"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_DRAWING_LOCATION}"/>
+									</Column>
+									<!-- Material Sample Drawing Loction Description -->
+									<Column demandPopin="true" id="QR_PS_MatlSmplDrawingLocDescription" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MatlSmplDrawingLocDescription","leadingProperty": "MatlSmplDrawingLocDescription","sortProperty":"MatlSmplDrawingLocDescription","filterProperty": "MatlSmplDrawingLocDescription"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_DRAWING_LOCATION_DESCRIPTION}"/>
+									</Column>
+									<!-- Material Sample Drawing On Date -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleDrawingOnDate" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleDrawingOnDate","leadingProperty": "MaterialSampleDrawingOnDate","sortProperty":"MaterialSampleDrawingOnDate","filterProperty": "MaterialSampleDrawingOnDate"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_DRAWING_DATE}"/>
+									</Column>
+									<!-- Material Sample Drawing On Time -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleDrawingOnTime" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleDrawingOnTime","leadingProperty": "MaterialSampleDrawingOnTime","sortProperty":"MaterialSampleDrawingOnTime","filterProperty": "MaterialSampleDrawingOnTime"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_DRAWING_TIME}"/>
+									</Column>
+									<!-- Material Sample Responsible Name -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleResponsibleName" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleResponsibleName","leadingProperty": "MaterialSampleResponsibleName","sortProperty":"MaterialSampleResponsibleName","filterProperty": "MaterialSampleResponsibleName"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_PROCESSOR}"/>
+									</Column>
+									<!-- Material Sample Drawing -->
+									<Column demandPopin="true" id="QR_PS_MaterialSampleDrawing" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+															 value='\{"columnKey": "MaterialSampleDrawing","leadingProperty": "MaterialSampleDrawing","sortProperty":"MaterialSampleDrawing","filterProperty": "MaterialSampleDrawing"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_SAMPLE_DRAWING_NUMBER}"/>
+									</Column>
+								</columns>
+								<items>
+									<!-- Declare Column List Items -->
+									<ColumnListItem id="physicalSampleTableItems" press="onWorkListItemPress" type="{workListView>/PhysicalSampleListItemType}">
+										<cells>
+											<Text text="{InspectionLot}"/>
+											<Text text="{MaterialSample}"/>
+											<Text text="{InspOperationCount}"/>
+											<Text text="{Material}"/>
+											<Text text="{Batch}"/>
+											<Text text="{InspCharCount}"/>
+											<customChart:Comparison data="{ChPrgsItemsByMs}" height="20rem" showLabel="false"/>
+											<ObjectStatus state="{ path: 'InspectionLotEndDate', formatter: '.formatter.lotEndDateStatus'}"
+												text="{path: 'InspectionLotEndDate', formatter: '.formatter.oLotNumberOfDays'}"/>
+											<Text text="{MaterialName}"/>
+											<Text text="{Supplier}"/>
+											<Text text="{Plant}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotType'},
+													{path: 'InspectionLotTypeText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotOrigin'},
+													{path: 'InspectionLotOriginText'}
+												],
+												formatter: '.formatter.textWithBrackets'
+											}"/>
+											<Text text="{InspectionLotObjectText}"/>
+											<Text text="{ path: 'InspLotCreatedOnLocalDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspLotCreatedOnLocalTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspectionLotCreatedBy}"/>
+											<Text text="{ path: 'InspectionLotCreatedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspectionLotCreatedOnTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{InspectionLotChangedBy}"/>
+											<Text text="{ path: 'InspectionLotChangeDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'InspectionLotChangeTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{ path: 'InspectionLotStartDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ManufacturingOrder}"/>
+											<Text text="{ProductionVersion}"/>
+											<Text text="{Customer}"/>
+											<Text text="{Manufacturer}"/>
+											<Text text="{MaterialRevisionLevel}"/>
+											<Text text="{BatchStorageLocation}"/>
+											<Text text="{PurchasingDocument}"/>
+											<Text text="{PurchasingDocumentItem}"/>
+											<Text text="{ScheduleLine}"/>
+											<Text text="{AccountingDocumentType}"/>
+											<Text text="{MaterialDocumentYear}"/>
+											<Text text="{MaterialDocument}"/>
+											<Text text="{MaterialDocumentItem}"/>
+											<Text text="{SalesOrder}"/>
+											<Text text="{DeliveryDocument}"/>
+											<Text text="{DeliveryDocumentItem}"/>
+											<Text text="{InspectionLotText}"/>
+											<Text text="{
+												parts: [
+													{path: 'InspectionLotQuantity'},
+													{path: 'InspLotQuantityUnitDecPlaces'}
+												],
+												formatter: '.formatter.quantityFormatter'
+											}"/>
+											<Text text="{InspectionLotQuantityUnit}"/>
+											<Text text="{SystemStatus}"/>
+											<Text text="{UserStatus}"/>
+											<Text text="{MaterialSampleType}"/>
+											<Text text="{MaterialSampleCategory}"/>
+											<Text text="{MaterialSampleStorageLocation}"/>
+											<Text text="{ path: 'MaterialSampleChangedOn', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{MaterialSampleDrawingLocation}"/>
+											<Text text="{MatlSmplDrawingLocDescription}"/>
+											<Text text="{ path: 'MaterialSampleDrawingOnDate', formatter: '.formatter.dateFormatter'}"/>
+											<Text text="{ path: 'MaterialSampleDrawingOnTime', formatter: '.formatter.dateTimeFormatter'}"/>
+											<Text text="{MaterialSampleResponsibleName}"/>
+											<Text text="{MaterialSampleDrawing}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</smartTable:SmartTable>
+					</IconTabFilter>
+					<!-- Load all the views strictly maintain the order .
+			 User can vary the display of setting according to user's preference, and able to save it .
+             Results should include all open inspection lot & all long term PhysicalSample .-->
+					<IconTabFilter count="{workListView>/MastercharacteristicCount}" id="qrWorkListId-MasterCharacteristics" key="MasterCharacteristics"
+						text="{i18n>masterPage.tab.masterCharacteristics}">
+						<smartTable:SmartTable beforeRebindTable="onMICSMTableBeforeRebind" customData:p13nDialogSettings='{filter:{visible:false}}'
+							enableAutoBinding="true" entitySet="InspectionCharacteristicSet" id="masterCharacteristicsSmartTable"
+							persistencyKey="SmartTableMasterCharacteristics" smartFilterId="qr_filterBar" tableType="ResponsiveTable" useExportToExcel="false"
+							useTablePersonalisation="true" useVariantManagement="true">
+							<smartTable:layoutData>
+								<FlexItemData growFactor="1"/>
+							</smartTable:layoutData>
+							<!-- Load Header information showing type of variant selected,search fields and other settings of a table   -->
+							<smartTable:customToolbar>
+								<OverflowToolbar>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<ToolbarSpacer/>
+									<SearchField search="onMastercharacteristicSearch" showRefreshButton="false" width="30%"/>
+									<Button press="onAddSample" id="qr_addSampleMasterCharacteristics" text="{i18n>masterPage.footer.addSample}" type="Transparent"/>
+									<Button press="onAddCharacteristic" id="qr_addCharMasterCharacteristics" text="{i18n>masterPage.footer.addChar}" type="Transparent"/>
+									<Button press="toggleMultiSelect" text="{i18n>QM_MULTI_SELECT}" type="Transparent"/>
+								</OverflowToolbar>
+							</smartTable:customToolbar>
+							<Table class="sapUiNoContentPadding" growing="true" growingFinished="onTableGrowingFinished" growingScrollToLoad="false"
+								growingThreshold="20" id="masterCharacteristics" inset="true" selectionChange="onInspectionLotChange"
+								updateFinished="onUpdateFinished">
+								<columns>
+									<!-- Inspection Specification  -->
+									<Column demandPopin="true" id="QR_Master_Char" minScreenWidth="Tablet" visible="true">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionSpecification","leadingProperty": "InspectionSpecification","sortProperty": "InspectionSpecification","filterProperty": "InspectionSpecification"}'/>
+										</customData>
+										<Text text="{i18n>QM_MASTER_CHAR}"/>
+									</Column>
+									<!-- Inspection Method  -->
+									<Column demandPopin="true" id="QR_MC_Method" minScreenWidth="Large">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey":
+												"InspectionMethod","leadingProperty": "InspectionMethod","sortProperty": "InspectionMethod","filterProperty": "InspectionMethod"}'/>
+										</customData>
+										<Text text="{i18n>QM_METHOD}"/>
+									</Column>
+									<!-- Search Field  -->
+									<Column demandPopin="true" id="QR_MC_Search_Field" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData"
+												value='\{"columnKey": "InspectionMethodSearchField","leadingProperty": "InspectionMethodSearchField","filterProperty": "InspectionMethodSearchField"}'/>
+										</customData>
+										<Text text="{i18n>QM_SEARCH_FIELD}"/>
+									</Column>
+									<!-- Tool Category  -->
+									<Column demandPopin="true" id="QR_MC_toolCategory" minScreenWidth="Tablet">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ProdnRsceToolCategoryName","leadingProperty": "ProdnRsceToolCategory","sortProperty": "ProdnRsceToolCategory","filterProperty": "ProdnRsceToolCategory"}'/>
+										</customData>
+										<Text text="{i18n>QM_TOOLCATEGORY}"/>
+									</Column>
+									<!-- Test Equipment  -->
+									<Column demandPopin="true" id="QR_MC_TestEq" minScreenWidth="Tablet">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "ProductionResourceToolDesc","leadingProperty": "ProductionResourceToolDesc","sortProperty": "ProductionResourceToolDesc","filterProperty": "ProductionResourceToolDesc"}'/>
+										</customData>
+										<Text text="{i18n>QM_TEST_EQUIPMENT}"/>
+									</Column>
+									<!-- Inspector Qualification Text  -->
+									<Column demandPopin="true" id="QR_MC_InspectorQual" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspectorQualificationText","leadingProperty": "InspectorQualificationText","filterProperty": "InspectorQualificationText"}'/>
+										</customData>
+										<Text text="{i18n>QM_INSPECTOR_QUALIFICATION}"/>
+									</Column>
+									<!-- Information Field 1  -->
+									<Column demandPopin="true" id="QR_MC_InfoFiled1" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspSpecInformationField1","leadingProperty": "InspSpecInformationField1","filterProperty": "InspSpecInformationField1"}'/>
+										</customData>
+										<Text text="{i18n>QM_INSP_SPEC_INFO1}"/>
+									</Column>
+									<!-- Information Field 2  -->
+									<Column demandPopin="true" id="QR_MC_InfoFiled2" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspSpecInformationField2","leadingProperty": "InspSpecInformationField2","filterProperty": "InspSpecInformationField2"}'/>
+										</customData>
+										<Text text="{i18n>QM_INSP_SPEC_INFO2}"/>
+									</Column>
+									<!-- Information Field 3  -->
+									<Column demandPopin="true" id="QR_MC_InfoFiled3" minScreenWidth="Tablet" visible="false">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspSpecInformationField3","leadingProperty": "InspSpecInformationField3","filterProperty": "InspSpecInformationField3"}'/>
+										</customData>
+										<Text text="{i18n>QM_INSP_SPEC_INFO3}"/>
+									</Column>
+									<!-- Number of Characteristics  -->
+									<Column demandPopin="true" id="QR_MC_Inspections" minScreenWidth="Tablet">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "InspCharCount","leadingProperty": "InspCharCount","filterProperty": "InspCharCount"}'/>
+										</customData>
+										<Text text="{i18n>QM_FIELD_CHARACTERISTIC_COUNT}"/>
+									</Column>
+									<!-- Progress of Characteristics  -->
+									<Column demandPopin="true" id="QR_MC_MastCharPgItem" minScreenWidth="Tablet">
+										<customData>
+											<core:CustomData key="p13nData" value='\{"columnKey": "MastCharPgItem","leadingProperty": "MastCharPgItem"}'/>
+										</customData>
+										<Text text="{i18n>QM_INSP_PROGRESS}"/>
+									</Column>
+								</columns>
+								<items>
+									<!-- Declare Column List Items -->
+									<ColumnListItem id="masterCharacteristicsItems" press="onWorkListItemPress" type="{workListView>/MasterCharacteristicsListItemType}">
+										<cells>
+											<Text
+												text="{parts:[{path:'InspectionSpecificationText'},{path:'InspectionSpecification'},{path:'InspectionSpecificationPlant'},{path:'InspectionSpecificationVersion'}], formatter: '.formatter.micColoumConcatenation'}"/>
+											<Text
+												text="{parts:[{path:'InspectionMethodText'},{path:'InspectionMethod'},{path:'InspectionMethodPlant'},{path:'InspectionMethodVersion'}], formatter: '.formatter.methodColoumConcatenation'}"/>
+											<Text text="{InspectionMethodSearchField}"/>
+											<Text text="{ProdnRsceToolCategoryName}"/>
+											<Text
+												text="{parts:[{path:'ProductionResourceToolDesc'},{path:'ProductionResourceTool'}], formatter: '.formatter.textIdConcatenation'}"/>
+											<Text
+												text="{parts:[{path:'InspectorQualificationText'},{path:'InspectorQualification'}], formatter: '.formatter.textIdConcatenation'}"/>
+											<Text text="{InspSpecInformationField1}"/>
+											<Text text="{InspSpecInformationField2}"/>
+											<Text text="{InspSpecInformationField3}"/>
+											<Text text="{InspCharCount}"/>
+											<customChart:Comparison data="{MastCharPgItem}" height="20rem" showLabel="false"/>
+										</cells>
+										<customData>
+											<core:CustomData key="MastCharNavRR" value="{MastCharNavRR}" />
+										</customData>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</smartTable:SmartTable>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<footer>
+			<!-- Declare record sample,add sample,AddCharacteristic,onAddSample and action settings button-->
+			<OverflowToolbar class="sapUiNoContentPadding">
+				<ToolbarSpacer/>
+				<Button enabled="false" id="QR_MASS_RECORD_BUTTON" press="onRecordResults" text="{i18n>masterPage.footer.recResults}" type="Emphasized"/>
+				<Button icon="sap-icon://action" press=""/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

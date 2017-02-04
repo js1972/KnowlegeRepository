@@ -1,0 +1,19 @@
+<html>
+<script>
+var happiness = 10;
+var girl = {
+    get whenMarry() {
+        happiness--;
+        return 1/0; //Infinity
+    },
+    get happiness() {
+        return happiness;
+    }
+};
+
+console.log(girl.whenMarry); //调用了whenMarry的get方法
+
+console.log( (1.0 - 0.9) === 0.1 );
+console.log(parseFloat((1.0-0.9).toFixed(10)) === 0.1 );
+</script>
+</html>

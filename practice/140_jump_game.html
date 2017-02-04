@@ -1,0 +1,113 @@
+<html>
+<script>
+/*
+给你一个数组，数组的每个元素表示你能前进的最大步数，最开始时你在第一个元素所在的位置，之后你可以前进，问能不能到达最后一个元素位置。
+比如：
+A = [2, 3, 1, 1, 4], return true.
+一种走法是 0 - 2 - 3 - 4，还有一种走法是 0 - 1 - 4
+O(n ^ 2) 解法
+
+一个很显然，几乎不用动脑的解法。
+设置一个布尔数组f，f[0] === true 表示 index === 0 这个位置能够到达，模拟每个位置的前进，最后判断 f[lastIndex] 的值。
+*/
+var canJump = function(nums){
+  var f = [];
+  f[0] = true;
+
+  nums.forEach(function(item, index, array){
+    if (f[index]) {
+      var tmp = Math.min(array.length - 1, index + item)
+      for (var i = index + 1; i <= tmp; i++)
+        f[i] = true;
+    }
+  });
+  f.forEach(function(item, index) {
+  	console.log("[" + index + "]: " + item);
+  });
+  // console.log(f);
+  return f[nums.length - 1] ? true : false;
+};
+
+// console.log("can jump? " + canJump([1,3,1,1,1,0,4]));
+
+
+/*
+树状数组中的染色问题。
+我们可以把jump的过程看成是染色，还是从左到右枚举位置，比如枚举到 index=0位置时，nums[0]=5，也就是说从 index=0 的位置一直可以走到 index=5 的位置，那么我们可以把1~5这一段进行染色。当枚举到 index=1 时，如何判断能不能走到这一步呢？只需求该点被染色的次数，如果大于0，那么就是能到达，然后从该点向后继续染色，最后判断最后一点有没有被染色即可。复杂度 O(nlongn)。
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var sum, n;
+
+function lowbit(x) {
+  return x & (-x);
+}
+
+function update(index, val) {
+  while (index) {
+    sum[index] += val;
+    index -= lowbit(index);
+  }
+}
+
+function getAns(index) {
+  var ans = 0;
+  while (index <= n) {
+    ans += sum[index];
+    index += lowbit(index);
+  }
+  return ans;
+}
+
+var canJump2 = function(nums) {
+  sum = [];
+  sum[1] = 1;
+
+  n = nums.reduce(function(pre, item, index) {
+    return Math.max(pre, item + index + 1);
+  }, 0);
+
+  for (var i = 2; i <= n; i++)
+    sum[i] = 0;
+
+  for (var i = 0, len = nums.length; i < len; i++) {
+    var isPainted = getAns(i + 1); // 是否被染色
+    if (!isPainted) 
+    	continue;
+    // 给i + 1 + nums[i]这个index上染上1，nums[i]为步数，就是能给当前
+    // 节点之后的多少个节点染上色 
+    update(i + 1 + nums[i], 1);
+    update(i, -1);
+  }
+
+  return Boolean(getAns(len));
+};
+/*
+n) 解法
+
+用树状数组显然大材小用了，树状数组可以求得被染色的次数，但是本题只需要判断是否被染色即可；而且本题每次染色都是一次。
+进一步思考，我们枚举每一位时都在判断是否被染色过（从而决定是否能够到达该点且能否继续往前走），假设在某一瞬间，index=m 的位置已经被染色了，那么index=n (n<=m) 的位置肯定已经被染色过了，我们维护一个最右边被染色的点，如果当前枚举点在该点的左侧，那么当前点已经被染色，否则即可停止遍历（因为右边的点再也不可能被染色到了）。
+
+1  2  3             4
+      ^(rightmost)
+
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+
+var canJump3 = function(nums){
+  var rightMost = 1;
+  for (var i = 0, len = nums.length; i < len; i++) {
+    if (rightMost < i + 1) 
+    	break;
+    rightMost = Math.max(rightMost, i + 1 + nums[i]); // nums[i]为前进步数
+  }
+  return rightMost >= len;
+};
+
+
+console.log("can jump? " + canJump3([1,3,1,1,0,1,4]));
+</script>
+</html>

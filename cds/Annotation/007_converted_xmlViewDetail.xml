@@ -1,0 +1,480 @@
+<Page xmlns="sap.m" showHeader="false" showNavButton="false" showFooter="{ui&gt;/editable}" class="sapSmartTemplatesObjectPage" xmlns:build="sap.build" build:metadata="#pattern:ObjectPage">
+			<content>
+				<uxap:ObjectPageLayout xmlns:uxap="sap.uxap" id="objectPage" flexEnabled="true" enableLazyLoading="false" showHeaderContent="{= !${ui&gt;/editable}}">
+					<uxap:headerTitle>
+						<uxap:ObjectPageHeader id="objectPageHeader" objectTitle="{path: 'ui&gt;/createMode', formatter: '._templateFormatters.formatDefaultObjectTitle'} {path:'object_id',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10'}}" objectSubtitle="{path:'description',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'40'}}" objectImageURI="" showPlaceholder="false" markLocked="{= ${HasDraftEntity} &amp;&amp; ${IsActiveEntity} &amp;&amp; !!${DraftAdministrativeData/InProcessByUser}}" markLockedPress="._templateEventHandlers.onPressDraftInfo" markChanges="{= ${HasDraftEntity} &amp;&amp; ${IsActiveEntity} &amp;&amp; !${DraftAdministrativeData/InProcessByUser}}" markChangesPress="._templateEventHandlers.onPressDraftInfo" build:metadata="#pattern:Header;prop:objectTitle:Title;prop:objectSubtitle:Description;prop:imageSource:ImageSource:">
+							
+
+	<uxap:navigationBar>
+		<Bar>
+			<contentLeft>
+				<Button id="back" icon="sap-icon://nav-back" press="._templateEventHandlers.onBack" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:popoverBelow="true" tooltip="{i18n&gt;BACK}"/>
+			</contentLeft>
+			<contentMiddle>
+				<Text id="objectTypeName" text="Service Order" build:metadata="#pattern:Header;prop:text:HeaderBarText">
+					<!-- Helper -->
+					<customData>
+						<core:CustomData xmlns:core="sap.ui.core" id="idObjectTitle" key="objectTitle" value="{path:'object_id',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10'}}" writeToDom="false"/>
+					</customData>
+				</Text>
+			</contentMiddle>
+		</Bar>
+	</uxap:navigationBar>
+
+
+							
+
+	
+
+
+							
+
+	<uxap:actions>
+
+		<!-- Custom Action Breakout -->
+		
+
+		
+			
+		
+			
+		
+			
+		
+
+		
+			<uxap:ObjectPageHeaderActionButton id="edit" text="{i18n&gt;EDIT}" type="Emphasized" hideText="false" enabled="{ui&gt;/enabled}" press="._templateEventHandlers.onEdit" importance="Medium" visible="{= !${ui&gt;/editable}}"/>
+		
+		
+			<uxap:ObjectPageHeaderActionButton id="delete" text="{i18n&gt;DELETE}" enabled="{ui&gt;/enabled}" hideText="false" press="._templateEventHandlers.onDelete" importance="Medium" visible="{= !${ui&gt;/editable}}">
+				<uxap:customData>
+					<core:CustomData xmlns:core="sap.ui.core" value="Bottom"/>
+				</uxap:customData>
+			</uxap:ObjectPageHeaderActionButton>
+		
+		
+ 		 
+		
+		
+			
+		
+			
+		
+			
+		
+		<uxap:ObjectPageHeaderActionButton icon="sap-icon://action" enabled="{ui&gt;/enabled}" type="Transparent" press="._templateEventHandlers.onShareObjectPageActionButtonPress" importance="High" class="sapSmartTemplatesShareMenuButton" tooltip="{i18n&gt;SHARE}"/>
+	</uxap:actions>
+
+
+						</uxap:ObjectPageHeader>
+					</uxap:headerTitle>
+					<uxap:headerContent>
+						
+
+	
+
+	
+			
+		
+
+
+					</uxap:headerContent>
+					<uxap:sections>
+						
+
+	
+		
+			
+				
+					
+						
+
+						<uxap:ObjectPageSection id="GeneralInformation::Section" title="{@i18n&gt;@GeneralInfoFacetLabel}" visible="true" build:metadata="#pattern:Section;staticProp:title:Title">
+							<uxap:subSections>
+								
+										<uxap:ObjectPageSubSection title=" " class="sapSmartTemplatesObjectPageSubSection">
+											<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|Z_C_Service_Order_View|GeneralInformation">
+												
+													
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartForm.fragment.xml
+        @param {Collection(UI.Facet)} [facet]
+    -->
+
+	<sfo:SmartForm xmlns:sfo="sap.ui.comp.smartform" id="GeneralInformation::Form" editable="{ui&gt;/editable}" class="sapSmartTemplatesSmartForm" visible="{= !${parameter&gt;/isDraftEnabled} &amp;&amp; ${path: 'groupFacet&gt;Target/AnnotationPath', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.isSelf'} === false ? '{= !${ui&gt;/createMode} ? true : false }' : true}" flexEnabled="true" entityType="Z_C_Service_Order_ViewType" build:metadta="#pattern:Form;">
+		<sfo:customData>
+           	<core:CustomData key="defaultInputFieldDisplayBehaviour" value="descriptionAndId"/>
+           	<core:CustomData key="defaultDropDownDisplayBehaviour" value="descriptionOnly"/>
+           	<core:CustomData key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+		</sfo:customData>
+		<sfo:layout>
+			<sfo:Layout columnsM="2" columnsL="3" labelSpanS="12" labelSpanM="12" labelSpanL="12" singleGroupFullSize="false"/>
+		</sfo:layout>
+		<!-- If the given facet has subfacets... -->
+		
+				
+					
+						<sfo:Group id="com.sap.vocabularies.UI.v1.Identification::FormGroup" binding="{}" label="{@i18n&gt;@GeneralInfoFacetLabel}" build:metadata="#pattern:FormGroup;staticProp:label:Title;condition:target&gt;AnnotationType:com.sap.vocabularies.UI.v1.FieldGroup">
+							
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.Identification::posting_date::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.Identification::posting_date::Field" value="{path:'posting_date',type:'sap.ui.model.odata.type.DateTime',constraints:{'displayFormat':'Date'}}" url="" xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" custom:multiLineSettings="{width: '100%'}" change="._templateEventHandlers.onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:;f4Edit:[object Object]">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.Identification::stat::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.Identification::stat::Field" value="{path:'stat',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'5'}}" url="" xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" custom:multiLineSettings="{width: '100%'}" change="._templateEventHandlers.onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:;f4Edit:[object Object]">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+										
+											
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="com.sap.vocabularies.UI.v1.Identification::txt04::GroupElement">
+		<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" id="com.sap.vocabularies.UI.v1.Identification::txt04::Field" value="{path:'txt04',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'4'}}" url="" xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" custom:multiLineSettings="{width: '100%'}" change="._templateEventHandlers.onChange" textLabel="" build:metadata="#pattern:FormElement;staticProp:label:Label:;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Url:;staticProp:nullable:Nullable:;prop:currency:Currency:;f4Edit:[object Object]">
+			
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+
+										
+									
+								
+						</sfo:Group>
+					
+				
+			
+	</sfo:SmartForm>
+
+
+		
+
+
+
+												
+											</core:ExtensionPoint>
+										</uxap:ObjectPageSubSection>
+									
+							</uxap:subSections>
+						</uxap:ObjectPageSection>
+
+						
+					
+				
+					
+						
+
+						<uxap:ObjectPageSection id="to_Item::com.sap.vocabularies.UI.v1.LineItem::Section" title="{@i18n&gt;@SecondFacetLabel}" visible="{= !${ui&gt;/createMode} ? true : false }" build:metadata="#pattern:Section;staticProp:title:Title">
+							<uxap:subSections>
+								
+										<uxap:ObjectPageSubSection title=" " class="sapSmartTemplatesObjectPageSubSection">
+											<core:ExtensionPoint xmlns:core="sap.ui.core" name="ReplaceFacet|Z_C_Service_Order_View|to_Item::com.sap.vocabularies.UI.v1.LineItem">
+												
+													
+	<!--
+		isMultiple will return false if there is no navigation property. As we want to create a FacetForm
+		in case of no navigation property in annotation path and if navigation property and isMultiple false
+		we only check for isMultiple
+	-->
+	
+			
+					
+	<!-- @classdesc @name: Name: sap.suite.ui.generic.template.fragments.SmartTable.fragment.xml
+		@param {UI.Facet} [facet] @param {edm.EntitySet} [entitySet] @param {edm.EntityType}
+		[entityType] -->
+
+	
+			
+				
+					
+						<st:SmartTable xmlns:st="sap.ui.comp.smarttable" id="to_Item::com.sap.vocabularies.UI.v1.LineItem::Table" persistencyKey="to_Item::com.sap.vocabularies.UI.v1.LineItem::Table" tableBindingPath="to_Item" fitContainer="false" useOnlyOneSolidToolbar="true" enableAutoBinding="true" showRowCount="true" beforeRebindTable="._templateEventHandlers.onBeforeRebindDetailTable" dataReceived="._templateEventHandlers.onDataReceived" useVariantManagement="false" useExportToExcel="false" useTablePersonalisation="true" entitySet="Z_I_Item_Detail" class="sapSmartTemplatesSmartTable" demandPopin="true" noData="{i18n&gt;NOITEMS}" build:metadata="#pattern:Table;bindingContext:columns:Items:{to_Item};">
+							<st:customData>
+								<core:CustomData key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+								
+									
+								
+							</st:customData>
+							<st:semanticObjectController>
+								<smartlink:SemanticObjectController xmlns:smartlink="sap.ui.comp.navpopover" beforePopoverOpens="._templateEventHandlers.onBeforeSemanticObjectLinkPopoverOpens" prefetchNavigationTargets="true"/>
+							</st:semanticObjectController>
+							<st:customToolbar>
+								<OverflowToolbar design="Transparent">
+									<ToolbarSpacer/>
+									
+										<!-- Custom Action Breakout -->
+										
+										
+											
+										
+											
+										
+											
+										
+											
+										
+											
+										
+									
+									
+									
+								</OverflowToolbar>
+							</st:customToolbar>
+							
+									
+											<Table id="to_Item::com.sap.vocabularies.UI.v1.LineItem::responsiveTable" fixedLayout="false" growing="true" growingThreshold="10" mode="None">
+												
+	<!-- @classdesc @name: Name: sap.suite.ui.generic.template.fragments.TableColumns.fragment.xml 
+		@description: - visualizes one column (header and data) @param {UI.LineItem} 
+		[collection] @param {Edm.EntitySet} [listEntitySet] -->
+
+	<columns>
+		
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;number_int&quot;, &quot;leadingProperty&quot;:&quot;number_int&quot;, &quot;sortProperty&quot;:&quot;number_int&quot;, &quot;filterProperty&quot;:&quot;number_int&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Item Number" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+		
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;description&quot;, &quot;leadingProperty&quot;:&quot;description&quot;, &quot;sortProperty&quot;:&quot;description&quot;, &quot;filterProperty&quot;:&quot;description&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Product Name" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+		
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;quantity&quot;, &quot;leadingProperty&quot;:&quot;quantity&quot;, &quot;sortProperty&quot;:&quot;quantity&quot;, &quot;filterProperty&quot;:&quot;quantity&quot; \}" visible="true" hAlign="End" build:metadata="#pattern:Column;staticProp::Importance:;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Quantity" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+		
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;unit&quot;, &quot;leadingProperty&quot;:&quot;unit&quot;, &quot;sortProperty&quot;:&quot;unit&quot;, &quot;filterProperty&quot;:&quot;unit&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Unit" build:metadata="#pattern:Column;staticProp:text:Title;"/>
+								
+						</Column>
+					
+				
+			
+		
+			
+				
+					
+						<Column xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nData="\{&quot;columnKey&quot;:&quot;txt30&quot;, &quot;leadingProperty&quot;:&quot;txt30&quot;, &quot;sortProperty&quot;:&quot;txt30&quot;, &quot;filterProperty&quot;:&quot;txt30&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Status"/>
+								
+						</Column>
+					
+				
+			
+		
+		
+				<core:ExtensionPoint name="ResponsiveTableColumnsExtension|Z_I_Item_Detail|to_Item::com.sap.vocabularies.UI.v1.LineItem"/>
+			
+	</columns>
+	<items>
+		<ColumnListItem type="Navigation" press="._templateEventHandlers.onListNavigate">
+			<cells>
+				
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{ui&gt;/editable}" uomEditable="false" change="._templateEventHandlers.onChange" controlContext="ResponsiveTable" proposedControl="" value="{number_int}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+				
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{ui&gt;/editable}" uomEditable="false" change="._templateEventHandlers.onChange" controlContext="ResponsiveTable" proposedControl="" value="{description}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+				
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{ui&gt;/editable}" uomEditable="false" change="._templateEventHandlers.onChange" controlContext="ResponsiveTable" proposedControl="" value="{quantity}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+				
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{ui&gt;/editable}" uomEditable="false" change="._templateEventHandlers.onChange" controlContext="ResponsiveTable" proposedControl="" value="{unit}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+				
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{ui&gt;/editable}" uomEditable="false" change="._templateEventHandlers.onChange" controlContext="ResponsiveTable" proposedControl="" value="{txt30}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+				
+				
+						<core:ExtensionPoint name="ResponsiveTableCellsExtension|Z_I_Item_Detail|to_Item::com.sap.vocabularies.UI.v1.LineItem"/>
+					
+			</cells>
+		</ColumnListItem>
+	</items>
+
+											</Table>
+										
+								
+						</st:SmartTable>
+					
+				
+			
+	
+
+				
+		
+
+
+
+												
+											</core:ExtensionPoint>
+										</uxap:ObjectPageSubSection>
+									
+							</uxap:subSections>
+						</uxap:ObjectPageSection>
+
+						
+					
+				
+			
+		
+	
+
+
+					</uxap:sections>
+				</uxap:ObjectPageLayout>
+			</content>
+			<footer>
+				
+
+	<Bar>
+		<contentLeft>
+			<Button id="showMessages" text="{model: 'message', path : '/', formatter : '._templateFormatters.showMessagesButtonText'}" press="._templateEventHandlers.onShowMessages" type="Emphasized" icon="sap-icon://message-popup" visible="{model: 'message', path : '/', formatter : '._templateFormatters.showMessagesButton'}"/>
+			<Label id="draftStatus" text="{model: 'ui', path : '/draftStatus'}" class="sapSmartTemplatesObjectDraftStatus"/>
+		</contentLeft>
+		<contentRight>
+
+			<!-- Custom Action Breakout -->
+			
+
+			
+				
+			
+				
+			
+				
+			
+			
+			
+				<Button id="save" text="{i18n&gt;SAVE}" type="Emphasized" press="._templateEventHandlers.onSave" visible="{ui&gt;/editable}"/>
+				<Button id="cancel" text="{i18n&gt;CANCEL}" press="._templateEventHandlers.onCancel" visible="{ui&gt;/editable}"/>
+			
+			
+		</contentRight>
+	</Bar>
+
+
+			</footer>
+		</Page>

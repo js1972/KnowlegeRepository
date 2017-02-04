@@ -1,0 +1,14 @@
+<html>
+<script>
+
+function downloadFile(path){
+    var aLink = document.createElement("a"),
+        evt = document.createEvent("HTMLEvents");
+
+    evt.initEvent("click");
+    aLink.download = "";
+    aLink.href = path;
+    aLink.dispatchEvent(evt);
+}
+</script>
+</html>

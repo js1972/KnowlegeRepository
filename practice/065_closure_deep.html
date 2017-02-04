@@ -1,0 +1,17 @@
+<html>
+<script>
+"use strict";
+var myClosure = (function outerFunction(){
+  var hidden = 1;
+  return {
+     inc: function innerFunction(){
+         return hidden++;
+     }
+  };
+}());
+
+myClosure.inc();// 返回 1
+myClosure.inc();// 返回 2
+myClosure.inc();// 返回 3
+</script>
+</html>

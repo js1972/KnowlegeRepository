@@ -1,0 +1,52 @@
+<html>
+<body>
+<p>test</p>
+<!-- test comment -->
+
+</body>
+<script>
+
+function a() {
+	console.log("I was called!");
+	return "Jerry";
+}
+// var b = 1 , 2; // Uncaught SyntaxError: Unexpected number
+
+
+var b = a(), a; // in var declaration, a is discard
+console.log(b); // print Jerry, typeof b = string
+
+var d = (function c(){
+	return a(),a; // will call a()
+})(); // finally d = a - function, the result of a() is discard, function a reserved; 
+
+
+(function() {
+    // "use strict";
+    var e = f = 1; // Uncaught ReferenceError: f is not defined
+    debugger;
+})();
+
+debugger;
+var getHtmlCommentNodes = function(){
+	var cn, push;
+    
+    cn = document.COMMENT_NODE;
+    push =[].push; // these two are closures
+    return function f(node){
+    	var result, c, l, i;
+
+        result =[];
+        if( node.nodeType == cn )
+            result.push( node );
+        else if( c = node.childNodes, l = c.length )
+        		for( i =0; i < l; i ++)
+                	push.apply( result, f( c[ i ]));
+                return result;
+        }
+}();
+
+var ret = getHtmlCommentNodes( document.documentElement );
+
+</script>
+</html>

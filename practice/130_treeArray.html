@@ -1,0 +1,119 @@
+<html>
+<script>
+var a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+/*
+如果只有 query(n, m) 这个操作，很容易想到用sum数组预处理前n项的和，然后用 sum[m] - sum[n-1] 获得答案。但是如果要修改 a[index] 的值，因为该项影响所有index之后的sum数组元素，所以如果这样做复杂度变为O(1)的查询和O(n)的删改，并没有什么卵用。
+
+*/
+// o(n)
+// query(n, m) 表示求解 a[n] ~ a[m] 之间元素的和
+function query(n, m,array) {
+  var sum = 0;
+  for (var i = n; i <= m; i++)
+    sum += array[i];
+  return sum;
+}
+
+// o(1)
+function modify(index, x, array) {
+  array[index] += x;
+}
+
+/*
+sum[1] = a[1];
+sum[2] = a[1] + a[2];
+sum[3] = a[3];
+sum[4] = a[1] + a[2] + a[3] + a[4];
+sum[5] = a[5];
+sum[6] = a[5] + a[6];
+sum[7] = a[7];
+sum[8] = a[1] + a[2] + a[3] + a[4] + a[5] + a[6] + a[7] + a[8];
+sum[9] = a[9];
+
+如果要求 a[1] ~ a[9] 的和，即为 sum[9] + sum[8]，如果要求 a[1] ~ a[7] 的和，即为 sum[7] + sum[6] + sum[4] ，如果要改变 a[1] 的值，改变sum数组中和 a[1] 有关的项即可（即 sum[1] sum[2] sum[4]sum[8]）。 这就是树状数组！实现了O(logn)的查询和删改。但是如何将a数组和sum数组联系起来？
+*/
+// 返回最低位0的个数
+// 2^k ,k为最低位0的个数： 求解2^k即求二进制码右边第一位1的值）：
+function lowbit(x) {
+  return x & (-x);
+  /* 1: 0000 0001
+    -1: 1111 1111
+     =: 0000 0001
+
+     2: 0000 0010 
+        1111 1101 反码 + 1 = 
+    -2: 1111 1110
+     =: 0000 0010 = 2
+     */
+}
+
+/*
+所以c[n]和lowerbit(n)有密切关系。
+n = 5， l(5) = 1, 所以c[5]即为a[5],
+var l = lowerbit(n);
+var result = a[l];
+while (l > 1) {
+  result += a[l];
+  l--
+} 
+console.log(lowbit(1)); // 1 01 a[1]
+console.log(lowbit(2)); // 2 10 a[1] + a[2]
+console.log(lowbit(3)); // 1 11 a[3]
+console.log(lowbit(4)); // 4 100 a[1] + a[2] + a[3] + a[4]
+console.log(lowbit(5)); // 1 101 a[5]
+console.log(lowbit(6)); // 2 110 a[5] + a[6]
+console.log(lowbit(7)); // 1 111 a[7]
+console.log(lowbit(8)); // 8 1000  a[1] + a[2] + .. + a[8]
+// 基本的树状数组维护的是数组的前缀和，所有的区间求值都可以转化成用sum[m]-sum[n-1] 来解
+*/
+
+function sum(n, array) {
+	/*
+	令sum = 0，转第二步；
+	假如n <= 0，算法结束，返回sum值，否则sum = sum + Cn，转第三步；
+	令n = n – lowbit(n)，转第二步。
+	*/
+	var result = 0;
+	var index = n;
+	while( index > 0) {
+		result += sum(index, array);
+		index -= lowbit(index);
+	}
+	return result;
+}
+
+var GLOBAL = [0,1,2,3,4,5,6];
+
+function getSum(n){
+  var ans = 0;
+  for (var i = n; i; i -= lowbit(i))
+    ans += suma[i];
+  return ans;
+}
+
+// SUM(n)(求a[1]~a[n]的和）a[1]~a[6] 1 + 2 + 3 + 4 + 5 + 6 = 21
+// console.log("result: " + sum(6, [0,1,2,3,4,5,6]));
+console.log("result: " + getSum(6));
+
+/*
+c[1] = a[1];
+c[2] = a[1] + a[2];
+c[3] = a[3];
+
+现在求n = 3， 即是a[1] + a[2] + a[3]
+sum = sum + c[3]., 最后值为a[3].
+n = n - lowebit(3) = 3 - 1 ( 3的末尾有0个0，二的零次方为1) = 2
+sum = sum + c[2] = a[3] + c[2] = a[1] + a[2] + a[3], 其实就已经完成任务了
+n = n - lowerbit(2) = 2 - 2 = 0, 算法结束！ 
+
+问题的核心在于 c[n] 如何表示？ 
+*/
+/* Jerry 2016-01-21 17:53PM 需要预先算一个sum？！
+*/
+ for (var i = 1; i <= GLOBAL.length; i++) {
+      scanf("%d", &tmp);
+      update(i, tmp);
+    }
+
+</script>
+</html>

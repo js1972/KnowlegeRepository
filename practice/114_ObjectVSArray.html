@@ -1,0 +1,58 @@
+<html>
+<script>
+
+var NUM = 10;
+var Benchmark = function () {};
+  Benchmark.prototype.setup = function() {
+    var arr = [],
+        i,
+        obj = {};
+    for(i = 0; i < NUM; i += 1) {
+        var o = {payload:i};
+        arr.push(o);
+        obj[i] = o;
+    }
+    return {
+    	array: arr,
+    	object: obj
+    };
+  };
+
+  var a = new Benchmark();
+  var result = a.setup();
+
+  console.time("Array");
+  var sum = 0;
+  for (var x = 0; x <result.array.length; ++x) {
+    sum += result.array[x].payload
+  }
+  console.timeEnd("Array");
+  console.log("sum: " + sum);
+
+  console.time("object For in");
+  var sum = 0;
+  for (var x in result.object) {
+    sum += result.object[x].payload;
+  }
+  console.timeEnd("object For in");
+  console.log("sum: " + sum);
+
+  console.time("object with known length");
+  var sum = 0;
+  for (var x =0; x< NUM; ++x) {
+    sum += result.object[x].payload
+}
+console.timeEnd("object with known length");
+console.log("sum: " + sum);
+
+console.time("object with key");
+var sum = 0;
+var keys = Object.keys(result.object); // keys: array [0,1,2,3... 9]
+for (var x=0; x<keys.length; ++x) {
+    sum += result.object[keys[x]].payload
+}
+console.timeEnd("object with key");
+console.log("sum: " + sum);
+</script>
+</script>
+</html>

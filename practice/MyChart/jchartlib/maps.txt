@@ -1,0 +1,8 @@
+jChartFX Maps
+========================
+
+A complete set of hundreds of maps compatible with the jChartFX Maps extension is available for download at the Software FX Maps Marketplace:
+
+       http://maps.softwarefx.com
+
+Most maps are available in high and low resolutions, so you can select the appropriate size and quality you need depending on your requirements.

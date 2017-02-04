@@ -1,0 +1,27 @@
+<html>
+<script>
+var str = "TTTTTTTTTTTTTTTTTTTTTTTTT";
+console.time("solution1");
+var a = str.match(/(T+T+)+K/);
+console.timeEnd("solution1");
+console.log(a);
+
+
+console.time("solution2");
+a = str.match(/(?=(T+T+))\2+K/);
+console.timeEnd("solution2");
+console.log(a);
+
+//然后把前面的T重复次数改成30
+/*P.S:小心风扇狂转，CPU暴涨
+我们来分析下上面这段代码，上面使用的都是贪婪模式，那么他会这样做：
+  REG: (T+T+)+K
+MATCH: ①第一个T+匹配前7个T，第二个T+匹配最后一个T，没找到K，宣布失败，回溯到最开始位置
+       ②第一个T+匹配前6个T，第二个T+匹配最后两个T，没找到K，宣布失败，回溯到最开始位置
+       ③...
+... 接着还会考虑(T+T+)+后面的 + 号，接着另一轮的尝试。
+       ⑦...
+...
+这段程序并不会智能的去检测字符串中是否存在 K，如果匹配失败，他会选择其他的匹配方式（路径）去匹配，从而造成疯狂的回溯和重新匹配，结果可想而知。这是回溯失控的典型例子。*/
+</script>
+</html>

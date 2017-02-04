@@ -1,0 +1,25 @@
+<html>
+<body onload = "load();">
+<div>
+	<button id="button1" width = "100px">button1</button>
+	<button id="button2" width = "100px">button2</button>
+</div>
+</body>
+<script>
+
+function load() {
+	registerEvent("button1");
+	registerEvent("button2");
+}
+
+function registerEvent(buttonID) {
+	var oButton = document.getElementById(buttonID);
+	if( !oButton)
+		return;
+	oButton.onclick = function(oEvent) {
+		debugger;
+		alert("button clicked, id: " + oEvent.srcElement.id);
+	};
+}
+</script>
+</html>

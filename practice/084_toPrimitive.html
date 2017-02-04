@@ -1,0 +1,25 @@
+<html>
+<script>
+var obj = {
+    valueOf: function () {
+        console.log("valueOf");
+        return {}; // not a primitive
+    },
+    toString: function () {
+        console.log("toString");
+        return {}; // not a primitive
+    }
+}
+
+/* valueOf
+084_toPrimitive.html:9 toString
+084_toPrimitive.html:14 Uncaught TypeError: Cannot convert object to primitive value
+Number(obj);*/
+
+/* toString
+084_toPrimitive.html:5 valueOf
+084_toPrimitive.html:19 Uncaught TypeError: Cannot convert object to primitive value
+String(obj);*/
+
+</script>
+</html>

@@ -1,0 +1,24 @@
+<html>
+
+<script>
+
+var bigFunction = function() {
+	// big logic
+	console.log("big logic");
+}
+
+// solution1:
+
+var _old = bigFunction;
+
+bigFunction = function() {
+    if ( _old ) {
+         _old();
+    }
+    console.log("our own enhancement");
+}
+
+bigFunction();
+
+</script>
+</html>

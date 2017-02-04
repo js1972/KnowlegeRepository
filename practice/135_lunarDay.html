@@ -1,0 +1,93 @@
+<html>
+<script>
+/*
+万年历大家肯定都用过，一般都有阳历、农历、节气等信息，但是你是否想过农历日期是如何获取的？
+
+阳历日期的获取很简单，以 Javascript 为例，有 Date 对象，可以调用它的 API 获取年、月、日信息，但是农历日期并不像阳历一样有规律，更别谈 API 了。所以，对于农历日期的获取我们只能打表。
+纳尼，打表？岂不是 1 年 365 天要打 365 个值的表么？非也。我们先来了解下农历的一些基本信息，农历一年有 12 个月或者 13 个月，每个月 29 天或者 30 天。如果哪一年有 13 个月，那么多出来的月叫做闰月，比方说农历 2001 年有两个四月，那么多出来的四月就叫做闰四月，紧跟在四月后，通常每 19 年就会有 7 个闰月，于是你可能在某一年过过两次农历生日。（详见 历法）
+如果今天是 2000 年 1 月 1 日（阳历），让你求 100 天后的日期（阳历），相信并不会很困难（甚至可以直接用 setDate() 方法）。如果今天是 2000 年 1 月 1 日（农历)，让你求 100 天后的日期（农历），怎么做？没错，我们需要的仅仅只是农历月份的一些数据而已，而这些数据我们不得不通过一些渠道去获得。
+这样，求解当天农历日期的过程似乎可以呼之欲出了。我们以某天为基准，比方说 2000 年 2 月 5 日（农历正月初一），我们先算得今天和基准日期的时间天数间隔（假设为 n 天），然后再去求农历 2000 年正月初一之后 n 天的日期。
+将每一年的农历月份信息存储下来也需要一定的技巧，这里采用二进制进行存储。用 12 位二进制代表 12 个月的年份，用 13 位代表 13 个月的年份。在每个位置上，用 1 表示当月有 30 天，0 表示 29天。
+比方说 2000 年我们可以用 110010010110 表示，它表示一月、二月、五月、八月、十月以及十一月有30天，其余 29 天，为了方便我们将该数用十六机制 0xc96 表示。有闰月的年份怎么表示呢？比方说 2001 年有个闰四月，我们用 13 个二进制数1101010010101 表示该年，其中第 5 个数字 0 表示闰四月有 29 天，但是因为 13 个二进制数表示十六进制不方便，我们再在前面加上 3 个 0，0001, 1010, 1001, 0101，最后我们还得知道闰月是在几月份，我们将其加在最前面，比如 2001 年是闰四月，四的二进制表示为 0100，我们将它加在最前面，0100, 0001, 1010, 1001, 0101，用十六进制表示为 0x41A95。
+*/
+// 仅使用于阳历2001年-2020年之间阳历-农历转换
+
+function getLunarDay(y, m, d) {
+  // 2000 - 2020
+  // 0xC96 110010010110
+  var data =  [0xc96, 0x41A95, 0xD4A, 0xDA5, 0x20B55, 0x56A, 0x7155B, 0x25D, 0x92D, 0x5192B,
+               0xA95, 0xB4A, 0x416AA, 0xAD5, 0x90AB5, 0x4BA, 0xA5B, 0x60A57, 0x52B, 0xA93, 
+               0x40E95];
+
+  // 以 2000 年 2 月 5 日为基准（农历正月初一）
+  var standard = new Date(2000, 1, 5);
+
+  // 将日期对象化
+  var cur = new Date(y, m, d); 
+
+  // 间隔的日期天数
+  var gap = (cur.getTime() - standard.getTime()) / 1000 / 3600 / 24 + 1;
+  
+  // 确认是不是 i 年
+  for (var i = 2000; i <= 2020; i++) {
+    var yearDays = getYearDays(i);
+    // 就是 i 年
+    if (gap <= yearDays) {
+      var leapMonth = getLeapMonth(i), totalMonths = leapMonth ? 13 : 12;
+
+      // 遍历月份
+      for (var j = 0; j < totalMonths; j++) {
+        var days = data[i - 2000] & (1 << (totalMonths - j - 1)) ? 30 : 29;
+        // 不是 j 月
+        if (gap > days) {
+          gap -= days;
+        } 
+        else {
+          if (leapMonth) {  // 如果当年有闰月，还需判断
+          	if (j < leapMonth)
+              return [i, j + 1, gap, 0];
+            else if (j === leapMonth)
+              return [i, j, gap, 1];
+            else return [i, j, gap, 0];
+          } else {
+            return [i, j + 1, gap, 0];  // i 年 j+1 月 gap 日，0 表示非闰月
+          }
+        }
+      }
+    } else {
+      gap -= yearDays;
+    }
+  }
+
+
+  // 获取 year 年的闰月月份，如果没有，返回 0 
+  function getLeapMonth(year) {
+    year -= 2000;
+    var month = 0;
+    for (var i = 16; i < 20; i++) 
+      month += data[year] & (1 << i);
+    return month >> 16;
+  }
+
+  // 获取 year 年农历总天数
+  function getYearDays(year) {
+    var leapMonth = getLeapMonth(year)
+      , totalMonths = leapMonth ? 13 : 12;
+
+    var totalDays = 0;
+    // 2001 // 0100, 0001, 1010, 1001, 0101
+    for (var i = 0; i < totalMonths; i++) {
+      var tmp = totalMonths - i - 1;
+      if (data[year - 2000] & (1 << tmp))
+        totalDays += 30;
+      else 
+        totalDays += 29;
+    }
+    return totalDays;
+  }
+}
+
+var result = getLunarDay(2016,2,9);
+console.log(result);
+</script>
+</html>

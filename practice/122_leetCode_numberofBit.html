@@ -1,0 +1,50 @@
+<html>
+<script>
+var hammingWeight = function(n) {
+  var ans = 0;
+  while (n) {
+    ans += n & 1;
+    n >>>= 1;
+  }
+  return ans;
+};
+
+/*
+最后得到的数字6即为12345二进制码中1的个数。而实际中，因为int32是32位的，所以一共要进行5步。求解思路和求逆序类似，逆序是要交换，所以要分别左移右移，而求1的个数是相加，所以只需移动一次就够了。
+*/
+var hammingWeight2 = function(n) {
+  n = ((n & 0xAAAAAAAA) >>> 1) + (n & 0x55555555);
+  n = ((n & 0xCCCCCCCC) >>> 2) + (n & 0x33333333);
+  n = ((n & 0xF0F0F0F0) >>> 4) + (n & 0x0F0F0F0F);
+  n = ((n & 0xFF00FF00) >>> 8) + (n & 0x00FF00FF);
+  n = ((n & 0xFFFF0000) >>> 16) + (n & 0x0000FFFF);
+  return n;
+};
+
+// console.log(hammingWeight(15)); // 4, 1111
+// console.log(hammingWeight2(15)); // 4, 1111
+// 计算二进制中1的个数的奇偶性
+/*
+我们可以先计算1的个数，然后再判断奇偶。当然既然作为一道独立的题目，肯定有更简便的方法。
+
+整个过程可以用分治来解。第1步统计相邻2位的1的个数奇偶性，保存到这2位的低位中。第2步统计相邻4位的1的个数奇偶性，保存到这4位的低位中。……第5步统计相邻2位的1的个数奇偶性，保存到这32位的低位中，即x的最低位。
+*/
+
+function bit1OddEven(x){ //奇数个为1，偶数个为0
+  x ^= x >>> 1;    //相邻 2位中1的奇偶性
+  /* alert(num1^num2);//输出： 26 ；对两个数值的二进制写法进行比较，只有当相同位置上的数字只有一个1时，才返回1，有两个1或者都是0则返回0，然后转换成十进制数值；*/
+  console.log("next 2 bits: " + x);
+  x ^= x >>> 2;    //相邻 4位中1的奇偶性
+  console.log("next 4 bits: " + x);
+  x ^= x >>> 4;    //相邻 8位中1的奇偶性
+  console.log("next 8 bits: " + x);
+  x ^= x >>> 8;    //相邻16位中1的奇偶性
+  console.log("next 16 bits: " + x);
+  x ^= x >>> 16;   //相邻32位中1的奇偶性
+  console.log("next 32 bits: " + x);
+  return x & 1;   
+}
+
+console.log("result: " + bit1OddEven(12));
+</script>
+</html>

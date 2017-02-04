@@ -1,0 +1,28 @@
+<html>
+<script>
+function add(a) {
+  var temp = function(b) {
+    return add(a + b);
+  }
+  temp.valueOf = temp.toString = function() {
+    return a;
+  };
+  return temp;
+}
+var ans = add(2)(3)(4);
+console.log(ans); // 9
+
+function add2(num){
+  num += ~~add2;
+  add2.num = num;
+  return add2;
+}
+add2.valueOf = add2.toString = function(){
+	console.log("value of or toString is called!");
+	return add2.num
+};
+var ans = add2(3)(4)(5)(6);  // 18
+alert(ans);
+
+</script>
+</html>

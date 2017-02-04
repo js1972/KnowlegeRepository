@@ -1,0 +1,24 @@
+<html>
+<script>
+function f(x, y, z){
+	if(x) 
+		console.log(typeof y === "function" ? y():y);
+	else 
+		console.log(typeof z === "function" ? z():z);
+}
+
+// f(true,  ( console.log("Big calculation1"), 3+2), console.log("Big calculation2"), 4+5);
+
+var a = function(){
+	console.log("Big calculation1");
+	return 3 + 2;
+};
+
+var b = function() {
+	console.log("Big calculation2");
+	return 4 + 5;
+}
+f(true, a, b);
+
+</script>
+</html>

@@ -1,0 +1,16 @@
+<html>
+<script>
+var a = {
+	name: "Jerry",
+	score: 100
+};
+
+function calleeDemo() { 
+	debugger;
+	console.log( "equal? " + this === arguments.callee); // this points to global
+    console.log(arguments.callee); 
+} 
+
+calleeDemo();
+</script>
+</html>

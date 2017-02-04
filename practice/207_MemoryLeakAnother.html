@@ -1,0 +1,49 @@
+<html>
+<div id="nodes"/>
+<script>
+/*
+var theThing = null;
+var replaceThing = function () {
+  var originalThing = theThing;
+  var unused = function () {
+    if (originalThing)
+      console.log("hi");
+  };
+
+  theThing = {
+    longStr: new Array(1000000).join('*'),
+    someMethod: function () {
+      console.log(someMessage);
+    }
+  };
+
+  originalThing = null;
+};
+
+setInterval(replaceThing, 1000);*/
+
+var x = [];
+
+function createSomeNodes() {
+    var div,
+        i = 100,
+        frag = document.createDocumentFragment();
+
+    for (;i > 0; i--) {
+        div = document.createElement("div");
+        div.appendChild(document.createTextNode(i + " - "+ new Date().toTimeString()));
+        frag.appendChild(div);
+    }
+
+    document.getElementById("nodes").appendChild(frag);
+}
+
+function grow() {
+    x.push(new Array(1000000).join('x'));
+    createSomeNodes();
+    setTimeout(grow,1000);
+}
+
+grow();
+</script>
+</html>

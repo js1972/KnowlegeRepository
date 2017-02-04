@@ -1,0 +1,50 @@
+<html>
+<script>
+
+/*
+function Parent(){
+this.name = 'mike';
+}
+
+function Child(){
+this.age = 12;
+}
+Child.prototype = new Parent();//Child继承Parent，通过原型，形成链条
+
+var test = new Child();
+console.log(test.age);
+console.log(test.name);//得到被继承的属性
+//继续原型链继承
+function Brother(){ //brother构造
+this.weight = 60;
+}
+Brother.prototype = new Child();//继续原型链继承
+var brother = new Brother();
+console.log(brother.name);//继承了Parent和Child,弹出mike
+console.log(brother.age);//弹出12
+*/
+
+function obj(o){
+function F(){}
+F.prototype = o;
+return new F();
+}
+var box = {
+name : 'trigkit4',
+arr : ['brother','sister','baba']
+};
+var b1 = obj(box);
+console.log(b1.name);//trigkit4
+
+b1.name = 'mike';
+console.log(b1.name);//mike
+
+console.log(b1.arr);//brother,sister,baba
+b1.arr.push('parents');
+console.log(b1.arr);//brother,sister,baba,parents
+
+var b2 = obj(box);
+console.log(b2.name);//trigkit4
+console.log(b2.arr);//brother,sister,baba,parents
+</script>
+</html>

@@ -1,0 +1,42 @@
+@AbapCatalog.sqlViewName: 'zcorderview'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'service order consumption view'
+
+@OData.publish: true
+@ObjectModel: {
+   type: #CONSUMPTION,
+   compositionRoot,
+   createEnabled,  
+   deleteEnabled, 
+   updateEnabled 
+}
+
+@UI.headerInfo:{
+  typeName:       'Service Order',
+  typeNamePlural: 'Service Orders',
+  title: {'Jerry'}
+}
+
+define view Z_C_Service_Order_View as select from Z_i_Order_View {
+  key Z_i_Order_View.order_guid as order_guid,
+  @UI.lineItem : [{position:10}]
+  @UI.identification: [ { position: 10 } ]
+  Z_i_Order_View.object_id,
+  @UI.lineItem : [{position:20}]
+  @UI.identification: [ { position: 20 } ]
+  Z_i_Order_View.description,
+  Z_i_Order_View.partner_no,
+  Z_i_Order_View.title,
+  @UI.lineItem : [{position:30}]
+  @UI.identification: [ { position: 30 } ]
+  Z_i_Order_View.name,
+  Z_i_Order_View.stat,
+  Z_i_Order_View.txt04,
+  @UI.lineItem : [{position:40}]
+  @UI.identification: [ { position: 40 } ]
+  Z_i_Order_View.txt30,
+  @ObjectModel.association.type: [#TO_COMPOSITION_CHILD]
+  Z_i_Order_View._Item
+  
+}

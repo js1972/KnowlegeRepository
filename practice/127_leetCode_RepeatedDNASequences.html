@@ -1,0 +1,61 @@
+<html>
+<script>
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// http://www.cnblogs.com/zichi/p/4797739.html
+var findRepeatedDnaSequences = function(s) {
+  var hash = {}
+    , ans = 0;
+
+  var result = [];
+  for (var i = 0, len = s.length; i < len; i++) {
+    var str = s.substr(i, 10);
+    if (str.length < 10) break;
+    if (!hash[str]) 
+      hash[str] = 1;
+    else{// if (hash[str] === 1)
+      hash[str]++, ans++;
+      if(( hash[str] > 1) && (!result.contains(str))){
+      	// 终于知道原因了，重复add了。
+      	console.log("adding: " + str);
+      	result.push(str);
+      }
+  	}
+  }
+  console.log("result length 0: " + result.length);
+  return result;
+};
+console.log(findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTTCCCCCAAAAACCCCCAAAAA"));
+
+var findRepeatedDnaSequences2 = function(s) {
+  var hash = new Set()
+    , hash_ans = new Set()
+    , ans = [];
+
+  for (var i = 0, len = s.length; i < len; i++) {
+    var str = s.substr(i, 10);
+    if (str.length < 10) break;
+    if (!hash.has(str)) 
+      hash.add(str);
+    else {
+      // 说明hash里已经有str了。即str这是第二次出现了。
+      if (!hash_ans.has(str)) {
+        hash_ans.add(str);
+        ans.push(str);
+      }
+    }
+  }
+  console.log("result 1 length: " + ans.length);
+  return ans;
+};
+console.log(findRepeatedDnaSequences2("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTTCCCCCAAAAACCCCCAAAAA"));
+</script>
+</html>

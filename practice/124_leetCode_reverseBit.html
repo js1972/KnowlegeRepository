@@ -1,0 +1,83 @@
+<html>
+<script>
+/*
+	我们从低到高位枚举n的二进制码，然后将低位提到高位来表示逆序后的二进制码。
+  http://www.cnblogs.com/zichi/p/4794602.html
+
+*/
+var reverseBits = function(n) {
+  var ans = 0;
+  for(var i = 31; i >= 0; i--) {
+    // ans |= ((n & 1) << i);
+    var temp = n & 1; // n的最低一位
+    console.log( "temp: " + temp.toString(2));
+    var moveDigit = (temp << i); // temp是最低位，移到第i位即31位上去。 
+    console.log( "moveDigit: " + moveDigit + " bin: " + moveDigit.toString(2));
+    ans |= moveDigit; // 或操作是置位，将第i位置位
+    console.log("before current n: " + n + " bin: " + n.toString(2));
+    n >>= 1; // n的最低位处理完了，将n往右移，相当于处理从右边即最低位数起第二位了。
+    console.log("after current n: " + n + " bin: " + n.toString(2));
+  }
+  /*
+  for循环运行完后，得到ans的二进制码为：
+
+1000 0000 0000 0000 0000 0000 0000 0000
+但是对于JavaScript而言，它的32位二进制码的第一位总是符号位，所以上面的二进制码所表示的数是-2147483648。现在问题来了，在JavaScript如何把一个signed的32位整数转成一个unsigned的32位整数？ 答案就是>>>0。于是程序也就很好理解了。
+
+var a = -2147483648; // 1000 0000 0000 0000 0000 0000 0000 0000 signed
+console.log(a >>> 0); // 2147483648 unsigned
+  */
+  return ans >>> 0;
+};
+// 12345 0011 0000 0011 1001
+// 1001 1100 0000 1100 0000 0000 0000 0000 
+console.log("result: " + reverseBits(12345)); // 2618032128 超过了32位了
+
+/*
+将奇数位提取出来：
+
+0_1_0_0_0_1_1_0_ 
+空隙中用0填补（这里为了视觉效果，用了字母）：
+
+0a1a0a0a0a1a1a0a
+将偶数位同样提取：
+
+_0_1_0_0_0_1_0_1
+空隙处用0填补（这里为了视觉效果，用了字母）：
+
+a0a1a0a0a0a1a0a1
+将奇数位右移一位，再将偶数位左移一位，相加，即得到结果：
+
+00a1a0a0a0a1a1a0
+0a1a0a0a0a1a0a10
+0011000000110110
+取x的奇数位并将偶数位用0填充代码实现就是 x & 0xAAAA（1010101010101010），取x的偶数位并将奇数位用0填充代码实现就是 x & 0x5555（0101010101010101）
+
+因此第一步用代码实现就是：
+*/
+var reverseBits2 = function(n) {
+  n = ((n & 0xAAAAAAAA) >>> 1) | ((n & 0x55555555) << 1);
+  n = ((n & 0xCCCCCCCC) >>> 2) | ((n & 0x33333333) << 2);
+  n = ((n & 0xF0F0F0F0) >>> 4) | ((n & 0x0F0F0F0F) << 4);
+  n = ((n & 0xFF00FF00) >>> 8) | ((n & 0x00FF00FF) << 8);
+  n = ((n & 0xFFFF0000) >>> 16) | ((n & 0x0000FFFF) << 16);
+
+  return n >>> 0;
+};
+
+console.log("result: " + reverseBits2(12345)); // 2618032128 超过了32位了
+
+var reverse = function(i) { 
+  return (i.toString(2).split('').reverse().join('')
+    + '00000000000000000000000000000000').substring(0,32);
+};
+console.log("result: " + reverse(12345)); // 2618032128 超过了32位了
+/*
+var a = -2147483648; // 1000 0000 0000 0000 0000 0000 0000 0000 signed
+console.log(a >>> 0); // 2147483648 unsigned
+
+var a = 4294967295; // 1111 1111 1111 1111 1111 1111 1111 1111 unsigned
+console.log(a << 0); // -1 signed
+*/
+</script>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="../jQuery/jquery1.7.1.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jchartfx.system.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jchartfx.coreVector.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jchartfx.coreVector3D.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jchartfx.advanced.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jchartfx.gauge.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jchartfx.full.js">
+    </script>
+    <script type="text/javascript" src="jchartlib/js/jquery-ui.js">
+    </script>
+     <script type="text/javascript">
+        function initialize() { 
+        	var chart1 = new cfx.Chart();
+
+            chart1.setGallery(cfx.Gallery.Pie);
+            chart1.getAllSeries().getPointLabels().setVisible(true);
+            var pie = chart1.getGalleryAttributes();
+            pie.setExplodingMode(cfx.ExplodingMode.All);
+
+            PopulateBrowserUsage(chart1);
+            var fields = chart1.getDataSourceSettings().getFields();
+
+            var field1 = new cfx.FieldMap();
+            field1.setName("Browser");
+            field1.setUsage(cfx.FieldUsage.RowHeading);
+            fields.add(field1);
+
+            var field2 = new cfx.FieldMap();
+            field2.setName("Region");
+            field2.setUsage(cfx.FieldUsage.ColumnHeading);
+            fields.add(field2);
+
+            var fieldVal = new cfx.FieldMap();
+            fieldVal.setName("Usage");
+            fieldVal.setUsage(cfx.FieldUsage.Value);
+            fields.add(fieldVal);
+
+            var crosstab = new cfx.data.CrosstabDataProvider();
+
+            crosstab.setDataSource(chart1.getDataSource());
+            chart1.setDataSource(crosstab);
+            var data = chart1.getData();
+            data.setSeries(1);
+
+            chart1.getAllSeries().getPointLabels().setVisible(true);
+            var titles = chart1.getTitles();
+            var title = new cfx.TitleDockable();
+            title.setText("Browser Usage in Africa on August 2013");
+            titles.add(title);
+            // Jerry 2015-09-01 16:58PM must equal to div id
+            chart1.create('divChart1');
+
+
+        }
+
+function PopulateBrowserUsage(chart1) {
+        var items = [{
+            "Browser": "Chrome",
+            "Region": "Africa",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 41.07
+        }, {
+            "Browser": "Firefox",
+            "Region": "Africa",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 30.75
+        }, {
+            "Browser": "IE",
+            "Region": "Africa",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 21.42
+        }, {
+            "Browser": "Safari",
+            "Region": "Africa",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 3.47
+        }, {
+            "Browser": "Opera",
+            "Region": "Africa",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 1.52
+        }, {
+            "Browser": "Other",
+            "Region": "Africa",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 1.77
+        }, {
+            "Browser": "Chrome",
+            "Region": "Asia",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 48.78
+        }, {
+            "Browser": "Firefox",
+            "Region": "Asia",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 16.88
+        }, {
+            "Browser": "IE",
+            "Region": "Asia",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 25.49
+        }, {
+            "Browser": "Safari",
+            "Region": "Asia",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 4
+        }, {
+            "Browser": "Opera",
+            "Region": "Asia",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 1.02
+        }, {
+            "Browser": "Other",
+            "Region": "Asia",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 3.83
+        }, {
+            "Browser": "Chrome",
+            "Region": "Europe",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 38.52
+        }, {
+            "Browser": "Firefox",
+            "Region": "Europe",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 26.25
+        }, {
+            "Browser": "IE",
+            "Region": "Europe",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 21.37
+        }, {
+            "Browser": "Safari",
+            "Region": "Europe",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 9.19
+        }, {
+            "Browser": "Opera",
+            "Region": "Europe",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 2.31
+        }, {
+            "Browser": "Other",
+            "Region": "Europe",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 2.36
+        }, {
+            "Browser": "Chrome",
+            "Region": "North America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 36.49
+        }, {
+            "Browser": "Firefox",
+            "Region": "North America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 16.24
+        }, {
+            "Browser": "IE",
+            "Region": "North America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 30.12
+        }, {
+            "Browser": "Safari",
+            "Region": "North America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 14.16
+        }, {
+            "Browser": "Opera",
+            "Region": "North America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 0.47
+        }, {
+            "Browser": "Other",
+            "Region": "North America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 2.52
+        }, {
+            "Browser": "Chrome",
+            "Region": "Oceania",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 35.02
+        }, {
+            "Browser": "Firefox",
+            "Region": "Oceania",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 18.9
+        }, {
+            "Browser": "IE",
+            "Region": "Oceania",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 27.82
+        }, {
+            "Browser": "Safari",
+            "Region": "Oceania",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 16.31
+        }, {
+            "Browser": "Opera",
+            "Region": "Oceania",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 0.45
+        }, {
+            "Browser": "Other",
+            "Region": "Oceania",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 1.5
+        }, {
+            "Browser": "Chrome",
+            "Region": "South America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 63.18
+        }, {
+            "Browser": "Firefox",
+            "Region": "South America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 15.26
+        }, {
+            "Browser": "IE",
+            "Region": "South America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 17.48
+        }, {
+            "Browser": "Safari",
+            "Region": "South America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 2.39
+        }, {
+            "Browser": "Opera",
+            "Region": "South America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 0.55
+        }, {
+            "Browser": "Other",
+            "Region": "South America",
+            "UsageDate": "2013-08-01T00:00:00.000Z",
+            "Usage": 1.14
+        }];
+    
+        chart1.setDataSource(items);
+    }
+ 
+    </script>
+     <link rel="stylesheet" type="text/css" href="jchartlib/styles/Attributes/jchartfx.attributes.aurora.css" />
+    <link rel="stylesheet" type="text/css" href="jchartlib/styles/Palettes/jchartfx.palette.aurora.css" />
+     <style type="text/css">
+
+      .jchartfx .Attribute3 {
+    fill: #FEFEFE;
+    stroke: #3C3E46;
+    }
+    .jchartfx .AxisY_Text {
+    fill: #FEFEFE;
+    }
+
+    .jchartfx .AxisX_Text {
+    fill: #FEFEFE;
+    }
+
+    .jchartfx .Title {
+fill: #FEFEFE;
+}
+
+.jchartfx .LegendItem {
+fill: #FEFEFE;
+}
+
+    </style>
+    
+}
+     </head>
+<body class="jchartfx_body">
+	<div class="jchartfx_container">
+            <div id="divChart1" style="width:1090px;height:370px;display:inline-block;position:absolute;left:0px;top:0px"></div>
+
+        <script language="javascript">
+            $(document).ready(function ($) {
+                initialize();
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

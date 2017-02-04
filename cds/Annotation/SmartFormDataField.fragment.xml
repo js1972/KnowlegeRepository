@@ -1,0 +1,33 @@
+<core:FragmentDefinition xmlns:sfi="sap.ui.comp.smartfield"
+						 xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+						 xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+						 xmlns="sap.m" xmlns:sfo="sap.ui.comp.smartform" xmlns:build="sap.build" xmlns:core="sap.ui.core">
+	<!--
+        @classdesc
+        @name: Name: sap.suite.ui.generic.template.fragments.SmartFormDataField.fragment.xml
+        @description: This fragment contains label value pairs for the smart form derived from UI.DataFields
+        @param {Collection(UI.DataField)} [dataField]
+    -->
+
+	<sfo:GroupElement id="{path: 'groupFacet>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromFacet'}::{path: 'dataField>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromDataField'}::GroupElement">
+		<sfi:SmartField id="{path: 'groupFacet>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromFacet'}::{path: 'dataField>', formatter: 'sap.suite.ui.generic.template.js.AnnotationHelper.getStableIdPartFromDataField'}::Field"
+						value="{path: 'dataField>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+						url="{= ${dataField>Url} ? ${path: 'dataField>Url', formatter: 'sap.ui.model.odata.AnnotationHelper.format'} : ''}"
+						custom:multiLineSettings="{width: '100%'}"
+                        change="._templateEventHandlers.onChange"
+                        textLabel="{= ${dataField>Label} ? ${path: 'dataField>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'} : ''}"
+                        build:metadata="#pattern:FormElement;staticProp:label:Label:{dataField>Value@@sap:label};prop:virtualProp1:Value:{dataField>Value};prop:virtualProp2:Url:{dataField>Url};staticProp:nullable:Nullable:{dataField>Value@@sap:nullable};prop:currency:Currency:{dataField>Value@@Org.OData.Measures.V1.ISOCurrency};f4Edit:{dataField>Value}">
+			<template:if test="{= ${dataField>Criticality} }">
+				<sfi:controlProposal>
+					<sfi:ControlProposal>
+						<sfi:objectStatus>
+							<sfi:ObjectStatus criticality="{path: 'dataField>Criticality', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}"
+                                              build:metadata="#pattern:FormElement;prop:criticality:Criticality;"/>
+						</sfi:objectStatus>
+					</sfi:ControlProposal>
+				</sfi:controlProposal>
+			</template:if>
+		</sfi:SmartField>
+	</sfo:GroupElement>
+
+</core:FragmentDefinition>

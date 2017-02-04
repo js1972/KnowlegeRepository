@@ -1,0 +1,38 @@
+<html>
+<body onload = "test()">
+</body>
+<script>
+
+function test() {
+ var getDiv = (function(){
+    var created = [];
+    var create = function(){
+          return document.body.appendChild(document.createElement('div'));
+    }
+    var get = function(){
+         if(created.length){
+         	  console.log("use cached one!");
+              return created.shift();
+          }else{
+          		console.log("first created div!");
+          		var cache = create();
+          		Array.prototype.push.call(created, cache);
+                return cache;
+           }
+     }
+/* 一个假设的事件，用来监听刚消失在视线外的div，实际上可以通过监听滚            动条位置来实现 
+      userInfoContainer.disappear(function(div){
+              created.push(div);
+        })*/
+     return get;
+})();
+  
+  var div = getDiv();
+  div.innerHTML="Jerry";
+
+  setTimeout( function(){
+  var div = getDiv();
+  div.innerHTML="Jerry2";}, 3000);
+}
+ </script>
+ </html>

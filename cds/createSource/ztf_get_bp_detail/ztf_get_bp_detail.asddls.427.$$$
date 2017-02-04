@@ -1,0 +1,4 @@
+
+@ClientDependent: true
+@AccessControl.authorizationCheck: #NOT_REQUIRED 
+define table function ztf_get_bp_detail 

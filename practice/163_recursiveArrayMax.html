@@ -1,0 +1,17 @@
+<html>
+<script>
+function max(array) {
+
+	function maxInternal(array, from) {
+		if (from == array.length - 1) {
+      		return array[from];
+    	}
+    	return Math.max(array[from], maxInternal(array, from + 1));
+	}
+    return maxInternal(array, 0);
+}
+
+console.log(max([1,3,2,4,1,6,5]));
+
+</script>
+</html>

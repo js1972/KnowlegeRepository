@@ -1,0 +1,33 @@
+<html>
+<script>
+function a1(){
+	console.log("a1");
+	return false;
+}
+
+function a2(){
+	console.log("a2");
+	return true;
+}
+
+// 如果a等于false，那么b就没必要执行了。这就是为什么当command1成功，才会执行command2
+// var a = a1() && a2();
+
+/*command1 || command2 || command3
+操作符||也有类似的特性。上面这个命令行，如果command1成功，那么command2和command3都不会被执行。如果command1失败，command2成功，那么command3就不会被执行。*/
+
+function b1(){
+	console.log("b1");
+	return false;
+}
+
+function b2(){
+	console.log("b2");
+	return true;
+}
+
+var b = b1() || b2();
+
+debugger;
+</script>
+</html>

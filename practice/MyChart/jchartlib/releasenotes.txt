@@ -1,0 +1,22 @@
+Product: jChartFX
+Version: 7.2.5282
+Release Date: 06/24/2014
+----------------------------
+
+Enhancements:
+============
+
+More than 60 different looks and color styles available. 
+
+Motifs: New motifs provide a complete different look to a jChartFX dashboard without the need to code the aesthetics for any of the controls.
+Palettes: A new series of css files that allow you to easily customize any of the controls through style sheets
+
+Maps: A new Maps extension suitable for data-centric applications using extremely small map files (typically ranging below 50KB* per map), compressed for specific target devices, including mobile devices.
+     
+Gauges: A new Highly-Detailed Graphic Gauges extension with shadows, lighting and glare effects. Includes a collection of gauge components: Radial Gauge, Horizontal Gauge, Vertical Gauge, Trends and Digital Panel. 
+
+Dashboard ready: With the addition of Maps, Gauges, a new set of Palettes & Motifs to jChartFX+, developers can easily create digital dashboards with minimum effort ensuring that the perceived coloring and visual attributes remains relatively constant in all of the dashboard elements.
+
+Several bug fixes.
+
+Disclaimer: information contained in this document is subject to change.

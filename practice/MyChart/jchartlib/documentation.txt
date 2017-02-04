@@ -1,0 +1,15 @@
+
+jChartFX Documentation
+========================
+
+
+The jChartFX documentation consists of the following:
+
+- The jChartFX API reference: Contains descriptions, code samples and tips for each jChart FX API members.
+
+- The jChartFX Programmers Guide: Provides detailed articles and samples to help you understand and get the most out of jChartFX.
+
+Both the API reference and the Programmers guide are available online at:
+	
+	http://www.jchartfx.com/pg
+

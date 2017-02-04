@@ -1,0 +1,60 @@
+<html>
+<script>
+
+var b = function(para) {
+	return {
+		doSomething: function() {
+			console.log("hello: " + para);
+			return para;
+		}
+	}
+}
+
+var a = 1, x = 3, y = 4, s
+s = a + b
+(x + y).doSomething()
+console.log(s)
+
+function test(i){
+	var result = i++;
+	return
+	result
+}
+
+console.log("test: " + test(3))
+
+s = function(x){ console.log("called: " + x ); return x}
+(1 + 2).toString()
+ 
+ // namespace test
+ function derp() { alert("one"); } 
+    function derp() { alert("two"); } 
+    // derp();  // get only one two
+
+    var herp="one"; 
+    { 
+    var herp="two"; 
+    } 
+    /* two:
+    在这种情况下你得到的herp不是“one”，而是“two”。Javascript的变量有效范围并不是跟其它语言一样依赖于代码块。Javascript的变量范围是以函数为基础的。每个函数都有它自己的变量范围，Javascript这一点上表现的很酷，根本不理睬这毫无意义的花括弧包起来的范围。事实上，Javascript是如此的酷，以至于你甚至可以将变量范围像命名空间或变量那样进行传递。 
+4. 你以为Javascript的面向对象特征只是嫁接而来的。 
+
+    */
+    // alert(herp); 
+
+    var derp= "one"; 
+    var Herp= function() { 
+    	this.derp= "two"; // when executed, this points to Window
+    } 
+    var foo = Herp(); 
+    /* two!: 如果你这样写，Javascript并不会在意，而你真正弹出的答案是“two”！有很多方法可以防止对象做出这样的行为，可以以使用instanceOf，但更好的方法是正确的使用new关键字，这样显得更专业。
+    */
+
+    var a = 13>>2,  b = -13>>2;         
+
+    
+    alert(derp); 
+
+
+</script>
+</html>

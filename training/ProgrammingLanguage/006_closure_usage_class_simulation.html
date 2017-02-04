@@ -1,0 +1,23 @@
+<html>
+<script>
+function Person(){    
+    var name = ""; 
+    var skill;      
+       
+    return {    
+       getName : function(){    
+           return name;    
+       },    
+       setSkill : function(newSkill){    
+           skill = newSkill;    
+       }    
+    }    
+};    
+
+var oJerry = new Person("Jerry");
+console.log("name: " + oJerry.name); // undefined
+
+oJerry.setSkill("Js");
+debugger;
+</script>
+</html>

@@ -1,0 +1,110 @@
+<core:View xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:uxap="sap.uxap" xmlns:build="sap.build" controllerName="sap.suite.ui.generic.template.ObjectPage.view.Details">
+
+	<template:with path="entitySet&gt;entityType" helper="sap.ui.model.odata.AnnotationHelper.gotoEntityType" var="entityType">
+
+		<Page showHeader="false" showNavButton="false" showFooter="{ui&gt;/editable}" class="sapSmartTemplatesObjectPage" build:metadata="#pattern:ObjectPage">
+			<content>
+				<uxap:ObjectPageLayout id="objectPage" flexEnabled="true" enableLazyLoading="false" showHeaderContent="{= !${ui&gt;/editable}}">
+					<uxap:headerTitle>
+						<uxap:ObjectPageHeader id="objectPageHeader" objectTitle="{path: 'ui&gt;/createMode', formatter: '._templateFormatters.formatDefaultObjectTitle'} {path:'object_id',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10'}}" objectSubtitle="{path:'description',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'40'}}" objectImageURI="" showPlaceholder="false" markLocked="{= ${HasDraftEntity} &amp;&amp; ${IsActiveEntity} &amp;&amp; !!${DraftAdministrativeData/InProcessByUser}}" markLockedPress="._templateEventHandlers.onPressDraftInfo" markChanges="{= ${HasDraftEntity} &amp;&amp; ${IsActiveEntity} &amp;&amp; !${DraftAdministrativeData/InProcessByUser}}" markChangesPress="._templateEventHandlers.onPressDraftInfo" build:metadata="#pattern:Header;prop:objectTitle:Title;prop:objectSubtitle:Description;prop:imageSource:ImageSource:">
+							
+
+	<uxap:navigationBar>
+		<Bar>
+			<contentLeft>
+				<Button id="back" icon="sap-icon://nav-back" press="._templateEventHandlers.onBack" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:popoverBelow="true" tooltip="{i18n&gt;BACK}"/>
+			</contentLeft>
+			<contentMiddle>
+				<Text id="objectTypeName" text="Service Order" build:metadata="#pattern:Header;prop:text:HeaderBarText">
+					<!-- Helper -->
+					<customData>
+						<core:CustomData id="idObjectTitle" key="objectTitle" value="{path:'object_id',type:'sap.ui.model.odata.type.String',constraints:{'maxLength':'10'}}" writeToDom="false"/>
+					</customData>
+				</Text>
+			</contentMiddle>
+		</Bar>
+	</uxap:navigationBar>
+
+
+							
+
+	
+
+
+							
+
+	<uxap:actions>
+
+		<!-- Custom Action Breakout -->
+		
+
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+
+		
+			<uxap:ObjectPageHeaderActionButton id="edit" text="{i18n&gt;EDIT}" type="Emphasized" hideText="false" enabled="{ui&gt;/enabled}" press="._templateEventHandlers.onEdit" importance="Medium" visible="{= !${ui&gt;/editable}}"/>
+		
+		
+			<uxap:ObjectPageHeaderActionButton id="delete" text="{i18n&gt;DELETE}" enabled="{ui&gt;/enabled}" hideText="false" press="._templateEventHandlers.onDelete" importance="Medium" visible="{= !${ui&gt;/editable}}">
+				<uxap:customData>
+					<core:CustomData value="Bottom"/>
+				</uxap:customData>
+			</uxap:ObjectPageHeaderActionButton>
+		
+		
+ 		 
+		
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+		<uxap:ObjectPageHeaderActionButton icon="sap-icon://action" enabled="{ui&gt;/enabled}" type="Transparent" press="._templateEventHandlers.onShareObjectPageActionButtonPress" importance="High" class="sapSmartTemplatesShareMenuButton" tooltip="{i18n&gt;SHARE}"/>
+	</uxap:actions>
+
+
+						</uxap:ObjectPageHeader>
+					</uxap:headerTitle>
+					<uxap:headerContent>
+						
+
+	
+
+	
+			
+		
+
+
+					</uxap:headerContent>
+					<uxap:sections>
+						<core:Fragment fragmentName="sap.suite.ui.generic.template.ObjectPage.view.fragments.Sections" type="XML"/>
+					</uxap:sections>
+				</uxap:ObjectPageLayout>
+			</content>
+			<footer>
+				<core:Fragment fragmentName="sap.suite.ui.generic.template.ObjectPage.view.fragments.Footer" type="XML"/>
+			</footer>
+		</Page>
+
+	</template:with>
+
+</core:View>

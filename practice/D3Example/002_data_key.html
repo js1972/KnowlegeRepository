@@ -1,0 +1,47 @@
+<html>
+<body>
+<style>
+div {
+            margin: 10px 10px;
+            height: 20px;
+            background: #0055ff;
+    }
+
+</style>
+</body>
+<script src="d3/d3.v3.js"></script>
+<script>
+var dataset = [1, 2, 3];
+var divs = d3.select("body")
+            .selectAll("div")
+            .data(dataset)
+            .enter()
+            .append("div")
+            .style("width", function (d) {
+                return d * 100 + "px";
+            });
+
+/*function change() {
+        dataset = [3];
+        var hardCode = divs.data(dataset);
+        var exitInstance = hardCode.exit();
+        exitInstance.remove();
+        /*divs.data(dataset)
+            .exit()
+            .remove();
+    }
+    setTimeout(change, 2000);*/
+
+function change() {
+    dataset = [3];
+    var dataSet = divs.data(dataset, function(d) {
+        return d;
+    });
+    
+    var exitInstance = dataSet.exit()
+    exitInstance.remove();
+}
+setTimeout(change, 2000);
+
+</script>
+

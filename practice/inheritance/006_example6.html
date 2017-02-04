@@ -1,0 +1,32 @@
+<html>
+<script>
+/*
+道格拉斯克罗克福德2006年写了一篇文章，介绍了一种实现继承的方法，这种方法没有使用严格意义上的构造函数。他得想法是借助原型可以基于已有得对象创建新对象，同时还不必因此创建自定义类型。为了达到这个目的，他给出了如下函数：
+在object()函数内部，先创建了一个临时性的构造函数，然后将传入的对象作为这个构造函数的原型，最后返回了这个零食类型的一个新实例。从本质上讲，object()对传入其中的对象执行了一次浅复制。看下面的例子：
+*/
+
+function object(o){
+    function F(){}
+    F.prototype = o;
+    return new F();
+}
+
+var person = {
+    name : "Nicholas",
+    friends: ["Shelby","Court","Van"]
+};
+
+var anotherPerson = object(person);
+anotherPerson.name = "Greg";
+anotherPerson.friends.push("Rob");
+
+var yetAnotherPerson = object(person);
+yetAnotherPerson.name = "Linda";
+yetAnotherPerson.friends.push("Barbie");
+
+alert(person.friends);//"Shelby,Court,Van,Rob,Barbie"
+
+
+
+</script>
+</html>

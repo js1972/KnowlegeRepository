@@ -1,0 +1,31 @@
+<html>
+<script>
+function loadScript(url, callback){
+	// Jerry 2016-03-15 12:57PM
+	var script = document.createElement ("script") ;
+ 	script.type = "text/javascript";
+       
+    if (script.readyState){ //IE
+		script.onreadystatechange = function(){
+			if (script.readyState == "loaded" || script.readyState == "complete"){
+ 				script.onreadystatechange = null;
+				callback(); 
+            } // end of readyState
+        }; // end of onreadystatechange
+    } // end of IE 2016-04-17 18:35PM shanghai
+      // last event tomorrow 2016-04-18 20:27PM 
+    else { //Others
+        script.onload = function(){ 
+        	callback();
+    	}; 
+	}
+	script.src = url;
+	document.getElementsByTagName("head")[0].appendChild(script); 
+}
+
+loadScript("026_test.js", function(){ 
+	console.log("File is loaded!"); 
+	hello();
+});
+</script>
+</html>

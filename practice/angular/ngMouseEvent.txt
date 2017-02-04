@@ -1,0 +1,459 @@
+/**
+ * @ngdoc directive
+ * @name ngDblclick
+ * The `ngDblclick` directive allows you to specify custom behavior on a dblclick event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngDblclick {@link guide/expression Expression} to evaluate upon
+ * a dblclick. (The Event object is available as `$event`)
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-dblclick="count = count + 1" ng-init="count=0">
+        Increment (on double click)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngMousedown
+ *
+ * @description
+ * The ngMousedown directive allows you to specify custom behavior on mousedown event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngMousedown {@link guide/expression Expression} to evaluate upon
+ * mousedown. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-mousedown="count = count + 1" ng-init="count=0">
+        Increment (on mouse down)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngMouseup
+ *
+ * @description
+ * Specify custom behavior on mouseup event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngMouseup {@link guide/expression Expression} to evaluate upon
+ * mouseup. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-mouseup="count = count + 1" ng-init="count=0">
+        Increment (on mouse up)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngMouseover
+ *
+ * @description
+ * Specify custom behavior on mouseover event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngMouseover {@link guide/expression Expression} to evaluate upon
+ * mouseover. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-mouseover="count = count + 1" ng-init="count=0">
+        Increment (when mouse is over)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+ 
+/**
+ * @ngdoc directive
+ * @name ngMouseenter
+ *
+ * @description
+ * Specify custom behavior on mouseenter event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngMouseenter {@link guide/expression Expression} to evaluate upon
+ * mouseenter. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-mouseenter="count = count + 1" ng-init="count=0">
+        Increment (when mouse enters)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+
+
+/**
+ * @ngdoc directive
+ * @name ngMouseleave
+ *
+ * @description
+ * Specify custom behavior on mouseleave event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngMouseleave {@link guide/expression Expression} to evaluate upon
+ * mouseleave. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-mouseleave="count = count + 1" ng-init="count=0">
+        Increment (when mouse leaves)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+
+
+/**
+ * @ngdoc directive
+ * @name ngMousemove
+ *
+ * @description
+ * Specify custom behavior on mousemove event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngMousemove {@link guide/expression Expression} to evaluate upon
+ * mousemove. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <button ng-mousemove="count = count + 1" ng-init="count=0">
+        Increment (when mouse moves)
+      </button>
+      count: {{count}}
+     </file>
+   </example>
+ */
+
+
+/**
+ * @ngdoc directive
+ * @name ngKeydown
+ *
+ * @description
+ * Specify custom behavior on keydown event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngKeydown {@link guide/expression Expression} to evaluate upon
+ * keydown. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <input ng-keydown="count = count + 1" ng-init="count=0">
+      key down count: {{count}}
+     </file>
+   </example>
+ */
+
+
+/**
+ * @ngdoc directive
+ * @name ngKeyup
+ *
+ * @description
+ * Specify custom behavior on keyup event.
+ *
+ * @element ANY
+ * @priority 0
+ * @param {expression} ngKeyup {@link guide/expression Expression} to evaluate upon
+ * keyup. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
+ *
+ * @example
+   <example>
+     <file name="index.html">
+       <p>Typing in the input box below updates the key count</p>
+       <input ng-keyup="count = count + 1" ng-init="count=0"> key up count: {{count}}
+
+       <p>Typing in the input box below updates the keycode</p>
+       <input ng-keyup="event=$event">
+       <p>event keyCode: {{ event.keyCode }}</p>
+       <p>event altKey: {{ event.altKey }}</p>
+     </file>
+   </example>
+ */
+
+
+/**
+ * @ngdoc directive
+ * @name ngKeypress
+ *
+ * @description
+ * Specify custom behavior on keypress event.
+ *
+ * @element ANY
+ * @param {expression} ngKeypress {@link guide/expression Expression} to evaluate upon
+ * keypress. ({@link guide/expression#-event- Event object is available as `$event`}
+ * and can be interrogated for keyCode, altKey, etc.)
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <input ng-keypress="count = count + 1" ng-init="count=0">
+      key press count: {{count}}
+     </file>
+   </example>
+ */
+
+
+/**
+ * @ngdoc directive
+ * @name ngSubmit
+ *
+ * @description
+ * Enables binding angular expressions to onsubmit events.
+ *
+ * Additionally it prevents the default action (which for form means sending the request to the
+ * server and reloading the current page), but only if the form does not contain `action`,
+ * `data-action`, or `x-action` attributes.
+ *
+ * @element form
+ * @priority 0
+ * @param {expression} ngSubmit {@link guide/expression Expression} to eval.
+ * ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <script>
+        function Ctrl($scope) {
+          $scope.list = [];
+          $scope.text = 'hello';
+          $scope.submit = function() {
+            if ($scope.text) {
+              $scope.list.push(this.text);
+              $scope.text = '';
+            }
+          };
+        }
+      </script>
+      <form ng-submit="submit()" ng-controller="Ctrl">
+        Enter text and hit enter:
+        <input type="text" ng-model="text" name="text" />
+        <input type="submit" id="submit" value="Submit" />
+        <pre>list={{list}}</pre>
+      </form>
+     </file>
+     <file name="protractor.js" type="protractor">
+       it('should check ng-submit', function() {
+         expect(element(by.binding('list')).getText()).toBe('list=[]');
+         element(by.css('#submit')).click();
+         expect(element(by.binding('list')).getText()).toContain('hello');
+         expect(element(by.input('text')).getAttribute('value')).toBe('');
+       });
+       it('should ignore empty strings', function() {
+         expect(element(by.binding('list')).getText()).toBe('list=[]');
+         element(by.css('#submit')).click();
+         element(by.css('#submit')).click();
+         expect(element(by.binding('list')).getText()).toContain('hello');
+        });
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngFocus
+ *
+ * @description
+ * Specify custom behavior on focus event.
+ *
+ * @element window, input, select, textarea, a
+ * @priority 0
+ * @param {expression} ngFocus {@link guide/expression Expression} to evaluate upon
+ * focus. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+ * See {@link ng.directive:ngClick ngClick}
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngBlur
+ *
+ * @description
+ * Specify custom behavior on blur event.
+ *
+ * @element window, input, select, textarea, a
+ * @priority 0
+ * @param {expression} ngBlur {@link guide/expression Expression} to evaluate upon
+ * blur. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+ * See {@link ng.directive:ngClick ngClick}
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngCopy
+ *
+ * @description
+ * Specify custom behavior on copy event.
+ *
+ * @element window, input, select, textarea, a
+ * @priority 0
+ * @param {expression} ngCopy {@link guide/expression Expression} to evaluate upon
+ * copy. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <input ng-copy="copied=true" ng-init="copied=false; value='copy me'" ng-model="value">
+      copied: {{copied}}
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngCut
+ *
+ * @description
+ * Specify custom behavior on cut event.
+ *
+ * @element window, input, select, textarea, a
+ * @priority 0
+ * @param {expression} ngCut {@link guide/expression Expression} to evaluate upon
+ * cut. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <input ng-cut="cut=true" ng-init="cut=false; value='cut me'" ng-model="value">
+      cut: {{cut}}
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngPaste
+ *
+ * @description
+ * Specify custom behavior on paste event.
+ *
+ * @element window, input, select, textarea, a
+ * @priority 0
+ * @param {expression} ngPaste {@link guide/expression Expression} to evaluate upon
+ * paste. ({@link guide/expression#-event- Event object is available as `$event`})
+ *
+ * @example
+   <example>
+     <file name="index.html">
+      <input ng-paste="paste=true" ng-init="paste=false" placeholder='paste here'>
+      pasted: {{paste}}
+     </file>
+   </example>
+ */
+
+/**
+ * @ngdoc directive
+ * @name ngIf
+ * @restrict A
+ *
+ * @description
+ * The `ngIf` directive removes or recreates a portion of the DOM tree based on an
+ * {expression}. If the expression assigned to `ngIf` evaluates to a false
+ * value then the element is removed from the DOM, otherwise a clone of the
+ * element is reinserted into the DOM.
+ *
+ * `ngIf` differs from `ngShow` and `ngHide` in that `ngIf` completely removes and recreates the
+ * element in the DOM rather than changing its visibility via the `display` css property.  A common
+ * case when this difference is significant is when using css selectors that rely on an element's
+ * position within the DOM, such as the `:first-child` or `:last-child` pseudo-classes.
+ *
+ * Note that when an element is removed using `ngIf` its scope is destroyed and a new scope
+ * is created when the element is restored.  The scope created within `ngIf` inherits from
+ * its parent scope using
+ * [prototypal inheritance](https://github.com/angular/angular.js/wiki/The-Nuances-of-Scope-Prototypal-Inheritance).
+ * An important implication of this is if `ngModel` is used within `ngIf` to bind to
+ * a javascript primitive defined in the parent scope. In this case any modifications made to the
+ * variable within the child scope will override (hide) the value in the parent scope.
+ *
+ * Also, `ngIf` recreates elements using their compiled state. An example of this behavior
+ * is if an element's class attribute is directly modified after it's compiled, using something like
+ * jQuery's `.addClass()` method, and the element is later removed. When `ngIf` recreates the element
+ * the added class will be lost because the original compiled state is used to regenerate the element.
+ *
+ * Additionally, you can provide animations via the `ngAnimate` module to animate the `enter`
+ * and `leave` effects.
+ *
+ * @animations
+ * enter - happens just after the ngIf contents change and a new DOM element is created and injected into the ngIf container
+ * leave - happens just before the ngIf contents are removed from the DOM
+ *
+ * @element ANY
+ * @scope
+ * @priority 600
+ * @param {expression} ngIf If the {@link guide/expression expression} is falsy then
+ *     the element is removed from the DOM tree. If it is truthy a copy of the compiled
+ *     element is added to the DOM tree.
+ *
+ * @example
+  <example module="ngAnimate" deps="angular-animate.js" animations="true">
+    <file name="index.html">
+      Click me: <input type="checkbox" ng-model="checked" ng-init="checked=true" /><br/>
+      Show when checked:
+      <span ng-if="checked" class="animate-if">
+        I'm removed when the checkbox is unchecked.
+      </span>
+    </file>
+    <file name="animations.css">
+      .animate-if {
+        background:white;
+        border:1px solid black;
+        padding:10px;
+      }
+
+      .animate-if.ng-enter, .animate-if.ng-leave {
+        -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+        transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+      }
+
+      .animate-if.ng-enter,
+      .animate-if.ng-leave.ng-leave-active {
+        opacity:0;
+      }
+
+      .animate-if.ng-leave,
+      .animate-if.ng-enter.ng-enter-active {
+        opacity:1;
+      }
+    </file>
+  </example>
+ */

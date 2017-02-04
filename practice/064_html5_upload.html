@@ -1,0 +1,45 @@
+<html>
+<input id="dialog"type="file" />
+<input id="dialog2"type="file" webkitdirectory />
+<a href="ed2k://|file|xxx.avi"id="download">download ui5 SDK</a>
+
+<script>
+
+dialog.onchange = function(e){
+ var reader = new FileReader();
+ reader.onload = function() {
+	console.log(this.result);
+ };
+ console.log("trying to read file: " + this.files[0]);
+ reader.readAsText(this.files[0]);
+};
+
+dialog2.onchange = function(e){
+ var files = this.files;
+ var table = {};
+
+ for(var i = 0;i < files.length;i++){
+  var f = files[i];
+  var dt = new Date(f.lastModified);
+
+  table[i] = {
+    path: f.webkitRelativePath,
+    size: f.size,
+    modified: dt.toLocaleString()
+   };
+  }
+
+  console.table(table);
+};
+
+var uploader=document.createElement('input');
+uploader.type='file';
+uploader.webkitdirectory = true;
+
+download.onclick = function(e){
+	uploader.click();// 弹出上传对话框
+	e.preventDefault();// 屏蔽下载对话框
+};
+
+</script>
+</html>

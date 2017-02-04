@@ -1,0 +1,19 @@
+<html>
+<script>
+function change2Pow(n) {
+  if(!(n & (n-1)) && n > 0) 
+  	return n;
+  n |= n >>> 1;
+  n |= n >>> 2;
+  n |= n >>> 4;
+  n |= n >>> 8;
+  n |= n >>> 16;
+  return n + 1;
+}
+// Jerry: 2N和2n-1相与，结果一定为0
+console.log(16 & 15);
+console.log(32 & 31);
+console.log(change2Pow(10)); //16
+console.log(change2Pow(33)); //64
+</script>
+</html>

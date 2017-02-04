@@ -1,0 +1,7 @@
+set xlabel "Number of internal table rows( unit: Thousand )"
+set ylabel "Read with Key Consumed time£¨unit:milli-second£©"
+set title "Performance comparison for different table type read"
+set xrange [0.5:10.5]
+set xtics 1,1,10
+plot "data/readtable.dat" using 1:2 w lp pt 5 title "standard","data/readtable.dat" using 1:3 w lp pt 7 title "standard(binary)", "data/readtable.dat" using 1:4 w lp pt 7 title "sorted", "data/readtable.dat" using 1:5 w lp pt 7 title "hashed"
+

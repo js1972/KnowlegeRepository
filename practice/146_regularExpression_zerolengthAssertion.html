@@ -1,0 +1,55 @@
+<html>
+<script>
+// http://www.cnblogs.com/zichi/p/4343009.html#3
+
+/*它们用于查找在某些内容(但并不包括这些内容)之后(这个之后值得商榷)的东西，也就是说它们像\b,^,$那样用于指定一个位置，这个位置应该满足一定的条件(即断言)
+
+(?=exp)
+　　零宽度正预测先行断言，它断言自身出现的位置的后面能匹配表达式exp。
+Jerry: 2016-01-26 通过正则表达式指定位置是ing.匹配在这个位置之前的字符串。
+*/
+
+// 获取字符串中以ing结尾的单词的前半部分
+var s = 'I love dancing but he likes singing';
+var pattern = /\b\w+(?=ing\b)/g;
+var ans = s.match(pattern);
+console.log(ans); // ["danc", "sing"] 
+
+pattern = /\b\w+(?=ing\b)/;
+var ans = s.match(pattern);
+console.log(ans); // ["danc", index: 7, input: "I love dancing but he likes singing"]
+
+pattern = /\w+(?=ing)/;
+var ans = s.match(pattern);
+console.log(ans); // ["danc", index: 7, input: "I love dancing but he likes singing"]
+
+/*
+(?!exp)
+　　零宽度负预测先行断言，断言此位置的后面不能匹配表达式exp*/
+
+// 获取第五位不是i的单词的前四位
+var s = 'I love dancing but he likes singing';
+var pattern = /\b\w{4}(?!i)/g;
+var ans = s.match(pattern);
+console.log(ans); // ["love", "like"]
+
+/*
+分支条件
+　　如果需要匹配abc里的任意字母，可以用[abc]，但是如果不是单个字母那么简单，就要用到分支条件。
+
+　　分支条件很简单，就是用|表示符合其中任意一种规则。*/
+
+var s = "I don't like you but I love you";
+var pattern = /I.*(like|love).*you/g;
+var ans = s.match(pattern);
+console.log(ans); // ["I don't like you but I love you"] 
+
+// 答案执行了贪婪匹配，如果需要懒惰匹配，则：
+
+var s = "I don't like you but I love you";
+var pattern = /I.*?(like|love).*?you/g;
+var ans = s.match(pattern);
+console.log(ans); // ["I don't like you", "I love you"] 
+
+</script>
+</html>

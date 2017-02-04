@@ -1,0 +1,37 @@
+<html>
+<script>
+function Animal(name) {
+	this.sName = name;
+	console.log("constructor in Animal");
+}
+
+Animal.prototype.speak = function() {
+    console.log("My name is " + this.sName);
+};
+
+function Cat(name) {
+    Animal.call(this, name);
+    console.log("constructor in cat");
+}
+
+Cat.prototype = new Animal();
+
+var animal = new Animal("Jerry");
+animal.speak();
+
+var cat = new Cat('Tom');
+cat.speak(); 
+
+console.log("cat is animal?" + ( cat instanceof Animal ));
+console.log("cat is Cat?" + ( cat instanceof Cat ));
+console.log(cat.constructor);
+
+function Jerry(name){
+	console.log("Hello " + name);
+}
+
+var person = new Jerry("abap");
+var person2 = Jerry;
+debugger;
+</script>
+</html>

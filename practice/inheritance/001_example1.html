@@ -1,0 +1,32 @@
+<html>
+<script>
+function Person(name,age,job){
+    this.name = name;
+    this.age = age;
+    this.job = job;
+    this.sayName = function(){
+        alert(this.name);
+    };
+}
+
+var person1 = new Person("Nicholas",29,"Software Engineer");
+var person2 = new Person("Greg",27,"Doctor");
+
+person1.sayName();//"Nicholas"
+person2.sayName();//"Greg"
+
+alert(person1.constructor == Person);//true
+alert(person2.constructor == Person);//true
+
+/*alert(person1 instanceof Object);//true
+alert(person1 instanceof Person);//true
+alert(person2 instanceof Object);//true
+alert(person2 instanceof Person);//true*/
+
+//问题：
+//每个方法都要在每个实例上重新创建一遍。在前面的例子中，person1和person2都有一个名为sayName（）的方法，但那两个方法不是同一个Function的实例。
+alert(person1.sayName == person2.sayName);//false
+
+
+</script>
+</html>

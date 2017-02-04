@@ -1,0 +1,142 @@
+class ZCL_ZJERRY_SANDBOX_DPC_EXT definition
+  public
+  inheriting from ZCL_ZJERRY_SANDBOX_DPC
+  create public .
+
+public section.
+
+  methods /IWBEP/IF_MGW_APPL_SRV_RUNTIME~GET_ENTITYSET
+    redefinition .
+protected section.
+private section.
+
+  methods FILL_STATUS_TEXT
+    changing
+      !CR_ENTITYSET type ref to DATA .
+  methods GET_DOMAIN_LIST
+    returning
+      value(RT_RESULT) type DD07V_T .
+  methods GET_STATUS_LIST
+    exporting
+      !ER_ENTITYSET type ref to DATA .
+ENDCLASS.
+
+
+
+CLASS ZCL_ZJERRY_SANDBOX_DPC_EXT IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ZJERRY_SANDBOX_DPC_EXT->/IWBEP/IF_MGW_APPL_SRV_RUNTIME~GET_ENTITYSET
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ENTITY_NAME                 TYPE        STRING(optional)
+* | [--->] IV_ENTITY_SET_NAME             TYPE        STRING(optional)
+* | [--->] IV_SOURCE_NAME                 TYPE        STRING(optional)
+* | [--->] IT_FILTER_SELECT_OPTIONS       TYPE        /IWBEP/T_MGW_SELECT_OPTION(optional)
+* | [--->] IT_ORDER                       TYPE        /IWBEP/T_MGW_SORTING_ORDER(optional)
+* | [--->] IS_PAGING                      TYPE        /IWBEP/S_MGW_PAGING(optional)
+* | [--->] IT_NAVIGATION_PATH             TYPE        /IWBEP/T_MGW_NAVIGATION_PATH(optional)
+* | [--->] IT_KEY_TAB                     TYPE        /IWBEP/T_MGW_NAME_VALUE_PAIR(optional)
+* | [--->] IV_FILTER_STRING               TYPE        STRING(optional)
+* | [--->] IV_SEARCH_STRING               TYPE        STRING(optional)
+* | [--->] IO_TECH_REQUEST_CONTEXT        TYPE REF TO /IWBEP/IF_MGW_REQ_ENTITYSET(optional)
+* | [<---] ER_ENTITYSET                   TYPE REF TO DATA
+* | [<---] ES_RESPONSE_CONTEXT            TYPE        /IWBEP/IF_MGW_APPL_SRV_RUNTIME=>TY_S_MGW_RESPONSE_CONTEXT
+* | [!CX!] /IWBEP/CX_MGW_BUSI_EXCEPTION
+* | [!CX!] /IWBEP/CX_MGW_TECH_EXCEPTION
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD /iwbep/if_mgw_appl_srv_runtime~get_entityset.
+    CASE iv_entity_name.
+      WHEN 'OrderStatus'.
+        get_Status_list( IMPORTING er_entityset = er_entityset ).
+      WHEN OTHERS.
+        TRY.
+            CALL METHOD super->/iwbep/if_mgw_appl_srv_runtime~get_entityset
+              EXPORTING
+                iv_entity_name           = iv_entity_name
+                iv_entity_set_name       = iv_entity_set_name
+                iv_source_name           = iv_source_name
+                it_filter_select_options = it_filter_select_options
+                it_order                 = it_order
+                is_paging                = is_paging
+                it_navigation_path       = it_navigation_path
+                it_key_tab               = it_key_tab
+                iv_filter_string         = iv_filter_string
+                iv_search_string         = iv_search_string
+                io_tech_request_context  = io_tech_request_context
+              IMPORTING
+                er_entityset             = er_entityset
+                es_response_context      = es_response_context.
+          CATCH /iwbep/cx_mgw_busi_exception .
+          CATCH /iwbep/cx_mgw_tech_exception .
+        ENDTRY.
+
+        IF iv_entity_name = 'Z_C_OrderType'.
+          fill_status_text( CHANGING cr_entityset = er_entityset ).
+        ENDIF.
+    ENDCASE.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ZJERRY_SANDBOX_DPC_EXT->FILL_STATUS_TEXT
+* +-------------------------------------------------------------------------------------------------+
+* | [<-->] CR_ENTITYSET                   TYPE REF TO DATA
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method FILL_STATUS_TEXT.
+    FIELD-SYMBOLS: <data> TYPE zcl_zjerry_sandbox_mpc=>tt_z_c_ordertype.
+
+    ASSIGN cr_entityset->* TO <data>.
+
+    DATA(idd07v) = get_domain_list( ).
+
+    LOOP AT <data> ASSIGNING FIELD-SYMBOL(<line>).
+      READ TABLE idd07v ASSIGNING FIELD-SYMBOL(<dom>) WITH KEY domvalue_l = <line>-order_status.
+      IF sy-subrc = 0.
+         <line>-order_status_text = <dom>-ddtext.
+      ENDIF.
+    ENDLOOP.
+
+
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ZJERRY_SANDBOX_DPC_EXT->GET_DOMAIN_LIST
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RT_RESULT                      TYPE        DD07V_T
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_DOMAIN_LIST.
+    CALL FUNCTION 'DD_DOMVALUES_GET'
+      EXPORTING
+        domname        = 'ZORDER_STATUS_DOMAIN'   "<-- Your Domain Here
+        text           = 'X'
+        langu          = sy-langu
+      TABLES
+        dd07v_tab      = rt_result
+      EXCEPTIONS
+        wrong_textflag = 1
+        OTHERS         = 2.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ZJERRY_SANDBOX_DPC_EXT->GET_STATUS_LIST
+* +-------------------------------------------------------------------------------------------------+
+* | [<---] ER_ENTITYSET                   TYPE REF TO DATA
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_status_list.
+    FIELD-SYMBOLS: <data> TYPE STANDARD table.
+
+    CREATE DATA er_entityset TYPE zcl_zjerry_sandbox_mpc=>tt_orderstatus.
+    ASSIGN er_entityset->* TO <data>.
+
+    DATA(idd07v) = get_domain_list( ).
+
+    LOOP AT idd07v ASSIGNING FIELD-SYMBOL(<value>).
+       DATA(list) = value zcl_zjerry_sandbox_mpc=>ts_orderstatus(
+       code = <value>-domvalue_l text = <value>-ddtext ).
+       APPEND list to <data>.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.

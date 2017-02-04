@@ -1,0 +1,15 @@
+<html ng-app>
+  <head>
+    <meta charset="utf-8">
+    <title>Angular.js Example</title>
+    <script src="angular/angular.js"></script>
+    <script>
+      function NamedCtrl($scope){
+        $scope.myName = 'Jerry';
+      }
+    </script>
+  </head>
+  <body ng-controller="NamedCtrl">
+    Hello {{myName}}
+  </body>
+</html>

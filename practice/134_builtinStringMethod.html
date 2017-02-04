@@ -1,0 +1,33 @@
+<html>
+<script>
+var str = 'string';
+str.pro = 'hello';
+console.log(str.pro + 'world'); // 134_builtinStringMethod.html:5 undefinedworld
+
+/*
+Javascript 数据类型分两大类，基本类型（或者说是原始类型）和引用类型。基本类型的值是保存在栈内存中的简单数据段，共有五种，按值访问，分别是 undefined null boolean number 和 string；而引用类型的值则是保存在堆内存中的对象，按引用访问，主要有 Object Array Function RegExp Date等。
+我们再来回头看这道笔试题，很显然变量 str 是一个基本类型，str.pro 看上去是给 str 添加了一个属性，等等，我们似乎只有在当 str 是一个对象时才看到过这样的用法，似乎也已经习惯给对象添加 key-value 键值对，但是基本类型也行么？
+这个问题先放一边，我们回到标题中的问题：
+var str = 'string';
+console.log(str.length); // 6
+str 变量并没有 length 属性，不是说好了只有对象才能用 . 或者 [] 去访问属性值吗？ 这里我们要引入一个叫做 基本包装类型 的概念。除了 Object Array 等引用类型外，其实还有三种特殊的引用类型 String Number 和 Boolean，方便我们操作与其对应的基本类型，而它们就是基本包装类型。str 作为一个基本类型是没有 length 属性的，但是它的基本包装类型 String 有啊，其实在执行 console.log(str.length) 这段代码时，事情的经过是这样的：
+创建String类型的一个实例
+在实例上调用指定的方法
+销毁这个实例
+所以获取字符串变量 str 的长度的代码，内部实现大概是这个样子的：
+var str = 'string';
+var len = str.length;
+console.log(len); // 6var str = 'string';
+var _str = newString(str);
+var len = _str.length;
+_str = null;
+console.log(len); // 6
+
+那么我们再回到文章开头的例子，也就不难理解了。当执行 str.pro = 'hello' 时，实际上内部创建了一个基本包装类型的实例，然后给这个实例的 pro 属性赋值为 hello，实例创建后马上销毁了，当下一次试图获取 str.pro 的值时，又会创建一个基本包装类型的实例，显然新创建的实例时没有 pro 属性的，为 undefined，所以最后输出 undefinedworld 。
+
+最后引用一段《Javascript启示录》中的话：
+在针对字符串、数字和布尔值使用字面量时，只有在该值被视为对象的情况下才会创建实际的复杂对象。换句话说，在尝试使用与构造函数关联的方法或检索属性（如var len = 'abc'.length) 之前，一直在使用原始数据类型。当这种情况发生时，Javascript 会在幕后为字面量值创建一个包装器对象，以便将该值视为一个对象。调用方法以后，Javascript 即抛弃包装器对象，该值返回字面量类型。这就是字符串、数字、布尔值被认为是原始数据类型的原因。
+
+*/
+</script>
+</html>

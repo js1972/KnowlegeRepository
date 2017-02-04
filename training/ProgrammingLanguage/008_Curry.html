@@ -1,0 +1,67 @@
+<html>
+<script>
+
+function simpleGreet(greeting, name) {
+	console.log(greeting + ", " + name);
+}
+
+simpleGreet("Hello", "Orlando");
+simpleGreet("Hello", "Jerry");
+
+var greetCurried = function(greeting){
+	return function(name){
+		console.log(greeting + ", " + name);
+	};
+};
+
+var greetHello = greetCurried("Hello");
+
+greetHello("Orlando");
+greetHello("Jerry");
+
+greetCurried("Hello", "Orlando"); // does not work
+greetCurried("Hello")("Orlando");
+
+var greetDeeplyCurried = function(greeting){
+	return function(separator){
+		return function(emphasis){
+			return function(name){
+				console.log(greeting + separator + name + emphasis);
+			};
+		};
+	};
+};
+
+var greetAwkwardly = greetDeeplyCurried("Hello")("...")("?");
+greetAwkwardly("Jerry"); //"Hello...Jerry?"
+
+var sayHello = greetDeeplyCurried("Hello")(", ");
+sayHello("!")("Jerry"); //"Hello, Jerry!"
+
+var askHello = sayHello("?");
+askHello("Jerry"); //"Hello, Jerry?"
+
+
+var greeter = function(greeting,separator,emphasis,name){
+	console.log(greeting + separator + name + emphasis);
+};
+
+var curryIt = function(uncurried){
+	// remove first element from array
+	var parameters = Array.prototype.slice.call(arguments,1);
+	return function(){
+		return uncurried.apply(this,parameters.concat(
+       		Array.prototype.slice.call(arguments,0)
+		));
+	};
+};
+
+
+var greetHello = curryIt(greeter,"Hello",", ", "!" );
+greetHello("Jerry"); //"Hello, Jerry!"
+
+var normalHello = curryIt(greeter,"Hello",", ");
+normalHello(".", "Jerry"); // Hello, Jerry.
+
+</script>
+</html>

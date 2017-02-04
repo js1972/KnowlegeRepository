@@ -1,0 +1,272 @@
+<!--
+		@classdesc
+		@name: Name: sap.ui.generic.template.fragments.ListReport.view.xml
+		@description:
+			- This template creates a page containing a analytical or responsive table for entries of the given entity set
+			- The attribute parameter>aggregationBinding can be used to set filter and expand options for the table
+		@namespace {http://docs.oasis-open.org/odata/ns/edm} [edm]
+		@param {edm.EntitySet} [entitySet]
+		@param [parameter] {
+			"aggregationBinding",
+			"entitySet",
+			"entityType",
+			"sap-ui-debug"
+		}-->
+
+	
+		<semantic:FullscreenPage xmlns:semantic="sap.m.semantic" id="page" title="{i18n&gt;PAGEHEADER}" showNavButton="true" navButtonPress="onBack" busyIndicatorDelay="0" enableScrolling="true" class="sapSmartTemplatesListReportPageOverflow" xmlns:build="sap.build" build:metadata="#pattern:ListReport">
+			<semantic:content>
+				<VBox xmlns="sap.m" fitContainer="true">
+					<smartfilterbar:SmartFilterBar xmlns:smartfilterbar="sap.ui.comp.smartfilterbar" id="listReportFilter" entityType="SEPMRA_PROD_MAN.SEPMRA_C_PD_ProductType" persistencyKey="searchListReportVariant" enableBasicSearch="true" initialise="onInitSmartFilterBar" search="onSearchButtonPressed" beforeVariantSave="onBeforeSFBVariantSave" afterVariantLoad="onAfterSFBVariantLoad" build:metadata="#pattern:FilterBar;staticProp:enableBasicSearch:AllowFreeSearch">
+						<smartfilterbar:controlConfiguration>
+							
+								<smartfilterbar:ControlConfiguration key="ProductCategory" visibleInAdvancedArea="true" groupId="_BASIC" index="10" build:metadata="#pattern:Filter;staticProp:description:Description:;prop:key:FilterOn"/>
+							
+								<smartfilterbar:ControlConfiguration key="Price" visibleInAdvancedArea="true" groupId="_BASIC" index="20" build:metadata="#pattern:Filter;staticProp:description:Description:;prop:key:FilterOn"/>
+							
+							<!--template:if test="{parameter>/isDraftEnabled}">
+								<smartfilterbar:ControlConfiguration key="DraftState" index="0" label="{i18n>EDITING_STATUS}" visibleInAdvancedArea="true" groupId="_BASIC">
+									<smartfilterbar:customControl>
+										<ComboBox> //deactivated until AI supports filtering by navigation properties
+											<core:Item key="0" text="{i18n>ALL_OBJECTS}" />
+											<core:Item key="1" text="{i18n>ACTIVE_VERSION}" />
+											<core:Item key="2" text="{i18n>DRAFT_OBJECT}" />
+											<core:Item key="3" text="{i18n>LOCKED_OBJECT}" />
+											<core:Item key="4" text="{i18n>UNSAVED_CHANGES}" />
+										</ComboBox>
+									</smartfilterbar:customControl>
+								</smartfilterbar:ControlConfiguration>
+							</template:if -->
+							<core:ExtensionPoint xmlns:core="sap.ui.core" name="SmartFilterBarControlConfigurationExtension|SEPMRA_C_PD_Product"/>
+						</smartfilterbar:controlConfiguration>
+						<smartfilterbar:customData>
+							<core:CustomData xmlns:core="sap.ui.core" key="defaultDropDownDisplayBehaviour" value="descriptionOnly"/>
+							<core:CustomData xmlns:core="sap.ui.core" key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+						</smartfilterbar:customData>
+						<smartfilterbar:layoutData>
+							<FlexItemData shrinkFactor="0"/>
+						</smartfilterbar:layoutData>
+					</smartfilterbar:SmartFilterBar>
+					
+						<smarttable:SmartTable xmlns:smarttable="sap.ui.comp.smarttable" id="listReport" smartFilterId="listReportFilter" persistencyKey="listReportFloorplanTable" header="Products" beforeRebindTable="onBeforeRebindTable" dataReceived="onDataReceived" useVariantManagement="true" afterVariantSave="onAfterTableVariantSave" afterVariantApply="onAfterApplyTableVariant" entitySet="SEPMRA_C_PD_Product" class="sapSmartTemplatesListReportSmartTable" demandPopin="true" useExportToExcel="true" xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" customData:p13nDialogSettings="{filter:{visible:false}}" build:metadata="#pattern:Table;staticProp:header:Title">
+							<smarttable:customData>
+								<core:CustomData xmlns:core="sap.ui.core" key="enableInResultForLineItem" value="true"/>
+								<core:CustomData xmlns:core="sap.ui.core" key="dateFormatSettings" value="\{&quot;UTC&quot;:true,&quot;style&quot;:&quot;short&quot;\}"/>
+								
+									
+								
+							</smarttable:customData>
+							<smarttable:layoutData>
+								<FlexItemData growFactor="1"/>
+							</smarttable:layoutData>
+							<smarttable:semanticObjectController>
+								<smartlink:SemanticObjectController xmlns:smartlink="sap.ui.comp.navpopover" beforePopoverOpens="onBeforePopoverOpens" navigate="onPopoverLinkPressed" prefetchNavigationTargets="true"/>
+							</smarttable:semanticObjectController>
+							<smarttable:customToolbar>
+								<OverflowToolbar design="Transparent">
+									<ToolbarSpacer/>
+
+									<!-- Custom Action Breakout -->
+									
+										
+									
+
+									
+										
+											
+												<Button id="action::SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities::SEPMRA_C_PD_ProductCopy" text="" press="onCallAction" type="Transparent" build:metadata="#pattern:ActionButton;staticProp:text:Label;staticProp::Importance:;condition:datafield&gt;RecordType:com.sap.vocabularies.UI.v1.DataFieldForAction">
+													<layoutData>
+														<OverflowToolbarLayoutData moveToOverflow="true" stayInOverflow="false"/>
+													</layoutData>
+													<customData>
+														<core:CustomData xmlns:core="sap.ui.core" key="Type" value="com.sap.vocabularies.UI.v1.DataFieldForAction"/>
+														
+														<core:CustomData xmlns:core="sap.ui.core" key="Action" value="SEPMRA_PROD_MAN.SEPMRA_PROD_MAN_Entities/SEPMRA_C_PD_ProductCopy"/>
+														<core:CustomData xmlns:core="sap.ui.core" key="Label" value=""/>
+														<core:CustomData xmlns:core="sap.ui.core" key="OperationGrouping"/>
+													</customData>
+												</Button>
+											
+										
+									
+										
+									
+										
+									
+										
+									
+										
+									
+									
+									
+										<OverflowToolbarButton id="addEntry" icon="sap-icon://add" tooltip="{path:'i18n&gt;CREATE_NEW_OBJECT_DYN', formatter: '.formatNewObjectTooltip'}" text="{path:'i18n&gt;CREATE_NEW_OBJECT_DYN', formatter: '.formatNewObjectTooltip'}" press="addEntry" type="Transparent"/>
+									
+								</OverflowToolbar>
+							</smarttable:customToolbar>
+							
+									<Table id="responsiveTable" fixedLayout="false" growing="true" growingScrollToLoad="true" growingThreshold="50" mode="SingleSelectLeft">
+										
+											
+												
+	<!--
+		@classdesc
+		@name: Name: sap.suite.ui.generic.template.fragments.TableColumns.fragment.xml
+		@description:
+		    - visualizes one column (header and data)
+		@param {UI.LineItem} [collection]
+		@param {Edm.EntitySet} [listEntitySet]
+	-->
+
+	<columns>
+		
+			
+				
+			
+			
+			
+				
+					
+						<Column customData:p13nData="\{&quot;columnKey&quot;:&quot;Product&quot;, &quot;leadingProperty&quot;:&quot;Product&quot;, &quot;additionalProperty&quot;:&quot;Product_Text&quot;, &quot;sortProperty&quot;:&quot;Product&quot;, &quot;filterProperty&quot;:&quot;Product&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/High;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Product"/>
+								
+						</Column>
+					
+				
+			
+			
+			
+				
+					
+						<Column customData:p13nData="\{&quot;columnKey&quot;:&quot;ProductCategory&quot;, &quot;leadingProperty&quot;:&quot;ProductCategory&quot;, &quot;sortProperty&quot;:&quot;ProductCategory&quot;, &quot;filterProperty&quot;:&quot;ProductCategory&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/High;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Category"/>
+								
+						</Column>
+					
+				
+			
+			
+			
+				
+					
+						<Column customData:p13nData="\{&quot;columnKey&quot;:&quot;Supplier&quot;, &quot;leadingProperty&quot;:&quot;Supplier&quot;, &quot;additionalProperty&quot;:&quot;to_Supplier/CompanyName&quot;, &quot;sortProperty&quot;:&quot;Supplier&quot;, &quot;filterProperty&quot;:&quot;Supplier&quot; \}" visible="true" hAlign="" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/High;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Supplier"/>
+								
+						</Column>
+					
+				
+			
+			
+			
+				
+					
+						<Column customData:p13nData="\{&quot;columnKey&quot;:&quot;Price&quot;, &quot;leadingProperty&quot;:&quot;Price&quot;, &quot;additionalProperty&quot;:&quot;Currency&quot;, &quot;sortProperty&quot;:&quot;Price&quot;, &quot;filterProperty&quot;:&quot;Price&quot; \}" visible="true" hAlign="End" build:metadata="#pattern:Column;staticProp::Importance:com.sap.vocabularies.UI.v1.ImportanceType/High;condition:collection&gt;AnnotationType:com.sap.vocabularies.UI.v1.LineItem">
+							
+									<Text text="Price"/>
+								
+						</Column>
+					
+				
+			
+			
+					
+					<core:ExtensionPoint xmlns:core="sap.ui.core" name="ResponsiveTableColumnsExtension|SEPMRA_C_PD_Product"/>
+				
+	</columns>
+	<items>
+		<ColumnListItem type="Navigation" press="onListNavigate">
+			<cells>
+				
+					
+					
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="ObjectIdentifier" value="{Product}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="" value="{ProductCategory}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="ObjectIdentifier" value="{Supplier}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+					
+						<VBox class="sapMTableContentMargin">
+							<items>
+								
+									
+										<sfi:SmartField xmlns:sfi="sap.ui.comp.smartfield" editable="{= ${ui&gt;/editable}}" uomEditable="false" change="onChange" controlContext="ResponsiveTable" proposedControl="" value="{Price}" url="" build:metadata="#pattern:Column;prop:virtualProp1:Value:[object Object];prop:virtualProp2:Currency:;prop:additionalValue:AdditionalValue:;prop:virtualProp3:Url:;">
+											
+										</sfi:SmartField>
+									
+								
+							</items>
+						</VBox>
+					
+					
+									
+							<core:ExtensionPoint xmlns:core="sap.ui.core" name="ResponsiveTableCellsExtension|SEPMRA_C_PD_Product"/>
+						
+			</cells>
+		</ColumnListItem>
+	</items>
+
+											
+										
+									</Table>
+								
+						</smarttable:SmartTable>
+					
+					<!-- Helper -->
+					<customData> <core:CustomData xmlns:core="sap.ui.core" id="idEntityTypeName" key="entityTypeName" value="Product" writeToDom="false"/> </customData>
+				</VBox>
+			</semantic:content>
+
+		<!-- FOOTER -->
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+		<semantic:shareInJamAction>
+			<semantic:ShareInJamAction id="shareInJam" visible="{share&gt;/isShareInJamActive}" press="onShareInJamPress"/>
+		</semantic:shareInJamAction>
+		<semantic:saveAsTileAction>
+			<ushell:footerbar.AddBookmarkButton xmlns:ushell="sap.ushell.ui" id="shareTile" title="{i18n&gt;PAGEHEADER}" tileIcon="{share&gt;/bookmarkIcon}" customUrl="{share&gt;/bookmarkCustomUrl}" serviceUrl="{share&gt;/bookmarkServiceUrl}"/>
+		</semantic:saveAsTileAction>
+
+		<!-- END FOOTER -->
+
+		</semantic:FullscreenPage>

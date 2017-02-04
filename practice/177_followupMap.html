@@ -1,0 +1,26 @@
+<html>
+<script>
+
+var buttonTextType = [
+{}, {}, {}];
+
+aButtons = aButtons.map(function(oButton){
+
+});
+
+aButtons.push(new sap.m.Button({
+			text : oResourceBundle.getText('BUTTONS_FOLLOWUPTOOPPT'),
+			press : this.requestProcessType.bind(this,"FollowupOpportunityTypeCollection", CONSTANTS.OPPORTUNITY)
+		}));
+
+	    aButtons.push(new sap.m.Button({
+			text : oResourceBundle.getText('BUTTONS_FOLLOWUPTOAPPT'),
+			press : this.requestProcessType.bind(this,"FollowupAppointmentTypeCollection", CONSTANTS.APPOINTMENT)
+		}));
+	    
+	    aButtons.push(new sap.m.Button({
+            text : oResourceBundle.getText('BUTTONS_FOLLOWUPTOTASK'),
+            press : this.requestProcessType.bind(this,"FollowupTaskTypeCollection", CONSTANTS.TASK)
+        }));
+</script>
+</html>

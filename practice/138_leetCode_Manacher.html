@@ -1,0 +1,68 @@
+<html>
+<script>
+/*
+给你一个字符串，找到最长的回文子串。啥叫回文串？就是前后看都一样的串，比如abcba，abba，因为题目给的数据量不大（1000），所以可以枚举字符串的每个位置当做回文对称点，回文对称点是我给它的一个概念，比如abcba的回文对称点就是idx=2也就是c的位置。But！并不是每个回文串都有对称点，比如abba，只有对称轴，它就没有点！怎么办？机智的coder想出了一个简单的用空间换取代码实现复杂度的方法，这也是Manacher算法的第一步：
+abcba-> #a#b#c#b#a#
+abba-> #a#b#b#a#
+这么一来，每个回文串就都有回文对称点了（可能是字母，也可能是#）。之后我们就能枚举对称点，然后向两边扩散开去，比较字符是否一样。为了不用判断是否已经到了边界，我们最初在字符串的开头再加个字符*，只要该字符和#以及字符串里其他字符都不一致即可。这样是可以AC的，虽然复杂度达到了O(n^2)。接下去我们介绍复杂度为O(n)的Manacher算法。
+我们试着以字符串babcbade举例，首先把字符串像上面一样变形：
+babcbade-> *#b#a#b#c#b#a#d#e#
+然后我们设置一个dp数组，dp[i]表示以变形后第i个元素为对称点的最长回文子串的半径，同样以上面的字符串举例，可以得到dp数组：
+#b#的半径为2
+#a#的半径为2
+#a#b#c#b#a#的半径为c#b#a#为6，这个半径包含了圆心的字母
+*#b#a#b#c#b#a#d#e# --->abcba
+112121216121212121
+我们可以很容易地发现，要求的最长回文子串的长度即dp数组最大值减去1。于是如何快速地求得该数组成为关键。假设我们已经得到了dp[6]的值，dp[10]的初始值也不难确定，因为它们两个元素根据idx=8对称（#a#b#c#b#a#)，所以可以不用从1开始向两边扩散了。
+我们用maxn维护当前存在的回文子串能达到最右的位置+1（maxn位置不可达到），用idx维护当前能到达最右+1的回文子串的回文中心点位置
+*/
+function Manacher(s) {
+  var str = '*#'
+    , dp = []
+    , maxn = 0
+    , idx = 0;
+
+  for (var i = 0, len = s.length; i < len; i++)
+    str += s[i] + '#';
+
+  for (var i = 1, len = str.length; i < len; i++) {
+    if (maxn > i) 
+        dp[i] = Math.min(dp[2 * idx - i], maxn - i);
+    else 
+        dp[i] = 1;
+
+    while (str[i - dp[i]] === str[i + dp[i]]) 
+        dp[i]++;
+
+    if (dp[i] + i > maxn)
+      maxn = dp[i] + i, idx = i;
+  }
+
+  var ans = 0
+    , pos;
+
+  for (var i = 1; i < len; i++) {
+    if (dp[i] > ans)
+      ans = dp[i], pos = i;
+  }
+
+  var f = str[pos] === '#'
+    , tmp = f ? '' : str[pos]
+    , startPos = f ? pos + 1 : pos + 2
+    , endPos = f ? dp[pos] - 3 + startPos : dp[pos] - 4 + startPos;
+
+  for (var i = startPos; i <= endPos; i += 2) 
+    tmp = str[i] + tmp + str[i];
+
+  return tmp;
+}
+
+var longestPalindrome = function(s) {
+  var str = Manacher(s);
+  return str;
+};
+
+var result = longestPalindrome("abc1234562654321as");
+console.log(result);
+</script>
+</html>

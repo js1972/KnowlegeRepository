@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="A simple HTML5 Template">
+    <meta name="author" content="dron">
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>变通方法实现保存文件</title>
+    <style type="text/css">
+		body{
+			padding: 10px;
+		}
+      #content{
+        width: 320px;
+        height: 240px;
+        border: 1px solid #ccc;
+        -webkit-border-radius: 4px;
+           -moz-border-radius: 4px;
+                border-radius: 4px;
+      }
+      #save-btn{
+        text-decoration: none;
+        display: inline-block;
+        *display: inline;
+        padding: 4px 12px;
+        margin-bottom: 0;
+        *margin-left: .3em;
+        font-size: 14px;
+        line-height: 20px;
+        color: #333333;
+        text-align: center;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+        vertical-align: middle;
+        cursor: pointer;
+        background-color: #f5f5f5;
+        *background-color: #e6e6e6;
+        background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+        background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+        background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+        background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+        background-repeat: repeat-x;
+        border: 1px solid #cccccc;
+        *border: 0;
+        border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+        border-bottom-color: #b3b3b3;
+        -webkit-border-radius: 4px;
+           -moz-border-radius: 4px;
+                border-radius: 4px;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+        filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+        *zoom: 1;
+        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+           -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+</head>
+<body>
+    <textarea id="content">测试文本，你可以随便修改，完事后点保存。</textarea>
+    <p><a id="save-btn" href="" download="noname.txt">保存</a></p>
+    <script>
+      var content, btn;
+      // get node whose id = content
+      content = document.querySelector( "#content" );
+      // get a node
+      btn = document.querySelector( "#save-btn" );
+
+      debugger;
+      content.addEventListener( "change", function(){
+        console.log(" I am in change, function() { body!"); // will be executed immediately just as initialization
+        var f = function(){
+          console.log(" I am in var f = function() { inside!");
+          btn.setAttribute( "href", "data:text/paint; utf-8," + content.value );
+        }
+        //var result = f(),f;
+        return f(), f;
+      }() ); // execute f immediately?
+    </script>
+
+<script>
+  void function( global ){ 
+    global.global_toolbar = function( setting ){ 
+        global.global_toolbar.setting = setting || {}; 
+    }; 
+
+    document.write( "<script src='http://ucren.com/ucren-toolbar/scripts/main.js'><\/script>" ); 
+  }( this );
+  
+  global_toolbar();
+</script>
+</body>
+</html>

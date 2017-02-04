@@ -1,0 +1,60 @@
+<html>
+<script>
+
+Function.prototype.after = function( func ){
+    var _self = this;
+    return function() {
+       var ret = _self.apply( this, arguments );
+       if ( ret  ) {
+          return ret;
+       }
+       return func.apply( this, arguments);
+    }
+}
+
+// Priority: ActiveX > HTML5 > Flash > Form(default)
+var getActiveX = function() {
+	try {
+		// lots of initialization work
+		a();
+		return { "name": "ActiveX"};
+	}
+	catch (e) {
+		// user broswer does not support ActiveX
+		return null;
+	}
+}
+
+var getHTML5 = function() {
+	try {
+		// lots of initialization work
+		return { "name": "HTML5"};
+	}
+	catch (e) {
+		// user broswer does not support HTML5
+		return null;
+	}
+}
+
+var getFlash = function() {
+	try {
+		// lots of initialization work
+		return { "name": "Flash"};
+	}
+	catch (e) {
+		// user broswer does not support Flash
+		return null;
+	}
+}
+
+var getForm = function() {
+	return { "name": "Form"};
+}
+
+var uploadAPI = getActiveX.after(getHTML5).after(getFlash).after(getForm)();
+
+console.log(uploadAPI);
+
+
+</script>
+</html>

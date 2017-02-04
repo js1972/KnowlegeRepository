@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" 
+    xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" 
+    xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" 
+    xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://ldciag3.wdf.sap.corp:44354/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" 
+        xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="sap.com.cds_zcwhole" xml:lang="en" sap:schema-version="1" 
+            xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="ZchildType" sap:label="item" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="carrid"/>
+                    <PropertyRef Name="connid"/>
+                    <PropertyRef Name="fldate"/>
+                </Key>
+                <Property Name="carrid" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:label="Airline"/>
+                <Property Name="connid" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="NonNegative" sap:label="Connection Number"/>
+                <Property Name="fldate" Type="Edm.DateTime" Nullable="false" Precision="0" sap:display-format="Date" sap:label="Flight Date"/>
+                <NavigationProperty Name="to_SalesOrder" Relationship="sap.com.cds_zcwhole.assoc_3873F39CBE4277C867D0373D1B0CD6D7" FromRole="FromRole_assoc_3873F39CBE4277C867D0373D1B0CD6D7" ToRole="ToRole_assoc_3873F39CBE4277C867D0373D1B0CD6D7"/>
+            </EntityType>
+            <EntityType Name="ZrootType" sap:label="parent" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="connid"/>
+                    <PropertyRef Name="carrid"/>
+                </Key>
+                <Property Name="connid" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="NonNegative" sap:label="Connection Number"/>
+                <Property Name="carrid" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:label="Airline"/>
+            </EntityType>
+            <EntityType Name="ZcwholeType" sap:label="w" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="carrid"/>
+                    <PropertyRef Name="connid"/>
+                </Key>
+                <Property Name="carrid" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:label="Airline"/>
+                <Property Name="connid" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="NonNegative" sap:label="Connection Number"/>
+                <NavigationProperty Name="to_Item" Relationship="sap.com.cds_zcwhole.assoc_BE5C60D2E67551C1D39D10C5504A8B6C" FromRole="FromRole_assoc_BE5C60D2E67551C1D39D10C5504A8B6C" ToRole="ToRole_assoc_BE5C60D2E67551C1D39D10C5504A8B6C"/>
+            </EntityType>
+            <Association Name="assoc_BE5C60D2E67551C1D39D10C5504A8B6C" sap:content-version="1">
+                <End Type="sap.com.cds_zcwhole.ZcwholeType" Multiplicity="1" Role="FromRole_assoc_BE5C60D2E67551C1D39D10C5504A8B6C"/>
+                <End Type="sap.com.cds_zcwhole.ZchildType" Multiplicity="*" Role="ToRole_assoc_BE5C60D2E67551C1D39D10C5504A8B6C"/>
+            </Association>
+            <Association Name="assoc_3873F39CBE4277C867D0373D1B0CD6D7" sap:content-version="1">
+                <End Type="sap.com.cds_zcwhole.ZchildType" Multiplicity="1" Role="FromRole_assoc_3873F39CBE4277C867D0373D1B0CD6D7"/>
+                <End Type="sap.com.cds_zcwhole.ZrootType" Multiplicity="1" Role="ToRole_assoc_3873F39CBE4277C867D0373D1B0CD6D7"/>
+            </Association>
+            <EntityContainer Name="sap.com.cds_zcwhole_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="Zroot" EntityType="sap.com.cds_zcwhole.ZrootType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="Zcwhole" EntityType="sap.com.cds_zcwhole.ZcwholeType" sap:content-version="1"/>
+                <EntitySet Name="Zchild" EntityType="sap.com.cds_zcwhole.ZchildType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <AssociationSet Name="assoc_3873F39CBE4277C867D0373D1B0CD6D7" Association="sap.com.cds_zcwhole.assoc_3873F39CBE4277C867D0373D1B0CD6D7" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="Zchild" Role="FromRole_assoc_3873F39CBE4277C867D0373D1B0CD6D7"/>
+                    <End EntitySet="Zroot" Role="ToRole_assoc_3873F39CBE4277C867D0373D1B0CD6D7"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_BE5C60D2E67551C1D39D10C5504A8B6C" Association="sap.com.cds_zcwhole.assoc_BE5C60D2E67551C1D39D10C5504A8B6C" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="Zcwhole" Role="FromRole_assoc_BE5C60D2E67551C1D39D10C5504A8B6C"/>
+                    <End EntitySet="Zchild" Role="ToRole_assoc_BE5C60D2E67551C1D39D10C5504A8B6C"/>
+                </AssociationSet>
+            </EntityContainer>
+            <atom:link rel="self" href="https://ldciag3.wdf.sap.corp:44354/sap/opu/odata/sap/ZCWHOLE_CDS/$metadata" 
+                xmlns:atom="http://www.w3.org/2005/Atom"/>
+                <atom:link rel="latest-version" href="https://ldciag3.wdf.sap.corp:44354/sap/opu/odata/sap/ZCWHOLE_CDS/$metadata" 
+                    xmlns:atom="http://www.w3.org/2005/Atom"/>
+                </Schema>
+            </edmx:DataServices>
+        </edmx:Edmx>
