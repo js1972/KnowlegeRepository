@@ -22,8 +22,8 @@ a {
 */
 
 var PREFIX = "http://tieba.baidu.com";
-//var START = "http://tieba.baidu.com/i/i/my_tie";
-var START = "http://www.baidu.com";
+var START = "http://tieba.baidu.com/i/i/my_tie";
+//var START = "http://www.baidu.com";
 var POST = {};
 var TOTAL = 0;
 var SORTED = [];
@@ -141,13 +141,60 @@ $(function(){
 	main();
 }); 
 
+
 function getPostByAJAX(requestURL){
    var html = $.ajax({
   	url: requestURL,
+  	crossOrigin: true,
+  	xhrFields: {
+    // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+    // This can be used to set the 'withCredentials' property.
+    // Set the value to 'true' if you'd like to pass cookies to the server.
+    // If this is enabled, your server must respond with the header
+    // 'Access-Control-Allow-Credentials: true'.
+    withCredentials: true
+  },
   	async: false}).responseText; 
    return html;
 }
 
+/*
+function getPostByAJAX(requestURL){
+ var settings = {
+        type: "GET",
+        crossOrigin: true,
+        url:requestURL,
+        error: function(XHR,textStatus,errorThrown) {
+            alert ("XHR="+XHR+"\ntextStatus="+textStatus+"\nerrorThrown=" + errorThrown);
+        },
+        success: function(data,textStatus) {
+            debugger;
+        },
+        headers: {
+            "Access-Control-Allow-Origin":"http://tieba.baidu.com",
+            "Access-Control-Allow-Headers":"X-Requested-With"
+        }
+    };
+    $.ajax(settings);
+}
+*/
+/*
+function getPostByAJAX(requestURL){
+   var html = $.ajax({
+  	url: requestURL,
+  	dataType:"jsonp",
+  	xhrFields: {
+    // The 'xhrFields' property sets additional fields on the XMLHttpRequest.
+    // This can be used to set the 'withCredentials' property.
+    // Set the value to 'true' if you'd like to pass cookies to the server.
+    // If this is enabled, your server must respond with the header
+    // 'Access-Control-Allow-Credentials: true'.
+    withCredentials: true
+  },
+  	async: false}).responseText; 
+   return html;
+}
+*/
 function insertPost(postDetail){
 	if( !POST[postDetail.barName]){
 		POST[postDetail.barName] = [];
