@@ -1,0 +1,40 @@
+<html>
+<script>
+
+function SuperClass(){
+	this.setX(99);
+}
+SuperClass.constructor = function(){
+
+}
+
+SuperClass.prototype = {
+    mSuperX : 0,
+    setX : function(x){
+         this.mSuperX = x;
+    }
+};
+
+function SubClass(){  
+    SuperClass.call(this);  
+}  
+
+SubClass.prototype = new SuperClass();  
+
+SubClass.prototype.mSubX = 1;
+
+SubClass.prototype.setX = function(x){
+    	SuperClass.prototype.setX(x);
+		this.mSubX = x;
+		console.log("SubX is assigned " + x);
+};
+
+SubClass.prototype.print = function(){
+	console.log("SubX: " + this.mSubX);
+}
+
+var sub = new SubClass();
+sub.print();
+
+</script>
+</html>
