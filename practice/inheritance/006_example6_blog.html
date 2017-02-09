@@ -17,11 +17,10 @@ SuperClass.prototype = {
 
 function SubClass(){  
     SuperClass.call(this);  
+    this.mSubX = 1;
 }  
 
 SubClass.prototype = new SuperClass();  
-
-SubClass.prototype.mSubX = 1;
 
 SubClass.prototype.setX = function(x){
     	SuperClass.prototype.setX(x);
