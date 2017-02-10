@@ -15,4 +15,8 @@ data: t_object_list TYPE crmt_cont_object_tab,
                        BASE t_object_list
                        ( object_name = 'Product' attr_requested = abap_true rels_requested = abap_true )
                      ).
-                     
+4. create a reference based on a data structure:
+data: ls_category TYPE zcrms4s_prod_category_ui.
+
+ls_category = value #( material_Type = 'HAWA' ).
+data(lv) = NEW zcrms4s_prod_category_ui( ls_category ).
