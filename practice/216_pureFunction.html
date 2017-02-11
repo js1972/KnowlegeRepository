@@ -1,0 +1,16 @@
+<html>
+<script>
+const addToCart = (cart, item, quantity) => {
+  cart.items.push({
+    item,
+    quantity
+  });
+  return cart;
+};
+
+var cart = { items: []};
+
+var result = addToCart(cart, "Jerry", 1);
+debugger;
+</script>
+</html>
