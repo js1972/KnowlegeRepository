@@ -2,9 +2,11 @@
 <script>
 // ^ab[\w]+12$
 
-var reg = /.\.c$/;
+var reg = /.\.c$|\.cpp$|\.h/;
 
 console.log(reg.test("hello.c"));
 console.log(reg.test("hello.cp"));
+console.log(reg.test("hello.h"));
+console.log(reg.test("hello.cpp"));
 </script>
 </html>
