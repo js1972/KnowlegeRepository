@@ -20,3 +20,4 @@ data: ls_category TYPE zcrms4s_prod_category_ui.
 
 ls_category = value #( material_Type = 'HAWA' ).
 data(lv) = NEW zcrms4s_prod_category_ui( ls_category ).
+                      |- data type         |- las_category is an variable which has data type zcrms4s_prod_category_ui
