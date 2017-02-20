@@ -1,0 +1,28 @@
+<html>
+<script type="text/javascript">
+function unique(arr) {
+    return arr.filter(function(item, index){
+        // indexOf返回第一个索引值，
+        // 如果当前索引不是第一个索引，说明是重复值
+        return arr.indexOf(item) === index;
+    });
+}
+
+function unique2(arr) {
+    var ret = [];
+    arr.forEach(function(item){
+        if(ret.indexOf(item) === -1){
+            ret.push(item);
+        }
+    });
+    return ret;
+}
+
+var test = [1,2,1,2,1,2,3];
+
+var result1 = unique(test);
+var result2 = unique2(test);
+console.log(result1);
+console.log(result2);
+</script>
+</html>
