@@ -18,11 +18,47 @@ function unique2(arr) {
     return ret;
 }
 
+function unique3(arr){
+    var ret = [];
+    var len = arr.length;
+    var isRepeat;
+    for(var i=0; i<len; i++) {
+        isRepeat = false;
+        for(var j=i+1; j<len; j++) {
+            if(arr[i] === arr[j]){
+                isRepeat = true;
+                break;
+            }
+        }
+        if(!isRepeat){
+            ret.push(arr[i]);
+        }
+    }
+    return ret;
+}
+
+function unique4(arr) {
+    var ret = [];
+    var len = arr.length;
+    var tmp = new Map();
+    for(var i=0; i<len; i++){
+        if(!tmp.get(arr[i])){
+            tmp.set(arr[i], 1);
+            ret.push(arr[i]);
+        }
+    }
+    return ret;
+}
+
 var test = [1,2,1,2,1,2,3];
 
 var result1 = unique(test);
 var result2 = unique2(test);
+var result3 = unique3(test);
+var result4 = unique4(test);
 console.log(result1);
 console.log(result2);
+console.log(result3);
+console.log(result4);
 </script>
 </html>
