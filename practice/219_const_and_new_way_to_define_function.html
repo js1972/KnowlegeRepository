@@ -1,9 +1,19 @@
 <html>
 <script>
+/*
 const toSlug = input => encodeURIComponent(
   input.split(' ')
     .map(str => str.toLowerCase())
     .join('-')
+);
+*/
+const toSlug = input => encodeURIComponent(
+  // debugger; Uncaught SyntaxError: Unexpected token debugger
+  /*var a1 = input.split(' ');
+  var a2 = a1.map(str => str.toLowerCase());
+  var a3 = a2.join('-');
+  a3;*/
+  input
 );
 
 console.log(toSlug("Jerry Wang"));
