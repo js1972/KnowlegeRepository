@@ -27,5 +27,24 @@ const toSlug = input => encodeURIComponent(
 console.log(toSlug("Jerry Wang"));
 // toSlug = "1"; // runtime error: assignment to constant variable
 console.log(typeof toSlug); // function
+
+function a(a1, a2){
+
+};
+// a.length = 2 -> number of argument
+debugger;
+// Jerry 2017-02-23 15:45PM .. will not work
+const curry = fn => (...argsFuck) => fn.bind(null, ...argsFuck);
+/* Jerry 2017-02-23 3:31PM - fn is argument one, ...args is argument two, three, four?? 
+
+length of curry.length: 1
+*/
+const vartest = (...a) => console.log(...a); // this will work
+
+console.log("new challenge comes");
+vartest("jerry", "wang");
+const map = curry((fn, arr) => arr.map(fn));
+
+debugger;
 </script>
 </html>
