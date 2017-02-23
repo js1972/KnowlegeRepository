@@ -7,6 +7,7 @@ const toSlug = input => encodeURIComponent(
 );
 
 console.log(toSlug("Jerry Wang"));
-toSlug = "1"; // runtime error: assignment to constant variable
+// toSlug = "1"; // runtime error: assignment to constant variable
+console.log(typeof toSlug); // function
 </script>
 </html>
