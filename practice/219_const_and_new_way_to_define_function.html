@@ -14,6 +14,7 @@ const underScore = input => (
 )
 ;
 
+// Jerry 2017-02-23 3:55PM wraped with { } will not work any more
 const toUpper = input => input.toUpperCase();
 const toSlug = input => encodeURIComponent(
   // debugger; Uncaught SyntaxError: Unexpected token debugger
@@ -41,8 +42,15 @@ length of curry.length: 1
 */
 const vartest = (...a) => console.log(...a); // this will work
 
+const vartest2 = fn => 
+  (...a) => 
+   console.log(fn(...a)); 
 console.log("new challenge comes");
 vartest("jerry", "wang");
+console.log("new challenge comes again");
+var newFunction = vartest2(toUpper);
+debugger;
+newFunction("Rocks", "Scala");
 const map = curry((fn, arr) => arr.map(fn));
 
 debugger;
