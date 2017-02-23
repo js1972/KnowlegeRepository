@@ -40,19 +40,21 @@ const curry = fn => (...argsFuck) => fn.bind(null, ...argsFuck);
 
 length of curry.length: 1
 */
-const vartest = (...a) => console.log(...a); // this will work
 
-const vartest2 = fn => 
-  (...a) => 
-   console.log(fn(...a)); 
+function JerryUpper(...arg){
+	console.log("Jerry's upper: " + arg);
+}
+const vartest = (...ar) => console.log(...ar); // this will work
+
+const vartest2 = fn => (...arg2) => fn(...arg2); 
 console.log("new challenge comes");
 vartest("jerry", "wang");
 console.log("new challenge comes again");
-var newFunction = vartest2(toUpper);
-debugger;
-newFunction("Rocks", "Scala");
+var newFunction = vartest2(JerryUpper);
+
+newFunction("Rocks", "Scala"); //消元的思想
 const map = curry((fn, arr) => arr.map(fn));
 
-debugger;
+
 </script>
 </html>
