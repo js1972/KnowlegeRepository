@@ -1,0 +1,17 @@
+<html>
+<script>
+
+const curry = fn => (...argsFuck) => fn.bind(null, ...argsFuck);
+
+const map = curry((fn, arr) => arr.map(fn));
+
+function print(...arg){
+  console.log("Jerry: " + arg);
+}
+
+var test = [1,2,3];
+
+map(print, test)();
+
+</script>
+</html>

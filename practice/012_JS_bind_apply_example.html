@@ -71,7 +71,7 @@
     }
 
     no_argument("Jerry");
-
+    // Jerry 2017-02-24 7:14PM 这里的=>就是参数列表的开始
     // const curry = fn => (...args) => fn.bind(null, ...args);
 
     function curry(fn, ...arg){
@@ -82,8 +82,9 @@
         console.log("Jerry 2017-02-24: " + arg);
     }
 
-    var curryResult = curry(jerryPrint, "default?");
+    var curryResult = curry(jerryPrint, "default1", "default2");
     curryResult("Hello", "World");
+    curryResult("Hello2", "World2");
 
 </script>
 </body>
