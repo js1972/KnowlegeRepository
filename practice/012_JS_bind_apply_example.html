@@ -71,6 +71,20 @@
     }
 
     no_argument("Jerry");
+
+    // const curry = fn => (...args) => fn.bind(null, ...args);
+
+    function curry(fn, ...arg){
+        return fn.bind(null, ...arg);
+    }
+
+    function jerryPrint(...arg){
+        console.log("Jerry 2017-02-24: " + arg);
+    }
+
+    var curryResult = curry(jerryPrint, "default?");
+    curryResult("Hello", "World");
+
 </script>
 </body>
 </html>
