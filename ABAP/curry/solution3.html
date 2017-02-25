@@ -1,0 +1,17 @@
+<html>
+<script type="text/javascript">
+	const conversion1 = input => input.split(' ').map(str => str.toLowerCase()).join('-');
+
+    console.log(conversion1("Jerry ABAP"));
+
+	const curry = fn => (...args) => fn.bind(null, ...args);
+    const map = curry((fn, arr) => arr.map(fn));
+	const join = curry((str, arr) => arr.join(str));
+	const toLowerCase = str => str.toLowerCase();
+	const split = curry((splitOn, str) => str.split(splitOn));
+
+	const conversion2 = input => join('-')(map(toLowerCase)(split(' ')(input)));
+
+  	console.log(conversion2("Jerry Java"));
+</script>
+</html>
