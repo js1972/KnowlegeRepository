@@ -5,6 +5,13 @@
 *&---------------------------------------------------------------------*
 REPORT zcreate_fm.
 
+*&---------------------------------------------------------------------*
+*& Report ZCREATE_FM
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+
+
 DATA: date               TYPE sy-datum,
       time               TYPE sy-uzeit,
       pool_name          TYPE rs38l-area,
@@ -24,20 +31,31 @@ DATA it_parameter_docu TYPE TABLE OF rsfdo.
 date = sy-datum.
 time = sy-uzeit.
 
-CONCATENATE 'TEST_FBS_' date time INTO pool_name.
-CONCATENATE 'FB1_' pool_name INTO func_name.
+CONCATENATE 'ZTEST_FBS_' date time INTO pool_name.
+CONCATENATE 'ZFB1_' pool_name INTO func_name.
 
 CALL FUNCTION 'RS_FUNCTION_POOL_INSERT'
   EXPORTING
-    function_pool       = pool_name
-    short_text          = 'TEST_FUGR_FBS'               "#EC NOTEXT
-    devclass            = '$TMP'                        "#EC NOTEXT
-    responsible         = sy-uname
-    suppress_corr_check = space
+    function_pool           = pool_name
+    short_text              = 'TEST_FUGR_FBS'               "#EC NOTEXT
+    devclass                = '$TMP'                        "#EC NOTEXT
+    responsible             = sy-uname
+    suppress_corr_check     = space
   EXCEPTIONS
-    OTHERS              = 12.
+    name_already_exists     = 1
+    name_not_correct        = 2
+    function_already_exists = 3
+    invalid_function_pool   = 4
+    invalid_name            = 5
+    too_many_functions      = 6
+    no_modify_permission    = 7
+    no_show_permission      = 8
+    enqueue_system_failure  = 9
+    canceled_in_corr        = 10
+    undefined_error         = 11
+    OTHERS                  = 12.
 IF sy-subrc <> 0.
-  WRITE:/ 'Fugr was not created!' .
+  WRITE:/ 'Fugr was not created!: ' , sy-subrc .
   RETURN.
 ENDIF.
 
@@ -48,8 +66,8 @@ wa_rsimp-typ       = 'I'.                                   "#EC NOTEXT
 APPEND wa_rsimp TO it_import_parameter.
 
 wa_rscha-parameter = 'P1_C'.                                "#EC NOTEXT
-wa_rscha-reference     = 'X'.                                   "#EC NOTEXT
-wa_rscha-typ       = 'I'.                              "#EC NOTEXT
+wa_rscha-reference     = 'X'.                               "#EC NOTEXT
+wa_rscha-typ       = 'I'.                                   "#EC NOTEXT
 APPEND wa_rscha TO it_changing_parameter.
 
 CALL FUNCTION 'FUNCTION_CREATE'
@@ -93,7 +111,7 @@ INSERT REPORT l_function_include FROM lt_codeline.
 COMMIT WORK AND WAIT.
 
 DATA: ptab TYPE abap_func_parmbind_tab,
-      lv_i TYPE int4 value 12.
+      lv_i TYPE int4 VALUE 12.
 
 ptab = VALUE #( ( name  = 'P1_I'
                   kind  = abap_func_exporting
@@ -110,10 +128,10 @@ TRY.
     WRITE: / cx_root->get_text( ).
 ENDTRY.
 
-call FUNCTION 'FUNCTION_DELETE'
-   EXPORTING
-      FUNCNAME = func_name.
+CALL FUNCTION 'FUNCTION_DELETE'
+  EXPORTING
+    funcname = func_name.
 
-call FUNCTION 'FUNCTION_POOL_DELETE'
-   EXPORTING
-      pool = pool_name.
+CALL FUNCTION 'FUNCTION_POOL_DELETE'
+  EXPORTING
+    pool = pool_name.
