@@ -1,0 +1,26 @@
+<html>
+<script>
+function isNoEmail(str){
+     var strartu=str.lastIndexOf("@"); 
+     var sdown=str.indexOf("@");
+     var isNostr=str.substring(str.lastIndexOf("@") + 1,str.length);
+     var stu=isNostr.lastIndexOf(".")+1; 
+     var sdn=isNostr.indexOf("."); 
+     if(strartu =='-1'||stu=='-1'){
+     	return false;
+  	}
+     if(strartu==sdown&&stu!=sdn)
+    	{
+     	return true;   
+  	}else{
+     	return false; 
+  	}	
+  }
+
+console.log(isNoEmail("a.le@163.com"));
+console.log(isNoEmail("a@163.com"));
+console.log(isNoEmail("jerry.wang@163.com"));
+console.log(isNoEmail("a163.com"));
+console.log(isNoEmail("a@b"));
+</script>
+</html>
