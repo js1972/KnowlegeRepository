@@ -5,16 +5,14 @@
 *&---------------------------------------------------------------------*
 REPORT zcreate_fm.
 
-DATA: sap_cus(10).
-DATA: date      TYPE sy-datum,
-      time      TYPE sy-uzeit,
-      pool_name TYPE rs38l-area,
-      func_name TYPE rs38l-name,
-       lt_codeline              type standard table of char255,
-      l_function_include       type progname.
+DATA: date               TYPE sy-datum,
+      time               TYPE sy-uzeit,
+      pool_name          TYPE rs38l-area,
+      func_name          TYPE rs38l-name,
+      lt_codeline        TYPE STANDARD TABLE OF char255,
+      l_function_include TYPE progname.
 
 DATA it_exception_list     TYPE TABLE OF rsexc.
-DATA wa_rsexc TYPE rsexc.
 DATA it_export_parameter   TYPE TABLE OF rsexp.
 DATA it_import_parameter   TYPE TABLE OF rsimp.
 DATA wa_rsimp TYPE rsimp.
@@ -22,8 +20,6 @@ DATA it_tables_parameter   TYPE TABLE OF rstbl.
 DATA it_changing_parameter TYPE TABLE OF rscha.
 DATA wa_rscha TYPE rscha.
 DATA it_parameter_docu TYPE TABLE OF rsfdo.
-DATA subrc             TYPE sy-subrc.
-DATA l_result          TYPE cts_check_result.
 
 date = sy-datum.
 time = sy-uzeit.
@@ -59,35 +55,39 @@ APPEND wa_rscha TO it_changing_parameter.
 
 CALL FUNCTION 'FUNCTION_CREATE'
   EXPORTING
-    funcname           = func_name
-    function_pool      = pool_name
-    short_text         = 'TEST_FUNC_FB'                 "#EC NOTEXT
-     importing
-            function_include             = l_function_include
-  tables
-        exception_list          = it_exception_list
-        export_parameter        = it_export_parameter
-        import_parameter        = it_import_parameter
-        tables_parameter        = it_tables_parameter
-        changing_parameter      = it_changing_parameter
-        parameter_docu          = it_parameter_docu
-      exceptions
-        double_task             = 1
-        error_message           = 2
-        function_already_exists = 3
-        invalid_function_pool   = 4
-        invalid_name            = 5
-        too_many_functions      = 6
-        others                  = 7.
+    funcname                = func_name
+    function_pool           = pool_name
+    short_text              = 'TEST_FUNC_FB'                 "#EC NOTEXT
+  IMPORTING
+    function_include        = l_function_include
+  TABLES
+    exception_list          = it_exception_list
+    export_parameter        = it_export_parameter
+    import_parameter        = it_import_parameter
+    tables_parameter        = it_tables_parameter
+    changing_parameter      = it_changing_parameter
+    parameter_docu          = it_parameter_docu
+  EXCEPTIONS
+    double_task             = 1
+    error_message           = 2
+    function_already_exists = 3
+    invalid_function_pool   = 4
+    invalid_name            = 5
+    too_many_functions      = 6
+    OTHERS                  = 7.
 
 IF sy-subrc <> 0.
   WRITE: / 'failed:', sy-subrc.
   RETURN.
 ENDIF.
 
-read report l_function_include into lt_codeline.
+READ REPORT l_function_include INTO lt_codeline.
+
+DELETE lt_codeline index lines( lt_codeline ).
+DELETE lt_codeline where table_line is INITIAL.
 BREAK-POINT.
 
 WRITE: / 'created successful:', func_name.
 APPEND | WRITE:/ 'OK'.| TO lt_codeline.
-insert report l_function_include from lt_codeline.
+APPEND 'ENDFUNCTION.' TO lt_codeline.
+INSERT REPORT l_function_include FROM lt_codeline.
