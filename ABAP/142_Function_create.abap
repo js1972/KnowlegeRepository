@@ -9,7 +9,9 @@ DATA: sap_cus(10).
 DATA: date      TYPE sy-datum,
       time      TYPE sy-uzeit,
       pool_name TYPE rs38l-area,
-      func_name TYPE rs38l-name.
+      func_name TYPE rs38l-name,
+       lt_codeline              type standard table of char255,
+      l_function_include       type progname.
 
 DATA it_exception_list     TYPE TABLE OF rsexc.
 DATA wa_rsexc TYPE rsexc.
@@ -22,13 +24,6 @@ DATA wa_rscha TYPE rscha.
 DATA it_parameter_docu TYPE TABLE OF rsfdo.
 DATA subrc             TYPE sy-subrc.
 DATA l_result          TYPE cts_check_result.
-
-CALL 'C_SAPGPARAM' ID 'NAME'  FIELD 'transport/systemtype'
-                    ID 'VALUE' FIELD sap_cus.
-
-IF sap_cus <> 'SAP'.      " test should be done only in SAP systems
-  cl_aunit_assert=>abort( ).
-ENDIF.
 
 date = sy-datum.
 time = sy-uzeit.
@@ -67,6 +62,8 @@ CALL FUNCTION 'FUNCTION_CREATE'
     funcname           = func_name
     function_pool      = pool_name
     short_text         = 'TEST_FUNC_FB'                 "#EC NOTEXT
+     importing
+            function_include             = l_function_include
   tables
         exception_list          = it_exception_list
         export_parameter        = it_export_parameter
@@ -89,3 +86,5 @@ IF sy-subrc <> 0.
 ENDIF.
 
 WRITE: / 'created successful:', func_name.
+APPEND | WRITE:/ 'OK'.| TO lt_codeline.
+insert report l_function_include from lt_codeline.
