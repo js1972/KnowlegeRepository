@@ -84,7 +84,6 @@ READ REPORT l_function_include INTO lt_codeline.
 
 DELETE lt_codeline INDEX lines( lt_codeline ).
 DELETE lt_codeline WHERE table_line IS INITIAL.
-BREAK-POINT.
 
 WRITE: / 'created successful:', func_name.
 APPEND | WRITE:/ 'OK'.| TO lt_codeline.
@@ -110,3 +109,11 @@ TRY.
   CATCH cx_root INTO DATA(cx_root).
     WRITE: / cx_root->get_text( ).
 ENDTRY.
+
+call FUNCTION 'FUNCTION_DELETE'
+   EXPORTING
+      FUNCNAME = func_name.
+
+call FUNCTION 'FUNCTION_POOL_DELETE'
+   EXPORTING
+      pool = pool_name.
