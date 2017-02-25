@@ -85,6 +85,9 @@ IF sy-subrc <> 0.
   RETURN.
 ENDIF.
 
+read report l_function_include into lt_codeline.
+BREAK-POINT.
+
 WRITE: / 'created successful:', func_name.
 APPEND | WRITE:/ 'OK'.| TO lt_codeline.
 insert report l_function_include from lt_codeline.
