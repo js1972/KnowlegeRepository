@@ -18,17 +18,17 @@ CLASS zcl_curry DEFINITION
     TYPES:
       BEGIN OF ty_curried_argument,
         arg_name  TYPE string,
-        arg_type  TYPE RS38L_TYP,
+        arg_type  TYPE rs38l_typ,
         arg_value TYPE string,
       END OF ty_curried_argument .
     TYPES:
       tt_curried_argument TYPE TABLE OF ty_curried_argument WITH KEY arg_name .
     TYPES:
       BEGIN OF ty_curried_func,
-        func_name    TYPE rs38l_fnam,
-        curried_func TYPE rs38l_fnam,
-        function_Group TYPE rs38l-area,
-        curried_arg  TYPE tt_curried_argument,
+        func_name      TYPE rs38l_fnam,
+        curried_func   TYPE rs38l_fnam,
+        function_group TYPE rs38l-area,
+        curried_arg    TYPE tt_curried_argument,
       END OF ty_curried_func .
     TYPES:
       tt_curried_func TYPE TABLE OF ty_curried_func WITH KEY func_name curried_func .
@@ -67,9 +67,9 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 * | [--->] IV_INCLUDE                     TYPE        PROGNAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD adapt_source_code.
-    DATA:lt_codeline        TYPE STANDARD TABLE OF char255,
-         lv_argu TYPE string,
-         lt_parsed_argu     TYPE tt_curried_argument.
+    DATA:lt_codeline    TYPE STANDARD TABLE OF char255,
+         lv_argu        TYPE string,
+         lt_parsed_argu TYPE tt_curried_argument.
     READ REPORT iv_include INTO lt_codeline.
 
     DELETE lt_codeline INDEX lines( lt_codeline ).
@@ -77,25 +77,30 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 
     APPEND |DATA: lt_ptab TYPE abap_func_parmbind_tab.| TO lt_codeline.
     APPEND |DATA: ls_para LIKE LINE OF lt_ptab.| TO lt_codeline.
-    lt_parsed_argu = MT_CURRIED_FUNC[ func_name = mv_org_func ]-curried_arg.
+    lt_parsed_argu = mt_curried_func[ func_name = mv_org_func ]-curried_arg.
     LOOP AT lt_parsed_argu ASSIGNING FIELD-SYMBOL(<argu>).
-       APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
-       APPEND | _{ <argu>-arg_name } = { <argu>-arg_name }. | TO lt_codeline.
+      APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
 
-       lv_argu = | ls_para = value #( name = '{ <argu>-arg_name }' | &&
-          | kind  = abap_func_exporting value = REF #( _{ <argu>-arg_name } ) ).|.
-       APPEND lv_argu TO lt_codeline.
-       APPEND | APPEND ls_para TO lt_ptab. | TO lt_codeline.
+      IF <argu>-arg_value IS NOT INITIAL.
+        APPEND | _{ <argu>-arg_name } = { <argu>-arg_value }. | TO lt_codeline.
+      ELSE.
+        APPEND | _{ <argu>-arg_name } = { <argu>-arg_name }. | TO lt_codeline.
+      ENDIF.
+
+      lv_argu = | ls_para = value #( name = '{ <argu>-arg_name }' | &&
+         | kind  = abap_func_exporting value = REF #( _{ <argu>-arg_name } ) ).|.
+      APPEND lv_argu TO lt_codeline.
+      APPEND | APPEND ls_para TO lt_ptab. | TO lt_codeline.
     ENDLOOP.
 
- APPEND 'TRY.' TO lt_codeline.
- APPEND |CALL FUNCTION '{ mv_org_func }' PARAMETER-TABLE lt_ptab.| TO lt_codeline.
- APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
- APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
- APPEND 'ENDTRY.' TO lt_codeline.
- APPEND 'ENDFUNCTION.' TO lt_codeline.
- INSERT REPORT iv_include FROM lt_codeline.
- COMMIT WORK AND WAIT.
+    APPEND 'TRY.' TO lt_codeline.
+    APPEND |CALL FUNCTION '{ mv_org_func }' PARAMETER-TABLE lt_ptab.| TO lt_codeline.
+    APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
+    APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
+    APPEND 'ENDTRY.' TO lt_codeline.
+    APPEND 'ENDFUNCTION.' TO lt_codeline.
+    INSERT REPORT iv_include FROM lt_codeline.
+    COMMIT WORK AND WAIT.
   ENDMETHOD.
 
 
@@ -174,7 +179,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     LOOP AT it_parsed_argument ASSIGNING FIELD-SYMBOL(<argu>).
       wa_rsimp-parameter = <argu>-arg_name.                 "#EC NOTEXT
       wa_rsimp-reference = 'X'.                             "#EC NOTEXT
-      wa_rsimp-typ       = 'STRING'.                             "#EC NOTEXT
+      wa_rsimp-typ       = 'STRING'.                        "#EC NOTEXT
       APPEND wa_rsimp TO lt_import_parameter.
     ENDLOOP.
     CALL FUNCTION 'FUNCTION_CREATE'
