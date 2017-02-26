@@ -78,16 +78,16 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     lt_parsed_argu = MT_CURRIED_FUNC[ func_name = mv_org_func ]-curried_arg.
     LOOP AT lt_parsed_argu ASSIGNING FIELD-SYMBOL(<argu>).
        APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
-       APPEND | _{ <argu>-arg_name } = { <argu>-arg_name } | TO lt_codeline.
+       APPEND | _{ <argu>-arg_name } = { <argu>-arg_name }. | TO lt_codeline.
 
-       lv_argu = | ls_para = value #( name = { <argu>-arg_name } | &&
+       lv_argu = | ls_para = value #( name = '{ <argu>-arg_name }' | &&
           | kind  = abap_func_exporting value = REF #( _{ <argu>-arg_name } ) ).|.
        APPEND lv_argu TO lt_codeline.
        APPEND | APPEND ls_para TO lt_ptab. | TO lt_codeline.
     ENDLOOP.
 
  APPEND 'TRY.' TO lt_codeline.
- APPEND |CALL FUNCTION { mv_org_func } PARAMETER-TABLE ptab.| TO lt_codeline.
+ APPEND |CALL FUNCTION '{ mv_org_func }' PARAMETER-TABLE lt_ptab.| TO lt_codeline.
  APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
  APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
  APPEND 'ENDTRY.' TO lt_codeline.
@@ -141,8 +141,8 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     lv_date = sy-datum.
     lv_time = sy-uzeit.
 
-    CONCATENATE 'ZCURRY' lv_date lv_time INTO lv_pool_name.
-    CONCATENATE 'ZCUR' lv_pool_name INTO lv_func_name.
+    CONCATENATE 'CURRY' lv_date lv_time INTO lv_pool_name.
+    CONCATENATE 'Z' lv_pool_name INTO lv_func_name.
 
     CALL FUNCTION 'RS_FUNCTION_POOL_INSERT'
       EXPORTING
@@ -210,6 +210,8 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     <curried_fm>-curried_arg = it_parsed_argument.
 
     rv_generated_include = l_function_include.
+
+    WRITE: / 'created_ok:' , lv_func_name.
 
   ENDMETHOD.
 
