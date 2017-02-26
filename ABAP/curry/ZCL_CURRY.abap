@@ -86,7 +86,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
       APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
 
       IF <argu>-arg_value IS NOT INITIAL.
-        APPEND | _{ <argu>-arg_name } = { <argu>-arg_value }. | TO lt_codeline.
+        APPEND | _{ <argu>-arg_name } = '{ <argu>-arg_value }'. | TO lt_codeline.
       ELSE.
         APPEND | _{ <argu>-arg_name } = { <argu>-arg_name }. | TO lt_codeline.
       ENDIF.
