@@ -106,6 +106,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     APPEND 'ENDFUNCTION.' TO lt_codeline.
     INSERT REPORT iv_include FROM lt_codeline.
     COMMIT WORK AND WAIT.
+    WAIT UP TO 1 SECONDS.
   ENDMETHOD.
 
 
@@ -233,8 +234,6 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     <curried_fm>-function_group = lv_pool_name.
 
     rv_generated_include = l_function_include.
-
-    WRITE: / 'created_ok:' , lv_func_name.
 
   ENDMETHOD.
 
