@@ -41,10 +41,14 @@ private section.
       !IT_ARGUMENT type STRING_TABLE .
   methods PARSE_ARGUMENT
     importing
-      !IT_ARGUMENT type STRING_TABLE .
+      !IT_ARGUMENT type STRING_TABLE
+    exporting
+      !ET_PARSED_ARGUMENT type TT_CURRIED_ARGUMENT .
   methods GENERATE_CURRIED_FM
+    importing
+      !IT_PARSED_ARGUMENT type TT_CURRIED_ARGUMENT
     returning
-      value(RV_RESULT) type INT4 .
+      value(RV_GENERATED_INCLUDE) type PROGNAME .
 ENDCLASS.
 
 
@@ -76,7 +80,8 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_CURRY->GENERATE_CURRIED_FM
 * +-------------------------------------------------------------------------------------------------+
-* | [<-()] RV_RESULT                      TYPE        INT4
+* | [--->] IT_PARSED_ARGUMENT             TYPE        TT_CURRIED_ARGUMENT
+* | [<-()] RV_GENERATED_INCLUDE           TYPE        PROGNAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method GENERATE_CURRIED_FM.
     DATA: lv_date               TYPE sy-datum,
@@ -86,14 +91,13 @@ CLASS ZCL_CURRY IMPLEMENTATION.
       lt_codeline        TYPE STANDARD TABLE OF char255,
       l_function_include TYPE progname.
 
-DATA it_exception_list     TYPE TABLE OF rsexc.
-DATA it_export_parameter   TYPE TABLE OF rsexp.
-DATA it_import_parameter   TYPE TABLE OF rsimp.
+DATA lt_exception_list     TYPE TABLE OF rsexc.
+DATA lt_export_parameter   TYPE TABLE OF rsexp.
+DATA lt_import_parameter   TYPE TABLE OF rsimp.
 DATA wa_rsimp TYPE rsimp.
-DATA it_tables_parameter   TYPE TABLE OF rstbl.
-DATA it_changing_parameter TYPE TABLE OF rscha.
-DATA wa_rscha TYPE rscha.
-DATA it_parameter_docu TYPE TABLE OF rsfdo.
+DATA lt_tables_parameter   TYPE TABLE OF rstbl.
+DATA lt_changing_parameter TYPE TABLE OF rscha.
+DATA lt_parameter_docu TYPE TABLE OF rsfdo.
 
 lv_date = sy-datum.
 lv_time = sy-uzeit.
@@ -104,7 +108,7 @@ CONCATENATE 'ZCUR' lv_pool_name INTO lv_func_name.
 CALL FUNCTION 'RS_FUNCTION_POOL_INSERT'
   EXPORTING
     function_pool       = lv_pool_name
-    short_text          = 'Curried test by Jerry'       "#EC NOTEXT
+    short_text          = 'Curry test by Jerry'       "#EC NOTEXT
     devclass            = '$TMP'                        "#EC NOTEXT
     responsible         = sy-uname
     suppress_corr_check = space
@@ -122,36 +126,30 @@ CALL FUNCTION 'RS_FUNCTION_POOL_INSERT'
       UNDEFINED_ERROR = 11
     OTHERS              = 12.
 IF sy-subrc <> 0.
-  rv_result = sy-subrc.
-  WRITE:/ 'Functio group was not created!' .
+  WRITE:/ 'Functio group was not created: ' , sy-subrc .
   RETURN.
 ENDIF.
 
-wa_rsimp-parameter = 'P1_I'.                                "#EC NOTEXT
-wa_rsimp-default   = '10'.                                  "#EC NOTEXT
+LOOP AT IT_PARSED_ARGUMENT ASSIGNING FIELD-SYMBOL(<argu>).
+wa_rsimp-parameter = <argu>-arg_name.                                "#EC NOTEXT
 wa_rsimp-reference = 'X'.                                   "#EC NOTEXT
 wa_rsimp-typ       = 'I'.                                   "#EC NOTEXT
-APPEND wa_rsimp TO it_import_parameter.
-
-wa_rscha-parameter = 'P1_C'.                                "#EC NOTEXT
-wa_rscha-reference     = 'X'.                                   "#EC NOTEXT
-wa_rscha-typ       = 'I'.                              "#EC NOTEXT
-APPEND wa_rscha TO it_changing_parameter.
-
+APPEND wa_rsimp TO lt_import_parameter.
+ENDLOOP.
 CALL FUNCTION 'FUNCTION_CREATE'
   EXPORTING
     funcname                = lv_func_name
     function_pool           = lv_pool_name
-    short_text              = 'TEST_FUNC_FB'                 "#EC NOTEXT
+    short_text              = 'Curry test by Jerry'                 "#EC NOTEXT
   IMPORTING
     function_include        = l_function_include
   TABLES
-    exception_list          = it_exception_list
-    export_parameter        = it_export_parameter
-    import_parameter        = it_import_parameter
-    tables_parameter        = it_tables_parameter
-    changing_parameter      = it_changing_parameter
-    parameter_docu          = it_parameter_docu
+    exception_list          = lt_exception_list
+    export_parameter        = lt_export_parameter
+    import_parameter        = lt_import_parameter
+    tables_parameter        = lt_tables_parameter
+    changing_parameter      = lt_changing_parameter
+    parameter_docu          = lt_parameter_docu
   EXCEPTIONS
     double_task             = 1
     error_message           = 2
@@ -166,6 +164,13 @@ IF sy-subrc <> 0.
   RETURN.
 ENDIF.
 
+APPEND INITIAL LINE TO MT_CURRIED_FUNC ASSIGNING FIELD-SYMBOL(<curried_fm>).
+
+<curried_fm>-func_name = mv_org_func.
+<curried_fm>-curried_func = lv_func_name.
+<curried_fm>-curried_arg = IT_PARSED_ARGUMENT.
+
+rv_generated_include = l_function_include.
 READ REPORT l_function_include INTO lt_codeline.
 
 DELETE lt_codeline INDEX lines( lt_codeline ).
@@ -184,6 +189,7 @@ COMMIT WORK AND WAIT.
 * | Instance Private Method ZCL_CURRY->PARSE_ARGUMENT
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_ARGUMENT                    TYPE        STRING_TABLE
+* | [<---] ET_PARSED_ARGUMENT             TYPE        TT_CURRIED_ARGUMENT
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method PARSE_ARGUMENT.
     data: lt_argu TYPE TABLE OF FUPARAREF,
@@ -201,6 +207,8 @@ COMMIT WORK AND WAIT.
         <parsed_argu>-arg_value = <curried>.
       ENDIF.
     ENDLOOP.
+
+    et_parsed_argument = lt_parsed.
   endmethod.
 
 
@@ -212,5 +220,7 @@ COMMIT WORK AND WAIT.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method RUN.
      mv_org_func = IV_FUNC.
+     PARSE_ARGUMENT( EXPORTING IT_ARGUMENT = IT_ARGUMENT
+                     IMPORTING et_parsed_argument = data(lt_parsed) ).
   endmethod.
 ENDCLASS.
