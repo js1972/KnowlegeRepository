@@ -18,6 +18,7 @@ CLASS zcl_curry DEFINITION
     TYPES:
       BEGIN OF ty_curried_argument,
         arg_name  TYPE string,
+        arg_type  TYPE RS38L_TYP,
         arg_value TYPE string,
       END OF ty_curried_argument .
     TYPES:
@@ -26,6 +27,7 @@ CLASS zcl_curry DEFINITION
       BEGIN OF ty_curried_func,
         func_name    TYPE rs38l_fnam,
         curried_func TYPE rs38l_fnam,
+        function_Group TYPE rs38l-area,
         curried_arg  TYPE tt_curried_argument,
       END OF ty_curried_func .
     TYPES:
@@ -172,7 +174,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     LOOP AT it_parsed_argument ASSIGNING FIELD-SYMBOL(<argu>).
       wa_rsimp-parameter = <argu>-arg_name.                 "#EC NOTEXT
       wa_rsimp-reference = 'X'.                             "#EC NOTEXT
-      wa_rsimp-typ       = 'I'.                             "#EC NOTEXT
+      wa_rsimp-typ       = 'STRING'.                             "#EC NOTEXT
       APPEND wa_rsimp TO lt_import_parameter.
     ENDLOOP.
     CALL FUNCTION 'FUNCTION_CREATE'
@@ -208,6 +210,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     <curried_fm>-func_name = mv_org_func.
     <curried_fm>-curried_func = lv_func_name.
     <curried_fm>-curried_arg = it_parsed_argument.
+    <curried_fm>-function_group = lv_pool_name.
 
     rv_generated_include = l_function_include.
 
@@ -233,6 +236,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
       APPEND INITIAL LINE TO lt_parsed ASSIGNING FIELD-SYMBOL(<parsed_argu>).
       CLEAR: <parsed_argu>.
       <parsed_argu>-arg_name = <form_argu>-parameter.
+      <parsed_argu>-arg_type = <form_argu>-structure.
       READ TABLE it_argument ASSIGNING FIELD-SYMBOL(<curried>) INDEX sy-tabix.
       IF sy-subrc = 0.
         <parsed_argu>-arg_value = <curried>.
