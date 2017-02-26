@@ -1,63 +1,64 @@
-class ZCL_CURRY definition
-  public
-  final
-  create public .
+CLASS zcl_curry DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  class-methods CLASS_CONSTRUCTOR .
-  class-methods CURRY
-    importing
-      !IV_FUNC type RS38L_FNAM
-      !IT_ARGUMENT type STRING_TABLE
-    returning
-      value(RV_CURRIED_FUNC) type RS38L_FNAM .
-  class-methods CLEANUP .
+    CLASS-METHODS class_constructor .
+    CLASS-METHODS curry
+      IMPORTING
+        !iv_func               TYPE rs38l_fnam
+        !it_argument           TYPE string_table
+      RETURNING
+        VALUE(rv_curried_func) TYPE rs38l_fnam .
+    CLASS-METHODS cleanup .
   PROTECTED SECTION.
-private section.
+  PRIVATE SECTION.
 
-  types:
-    BEGIN OF ty_curried_argument,
+    TYPES:
+      BEGIN OF ty_curried_argument,
         arg_name  TYPE string,
         arg_type  TYPE rs38l_typ,
         arg_value TYPE string,
       END OF ty_curried_argument .
-  types:
-    tt_curried_argument TYPE TABLE OF ty_curried_argument WITH KEY arg_name .
-  types:
-    BEGIN OF ty_curried_func,
+    TYPES:
+      tt_curried_argument TYPE TABLE OF ty_curried_argument WITH KEY arg_name .
+    TYPES:
+      BEGIN OF ty_curried_func,
         func_name      TYPE rs38l_fnam,
         curried_func   TYPE rs38l_fnam,
         function_group TYPE rs38l-area,
         curried_arg    TYPE tt_curried_argument,
       END OF ty_curried_func .
-  types:
-    tt_curried_func TYPE TABLE OF ty_curried_func WITH KEY func_name curried_func .
+    TYPES:
+      tt_curried_func TYPE TABLE OF ty_curried_func WITH KEY func_name curried_func .
 
-  data MT_CURRIED_FUNC type TT_CURRIED_FUNC .
-  data MV_ORG_FUNC type RS38L_FNAM .
-  class-data SO_INSTANCE type ref to ZCL_CURRY .
+    DATA mt_curried_func TYPE tt_curried_func .
+    DATA mv_org_func TYPE rs38l_fnam .
+    CLASS-DATA so_instance TYPE REF TO zcl_curry .
+    DATA mv_curried TYPE rs38l_fnam .
 
-  methods ADAPT_SOURCE_CODE
-    importing
-      !IV_INCLUDE type PROGNAME .
-  methods RUN
-    importing
-      !IV_FUNC type RS38L_FNAM
-      !IT_ARGUMENT type STRING_TABLE
-    returning
-      value(RV_CURRIED_FUNC) type RS38L_FNAM .
-  methods PARSE_ARGUMENT
-    importing
-      !IT_ARGUMENT type STRING_TABLE
-    exporting
-      !ET_PARSED_ARGUMENT type TT_CURRIED_ARGUMENT .
-  methods GENERATE_CURRIED_FM
-    importing
-      !IT_PARSED_ARGUMENT type TT_CURRIED_ARGUMENT
-    returning
-      value(RV_GENERATED_INCLUDE) type PROGNAME .
-  methods _CLEANUP .
+    METHODS adapt_source_code
+      IMPORTING
+        !iv_include TYPE progname .
+    METHODS run
+      IMPORTING
+        !iv_func               TYPE rs38l_fnam
+        !it_argument           TYPE string_table
+      RETURNING
+        VALUE(rv_curried_func) TYPE rs38l_fnam .
+    METHODS parse_argument
+      IMPORTING
+        !it_argument        TYPE string_table
+      EXPORTING
+        !et_parsed_argument TYPE tt_curried_argument .
+    METHODS generate_curried_fm
+      IMPORTING
+        !it_parsed_argument         TYPE tt_curried_argument
+      RETURNING
+        VALUE(rv_generated_include) TYPE progname .
+    METHODS _cleanup .
 ENDCLASS.
 
 
@@ -81,7 +82,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 
     APPEND |DATA: lt_ptab TYPE abap_func_parmbind_tab.| TO lt_codeline.
     APPEND |DATA: ls_para LIKE LINE OF lt_ptab.| TO lt_codeline.
-    lt_parsed_argu = mt_curried_func[ func_name = mv_org_func ]-curried_arg.
+    lt_parsed_argu = mt_curried_func[ func_name = mv_org_func curried_func = mv_curried ]-curried_arg.
     LOOP AT lt_parsed_argu ASSIGNING FIELD-SYMBOL(<argu>).
       APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
 
@@ -122,7 +123,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD cleanup.
-    SO_INSTANCE->_cleanup( ).
+    so_instance->_cleanup( ).
   ENDMETHOD.
 
 
@@ -192,7 +193,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     LOOP AT it_parsed_argument ASSIGNING FIELD-SYMBOL(<argu>).
       wa_rsimp-parameter = <argu>-arg_name.                 "#EC NOTEXT
       wa_rsimp-reference = 'X'.
-      wa_rsimp-optional = 'X'.                            "#EC NOTEXT
+      wa_rsimp-optional = 'X'.                              "#EC NOTEXT
       wa_rsimp-typ       = 'STRING'.                        "#EC NOTEXT
       APPEND wa_rsimp TO lt_import_parameter.
     ENDLOOP.
@@ -227,7 +228,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
     APPEND INITIAL LINE TO mt_curried_func ASSIGNING FIELD-SYMBOL(<curried_fm>).
 
     <curried_fm>-func_name = mv_org_func.
-    <curried_fm>-curried_func = lv_func_name.
+    mv_curried = <curried_fm>-curried_func = lv_func_name.
     <curried_fm>-curried_arg = it_parsed_argument.
     <curried_fm>-function_group = lv_pool_name.
 
@@ -279,7 +280,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
                     IMPORTING et_parsed_argument = DATA(lt_parsed) ).
     DATA(lv_include) = generate_curried_fm( lt_parsed ).
     adapt_source_code( lv_include ).
-    RV_CURRIED_FUNC = MT_CURRIED_FUNC[ func_name = mv_org_func ]-curried_func.
+    rv_curried_func = mv_curried.
   ENDMETHOD.
 
 
@@ -287,7 +288,7 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 * | Instance Private Method ZCL_CURRY->_CLEANUP
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD _CLEANUP.
+  METHOD _cleanup.
     LOOP AT mt_curried_func ASSIGNING FIELD-SYMBOL(<curried>).
 
       CALL FUNCTION 'FUNCTION_DELETE'
@@ -299,6 +300,6 @@ CLASS ZCL_CURRY IMPLEMENTATION.
           pool = <curried>-function_group.
     ENDLOOP.
 
-    CLEAR: MT_CURRIED_FUNC.
+    CLEAR: mt_curried_func.
   ENDMETHOD.
 ENDCLASS.
