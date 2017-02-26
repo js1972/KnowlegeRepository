@@ -56,7 +56,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_curry IMPLEMENTATION.
+CLASS ZCL_CURRY IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -65,18 +65,35 @@ CLASS zcl_curry IMPLEMENTATION.
 * | [--->] IV_INCLUDE                     TYPE        PROGNAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD adapt_source_code.
-    DATA:lt_codeline        TYPE STANDARD TABLE OF char255.
+    DATA:lt_codeline        TYPE STANDARD TABLE OF char255,
+         lv_argu TYPE string,
+         lt_parsed_argu     TYPE tt_curried_argument.
     READ REPORT iv_include INTO lt_codeline.
 
     DELETE lt_codeline INDEX lines( lt_codeline ).
     DELETE lt_codeline WHERE table_line IS INITIAL.
 
+    APPEND |DATA: lt_ptab TYPE abap_func_parmbind_tab.| TO lt_codeline.
+    APPEND |DATA: ls_para LIKE LINE OF lt_ptab.| TO lt_codeline.
+    lt_parsed_argu = MT_CURRIED_FUNC[ func_name = mv_org_func ]-curried_arg.
+    LOOP AT lt_parsed_argu ASSIGNING FIELD-SYMBOL(<argu>).
+       APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
+       APPEND | _{ <argu>-arg_name } = { <argu>-arg_name } | TO lt_codeline.
 
-    APPEND | WRITE:/ 'OK'.| TO lt_codeline.
-    APPEND | WRITE:/ P1_I.| TO lt_codeline.
-    APPEND 'ENDFUNCTION.' TO lt_codeline.
-    INSERT REPORT iv_include FROM lt_codeline.
-    COMMIT WORK AND WAIT.
+       lv_argu = | ls_para = value #( name = { <argu>-arg_name } | &&
+          | kind  = abap_func_exporting value = REF #( _{ <argu>-arg_name } ) ).|.
+       APPEND lv_argu TO lt_codeline.
+       APPEND | APPEND ls_para TO lt_ptab. | TO lt_codeline.
+    ENDLOOP.
+
+ APPEND 'TRY.' TO lt_codeline.
+ APPEND |CALL FUNCTION { mv_org_func } PARAMETER-TABLE ptab.| TO lt_codeline.
+ APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
+ APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
+ APPEND 'ENDTRY.' TO lt_codeline.
+ APPEND 'ENDFUNCTION.' TO lt_codeline.
+ INSERT REPORT iv_include FROM lt_codeline.
+ COMMIT WORK AND WAIT.
   ENDMETHOD.
 
 
