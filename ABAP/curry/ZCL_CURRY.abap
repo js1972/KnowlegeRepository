@@ -34,6 +34,11 @@ private section.
   data MT_CURRIED_FUNC type TT_CURRIED_FUNC .
   data MV_ORG_FUNC type RS38L_FNAM .
   class-data SO_INSTANCE type ref to ZCL_CURRY .
+
+  methods RUN
+    importing
+      !IV_FUNC type RS38L_FNAM
+      !IT_ARGUMENT type STRING_TABLE .
 ENDCLASS.
 
 
@@ -58,5 +63,17 @@ CLASS ZCL_CURRY IMPLEMENTATION.
 * | [<-()] RV_CURRIED_FUNC                TYPE        RS38L_FNAM
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method CURRY.
+    so_instance->run( IV_FUNC = IV_FUNC IT_ARGUMENT = IT_ARGUMENT ).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CURRY->RUN
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_FUNC                        TYPE        RS38L_FNAM
+* | [--->] IT_ARGUMENT                    TYPE        STRING_TABLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method RUN.
+     mv_org_func = IV_FUNC.
   endmethod.
 ENDCLASS.
