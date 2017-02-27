@@ -7,14 +7,14 @@
 
 	const curry = fn => (...args) => fn.bind(null, ...args);
   
-    const map = curry((fn, arr) => arr.map(fn));
+  const map = curry((fn, arr) => arr.map(fn));
 	const join = curry((str, arr) => arr.join(str));
 	const toLowerCase = str => str.toLowerCase();
 	const split = curry((splitOn, str) => str.split(splitOn));
 
 	const conversion2 = input => join('-')(map(toLowerCase)(split(' ')(input)));
 
-  	// console.log(conversion2("Jerry Java"));
+  console.log(conversion2("Jerry Java"));
 
   	// Jerry 2017-02-25 2:37PM 第二个 =>x是偏参数
   	// const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
