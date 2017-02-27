@@ -25,19 +25,22 @@ CLASS ZCL_COMMAND_LOWER IMPLEMENTATION.
          LOOP AT mt_string ASSIGNING FIELD-SYMBOL(<line>).
         TRANSLATE <line> TO LOWER CASE.
      ENDLOOP.
+
+     zif_command~result_Type = 'STRING_TABLE'.
+
   endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_COMMAND_LOWER->ZIF_COMMAND~GET_NEXT
+* | Instance Private Method ZCL_COMMAND_LOWER->ZIF_COMMAND~GET_NEXT
 * +-------------------------------------------------------------------------------------------------+
-* | [<-()] RO_NEXT                        TYPE REF TO ZIF_COMMAND
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_COMMAND~GET_NEXT.
     ZIF_COMMAND~do( ).
-    ZIF_COMMAND~next->set_task( mt_string ).
 
     ro_next = ZIF_COMMAND~next.
+    CHECK ZIF_COMMAND~next IS NOT INITIAL.
+    ZIF_COMMAND~next->set_task( mt_string ).
   endmethod.
 
 
@@ -52,9 +55,8 @@ CLASS ZCL_COMMAND_LOWER IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_COMMAND_LOWER->ZIF_COMMAND~SET_NEXT
+* | Instance Private Method ZCL_COMMAND_LOWER->ZIF_COMMAND~SET_NEXT
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IO_NEXT                        TYPE REF TO ZIF_COMMAND
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_COMMAND~SET_NEXT.
      ZIF_COMMAND~next = io_next.
