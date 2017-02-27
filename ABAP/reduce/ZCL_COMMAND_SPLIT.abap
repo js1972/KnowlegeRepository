@@ -24,20 +24,22 @@ CLASS ZCL_COMMAND_SPLIT IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_COMMAND~DO.
     SPLIT mv_string_to_split AT SPACE INTO TABLE mt_splited.
+    zif_command~result_Type = 'STRING_TABLE'.
   endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_COMMAND_SPLIT->ZIF_COMMAND~GET_NEXT
+* | Instance Private Method ZCL_COMMAND_SPLIT->ZIF_COMMAND~GET_NEXT
 * +-------------------------------------------------------------------------------------------------+
-* | [<-()] RO_NEXT                        TYPE REF TO ZIF_COMMAND
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_COMMAND~GET_NEXT.
 
     ZIF_COMMAND~do( ).
+    ro_next = ZIF_COMMAND~next.
+
+    CHECK ZIF_COMMAND~next IS NOT INITIAL.
     ZIF_COMMAND~next->set_task( mt_splited ).
 
-    ro_next = ZIF_COMMAND~next.
   endmethod.
 
 
@@ -52,9 +54,8 @@ CLASS ZCL_COMMAND_SPLIT IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_COMMAND_SPLIT->ZIF_COMMAND~SET_NEXT
+* | Instance Private Method ZCL_COMMAND_SPLIT->ZIF_COMMAND~SET_NEXT
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IO_NEXT                        TYPE REF TO ZIF_COMMAND
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_COMMAND~SET_NEXT.
     ZIF_COMMAND~next = io_next.
