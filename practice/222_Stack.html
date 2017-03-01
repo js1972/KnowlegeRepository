@@ -5,6 +5,7 @@ function Stack() {
     this.top = 0;
     this.push = push;
     this.pop = pop;
+    this.length = length;
     this.peek = peek;
 }
 
@@ -28,7 +29,21 @@ function clear() {
     this.top = 0;
 }
 
+function mulBase(num, base) {
+    var s = new Stack();
+    do {
+        s.push(num % base);
+        num = Math.floor(num /= base);
+    } while (num > 0);
+    var converted = "";
+    while (s.length() > 0) {
+        converted += s.pop();
+    }
+    return converted;
+}
 
+var a = mulBase(3, 2);
+console.log("value: " + a);
 </script>
 
 </html>
