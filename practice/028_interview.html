@@ -16,5 +16,40 @@ console.log(
    (foo.bar = foo.bar)(),
    (foo.bar, foo.bar)()
 ); // 20 20 10 10
+
+function spacify(str) {
+      return str.split('').join(' ');
+}
+
+console.log(spacify('hello world'));
+
+// 接下来，我会问侯选人，如何把这个方法放入String对象上面，例如：
+// 'hello world'.spacify();
+
+String.prototype.spacify = function(){
+      return this.split('').join(' ');
+    };
+
+console.log('hello ABAP'.spacify());
+
+function log(){
+      console.log.apply(console, arguments);
+    };
+
+log("Jerry", "2");
+
+/*
+我就会说我要改变我调用log的方式，传入多个参数。我会强调我传入参数的个数是不定的，可不止两个。这里我举了一个传两个参数的例子。
+好的侯选人知道arugments是一个伪数组，然后会将他转化成为标准数组。通常方法是使用Array.prototype.slice，像这样：
+
+*/
+function log(){
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift('(app)');
+
+      console.log.apply(console, args);
+    };
+
+
 </script>
 </html>
