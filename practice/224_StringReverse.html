@@ -1,0 +1,29 @@
+<html>
+<script type="text/javascript">
+	function reverseString(str) { 
+    var tmp = ""; 
+    for (var i = str.length - 1; i >= 0; i--) { 
+        tmp += str.charAt(i); 
+    } 
+    return tmp; 
+} 
+
+function reverseString2(s) {
+    var arr = s.split('');
+    var i = 0, j = arr.length - 1;
+    while (i < j) {
+        var t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+        i++;
+        j--;
+    }
+    return arr.join('');
+}
+
+var jerry = "Hello World";
+
+console.log(reverseString(jerry));
+console.log(reverseString2(jerry));
+</script>
+</html>
