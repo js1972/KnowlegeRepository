@@ -50,6 +50,31 @@ function log(){
       console.log.apply(console, args);
     };
 
+var User = {
+  count: 1,
+
+  getCount: function() {
+    return this.count;
+  }
+};
+
+ console.log(User.getCount());
+/*
+正确的答案是1和undefined。你会很吃惊，因为有很多人被这种最基础的上下文问题绊倒。func是在winodw的上下文中被执行的，所以会访问不到count属性。我向侯选人解释了这点，然后问他们怎么样保证User总是能访问到func的上下文，即返回正即的值：1
+*/
+    var func = User.getCount;
+    console.log(func());
+    Function.prototype.bind2 = Function.prototype.bind || function(context){
+      var self = this;
+
+      return function(){
+        return self.apply(context, arguments);
+      };
+    }
+
+var func2 = User.getCount.bind2(User);
+    console.log(func2());
+
 
 </script>
 </html>
