@@ -1,0 +1,23 @@
+<html>
+<script>
+function palindrome(str) {
+    // 删除字符串中不必要的字符
+    var re = /[W_]/g;
+    // 将字符串变成小写字符
+    var lowRegStr = str.toLowerCase().replace(re, '');
+    // 如果字符串lowRegStr的length长度为0时，字符串即是palindrome
+    if (lowRegStr.length === 0) {
+        return true;
+    }
+    // 如果字符串的第一个和最后一个字符不相同，那么字符串就不是palindrome
+    if (lowRegStr[0] !== lowRegStr[lowRegStr.length - 1]) {
+        return false;
+    } else {
+        return palindrome(lowRegStr.slice(1, lowRegStr.length - 1));
+    }
+}
+
+console.log(palindrome("Jerry"));
+console.log(palindrome("JerreJ"));
+</script>
+</html>
