@@ -5,5 +5,15 @@ var alert = console.log;
 var reg = /\s.+/;
 var str='This is a test String.';
 alert(reg.exec(str)); // 返回“is a test String，正则的意思是匹配第一个空格以及其后的所有非换行字符。
+
+/*
+同样，\S表示非空格字符。
+匹配结果为This，当遇到第一个空格之后，正则就停止匹配了。
+*/
+
+var reg1 = /\S+/;
+var str1='This is a test String.';
+alert(reg1.exec(str1));
+
 </script>
 </html>
