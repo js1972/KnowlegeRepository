@@ -81,5 +81,20 @@ Array.prototype.jerrymap2 = f =>
 
 var d = [].jerrymap(x=>x+1)(a);
 
+function Person(name){
+    this.name = name;
+}
+
+var aName = ["Jerry", "Ji"];
+
+var result = aName.map(function(sName){
+    return new Person(sName);
+});
+
+var arr = [1,2,3];
+arr.forEach(function(i){
+    console.log(i)
+});
+debugger;
 </script>
 </html>
