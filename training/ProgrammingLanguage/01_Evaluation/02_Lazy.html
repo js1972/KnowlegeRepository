@@ -1,13 +1,39 @@
 <html>
 <script type="text/javascript">
-/*
-// false && (anything)  短路计算的结果为false.
-//true || (anything)  短路计算的结果为 true
-*/
-var a = false && ( console.log("Java"))  // console will not be evaluated
-var b = true && ( console.log("ABAP"))  // console will be evaluated
 
-var c = false || ( console.log("javascript")) // Javascript
-var d = true || ( console.log("Scala")) 
+// fibonacci function
+// http://stackoverflow.com/questions/17329083/javascript-lazy-evaluation-fibonacci-function
+
+var fib = function (a, b) {
+  var c = a + b
+  return { 
+  	       "current": c, 
+           "next": function () { 
+           	  return fib(b, c) 
+           	} 
+         }
+}
+
+var x = fib(1,1);
+console.log(x.current); // 2
+
+var x = x.next();
+
+console.log(x.current); // 3
+
+var take = function(n, cons) {
+
+    var res = []
+    var mem = cons
+
+    for (var i = 0; i < n; i++) {
+      res.push(mem.current)
+      mem = mem.next()
+    }
+
+    return res
+}
+
+console.log(take(10, fib(1,1)));
 </script>
 </html>
