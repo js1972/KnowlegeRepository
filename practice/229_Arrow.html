@@ -13,5 +13,23 @@ console.log(func1()); // 得到 3
 var func2 = (x, ...args) => { console.log(args) };
 func2(1,2,3); // 输出 [2, 3]
 
+/*箭头函数允许多行语句或者单行表达式作为函数体。多行语句要用 {} 括起来；单行表达式不需要 {}，并且会作为函数返回值：
+JS*/
+
+x => { return x * x }; // 函数返回 x * x
+x => x * x; // 同上一行
+x => return x * x; // SyntaxError 报错，不能省略 {}
+x => { x * x }; // 合法，没有定义返回值，返回 undefined
+
+var o = {
+    x : 1,
+    func : function() { console.log(this.x) },
+    test : function() {
+        setTimeout(() => { this.func() }, 100);
+    }
+};
+
+o.test(); // 箭头函数的 this 始终指向函数定义时的 this，而非执行时。
+
 </script>
 </html>
