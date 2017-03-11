@@ -32,5 +32,15 @@ var str='zhufengpeixun';
 alert(reg.exec(str));
 //返回zh,z,h // ,zh是整个正则匹配的内容，z是第一个括号里的子正则表达式匹配的内容，h是第二个括号匹配的内容。
 
+var reg = /(\w)\1/;
+var str='zhufengpeixun';
+alert(reg.exec(str));
+/*则会返回null。这里的“\1”就叫做反向引用，它表示的是第一个括号内的子正则表达式匹配的内容。在上面的例子中，第一个括号里的(\w)匹配了z，因此“\1”就同样表示z了，在余下的字符串里自然找不到z了。与第二个例子对比就可以发现，“\1”是等同于“第1个括号匹配的内容”，而不是“第一个括号的内容”。
+*/
+
+var reg = /(\w)\1/;
+var str='bbs.zhufengpeixun.cn';
+alert(reg.exec(str));
+// 这个正则则会匹配到bb,b。同样，前面有几个子正则表达式我们就可以使用几个反向引用。
 </script>
 </html>
