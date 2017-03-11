@@ -44,6 +44,8 @@ JavaScript, Ruby, Python
 
 * Weak Type: Type of variable can be changed in the runtime. Assignment and initialization is allowed among variables with different type is allowed. 
 
+![image](https://cloud.githubusercontent.com/assets/5669954/23824144/21345b86-06ac-11e7-9b0b-410a25b3015b.png)
+
 
 
 
