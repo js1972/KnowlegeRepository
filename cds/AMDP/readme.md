@@ -1,0 +1,1 @@
+AMDP can declare local variable in method implementation.
