@@ -30,34 +30,34 @@ LazySingleton.getInstance().method();
 console.log("LazySingleton: " + LazySingleton.getInstance().getAttr()); 
 
 function Universe() {
-    // 判断是否存在实例
+
     if (typeof Universe.instance === 'object') {
         return Universe.instance;
     }
-    // 其它内容
+
     this.start_time = 0;
     this.bang = "Big";
-    // 缓存
+
     Universe.instance = this;
-    // 隐式返回this
+    // return this implicitly
 }
-// 测试
+
+// test
 var uni = new Universe();
 var uni2 = new Universe();
 console.log(uni === uni2); // true
 
 function Universe2() {
-    // 缓存的实例
+    // instance cached
     var instance = this;
-    // 其它内容
+
     this.start_time = 0;
     this.bang = "Big";
-    // 重写构造函数
     Universe2 = function () {
         return instance;
     };
 }
-// 测试
+
 var un1i = new Universe2();
 var un1i2 = new Universe2();
 un1i.bang = "123";
@@ -72,12 +72,12 @@ var Universe3;
             return instance;
         }
         instance = this;
-        // 其它内容
+
         this.start_time = 0;
         this.bang = "Big";
     };
 } ());
-//测试代码
+
 var a = new Universe3();
 var b = new Universe3();
 alert(a === b); // true
