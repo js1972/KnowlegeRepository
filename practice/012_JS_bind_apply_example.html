@@ -89,12 +89,32 @@
     !(function test(){
     var bi = con.bind({a: 1}, "Jerry");
     bi();
-    })();
+    })(); // result in console: hello: Jerry
 
     function con(a){
         console.log("hello: " + a);
     }
-// result in console: hello: Jerry
+
+    /*偏函数（Partial Functions）
+Partial Functions也叫Partial Applications，这里截取一段关于偏函数的定义：
+
+Partial application can be described as taking a function that accepts some number of arguments, binding values to one or more of those arguments, and returning a new function that only accepts the remaining, un-bound arguments.
+这是一个很好的特性，使用bind()我们设定函数的预定义参数，然后调用的时候传入其他参数即可：*/
+
+  function list() {
+    return Array.prototype.slice.call(arguments);
+  }
+
+var list1 = list(1, 2, 3); // [1, 2, 3]
+  console.log("list: " + list1);
+  
+  // 预定义参数37
+  var leadingThirtysevenList = list.bind(undefined, 37);
+
+  var list2 = leadingThirtysevenList(); // [37]
+  console.log("list2: " + list2);
+  var list3 = leadingThirtysevenList(1, 2, 3); // [37, 1, 2, 3]
+  console.log("list: " + list3);
 </script>
 </body>
 </html>
