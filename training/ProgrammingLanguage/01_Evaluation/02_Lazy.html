@@ -1,0 +1,13 @@
+<html>
+<script type="text/javascript">
+/*
+// false && (anything)  短路计算的结果为false.
+//true || (anything)  短路计算的结果为 true
+*/
+var a = false && ( console.log("Java"))  // console will not be evaluated
+var b = true && ( console.log("ABAP"))  // console will be evaluated
+
+var c = false || ( console.log("javascript")) // Javascript
+var d = true || ( console.log("Scala")) 
+</script>
+</html>
