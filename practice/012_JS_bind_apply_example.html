@@ -86,6 +86,15 @@
     curryResult("Hello", "World");
     curryResult("Hello2", "World2");
 
+    !(function test(){
+    var bi = con.bind({a: 1}, "Jerry");
+    bi();
+    })();
+
+    function con(a){
+        console.log("hello: " + a);
+    }
+// result in console: hello: Jerry
 </script>
 </body>
 </html>
