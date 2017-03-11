@@ -42,5 +42,10 @@ var reg = /(\w)\1/;
 var str='bbs.zhufengpeixun.cn';
 alert(reg.exec(str));
 // 这个正则则会匹配到bb,b。同样，前面有几个子正则表达式我们就可以使用几个反向引用。
+
+var reg = /(\w)(\w)\2\1/;
+var str='woow';
+alert(reg.exec(str));
+/*会匹配成功，因为第一个括号匹配到w，第二个括号匹配到o，而\2\1则表示ow，恰好匹配了字符串的最后两个字符。*/
 </script>
 </html>
