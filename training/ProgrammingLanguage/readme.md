@@ -20,7 +20,7 @@ Java, C, C++, C#, ABAP
 * dynamic typed language: variable data type is determined and fixed in runtime.
 ```JavaScript
 	function add(a,b){
-		return a+b;
+		return a + b;
 	}
 	add(1,2);
 	add('1',2);
@@ -31,8 +31,20 @@ JavaScript, Ruby, Python
 * Static programming language: Data structure could not be changed in the runtime.
 
 * Dynamic programming language: variable data structure ( attribute and method of a function -consider JavaScript function object ) could be changed in the runtime. 
-
 JavaScript, Ruby, Python
+
+# Strong Type Vs Weak Type
+
+* Strong Type: Once the type of variable is determined, it could not be changed any more. No assignment and initialization is allowed among variables with different type. This is only possible via implicitly / explicipt conversion. 
+
+![clipboard1](https://cloud.githubusercontent.com/assets/5669954/23824112/be05946c-06ab-11e7-9833-d82755d55244.png)
+
+![clipboard2](https://cloud.githubusercontent.com/assets/5669954/23824111/bddc06ba-06ab-11e7-844e-5b7aed948b57.png)
+
+
+* Weak Type: Type of variable can be changed in the runtime. Assignment and initialization is allowed among variables with different type is allowed. 
+
+
 
 
 
