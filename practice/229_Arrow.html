@@ -1,0 +1,17 @@
+<html>
+<script>
+/*
+https://imququ.com/post/arrow-function-in-es6.html
+() => { ... } // 零个参数用 () 表示；
+x => { ... } // 一个参数可以省略 ()；
+(x, y) => { ... } // 多参数不能省略 ()；
+*/
+
+var func1 = (x = 1, y = 2) => x + y;
+console.log(func1()); // 得到 3
+
+var func2 = (x, ...args) => { console.log(args) };
+func2(1,2,3); // 输出 [2, 3]
+
+</script>
+</html>
