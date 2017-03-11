@@ -15,5 +15,22 @@ var reg1 = /\S+/;
 var str1='This is a test String.';
 alert(reg1.exec(str1));
 
+var reg = /\w+/;
+var str='.className';
+alert(reg.exec(str));
+// 结果显示匹配了字符串中的className，只有第一个“.”唯一的非单词字符没有匹配。
+
+// \W表示非单词字符，等效于[^a-zA-Z0-9_]
+
+var reg = /\W+/;
+var str='正则教程';
+alert(reg.exec(str));
+// 返回完整的字符串，因为，中文算作是非单词字符。
+
+var reg = /(\w)(\w)/;
+var str='zhufengpeixun';
+alert(reg.exec(str));
+//返回zh,z,h // ,zh是整个正则匹配的内容，z是第一个括号里的子正则表达式匹配的内容，h是第二个括号匹配的内容。
+
 </script>
 </html>
