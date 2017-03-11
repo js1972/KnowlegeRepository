@@ -35,5 +35,36 @@ var take = function(n, cons) {
 }
 
 console.log(take(10, fib(1,1)));
+
+// generator: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
+var fib_generator = function *(){
+  var current = 0, next = 1;
+  while(true)
+  {
+     [next, current] = [next+current, next];
+     yield current;
+  }
+}
+
+var fib = fib_generator();
+
+// below is the sample code prints values uptill 55
+for(var i=0; i<10; i++)
+{
+   console.log(fib.next().value);
+}
+
+/*
+Lazy evaluation allows control structures to be defined normally, and not as primitives or compile-time techniques. If (i) or (j) have side effects or introduce run time errors, the subtle differences between (l) and (l') can be complex. 
+
+It is usually possible to introduce user-defined lazy control structures in eager languages as functions, though they may depart from the language's syntax for eager evaluation: Often the involved code bodies (like (i) and (j)) need to be wrapped in a function value, so that they are executed only when called.
+
+Short-circuit evaluation of Boolean control structures is sometimes called lazy.
+*/
+
+function test(a,b,c){
+	if
+}
+
 </script>
 </html>

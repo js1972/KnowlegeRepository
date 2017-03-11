@@ -7,6 +7,7 @@ function f(x, y, z){
 		console.log(typeof z === "function" ? z():z);
 }
 // Jerry 2017-03-11 6:10PM - this is actually not a lazy evaluation example
+// 2017-03-11 7:33PM My understanding is wrong. JavaScript is a eager language
  f(true,  ( console.log("Big calculation1"), 3+2), console.log("Big calculation2"), 4+5);
 
 var a = function(){
@@ -18,7 +19,11 @@ var b = function() {
 	console.log("Big calculation2");
 	return 4 + 5;
 }
-//f(true, a, b);
 
+console.log("second time");
+f(true, a, b);
+
+console.log("third time");
+f(true, () => { console.log("Big1"); return 5 } , () => { console.log("Big2"); return 9 });
 </script>
 </html>
