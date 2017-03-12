@@ -1,4 +1,5 @@
 <html>
+<input type="text" id="input"/>
 <script type="text/javascript">
 
 /* Simple JavaScript Inheritance
@@ -100,6 +101,39 @@ jerry.Say(); //'Student-xiaojerry can Say!'
 jerry.Sleep();//'Student-xiaojerry can Sleep!'
             // 'And sleep early!'
 jerry.DoHomeWork(); //'Student-xiaojerry can do homework!'
+
+var JudgeInput = Class.extend({
+  init: function(config){
+    this.input = document.getElementById(config.id);
+    this._bind();
+  },
+  _getValue: function(){
+    return this.input.value;
+  },
+  _render: function(){
+    var value = this._getValue();
+    if(!document.getElementById("show")){
+      var append = document.createElement('span');
+      append.setAttribute("id", "show");
+      input.parentNode.appendChild(append);
+    }
+    var show = document.getElementById("show");
+    if(/^[0-9a-zA-Z]+$/.exec(value)){
+      show.innerHTML = 'Pass!';
+    }else{
+      show.innerHTML = 'Failed!';
+    }
+  },
+  _bind: function(){
+    var self = this;
+    self.input.addEventListener('keyup', function(){
+      self._render();
+    });
+  }
+});
+window.onload = function(){
+  new JudgeInput({id: "input"});
+}
 
 </script>
 </html>
