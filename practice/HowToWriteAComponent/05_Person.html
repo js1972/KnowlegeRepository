@@ -85,5 +85,16 @@ Student.prototype.constructor = Student;
 用上面的继承代码替换掉之前的 Student.prototype = new Person();
 
 */
+
+// final encapsulation
+function classInherit(subClass, parentClass){
+  var fn = function(){};
+  fn.prototype = parentClass.prototype;
+  subClass.prototype = new fn();
+  subClass.prototype.constructor = subClass;
+}
+
+// classInherit(Student, Person);
+
 </script>
 </html>
