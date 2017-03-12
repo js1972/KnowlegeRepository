@@ -1,0 +1,89 @@
+<html>
+<script>
+function Person(name){
+  this.name = name;
+}
+Person.prototype.Say = function(){
+  console.log(this.name + ' can say!');
+}
+var Jerry = new Person("Jerry");
+/* actual three steps
+	var Jerry = {};
+	Jerry.__proto__ = Person.prototype;
+	Person.call(Jerry, name)
+*/
+console.log(Jerry.__proto__ === Person.prototype); // true
+
+function Student(name){
+  Person.call(this, name); //Person 的属性赋值给 Student
+}
+
+/* Jerry 2017-03-12 13:25PM in this step since we don't pass any value to new Person
+ so name is by default "undefined" , since new Person() is assigned as Student.prototype, so 
+ all Student instance will have name as undefined
+*/
+
+// Approach one
+// Student.prototype = new Person(); //顺序不能反，要在最前面
+
+// Approach two
+var fn = function(){};
+fn.prototype = Person.prototype;
+Student.prototype = new fn();
+// 重新添上 constructor 属性
+Student.prototype.constructor = Student;
+
+Student.prototype.DoHomeWork = function(){
+  console.log(this.name + ' can do homework!');
+}
+
+var i042416 = new Student("i042416");
+i042416.DoHomeWork(); 
+i042416.Say(); 
+/*
+打开调试工具，看一下 i042416 都有哪些东西：
+
+i042416
+  name: "i042416"
+  __proto__: Person
+    DoHomeWork: ()
+    name: undefined //注意这里多了一个 name 属性
+    __proto__: Object
+      Say: ()
+      constructor: Person(name)
+      __proto__: Object
+当调用 i042416.Say() 的时候，刚好 i042416.__proto__.__proto__ 有这个属性，这就是链式调用的原理，一层一层向下寻找。
+
+来看一看刚才那种做法的弊端。
+
+  1. 没有实现传统面向对象该有的 super 方法来调用父类方法，链式和 super 方法相比还是有一定缺陷的；
+  2. 造成过多的原型属性（name），constructor 丢失（constructor 是一个非常重要的属性，MDN）。
+*/
+
+
+// 少了 constructor
+console.log(i042416.constructor == Person); //true
+console.log("now?");
+console.log(i042416.constructor == Student); 
+
+/* Jerry 2017-03-12 13:28PM - 
+这也很奇怪，明明 i042416是Student的实例，却返回 false
+console.log(i042416.constructor == Student) // false
+
+再找原因，这句话导致了 Student.prototype 的 constructor 方法丢失：
+
+Student.prototype = new Person();
+在这句话之前打一个断点，曾经是有的，只是被替换掉了：
+
+找到了问题所在，现在来改进
+// fn 用来排除多余的属性(name)
+var fn = function(){}; - Jerry 13:30PM 这是一个干净的function，里面不含name
+fn.prototype = Person.prototype;
+Student.prototype = new fn();
+// 重新添上 constructor 属性
+Student.prototype.constructor = Student;
+用上面的继承代码替换掉之前的 Student.prototype = new Person();
+
+*/
+</script>
+</html>
