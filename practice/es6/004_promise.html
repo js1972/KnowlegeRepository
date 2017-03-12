@@ -1,0 +1,40 @@
+<html>
+<script>
+
+function doOperation(name='default', args=[]) {
+    // 这是一个通过name来决定操作方法的函数
+    console.log("name: " + name + " args: " + args);
+    if( typeof args == "object"){
+    	for( i in args){
+    		console.log("attribute: " + i + " value: " + args[i]);
+    	}
+    }
+}
+
+function findSome() {
+    return Promise.resolve('Jerry');
+}
+
+function getCarList() {
+    return Promise.resolve({size:4800, seats:5, output:6.0});
+}
+
+findSome().then(args => {
+    doOperation('searchCar', args);
+});
+
+getCarList().then(args => {
+    doOperation('buyLexus', args);
+});
+
+//修改过程
+//先通过bind函数，将操作方法从参数导入的方式分离成2个函数
+var play = doOperation.bind(null, 'searchCar');
+var buy = doOperation.bind(null, 'buyLexus');
+
+findSome().then(play);
+getCarList().then(buy);
+
+
+</script>
+</html>
