@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>js验证码</title>
+<style type="text/css">
+ #login{
+    width:50px;
+    height:30px;
+    line-height:30px;
+    margin:0 auto;
+    background-color:#eee;
+    text-align:center;
+    color:red;
+ }
+ p{
+    width:75px;
+    height:30px;
+
+    margin:0 auto;
+ }
+	
+</style>
+</head>
+<body>
+<p>验证码：</p>
+<div id="login" onclick="show()"><a href="#"></a></div>
+<script type="text/javascript">
+    function codes(n){
+            var a="azxcvbnmsdfghjklqwertyuiopZXCVBNMASDFGHJKLQWERTYUIOP0123456789";
+            var b="";
+        for (var i = 0;i<n;i++){
+            var index=Math.floor(Math.random()*62);
+             b+=a.charAt(index);
+
+        }
+        return b;
+        };
+        function show(){
+            document.getElementById("login").innerHTML=codes(4);
+       
+   }
+   window.onload=show;
+
+
+</script>
+
+</body>
+</html>
