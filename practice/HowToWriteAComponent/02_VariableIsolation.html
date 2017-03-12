@@ -1,0 +1,43 @@
+<html>
+<input type="text" id="input"/>
+<script>
+/*
+obj 对象中的方法都是公开的，并不是私有的，其他人写的代码可以随意更改这些内容。当多人协作或代码量很多时，又会产生一系列问题。
+*/
+
+var obj = {
+  input: null,
+  init: function(config){
+    this.input = document.getElementById(config.id);
+    this.bind();
+    return this;
+  },
+  bind: function(){
+    var self = this;
+    this.input.addEventListener('keyup', function(){
+      self.render();
+    });
+  },
+  getValue: function(){
+    return this.input.value;
+  },
+  render: function(){
+    var value = this.getValue();
+    if(!document.getElementById("show")){
+      var append = document.createElement('span');
+      append.setAttribute("id", "show");
+      input.parentNode.appendChild(append);
+    }
+    var show = document.getElementById("show");
+    if(/^[0-9a-zA-Z]+$/.exec(value)){
+      show.innerHTML = 'Pass!';
+    }else{
+      show.innerHTML = 'Failed!';
+    }
+  }
+}
+window.onload = function(){
+  obj.init({id: "input"});
+}
+</script>
+</html>
