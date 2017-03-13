@@ -69,41 +69,63 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | [--->] IV_INCLUDE                     TYPE        PROGNAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD ADAPT_SOURCE_CODE.
-*    DATA:lt_codeline    TYPE STANDARD TABLE OF char255,
-*         lv_argu        TYPE string,
-*         lt_parsed_argu TYPE tt_curried_argument.
-*    READ REPORT iv_include INTO lt_codeline.
-*
-*    DELETE lt_codeline INDEX lines( lt_codeline ).
-*    DELETE lt_codeline WHERE table_line IS INITIAL.
-*
-*    APPEND |DATA: lt_ptab TYPE abap_func_parmbind_tab.| TO lt_codeline.
-*    APPEND |DATA: ls_para LIKE LINE OF lt_ptab.| TO lt_codeline.
-*    lt_parsed_argu = mt_curried_func[ func_name = mv_org_func curried_func = mv_curried ]-curried_arg.
-*    LOOP AT lt_parsed_argu ASSIGNING FIELD-SYMBOL(<argu>).
-*      APPEND | DATA:  _{ <argu>-arg_name } LIKE { <argu>-arg_name }.| TO lt_codeline.
-*
-*      IF <argu>-arg_value IS NOT INITIAL.
-*        APPEND | _{ <argu>-arg_name } = '{ <argu>-arg_value }'. | TO lt_codeline.
-*      ELSE.
-*        APPEND | _{ <argu>-arg_name } = { <argu>-arg_name }. | TO lt_codeline.
-*      ENDIF.
-*
-*      lv_argu = | ls_para = value #( name = '{ <argu>-arg_name }' | &&
-*         | kind  = abap_func_exporting value = REF #( _{ <argu>-arg_name } ) ).|.
-*      APPEND lv_argu TO lt_codeline.
-*      APPEND | APPEND ls_para TO lt_ptab. | TO lt_codeline.
-*    ENDLOOP.
-*
+
+    DATA:lt_codeline    TYPE STANDARD TABLE OF char255,
+         ls_export TYPE FUPARAREF,
+         ls_import TYPE FUPARAREF.
+
+    READ REPORT iv_include INTO lt_codeline.
+    READ TABLE mt_fm_argument ASSIGNING FIELD-SYMBOL(<fm_argu>) WITH KEY func_name = mv_org_func.
+    ASSERT sy-subrc = 0.
+*   Jerry: for POC I only support 1 import and 1 export parameter. 1:N can easily be supported.
+    READ TABLE <fm_argu>-func_arg INTO ls_import WITH KEY paramtype = 'I'.
+    READ TABLE <fm_argu>-func_arg INTO ls_export WITH KEY paramtype = 'E'.
+    DELETE lt_codeline INDEX lines( lt_codeline ).
+    DELETE lt_codeline WHERE table_line IS INITIAL.
+
+    APPEND |DATA: lt_ptab TYPE abap_func_parmbind_tab.| TO lt_codeline.
+    APPEND |DATA: ls_para LIKE LINE OF lt_ptab.| TO lt_codeline.
+    APPEND |TYPES: BEGIN OF ty_buffer,| TO lt_codeline.
+    IF ls_import-type = 'X'.
+       APPEND |{ ls_import-parameter } TYPE { ls_import-structure },| TO lt_codeline.
+    ELSE.
+       APPEND |{ ls_import-parameter } TYPE REF TO { ls_import-structure },| TO lt_codeline.
+    ENDIF.
+    IF ls_export-type = 'X'.
+       APPEND |{ ls_export-parameter } TYPE { ls_export-structure },| TO lt_codeline.
+    ELSE.
+       APPEND |{ ls_export-parameter } TYPE REF TO { ls_export-structure },| TO lt_codeline.
+    ENDIF.
+    APPEND |END OF ty_buffer.| to lt_codeline.
+
+    APPEND |TYPES: tt_buffer TYPE STANDARD TABLE OF ty_buffer WITH KEY { ls_import-parameter }.|
+     TO lt_codeline.
+
+    APPEND |STATICS: st_buffer TYPE tt_buffer.| TO lt_codeline.
+    APPEND |READ TABLE st_buffer ASSIGNING FIELD-SYMBOL(<buffer>) WITH KEY|
+     && | { ls_import-parameter } = { ls_import-parameter }.| TO lt_codeline.
+    APPEND |IF sy-subrc = 0.| TO lt_codeline.
+    APPEND |{ ls_export-parameter } = <buffer>-{ ls_export-parameter }. | TO lt_codeline.
+    APPEND |RETURN.| TO lt_codeline.
+    APPEND |ENDIF.| TO lt_codeline.
+
+    APPEND | ls_para = value #( name = '{ ls_import-parameter }'| to lt_codeline.
+    APPEND |  kind  = abap_func_exporting value = REF #( { ls_import-parameter } ) ).| TO lt_codeline.
+    APPEND |APPEND ls_para TO LT_PTAB.| TO lt_codeline.
+
+    APPEND |ls_para = value #( name = '{ ls_export-parameter }'| TO lt_codeline.
+    APPEND | kind  = abap_func_IMporting value = REF #( { ls_export-parameter } ) ). | TO lt_codeline.
+    APPEND |APPEND ls_para TO LT_PTAB.| TO lt_codeline.
+
 *    APPEND 'TRY.' TO lt_codeline.
 *    APPEND |CALL FUNCTION '{ mv_org_func }' PARAMETER-TABLE lt_ptab.| TO lt_codeline.
 *    APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
 *    APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
 *    APPEND 'ENDTRY.' TO lt_codeline.
-*    APPEND 'ENDFUNCTION.' TO lt_codeline.
-*    INSERT REPORT iv_include FROM lt_codeline.
-*    COMMIT WORK AND WAIT.
-*    WAIT UP TO 1 SECONDS.
+    APPEND 'ENDFUNCTION.' TO lt_codeline.
+    INSERT REPORT iv_include FROM lt_codeline.
+    COMMIT WORK AND WAIT.
+    WAIT UP TO 1 SECONDS.
   ENDMETHOD.
 
 
