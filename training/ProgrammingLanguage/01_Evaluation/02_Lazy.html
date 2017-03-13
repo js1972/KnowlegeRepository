@@ -5,35 +5,36 @@
 // http://stackoverflow.com/questions/17329083/javascript-lazy-evaluation-fibonacci-function
 
 var fib = function (a, b) {
-  var c = a + b
+  var _current = a + b;
   return { 
-  	       "current": c, 
-           "next": function () { 
-           	  return fib(b, c) 
+  	       current: _current, 
+           next: function () { 
+           	  return fib(b, _current); 
            	} 
          }
 }
 
-var x = fib(1,1);
-console.log(x.current); // 2
+var generator = fib(1,1);
+console.log(generator.current); // 2
 
-var x = x.next();
+var result = generator.next();
 
-console.log(x.current); // 3
+console.log(result.current); // 3
 
-var take = function(n, cons) {
+var take = function(n, sequence) {
 
-    var res = []
-    var mem = cons
+    var result = [];
+    var temp = sequence;
 
     for (var i = 0; i < n; i++) {
-      res.push(mem.current)
-      mem = mem.next()
+      result.push(temp.current);
+      temp = temp.next();
     }
 
-    return res
+    return result;
 }
 
+console.log("new");
 console.log(take(10, fib(1,1)));
 
 // generator: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
