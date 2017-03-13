@@ -113,7 +113,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
     APPEND |RETURN.| TO lt_codeline.
     APPEND |ENDIF.| TO lt_codeline.
 
-    APPEND | ls_para = value #( name = '{ ls_import-parameter }'| TO lt_codeline.
+    APPEND | ls_para = value #( name = '{ ls_import-parameter CASE = UPPER }'| TO lt_codeline.
     APPEND |  kind  = abap_func_exporting value = REF #( { ls_import-parameter } ) ).| TO lt_codeline.
     APPEND |APPEND ls_para TO LT_PTAB.| TO lt_codeline.
 
@@ -126,6 +126,9 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
     APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
     APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
     APPEND 'ENDTRY.' TO lt_codeline.
+    APPEND |APPEND INITIAL LINE TO st_buffer ASSIGNING FIELD-SYMBOL(<filled_buffer>).| TO lt_codeline.
+    APPEND |<filled_buffer>-{ ls_export-parameter } = { ls_export-parameter }.| TO lt_codeline.
+    APPEND |<filled_buffer>-{ ls_import-parameter } = { ls_import-parameter }.| TO lt_codeline.
     APPEND 'ENDFUNCTION.' TO lt_codeline.
     INSERT REPORT iv_include FROM lt_codeline.
     COMMIT WORK AND WAIT.
