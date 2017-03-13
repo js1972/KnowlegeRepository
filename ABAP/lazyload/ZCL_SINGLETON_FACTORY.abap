@@ -1,61 +1,61 @@
-class ZCL_SINGLETON_FACTORY definition
-  public
-  final
-  create public .
+CLASS zcl_singleton_factory DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  class-methods CLASS_CONSTRUCTOR .
-  class-methods GET
-    importing
-      !IV_FUNC type RS38L_FNAM
-    returning
-      value(RV_CURRIED_FUNC) type RS38L_FNAM .
-  class-methods CLEANUP .
+    CLASS-METHODS class_constructor .
+    CLASS-METHODS get
+      IMPORTING
+        !iv_func               TYPE rs38l_fnam
+      RETURNING
+        VALUE(rv_curried_func) TYPE rs38l_fnam .
+    CLASS-METHODS cleanup .
   PROTECTED SECTION.
-private section.
+  PRIVATE SECTION.
 
-  types:
-    BEGIN OF ty_curried_func,
+    TYPES:
+      BEGIN OF ty_curried_func,
         func_name      TYPE rs38l_fnam,
         curried_func   TYPE rs38l_fnam,
         function_group TYPE rs38l-area,
       END OF ty_curried_func .
-  types:
-    tt_curried_func TYPE TABLE OF ty_curried_func WITH KEY func_name curried_func .
-  types:
-    tt_fm_argument TYPe STANDARD TABLE OF FUPARAREF with key funcname parameter .
-  types:
-    begin of ty_fm_argument,
-             func_name type FUPARAREF-funcname,
-             func_arg type tt_fm_argument,
-          end of ty_fm_argument .
-  types:
-    tt_fm_argument_detail type STANDARD TABLE OF ty_fm_argument with key func_name .
+    TYPES:
+      tt_curried_func TYPE TABLE OF ty_curried_func WITH KEY func_name curried_func .
+    TYPES:
+      tt_fm_argument TYPE STANDARD TABLE OF fupararef WITH KEY funcname parameter .
+    TYPES:
+      BEGIN OF ty_fm_argument,
+        func_name TYPE fupararef-funcname,
+        func_arg  TYPE tt_fm_argument,
+      END OF ty_fm_argument .
+    TYPES:
+      tt_fm_argument_detail TYPE STANDARD TABLE OF ty_fm_argument WITH KEY func_name .
 
-  data MT_CURRIED_FUNC type TT_CURRIED_FUNC .
-  data MV_ORG_FUNC type RS38L_FNAM .
-  class-data SO_INSTANCE type ref to ZCL_SINGLETON_FACTORY .
-  data MV_CURRIED type RS38L_FNAM .
-  data MT_FM_ARGUMENT type TT_FM_ARGUMENT_DETAIL .
+    DATA mt_curried_func TYPE tt_curried_func .
+    DATA mv_org_func TYPE rs38l_fnam .
+    CLASS-DATA so_instance TYPE REF TO zcl_singleton_factory .
+    DATA mv_curried TYPE rs38l_fnam .
+    DATA mt_fm_argument TYPE tt_fm_argument_detail .
 
-  methods GENERATE_SIGNATURE
-    exporting
-      !ET_IMPORT type RSFB_IMP
-      !ET_EXPORT type RSFB_EXP .
-  methods ADAPT_SOURCE_CODE
-    importing
-      !IV_INCLUDE type PROGNAME .
-  methods RUN
-    importing
-      !IV_FUNC type RS38L_FNAM
-    returning
-      value(RV_CURRIED_FUNC) type RS38L_FNAM .
-  methods PARSE_ARGUMENT .
-  methods GENERATE_SINGLETON_FM
-    returning
-      value(RV_GENERATED_INCLUDE) type PROGNAME .
-  methods _CLEANUP .
+    METHODS generate_signature
+      EXPORTING
+        !et_import TYPE rsfb_imp
+        !et_export TYPE rsfb_exp .
+    METHODS adapt_source_code
+      IMPORTING
+        !iv_include TYPE progname .
+    METHODS run
+      IMPORTING
+        !iv_func               TYPE rs38l_fnam
+      RETURNING
+        VALUE(rv_curried_func) TYPE rs38l_fnam .
+    METHODS parse_argument .
+    METHODS generate_singleton_fm
+      RETURNING
+        VALUE(rv_generated_include) TYPE progname .
+    METHODS _cleanup .
 ENDCLASS.
 
 
@@ -68,11 +68,11 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_INCLUDE                     TYPE        PROGNAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD ADAPT_SOURCE_CODE.
+  METHOD adapt_source_code.
 
-    DATA:lt_codeline    TYPE STANDARD TABLE OF char255,
-         ls_export TYPE FUPARAREF,
-         ls_import TYPE FUPARAREF.
+    DATA:lt_codeline TYPE STANDARD TABLE OF char255,
+         ls_export   TYPE fupararef,
+         ls_import   TYPE fupararef.
 
     READ REPORT iv_include INTO lt_codeline.
     READ TABLE mt_fm_argument ASSIGNING FIELD-SYMBOL(<fm_argu>) WITH KEY func_name = mv_org_func.
@@ -80,6 +80,10 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 *   Jerry: for POC I only support 1 import and 1 export parameter. 1:N can easily be supported.
     READ TABLE <fm_argu>-func_arg INTO ls_import WITH KEY paramtype = 'I'.
     READ TABLE <fm_argu>-func_arg INTO ls_export WITH KEY paramtype = 'E'.
+    TRANSLATE ls_import-structure TO LOWER CASE.
+    TRANSLATE ls_import-parameter TO LOWER CASE.
+    TRANSLATE ls_export-structure TO LOWER CASE.
+    TRANSLATE ls_export-structure TO LOWER CASE.
     DELETE lt_codeline INDEX lines( lt_codeline ).
     DELETE lt_codeline WHERE table_line IS INITIAL.
 
@@ -87,16 +91,16 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
     APPEND |DATA: ls_para LIKE LINE OF lt_ptab.| TO lt_codeline.
     APPEND |TYPES: BEGIN OF ty_buffer,| TO lt_codeline.
     IF ls_import-type = 'X'.
-       APPEND |{ ls_import-parameter } TYPE { ls_import-structure },| TO lt_codeline.
+      APPEND |{ ls_import-parameter } TYPE { ls_import-structure },| TO lt_codeline.
     ELSE.
-       APPEND |{ ls_import-parameter } TYPE REF TO { ls_import-structure },| TO lt_codeline.
+      APPEND |{ ls_import-parameter } TYPE REF TO { ls_import-structure },| TO lt_codeline.
     ENDIF.
     IF ls_export-type = 'X'.
-       APPEND |{ ls_export-parameter } TYPE { ls_export-structure },| TO lt_codeline.
+      APPEND |{ ls_export-parameter } TYPE { ls_export-structure },| TO lt_codeline.
     ELSE.
-       APPEND |{ ls_export-parameter } TYPE REF TO { ls_export-structure },| TO lt_codeline.
+      APPEND |{ ls_export-parameter } TYPE REF TO { ls_export-structure },| TO lt_codeline.
     ENDIF.
-    APPEND |END OF ty_buffer.| to lt_codeline.
+    APPEND |END OF ty_buffer.| TO lt_codeline.
 
     APPEND |TYPES: tt_buffer TYPE STANDARD TABLE OF ty_buffer WITH KEY { ls_import-parameter }.|
      TO lt_codeline.
@@ -109,7 +113,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
     APPEND |RETURN.| TO lt_codeline.
     APPEND |ENDIF.| TO lt_codeline.
 
-    APPEND | ls_para = value #( name = '{ ls_import-parameter }'| to lt_codeline.
+    APPEND | ls_para = value #( name = '{ ls_import-parameter }'| TO lt_codeline.
     APPEND |  kind  = abap_func_exporting value = REF #( { ls_import-parameter } ) ).| TO lt_codeline.
     APPEND |APPEND ls_para TO LT_PTAB.| TO lt_codeline.
 
@@ -117,11 +121,11 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
     APPEND | kind  = abap_func_IMporting value = REF #( { ls_export-parameter } ) ). | TO lt_codeline.
     APPEND |APPEND ls_para TO LT_PTAB.| TO lt_codeline.
 
-*    APPEND 'TRY.' TO lt_codeline.
-*    APPEND |CALL FUNCTION '{ mv_org_func }' PARAMETER-TABLE lt_ptab.| TO lt_codeline.
-*    APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
-*    APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
-*    APPEND 'ENDTRY.' TO lt_codeline.
+    APPEND 'TRY.' TO lt_codeline.
+    APPEND |CALL FUNCTION '{ mv_org_func }' PARAMETER-TABLE lt_ptab.| TO lt_codeline.
+    APPEND | CATCH cx_root INTO DATA(cx_root). | TO lt_codeline.
+    APPEND |WRITE: / cx_root->get_text( ).| TO lt_codeline.
+    APPEND 'ENDTRY.' TO lt_codeline.
     APPEND 'ENDFUNCTION.' TO lt_codeline.
     INSERT REPORT iv_include FROM lt_codeline.
     COMMIT WORK AND WAIT.
@@ -133,7 +137,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | Static Public Method ZCL_SINGLETON_FACTORY=>CLASS_CONSTRUCTOR
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD CLASS_CONSTRUCTOR.
+  METHOD class_constructor.
     CREATE OBJECT so_instance.
   ENDMETHOD.
 
@@ -142,7 +146,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | Static Public Method ZCL_SINGLETON_FACTORY=>CLEANUP
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD CLEANUP.
+  METHOD cleanup.
     so_instance->_cleanup( ).
   ENDMETHOD.
 
@@ -172,7 +176,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
         WHEN 'E'.
           wa_rsexp-parameter = <arg_detail>-parameter.      "#EC NOTEXT
           wa_rsexp-reference = <arg_detail>-reference.
-          wa_rsexp-typ = <arg_detail>-structure.
+          wa_rsexp-typ = |REF TO { <arg_detail>-structure }|.
           wa_rsexp-ref_class = <arg_detail>-ref_class.
           APPEND wa_rsexp TO et_export.
         WHEN OTHERS.
@@ -187,7 +191,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RV_GENERATED_INCLUDE           TYPE        PROGNAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GENERATE_SINGLETON_FM.
+  METHOD generate_singleton_fm.
     DATA: lv_date               TYPE sy-datum,
           lv_time               TYPE sy-uzeit,
           lv_pool_name          TYPE rs38l-area,
@@ -279,7 +283,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | [--->] IV_FUNC                        TYPE        RS38L_FNAM
 * | [<-()] RV_CURRIED_FUNC                TYPE        RS38L_FNAM
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET.
+  METHOD get.
     rv_curried_func = so_instance->run( iv_func = iv_func ).
   ENDMETHOD.
 
@@ -288,8 +292,8 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | Instance Private Method ZCL_SINGLETON_FACTORY->PARSE_ARGUMENT
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD PARSE_ARGUMENT.
-    data: lt_argu TYPE TABLE OF fupararef,
+  METHOD parse_argument.
+    DATA: lt_argu    TYPE TABLE OF fupararef,
           ls_fm_argu TYPE fupararef.
     READ TABLE mt_fm_argument WITH KEY func_name = mv_org_func TRANSPORTING NO FIELDS.
     CHECK sy-subrc <> 0.
@@ -301,8 +305,8 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
     <fm_argument>-func_name = mv_org_func.
 
     LOOP AT lt_argu ASSIGNING FIELD-SYMBOL(<form_argu>).
-       MOVE-CORRESPONDING <form_argu> to ls_fm_argu.
-       APPEND ls_fm_argu TO <fm_argument>-func_arg.
+      MOVE-CORRESPONDING <form_argu> TO ls_fm_argu.
+      APPEND ls_fm_argu TO <fm_argument>-func_arg.
     ENDLOOP.
 
   ENDMETHOD.
@@ -314,7 +318,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | [--->] IV_FUNC                        TYPE        RS38L_FNAM
 * | [<-()] RV_CURRIED_FUNC                TYPE        RS38L_FNAM
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD RUN.
+  METHOD run.
     mv_org_func = iv_func.
     parse_argument( ).
     DATA(lv_include) = generate_singleton_fm( ).
@@ -327,7 +331,7 @@ CLASS ZCL_SINGLETON_FACTORY IMPLEMENTATION.
 * | Instance Private Method ZCL_SINGLETON_FACTORY->_CLEANUP
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD _CLEANUP.
+  METHOD _cleanup.
     LOOP AT mt_curried_func ASSIGNING FIELD-SYMBOL(<curried>).
 
       CALL FUNCTION 'FUNCTION_DELETE'
