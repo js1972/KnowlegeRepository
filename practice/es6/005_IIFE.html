@@ -1,0 +1,36 @@
+<html>
+<script>
+// 使用IIFE(Immediately-Invoked Function Expression)做复杂初始化
+
+function readSettings(){
+	return {
+		timezone: "CET",
+		account: "i042416",
+		theme: "SAP_Gold"
+	};
+}
+var settings = readSettings();
+var apiUrl = `https://${settings.apiDomain}:${settings.apiPort}/api`;
+
+var defaultConfig = {
+    apiUrl:apiUrl,
+    timezone: settings.timezone,
+    account: settings.account,
+    theme: settings.theme
+}
+
+var defaultConfig2 = (() => {
+    var settings = readSettings();
+    var apiUrl = `https://${settings.apiDomain}:${settings.apiPort}/api`;
+
+    var defaultConfigLocal = {
+        apiUrl:apiUrl,
+        timezone: settings.timezone,
+        account: settings.account,
+        theme: settings.theme
+    }
+    return defaultConfigLocal;
+})();
+debugger;
+</script>
+</html>
