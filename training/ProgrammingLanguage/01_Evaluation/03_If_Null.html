@@ -1,0 +1,29 @@
+<html>
+<script>
+
+function arg1(){
+	console.log("in arg1");
+	return 1;
+}
+
+function test( a,b,c){
+	if(a) {
+		console.log(b);
+	}
+	else{
+		console.log(c);
+	}
+}
+
+// method call 
+test( true, 199, arg1());
+
+if( true){
+	console.log("true");
+}
+else{
+	console.log( arg1());
+}
+
+</script>
+</html>
