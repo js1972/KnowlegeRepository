@@ -136,6 +136,37 @@ setTimeout(function(a, b){
 },0, 3, 4);
 */
 </script>
+
+<script>
+/*
+Jerry 2017-03-17 16:58PM */ 
+var timerStart1 = now();
+setTimeout(function () {
+  console.log('第一个setTimeout从call SetTimeout到真正被执行：', now() - timerStart1);
+
+  var timerStart2 = now();
+  setTimeout(function () {
+    console.log('第二个setTimeout从call SetTimeout到真正被执行：', now() - timerStart2);
+  }, 100);
+
+  heavyTask(3123);  // 耗时任务
+}, 100);
+
+var loopStart = now();
+heavyTask(1781); // 耗时任务
+console.log('heavyTask耗费时间：', now() - loopStart);
+
+function heavyTask(duration) {
+  var s = now();
+  while(now() - s < duration) {
+  }
+}
+
+function now () {
+  return new Date();
+}
+
+</script>
 <body onload="onloadfun()">
     <p>one</p>
     <input id="one"></input>
