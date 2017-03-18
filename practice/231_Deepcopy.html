@@ -54,6 +54,7 @@ function deepClone2(initalObj, finalObj) {
 }
 
 var class2type = {};
+var hasOwn = Object.prototype.hasOwnProperty;
 
 var jQuery = {
 	isArray: Array.isArray || function( obj ) {
@@ -152,7 +153,7 @@ var extend = function() {
                     }
 
                     // Never move original objects, clone them
-                    target[ name ] = jQuery.extend( deep, clone, copy );
+                    target[ name ] = extend( deep, clone, copy );
 
                 // Don't bring in undefined values
                 } else if ( copy !== undefined ) {
