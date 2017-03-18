@@ -2,7 +2,6 @@
 <script>
 
 function doOperation(name='default', args=[]) {
-    // 这是一个通过name来决定操作方法的函数
     console.log("name: " + name + " args: " + args);
     if( typeof args == "object"){
     	for( i in args){
@@ -23,7 +22,7 @@ findSome().then(args => {
     doOperation('searchCar', args);
 });
 
-getCarList().then(args => {
+/*getCarList().then(args => {
     doOperation('buyLexus', args);
 });
 
@@ -35,6 +34,6 @@ var buy = doOperation.bind(null, 'buyLexus');
 findSome().then(play);
 getCarList().then(buy);
 
-
+*/
 </script>
 </html>
