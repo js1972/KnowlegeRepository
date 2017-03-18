@@ -17,12 +17,12 @@ function findSome() {
 function getCarList() {
     return Promise.resolve({size:4800, seats:5, output:6.0});
 }
-
+/*
 findSome().then(args => {
     doOperation('searchCar', args);
 });
 
-/*getCarList().then(args => {
+getCarList().then(args => {
     doOperation('buyLexus', args);
 });
 
@@ -33,6 +33,30 @@ var buy = doOperation.bind(null, 'buyLexus');
 
 findSome().then(play);
 getCarList().then(buy);
+
+*/
+
+function runAsync(){
+    var p = new Promise(function(resolve, reject){
+        //做一些异步操作
+        setTimeout(function(){
+            console.log('执行完成');
+            resolve('随便什么数据');
+        }, 2000);
+    });
+    return p;            
+}
+runAsync().then(function(data){
+    console.log("Jerry in then callback: " + data);
+    //后面可以用传过来的数据做些其他操作
+    //......
+});
+console.log("after runAsync");
+
+/*
+after runAsync
+执行完成
+Jerry in then callback: 随便什么数据
 
 */
 </script>
