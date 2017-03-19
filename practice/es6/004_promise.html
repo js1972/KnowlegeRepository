@@ -44,10 +44,11 @@ function runAsync(){
             resolve('随便什么数据');
         }, 2000);
     });
+    var a = "Jerry";
     return p;            
 }
 runAsync().then(function(data){
-    console.log("Jerry in then callback: " + data);
+    console.log("Jerry in then callback: " + data + a);
     //后面可以用传过来的数据做些其他操作
     //......
 });

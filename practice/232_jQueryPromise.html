@@ -27,8 +27,9 @@ $("button").bind( "click", function() {
     $( this ).fadeIn().fadeOut( 1000 * (i+1) );
   });
  
+  var a = "Jerry";
   $( "div" ).promise().done(function() {
-    $( "p" ).append( " Finished! " );
+    $( "p" ).append( " Finished! " + a );
   });
 });
 </script>
