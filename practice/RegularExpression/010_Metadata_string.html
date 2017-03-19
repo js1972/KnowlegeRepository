@@ -55,5 +55,13 @@ var reg = /^(b|c).+/;
 var str='bbs.blueidea.com';
 alert(reg.exec(str));
 
+/*
+使用形如(?:pattern)的正则就可以避免保存括号内的匹配结果。
+可以看到返回的结果不再包括那个括号内的字正则表达式多匹配的内容。同理，反向引用也不好使了：
+*/
+var reg = /^(?:b|c).+/;
+var str='bbs.blueidea.com';
+alert(reg.exec(str));
+
 </script>
 </html>
