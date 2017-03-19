@@ -63,5 +63,12 @@ var reg = /^(?:b|c).+/;
 var str='bbs.blueidea.com';
 alert(reg.exec(str));
 
+/*
+返回bb,b。bb是整个正则表达式匹配的内容，而b是第一个子正则表达式匹配的内容。
+*/
+var reg = /^(b|c)\1/;
+var str='bbs.zhufengpeixun.cn';
+alert(reg.exec(str));
+
 </script>
 </html>
