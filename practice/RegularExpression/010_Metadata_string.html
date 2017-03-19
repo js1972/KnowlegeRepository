@@ -70,5 +70,9 @@ var reg = /^(b|c)\1/;
 var str='bbs.zhufengpeixun.cn';
 alert(reg.exec(str));
 
+var reg = /^(?:b|c)\1/;
+var str='bbs.zhufengpeixun.cn';
+alert(reg.exec(str));
+// 返回null。由于根本就没有记录括号内匹配的内容，自然没有办法反向引用了。
 </script>
 </html>
