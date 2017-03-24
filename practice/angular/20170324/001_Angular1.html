@@ -3,6 +3,11 @@
     <meta charset="utf-8">
     <title>Angular.js Example</title>
     <script src="../angular.js"></script>
+    <script>
+    // Jerry add 2017-03-24 9:57AM 
+    var myModule = angular.module("myModule",[]); 
+	myModule.value("name","superMan");
+    </script>
   </head>
   <body>
     Name:<input ng-model="name" type="text"/>
