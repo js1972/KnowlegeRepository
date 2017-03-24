@@ -1,0 +1,18 @@
+<html>
+
+<div id="JerryTest">
+</div>
+<script>
+
+function getHTML(names){
+	var content = names.map((name) =>{return "<p>Hello, " + name + "!</p>"});
+	return content.join("");
+}
+
+var names = ["Java", "JavaScript", "ABAP"];
+
+var dom = document.getElementById("JerryTest");
+dom.innerHTML = getHTML(names);
+
+</script>
+</html>
