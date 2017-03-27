@@ -1,0 +1,26 @@
+<html>
+<script>
+function add () {
+    var args = Array.prototype.slice.call(arguments);
+ 
+    var fn = function () {
+        var arg_fn = Array.prototype.slice.call(arguments);
+        return add.apply(null, args.concat(arg_fn));
+    }
+ 
+    fn.valueOf = function () {
+        console.log("fn.valueOf called!!");
+        debugger;
+        return args.reduce(function(a, b) {
+            return a + b;
+        })
+    }
+    return fn;
+}
+
+// console.log(add(1)(2)); // 3
+// console.log(add(1, 2, 3)(10)); // 16
+console.log(add(1)(2)(3)(4)(5)); // 15
+
+</script>
+</html>
