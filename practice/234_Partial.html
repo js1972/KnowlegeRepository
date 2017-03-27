@@ -1,0 +1,19 @@
+<html>
+<script type="text/javascript">
+// 一般写法
+var sayIt = function(greeting, name, punctuation) { 
+	return greeting + ', ' + name + (punctuation || '!'); 
+}; 
+
+console.log(partial(sayIt, 'Hello', 'Ellie')('!!!'));
+
+function partial(fn, str1, str2) {
+    function result(str3) {
+        return fn(str1, str2, str3);
+    }
+
+    return result;
+}
+
+</script>
+</html>

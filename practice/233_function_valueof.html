@@ -9,7 +9,7 @@ function add () {
     }
  
     fn.valueOf = function () {
-        console.log("fn.valueOf called!!");
+        console.log("fn.valueOf called!!: " + args);
         debugger;
         return args.reduce(function(a, b) {
             return a + b;
