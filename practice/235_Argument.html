@@ -1,0 +1,68 @@
+<html>
+<script>
+/*
+题目描述
+函数 useArguments 可以接收 1 个及以上的参数。请实现函数 useArguments，返回所有调用参数相加后的结果。本题的测试参数全部为 Number 类型，不需考虑参数转换。 
+输入例子:
+useArguments(1, 2, 3, 4)
+输出例子:
+10
+
+关于arguments的介绍(https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/arguments)
+
+// 一般写法，直接利用arguments只有length属性的特点
+*/
+function useArguments1() {
+    var sum = 0;
+    for (var i = 0; i < arguments.length; ++i) {
+        sum += arguments[i];
+    }
+
+    return sum;
+}
+
+// call
+function useArguments2() {
+    var arr = [].slice.call(arguments); // 转成数组 ([]为Array.prototype的语法糖)
+    return arr.reduce(function(a, b) {
+        return a + b;
+    });
+}
+/* call, bind, apply会改变生成函数对象的this, 使得arguments可以直接使用数组的方法,
+   所以也可不转换成数组而直接使用reduce */
+
+// call同上, 精简版
+function useArguments3() {
+    return [].reduce.call(arguments, function(a, b) {
+        return a + b;
+    });
+}
+
+// bind
+function useArguments4() {
+    return [].reduce.bind(arguments, function(a, b) {
+        return a + b;
+    })();
+}
+
+// apply
+function useArguments5() {
+    return [].reduce.apply(arguments, [function(a, b) {
+        return a + b;
+    }]);
+}
+
+// eval的妙用，但不推荐使用eval
+function useArguments6() {
+    var arr = Array.prototype.slice.call(arguments);
+    return eval(arr.join('+'));
+}
+
+console.log(useArguments1(1,2,3,4));
+console.log(useArguments2(1,2,3,4));
+console.log(useArguments3(1,2,3,4));
+console.log(useArguments4(1,2,3,4));
+console.log(useArguments5(1,2,3,4));
+console.log(useArguments6(1,2,3,4));
+</script>
+</html>
