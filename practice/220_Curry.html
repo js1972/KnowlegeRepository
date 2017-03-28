@@ -63,11 +63,12 @@ function curryIt3(fn) {
 const curryIt4 = fn => e1 => e2 => e3 => fn(e1, e2, e3);
 
 // 箭头函数
-const curryIt5 = (fn) => { ( e1 ) => { ( e2 ) =>  { ( e3 )  => { fn(e1, e2, e3) } } } };
+const curryIt5 = (fn) => { return ( e1 ) => { return  ( e2 ) =>  { return ( e3 )  => { return fn(e1, e2, e3) } } } };
 
 console.log(curryIt2(fn)(1)(2)(3));
 console.log(curryIt3(fn)(1)(2)(3));
 console.log(curryIt4(fn)(1)(2)(3)); // e1, e2 is closure, e3 is local input variable
+console.log("Jerry");
 console.log(curryIt5(fn)(1)(2)(3));
 </script>
 </html>
