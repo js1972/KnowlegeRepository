@@ -1,0 +1,49 @@
+<html>
+<script type="text/javascript">
+	/*
+	题目描述
+实现函数 callIt，调用之后满足如下条件
+1、返回的结果为调用 fn 之后的结果
+2、fn 的调用参数为 callIt 的第一个参数之后的全部参数 
+输入例子:
+var a = 1; 
+var b = 2; 
+var test = function (first, second) { 
+    return first === a && second === b;
+}; 
+
+callIt(test, a, b);
+输出例子:
+true
+
+箭头函数的arguments(http://www.orangecube.net/articles/es6的箭头函数与arguments对象.html)
+剩余参数(rest parameter)（https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/Rest_parameters）
+
+*/
+// slice
+function callIt1(fn) {
+    var arr = [].slice.call(arguments, 1); 
+    /* 将arguments转成数组并只截取从1开始之后的所有元素 */
+    return fn.apply(this, arr);
+}
+
+// shift
+function callIt2(fn) {
+    return [].shift.call(arguments).apply(null, arguments);
+    /* [].shift.call(arguments)返回了第一个参数fn, 因为这里fn等价于arguments[0] */
+}
+
+// ES6语法糖
+const callIt3 = (fn, ...args) => fn(...args);
+
+var a = 1; 
+var b = 2; 
+var test = function (first, second) { 
+    return first === a && second === b;
+}; 
+
+console.log(callIt1(test, a, b));
+console.log(callIt2(test, a, b));
+console.log(callIt3(test, a, b));
+</script>
+</html>
