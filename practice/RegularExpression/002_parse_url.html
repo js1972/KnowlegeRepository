@@ -3,5 +3,18 @@
 var href = "https://dewdfgwd01082.wdf.sap.corp:4080/sap/opu/odata/sap/CRM_OPPORTUNITY/?q=jerry#123";
 var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
 debugger;
+
+function containsRepeatingLetter(str) {
+    return /([a-zA-Z])\1/.test(str);
+}
+
+var ex = /([a-zA-Z])\1/;
+
+var result = "HelloWorld".match(ex);
+
+debugger;
+
+
+console.log(containsRepeatingLetter("HelloWorld"));
 </script>
 </html>
