@@ -1,0 +1,33 @@
+<html>
+<script type="text/javascript">
+/*
+	题目描述
+求 a 和 b 相乘的值，a 和 b 可能是小数，需要注意结果的精度问题 
+输入例子:
+multiply(3, 0.0001)
+输出例子:
+0.0003
+
+String.prototype.substring()（https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/substring）
+
+Number.prototype.toFixed()(https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toFixed)
+
+// 推荐写法
+*/
+function multiply(a, b) {
+    a = a.toString();
+    b = b.toString();
+    var aLen = a.substring(a.indexOf('.') + 1).length;
+    var bLen = b.substring(b.indexOf('.') + 1).length; 
+    
+    return (a * b).toFixed(Math.max(aLen, bLen));
+    /* 本题未说明保留小数位数, 这里假定得出的结果不含多余的0, 即0.0003000...需转成0.0003 */
+}
+
+console.log( multiply( 3, 0.0001 ));
+console.log( 3 * 0.0001 );
+
+console.log( multiply( 3.0001, 0.0002 ));
+console.log( 3.0001 * 0.0002 );
+</script>
+</html>
