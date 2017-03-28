@@ -93,7 +93,6 @@ CLASS CL_CRM_TASK_USERSTATUS_TOOL IMPLEMENTATION.
       READ TABLE it_opt WITH KEY header_guid = <origin>-header_guid laiso = <origin>-laiso
          status = <origin>-status txt30 = <origin>-txt30 inist = <origin>-inist TRANSPORTING NO FIELDS.
       IF sy-subrc <> 0.
-        BREAK-POINT.
         RETURN.
       ENDIF.
     ENDLOOP.
