@@ -1,0 +1,44 @@
+<html>
+<script type="text/javascript">
+/*
+题目描述
+将给定数字转换成二进制字符串。如果字符串长度不足 8 位，则在前面补 0 到满8位。 
+输入例子:
+convertToBinary(65)
+输出例子:
+01000001
+*/
+// 前三种都是采用拼接方法
+function convertToBinary(num) {
+    var s = num.toString(2);
+    var len = s.length;
+    if (len < 8) {
+        s = '0000000'.slice(0, 8 - len) + s;
+    }
+    
+    return s;
+}
+
+function convertToBinary1(num) {
+    var s = num.toString(2);
+    while (s.length < 8) {
+        s = '0' + s;
+    }
+     
+    return s;
+}
+
+function convertToBinary2(num) {
+    var s = num.toString(2);
+    return s.length < 8 ? new Array(8 - s.length + 1).join('0').concat(s) : s;
+}
+
+// 推荐写法, 如果长度过长, 则截取后8位(倒数第8位开始到最后1位)
+function convertToBinary3(num) {
+    var s = num.toString(2);
+    return s.length < 8 ? ('00000000' + s).slice(-8) : s;
+}
+
+console.log(convertToBinary(65000000000));
+</script>
+</html>
