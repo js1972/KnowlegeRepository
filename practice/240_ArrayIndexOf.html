@@ -1,0 +1,32 @@
+<html>
+<script type="text/javascript">
+	function indexOf(arr, item) {
+    var pos = arr.map(function(e, index) {
+        return e === item ? index: -1;
+    }).filter(function(e) {
+        return e !== -1;
+    });
+
+    return pos.length === 0 ? -1 : pos[0];
+}
+
+console.log( indexOf([1,2,3,4,5], 2));
+
+function indexOf2(arr, item) {
+    	try {
+          arr.forEach( (e, i) => {
+            if (e === item) {
+                throw new Error(i);
+            }
+        } );
+      }
+        catch (err) {
+            return err.message;
+        }
+        return -1;
+   
+ }
+
+console.log( indexOf2([1,2,3,4,5], 2));
+
+</script>
