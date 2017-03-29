@@ -2,8 +2,20 @@
 <script type="text/javascript">
 	function indexOf(arr, item) {
     var pos = arr.map(function(e, index) {
+    	/* 1 0
+    	   2 1
+    	   3 2
+    	   4 3
+    	   5 4
+    	  */
+    	console.log("within Map, e: " + e + " index: " + index);
         return e === item ? index: -1;
     }).filter(function(e) {
+    	/* -1
+    	   1
+    	   -1
+    	  */
+    	console.log("within filter, e: " + e);
         return e !== -1;
     });
 
