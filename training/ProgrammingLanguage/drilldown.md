@@ -27,7 +27,7 @@ Example: JavaScript, Ruby, Python
 
 * Strong Type: Once the type of variable is determined, it could not be changed any more. No assignment and initialization is allowed among variables with different type. This is only possible via implicitly / explicipt conversion. 
 
-![clipboard1](https://cloud.githubusercontent.com/assets/5669954/23824112/be05946c-06ab-11e7-9833-d82755d55244.png)
+![java_type_conversion_compile_error](https://cloud.githubusercontent.com/assets/5669954/24578002/6f01916c-170a-11e7-95d7-f91a73b506f2.png)
 
 ![clipboard2](https://cloud.githubusercontent.com/assets/5669954/23824111/bddc06ba-06ab-11e7-844e-5b7aed948b57.png)
 
