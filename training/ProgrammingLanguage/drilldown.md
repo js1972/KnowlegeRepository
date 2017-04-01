@@ -39,4 +39,9 @@ Example: JavaScript, Ruby, Python
 
 The comparison of Static / dynamic programming language mainly focus on the fact that whether data structure of variable could be adapted in the runtime, while Strong / Weak Type focus on the possibility of variable assignment among different types.
 
- 
+# Examples for Evaluation (in SML)
+
+The print statements help us understand that the argument is evaluated first, followed by the actual function call to f.
+
+The evaluation strategy in which function arguments are evaluated before the function call is made is known as an "eager" evaluation. Eager evaluation is used by most well-known modern programming languages, and it might seem so natural that we don't even consider the possibility of alternative evaluation strategies.
+
