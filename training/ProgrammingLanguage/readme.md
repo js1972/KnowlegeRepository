@@ -12,12 +12,6 @@ Object-Oriented Languages - Part2 | Orlando | 61~69 | 9
 * Orlando: 7 + 12 + 7 + 9 = 35
 * Jerry: 5 + 13 + 14 = 32 
 
-# Static programming language Vs Dynamic programming language
-* Static programming language: Data structure could not be changed in the runtime.
-
-* Dynamic programming language: variable data structure ( attribute and method of a function -consider JavaScript function object ) could be changed in the runtime. 
-JavaScript, Ruby, Python
-
 # Strong Type Vs Weak Type
 
 * Strong Type: Once the type of variable is determined, it could not be changed any more. No assignment and initialization is allowed among variables with different type. This is only possible via implicitly / explicipt conversion. 

@@ -16,3 +16,9 @@ Example: Java, C, C++, C#, ABAP
 	add('1',2);
 ```
 Example: JavaScript, Ruby, Python
+
+## Static programming language Vs Dynamic programming language
+* Static programming language: Data structure & class attribute could not be changed in the runtime.
+
+* Dynamic programming language: variable data structure ( attribute and method of a function -consider JavaScript function object ) could be changed in the runtime. 
+Example: JavaScript, Ruby, Python
