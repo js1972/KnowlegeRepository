@@ -12,19 +12,6 @@ Object-Oriented Languages - Part2 | Orlando | 61~69 | 9
 * Orlando: 7 + 12 + 7 + 9 = 35
 * Jerry: 5 + 13 + 14 = 32 
 
-# Strong Type Vs Weak Type
-
-* Strong Type: Once the type of variable is determined, it could not be changed any more. No assignment and initialization is allowed among variables with different type. This is only possible via implicitly / explicipt conversion. 
-
-![clipboard1](https://cloud.githubusercontent.com/assets/5669954/23824112/be05946c-06ab-11e7-9833-d82755d55244.png)
-
-![clipboard2](https://cloud.githubusercontent.com/assets/5669954/23824111/bddc06ba-06ab-11e7-844e-5b7aed948b57.png)
-
-
-* Weak Type: Type of variable can be changed in the runtime. Assignment and initialization is allowed among variables with different type is allowed. 
-
-![image](https://cloud.githubusercontent.com/assets/5669954/23824144/21345b86-06ac-11e7-9b0b-410a25b3015b.png)
-
 
 
 
