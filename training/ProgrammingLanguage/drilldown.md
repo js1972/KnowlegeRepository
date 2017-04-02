@@ -121,3 +121,7 @@ That is, covariant if it preserves the ordering of types (≤), which orders typ
 
 ## The Problem with Java Generics
 the type information for type parameters is discarded by the compiler after the compilation of code is done; therefore this type information is not available at run time. This process is called type erasure.
+
+* super是声明下界，extends是声明上界
+声明了下界的泛型容器只能add该泛型参数类型，声明了上界的泛型容器只能get该泛型参数类型
+* super用来限制传入的参数, extends使用限制返回的参数
