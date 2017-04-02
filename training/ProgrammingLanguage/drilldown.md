@@ -45,3 +45,24 @@ The print statements help us understand that the argument is evaluated first, fo
 
 The evaluation strategy in which function arguments are evaluated before the function call is made is known as an "eager" evaluation. Eager evaluation is used by most well-known modern programming languages, and it might seem so natural that we don't even consider the possibility of alternative evaluation strategies.
 
+# There Is No Such Thing As A Perfect Check
+
+# Jerry added: "Correct" program gets rejected by Compiler
+
+```Java
+public class ExceptionForQuiz<T extends Exception> {
+	private void pleaseThrow(final Exception t) throws T {
+		throw (T) t;
+	}
+
+	public static void main(final String[] args) {
+		try {
+			new ExceptionForQuiz<RuntimeException>()
+					.pleaseThrow(new SQLException());
+		} catch (final SQLException ex) {
+			System.out.println("Jerry print, the exception class: " + ex.getClass().getSimpleName());			
+			ex.printStackTrace();
+		}
+	}
+}
+```
