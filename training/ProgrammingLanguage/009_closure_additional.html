@@ -6,5 +6,22 @@ for (var i = 1; i <= 5; i++) {
     }, 1000 );
 }
 
+// solution1
+for (var i = 1; i <= 5; i++) {
+    (function(i) {
+        setTimeout( function timer() {
+            console.log(i);
+        }, 1000 );
+    })(i);
+}
+
+// solution 2
+for (var i = 1; i <= 5; i++) {
+    setTimeout( (function(i) {
+        return function() {
+            console.log(i);
+        }
+    })(i), 1000 );
+}
 </script>
 </html>
