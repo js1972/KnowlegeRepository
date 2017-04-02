@@ -66,3 +66,4 @@ public class ExceptionForQuiz<T extends Exception> {
 	}
 }
 ```
+ExceptionQuiz: Catch RuntimeException, no compile error, but cannot catch SQLException. I have to replace with catching Exception instead.
