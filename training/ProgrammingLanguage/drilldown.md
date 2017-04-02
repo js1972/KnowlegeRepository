@@ -76,4 +76,30 @@ ExceptionQuiz: Catch RuntimeException, no compile error, but cannot catch SQLExc
 * 1. 在词法作用域下，一个符号参照到语境中符号名字出现的地方(可以理解为参照到定义)
 * 2. 变量的作用域是在定义时决定而不是执行时决定，也就是说词法作用域取决于源码，通过静态分析就能确定，因此词法作用域也叫做静态作用域。
 
+# Implementation Hiding
+add example
 
+# Object-Oriented Programming
+
+# Abstract Data Type
+Jerry removes this slide. A new slide is to be added: integer in ABAP and Java. 
+
+# Contracts for Java
+```Java
+interface Time {
+  ...
+  @Ensures({
+    "result >= 0",
+    "result <= 23"
+  })
+  int getHour();
+
+  @Requires({
+    "h >= 0",
+    "h <= 23"
+  })
+  @Ensures("getHour() == h")
+  void setHour(int h);
+  ...
+}
+```
