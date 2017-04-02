@@ -67,3 +67,13 @@ public class ExceptionForQuiz<T extends Exception> {
 }
 ```
 ExceptionQuiz: Catch RuntimeException, no compile error, but cannot catch SQLException. I have to replace with catching Exception instead.
+
+# Closure
+
+## Lexical Scope vs. Dynamic Scope 
+
+词法作用域 vs 动态作用域
+* 1. 在词法作用域下，一个符号参照到语境中符号名字出现的地方(可以理解为参照到定义)
+* 2. 变量的作用域是在定义时决定而不是执行时决定，也就是说词法作用域取决于源码，通过静态分析就能确定，因此词法作用域也叫做静态作用域。
+
+
