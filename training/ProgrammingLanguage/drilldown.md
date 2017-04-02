@@ -103,3 +103,6 @@ interface Time {
   ...
 }
 ```
+
+# Object
+after this slide, there should be another slide talking about static method.
