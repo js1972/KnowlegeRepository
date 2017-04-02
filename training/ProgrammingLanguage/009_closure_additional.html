@@ -1,13 +1,13 @@
 <html>
 <script>
-for (var i = 1; i <= 5; i++) {
+/*for (var i = 1; i <= 5; i++) {
     setTimeout( function timer() {
         console.log(i);
     }, 1000 );
-}
+}*/
 
 // solution1
-for (var i = 1; i <= 5; i++) {
+/*for (var i = 1; i <= 5; i++) {
     (function(i) {
         setTimeout( function timer() {
             console.log(i);
@@ -22,6 +22,12 @@ for (var i = 1; i <= 5; i++) {
             console.log(i);
         }
     })(i), 1000 );
+}*/
+
+for (let i = 1; i <= 5; i++) {
+    setTimeout( function timer() {
+        console.log(i);
+    }, 1000 );
 }
 </script>
 </html>
