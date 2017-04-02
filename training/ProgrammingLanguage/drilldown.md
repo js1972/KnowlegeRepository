@@ -117,3 +117,4 @@ Depending on the variance of the type constructor, the subtyping relation may be
 For example in OCaml, "list of Cat" is a subtype of "list of Animal" because the list constructor is covariant, while "function from Animal to String" is a subtype of "function from Cat to String" because the function type constructor is contravariant in the argument type. 
 That is, covariant if it preserves the ordering of types (≤), which orders types from more specific to more generic; contravariant if it reverses this ordering.
 
+[covariance example in Java](https://dzone.com/articles/covariance-and-contravariance)
