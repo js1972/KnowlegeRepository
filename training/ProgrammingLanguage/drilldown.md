@@ -106,3 +106,14 @@ interface Time {
 
 # Object
 after this slide, there should be another slide talking about static method.
+
+# Liskov’s Substitution Principle – Motivation
+
+* Variance: refers to how subtyping between more complex types (list of Cats versus list of Animals, function returning Cat versus function returning Animal, ...) relates to subtyping between their components.
+
+* type constructor: a feature of a typed formal language that builds new types from old ones. 
+Depending on the variance of the type constructor, the subtyping relation may be either preserved, reversed, or ignored.
+
+For example in OCaml, "list of Cat" is a subtype of "list of Animal" because the list constructor is covariant, while "function from Animal to String" is a subtype of "function from Cat to String" because the function type constructor is contravariant in the argument type. 
+That is, covariant if it preserves the ordering of types (≤), which orders types from more specific to more generic; contravariant if it reverses this ordering.
+
