@@ -17,13 +17,12 @@ function useArguments1() {
     for (var i = 0; i < arguments.length; ++i) {
         sum += arguments[i];
     }
-
     return sum;
 }
 
-// call
+// 转成数组 ([]为Array.prototype的语法糖)
 function useArguments2() {
-    var arr = [].slice.call(arguments); // 转成数组 ([]为Array.prototype的语法糖)
+    var arr = [].slice.call(arguments); 
     return arr.reduce(function(a, b) {
         return a + b;
     });
