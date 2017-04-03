@@ -58,3 +58,58 @@ WRITE:/ 'result: '.
 LOOP AT lt_array INTO ls_array.
   WRITE: ls_array-number.
 ENDLOOP.
+
+class ZCL_MARCH_SORT definition
+  public
+  final
+  create public .
+
+public section.
+
+  types:
+    tt_table TYPE TABLE OF int4 .
+
+  methods BUBBLE_SORT
+    changing
+      !CT_TABLE type TT_TABLE .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS ZCL_MARCH_SORT IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_MARCH_SORT->BUBBLE_SORT
+* +-------------------------------------------------------------------------------------------------+
+* | [<-->] CT_TABLE                       TYPE        TT_TABLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD bubble_sort.
+
+    DATA(length) = lines( ct_table ).
+    DATA(mark) = 1.
+    DATA nextnum TYPE int4 .
+    DATA currentnum TYPE int4 .
+    DATA tempnum TYPE int4.
+
+    DO lines( ct_table ) TIMES .
+
+      WHILE mark < length .
+
+        IF ct_table[ mark ] > ct_table[  mark + 1 ].
+          tempnum = ct_table[ mark ] .
+          ct_table[ mark ] = ct_table[  mark + 1 ] .
+          ct_table[  mark + 1 ] = tempnum .
+        ENDIF.
+
+        mark = mark + 1.
+
+      ENDWHILE.
+      mark = 1.
+      length = length - 1.
+
+    ENDDO.
+  ENDMETHOD.
+ENDCLASS.
