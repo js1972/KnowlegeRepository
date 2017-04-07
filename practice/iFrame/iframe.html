@@ -1,0 +1,8 @@
+<html>
+<p>iframe</p>
+<script src="singleton.js"></script> 
+<script>
+console.log("in iframe window: " + getInstance()());
+console.log("in iframe window getInstance2: " + parent.window.getInstance2());
+</script>
+</html>

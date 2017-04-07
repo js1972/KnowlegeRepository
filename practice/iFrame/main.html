@@ -1,0 +1,19 @@
+<html>
+<p>main window</p>
+<iframe src="iframe.html" height="200" width="300"></iframe>
+<script src="singleton.js"></script> 
+<script>
+console.log("in main window: " + getInstance()());
+
+function getInstance2(){
+  var mask;
+  return function() {
+  	 return mask || ( mask = "Jerry React" );
+  }
+}
+
+window.getInstance2 = getInstance2();
+
+console.log("in main window getInstance2: " + getInstance2());
+</script>
+</html>
