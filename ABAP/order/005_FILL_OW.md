@@ -67,7 +67,7 @@ This FM will call dedicated check function module for a given field registered i
 
 ## 2.CRM_OPPORT_H_READ_OB
 
-The logic of this FM is already explained in blog: Buffer logic in One Order header extension Read.
+The logic of this FM is already explained in this [link](https://github.com/i042416/KnowlegeRepository/blob/master/ABAP/order/004_Object_buffer_read.md).
 
 ## 3. CRM_ORDER_INPUT_DATA
 
