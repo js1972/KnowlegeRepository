@@ -1,0 +1,1477 @@
+PGMIDOBJECTTEXT
+*Comment Line
+CORRMERGComment: Object List Included
+CORRPERFPerforce Changelist
+CORRRELEComment Entry: Released
+LIMUADIRObject Directory Entry
+LIMUCINCClass Include (ABAP Objects)
+LIMUCLSDClass Definition (ABAP Objects)
+LIMUCOMMObject List of Request or Piece List
+LIMUCPRIPrivate Header (ABAP Objects)
+LIMUCPROProtected Header (ABAP Objects)
+LIMUCPUBPublic Header (ABAP Objects)
+LIMUCUADGUI Definition
+LIMUDEVPPackage: Usage
+LIMUDOCUDocumentation
+LIMUDOMDDomain Definition
+LIMUDTEDData Element Definition
+LIMUDYNPScreen
+LIMUENQDLock Object Definition
+LIMUFSELField Selection
+LIMUFUGTFunction Group Texts
+LIMUFUNCFunction Module
+LIMUHOTO
+LIMUHOTP
+LIMUINDXTable Index
+LIMUINTDInterface Definition (ABAP Objects)
+LIMUMAPPMapping Information (ABAP Objects)
+LIMUMCODMatchcode Object Definition
+LIMUMESSSingle Message
+LIMUMETHMethod (ABAP Objects)
+LIMUMSADMessage Class: Definition and All Short Texts
+LIMUPIFAPackage Interface: Assignments
+LIMUPIFHPackage Interface: Header Information
+LIMUREPOReport Program Source Code and Texts
+LIMUREPSReport Source Code
+LIMUREPTReport Texts
+LIMUSHLDSearch Help Definition
+LIMUSHLXText Component of Search Help Definition
+LIMUSOTTConcept (Online Text Repository) - Short Texts
+LIMUSOTUConcept (Online Text Repository) - Long Texts
+LIMUSQLDPool, Cluster Definition
+LIMUSQTTTechnical Attributes for Pool/Cluster
+LIMUTABDTable Definition
+LIMUTABTTechnical Attributes of a Table
+LIMUTTYDTable Type Definition
+LIMUTTYXText Component of Table Type Definition
+LIMUTYPDType Group Source Code
+LIMUVARIReport Program System Variant
+LIMUVARXReport Program Application Variant
+LIMUVIEDView Definition
+LIMUVIETTechnical Attributes of a View
+LIMUWAPDDefinition of BSP Application
+LIMUWAPPPage/Controller of a BSP Application
+LIMUWDYCController (Web Dynpro)
+LIMUWDYDDefinition (Web Dynpro)
+LIMUWDYVView (Web Dynpro)
+LIMUXINDExtension Index Definition
+R3TR01DYScreen sequence for rental units transport object
+R3TR0KM1Screen variant for cost center collective processing
+R3TR0KW3Screen Variant: Collective Processing for Business Processes
+R3TR1APPBPC: APPLICATION
+R3TR24FOHR Forms (KSA)
+R3TRAABCBPC APA Global Bands & KPI Category Setting
+R3TRAADTBPC APA Application Global Setting
+R3TRAAOEAnalysis Office Excel Workbook
+R3TRAAOPAnalysis Office Powerpoint
+R3TRAAPPBPC Model
+R3TRAAPSBPC Environment Info
+R3TRAARTOrder type (CO, PP, PM, network)
+R3TRABPCBPC Objects
+R3TRABPFBPC BPF
+R3TRABRUBPC Business Rule
+R3TRABRVSettlement variant
+R3TRACGABPC Environment Configuration
+R3TRACGPBPC Model Configuration
+R3TRACGRRole
+R3TRACGSBPC System Configuration
+R3TRACGTRole - User assignment
+R3TRACIDCheckpoint Group
+R3TRACLAArchiving Class
+R3TRACLBBPC Library
+R3TRACTRBPC Control
+R3TRADAFBPC Data Access Profile
+R3TRADEEBPC Deletion Entity
+R3TRADEIBPC deletion item
+R3TRADELBPC Deletion
+R3TRADIMBPC Dimension
+R3TRADMCBPC DM Data File
+R3TRADMDBPC DM File Folder
+R3TRADMFBPC DM File
+R3TRADMGBPC Data Mananger Package Group
+R3TRADMLBPC DM Package Link
+R3TRADMPBPC DM Package
+R3TRADSODatastore Object
+R3TRADTCADT Compatibility Graph
+R3TRADTGBPC Drill Through
+R3TRADTSADT scopes for HTTP resource authorization via OAUTH2
+R3TRAFLCBPC File Category
+R3TRAFLDBPC File Folder
+R3TRAFLEBPC Files
+R3TRAFLGBPC File Group
+R3TRAGGRAggregate
+R3TRAJUTBPC Jounal Template
+R3TRAKPIBPC AVA KPI
+R3TRALIDTransport Object for Alternative ID Types
+R3TRALPTBPC Web documents - LiveReport
+R3TRALVCALV Templates (for example, Crystal Layouts) from Customer
+R3TRALVLAggregation Level
+R3TRALVTALV Templates (for example, Crystal Layouts) from SAP
+R3TRALVWALV (WebDynroABAP) - BLOBs for Views delivered by SAP
+R3TRAM00Asset Accounting FI-AA: Chart of depreciation
+R3TRAM01Asset Accounting FI-AA: Calculation key
+R3TRAM02Asset Accounting FI-AA: Company codes
+R3TRAM03Asset Accounting FI-AA: Cut-off value/scrap value
+R3TRAM04Asset Accounting FI-AA: Depreciation Keys
+R3TRAM05Asset Accounting FI-AA: Account allocation
+R3TRAM07Asset Accounting FI-AA: Transaction types
+R3TRAM08Asset Accounting FI-AA: Screen layout rule asset master
+R3TRAM09Asset Accounting FI-AA: Screen layout rule deprec. areas
+R3TRAM10Asset Accounting FI-AA: Asset history sheet (definition)
+R3TRAM11Asset Accounting FI-AA: Index points
+R3TRAM12Asset Accounting FI-AA: Views
+R3TRAM13Asset Accounting FI-AA: Field groups and asset views
+R3TRAM14Asset Accounting FI-AA: Period weighting
+R3TRAM15Asset Accounting: Asset classes
+R3TRAM16Asset Accounting: Account groups
+R3TRAM17Asset Accounting: chart of accounts
+R3TRAM18Asset Accounting: Transaction type proposals
+R3TRAMBRBPC Dimension member
+R3TRAMOPAPO Alert Monitor Profile
+R3TRAMPFBPC Member Access Profile
+R3TRAMSDLogical Transport Object
+R3TRAMSMLogical Transport Object
+R3TRANMOAnalytical Model
+R3TRANPRAnalysis Process
+R3TRANSEAnalytical Service
+R3TRANSOSource for analytical model
+R3TRANSTAnalytical service types
+R3TRAOBJArchiving Object
+R3TRAPCOApplication components
+R3TRAPPLApplication Class
+R3TRAPPSBPC Appset
+R3TRAQBGABAP Query: User group
+R3TRAQHTSAP Query: HTML Templates
+R3TRAQQUABAP Query: Query
+R3TRAQQVABAP Query: Query variant
+R3TRAQSGABAP Query: Functional area
+R3TRAQTRSAP Query: HTML Templates (raw)
+R3TRAQXIABAP Query: Additional functions
+R3TRAREAInfoArea
+R3TRARLEMeta Data for Derivation Cluster
+R3TRARTPBPC Report template
+R3TRASFCSAP AS: Field Catalog
+R3TRASISSAP AS: Archiving Information Structure
+R3TRASOBAnalytics Security Object (BI Analysis Authorizations)
+R3TRASPDBPC Script Folder
+R3TRASPFBPC Script File
+R3TRASPRBPC Script File Resource
+R3TRATCSABAP Test Cockpit: Step
+R3TRATEMBPC Team
+R3TRATPFBPC Task Profile
+R3TRATPLTransport of Profile Generator templates
+R3TRATRTData Types for Attributes
+R3TRATTRLogical Transport Object for Set Type Attributes
+R3TRAUDIGeneral Structure Repository: Audit Information Structure
+R3TRAUTHAuthorization Check Fields
+R3TRAVARActivation Variants for Assertions and Breakpoints
+R3TRAVASClassification
+R3TRAVRSLogical Transport Object
+R3TRAWDCBPC Web document category
+R3TRAWFDBPC Web document folder
+R3TRAWKPBPC Web document - workspace
+R3TRAWSSBPC Workstatus
+R3TRAXDBBPC Web documents - XcelsiusDashBoard
+R3TRAXECRapid Application Embedded Views (Customer maintained)
+R3TRAXEMEmbeddable view
+R3TRAXESRapid Application Embedded Views (SAP delivered)
+R3TRAXTAApplication Group
+R3TRAXTBExtensible business objects
+R3TRAXTCGeneration Catalogue
+R3TRAXTEExtension
+R3TRAXTLLogical Table object
+R3TRAXTNExtensibility number range definition
+R3TRAXTOExtension object type
+R3TRAXTPExtensible place
+R3TRAXTSExtensible search
+R3TRAXTTExtensible table place
+R3TRAXTVNavigational object
+R3TRAZAPAnalysis Application
+R3TRAZEXDesign Studio Extension
+R3TRBANATemplate object type in ABAP Workbench
+R3TRBAOEBPC: Workbook
+R3TRBBPFBPC: BPF
+R3TRBCCHBusiness Configuration Check
+R3TRBCCUBusiness Configuration Check Units
+R3TRBCFKTest L Object for business configuration API
+R3TRBDAPBPC: Data access profile
+R3TRBEN1Benefit area plans
+R3TRBEN2Benefit area administration
+R3TRBEN3Flexible Benefit Area Tables
+R3TRBIBDBI Content Bundle
+R3TRBILALanguage Transport of Financial Statement Version
+R3TRBIMOBI Meta (Transport) Object Type
+R3TRBITMBI Web Items (NW7.0+)
+R3TRBIXPObject for Controlling Data Conversions in BI
+R3TRBLFOBW: LOIO Class Folder
+R3TRBLMABW: LOIO Class Master Data
+R3TRBLRCCustomizing for RFC Blacklist Entries
+R3TRBLRFBlacklist Entries RFC
+R3TRBLTMBW: LOIO Class Web Templates
+R3TRBLUBTemplate object type in ABAP Workbench
+R3TRBLUETemplate object type in ABAP Workbench
+R3TRBMAOAny object
+R3TRBMBSCollaborative Business Scenario
+R3TRBMEFFunction in process model
+R3TRBMEOEnterprise OrgUnit type (3.0 only)
+R3TRBMEPDiagram in process model
+R3TRBMETProcess hierarchy level below OrgUnit (3.0 only)
+R3TRBMEVEvent in process model
+R3TRBMFRApplication Component
+R3TRBMFUFunction
+R3TRBMFVGlobal function variant
+R3TRBMFZFunction relationship diagram
+R3TRBMGRGroup
+R3TRBMGTProcess list for application components 3.1
+R3TRBMHFProcess list for application components, 3.0
+R3TRBMHTApplication component hierarchy level
+R3TRBMPCSoftware Module
+R3TRBMPMProcess selection matrix for components (3.0 only)
+R3TRBMPVSoftware Variant
+R3TRBMSHSelection
+R3TRBMSLDiagram variants in process model
+R3TRBMSMProcess selection matrix for OrgUnits (3.0 only)
+R3TRBMSPScenario process (3.0 only)
+R3TRBMSZScenario (3.0 only)
+R3TRBMTHStructure Repository for Processes: Node Definition
+R3TRBMVAComponent selection for IMG
+R3TRBMVGDisplay group process model
+R3TRBOBCBOPF Contract Compliance Check Configuration
+R3TRBOBFBOPF: Business Object Model
+R3TRBOBLBOPF: Business Object Library
+R3TRBOBXBOPF: Business Object Model Extension
+R3TRBOPFBOPF: Business Object Model
+R3TRBOPXBOPF: Business Object Model Extension
+R3TRBOTYObject Type for General Object Number
+R3TRBPMABW: PHIO Class Master Data
+R3TRBPTMBW: PHIO Class Web Templates
+R3TRBRCLAttributes - Producer/Distributor Classes in Broadcasting BW
+R3TRBRF0BRF: Application Class
+R3TRBRR1Business Rule
+R3TRBRR2Business Rule (client-dependent)
+R3TRBRSEBroadcasting Settings (BW)
+R3TRBSALBusiness Suite Side Panel: Logical information object
+R3TRBSAPBusiness Suite Side Panel: Physical information object
+R3TRBSNLBusiness Suite Side Panel: Logical information object
+R3TRBSNPBusiness Suite Side Panel: Physical information object
+R3TRBSVIStatus management: System status
+R3TRBSVOStatus management: Object type
+R3TRBSVSStatus management: status profile
+R3TRBSVVStatus management: Process
+R3TRBTMPBI Web Templates (NW7.0+)
+R3TRBWBKBPC: Workbook
+R3TRBWLABW: Processor for Language Export in BW
+R3TRCALEPublic Holidays
+R3TRCASPSCC: Check Aspect
+R3TRCASVSCC: Check Aspect Value
+R3TRCCFGSCC: Check Configuration
+R3TRCCRUSCC: Check Configuration Rule
+R3TRCDATView Cluster Maintenance: Data
+R3TRCDDHDevelopment Classes for Table Entries: Granularity
+R3TRCDDLDefault Original Language in Customizing
+R3TRCDDODefault Originality Attributes in Customizing
+R3TRCDLHOriginal Language for Table Entries: Granularity
+R3TRCDOHOriginality for Table Entries: Granularity
+R3TRCELMElements of the Query Builder (SAP Delivery)
+R3TRCFDACustom Fields: BAdIs of Business Context
+R3TRCFDBCustom Fields: Business Context Registry
+R3TRCFDCCustom Fields: CDS View Registry
+R3TRCFDEData Source Extension
+R3TRCFDFCustom Field
+R3TRCFDGCustom Fields: SAP GUI Registry
+R3TRCFDOCustom Fields: OData Model Registry
+R3TRCFDSCustom Fields: Business Scenario Registry
+R3TRCFDTCustom Fields: Data Transfer Registry
+R3TRCHARObject characteristic
+R3TRCHDOChange Document Object
+R3TRCINSCorrection Instruction
+R3TRCLASClass (ABAP Objects)
+R3TRCMHCCloud Management Health Check
+R3TRCMODCustomer enhancement projects
+R3TRCMPTCode Composer Template
+R3TRCMTMCloud Management Tenant Multiplexer Trigger
+R3TRCNPALogical Transport Object
+R3TRCNPCDMC: Migration Settings of a Control Parameter
+R3TRCNTLSEM-SRM Contacts: Logical InfoObject (SRM:CNT)
+R3TRCNTNDMC: Definition of a Container (Sender/Recipient)
+R3TRCNTPSEM-SRM Contacts: Physical InfoObject (SRM_CNT)
+R3TRCNTXContext
+R3TRCNVNConversion Tools: Notification Events
+R3TRCOACESF: Action
+R3TRCOASESF: Aspect
+R3TRCOBBControlling CO: Calculation base for overhead - detail
+R3TRCOBJDMC: Definition of a Conversion Object
+R3TRCOBOESF: Business Object
+R3TRCOC1CO: Cost Centers
+R3TRCOC2CO: Activity Types
+R3TRCOC3CO: Statistical Key Figures
+R3TRCOCFESF: Configuration
+R3TRCOCOControl Composite
+R3TRCOE1Controlling CO: Credit for surcharges - Overview
+R3TRCOE2Controlling CO: Credit for surcharges - detail
+R3TRCOF1CO: Cost Elements (Dependent on Chart of Accounts)
+R3TRCOF2Cost elements (controlling area specific data)
+R3TRCOK1Controlling CO: Overview of surcharge conditions
+R3TRCOK2Controlling CO: Additional data for surcharge conditions
+R3TRCOKSControlling CO: costing sheet for overhead
+R3TRCOPRCompositeProvider
+R3TRCORLESF: Relation
+R3TRCOSMESF: Service Modules
+R3TRCOVGControlling CO: Transaction groups
+R3TRCPKMMeta data of a transport-based correction instruction
+R3TRCREQFormulae and Requirements: Table Entries
+R3TRCRMECRM Enterpise Search
+R3TRCRWBCrystal Reports Template
+R3TRCTAFCondition Technique - Application Field
+R3TRCTAPCondition Technique - Application
+R3TRCTASS/4HANA Condition Technique - Access Sequence
+R3TRCTCTCondition Technique - Condition Table
+R3TRCTDDCondition Technique - Procedure Type for Info. Determination
+R3TRCTEMCustomizing templates
+R3TRCTFCS/4HANA Condition Technique - Field Catalog
+R3TRCTFDCondition Technique - Data Element in Global Field Catalog
+R3TRCTFFCondition Technique - Field Name in Global Field Catalog
+R3TRCTFPCondition Technique - Dependencies in Global Field Catalog
+R3TRCTFRCondition Technique - Relationships in Global Field Catalog
+R3TRCTMCCondition Technique - Maintenance Context for Cond. Maint.
+R3TRCTMPCTM Planning Profile
+R3TRCTRFCondition Technique: Reference Type for Condition Maint.
+R3TRCTRTCurrency Translation Type
+R3TRCTSBCondition Technque - Scale Base Type of Scale
+R3TRCTTKCondition Technique - Task (Signature Part)
+R3TRCTTSCondition Technique - Task (Definition Part)
+R3TRCTUFCondition Technique - Field of a Usage
+R3TRCTUSCondition Technique - Usage
+R3TRCUATCustomer enhancements: Menu enhancement texts
+R3TRCUBEInfoCube
+R3TRCUS0Customizing IMG Activity
+R3TRCUS1Customizing Transactions
+R3TRCUS2Customizing Attributes
+R3TRCUS3Variants of IMG Attributes
+R3TRDAAGData Aging Object
+R3TRDAGRAggregate (SAP Delivery)
+R3TRDALVAggregation Level (SAP Delivery)
+R3TRDANMAnalytical Model (shipped version)
+R3TRDANPAnalysis Process (SAP Delivery)
+R3TRDANSSource for analytical model (shipment version)
+R3TRDAOEAnalysis Office Excel Workbook (SAP Delivery Version)
+R3TRDAOPAnalysis Office Powerpoint (SAP Delivery Version)
+R3TRDAPABW Data Archiving Process (Active Version)
+R3TRDAPCApplication Components (SAP Delivery)
+R3TRDAPDBW Data Archiving Process (Delivered Version)
+R3TRDAREInfoArea (SAP Delivery)
+R3TRDASOD Version for Analytics Security Object (BI Analysis Auth.)
+R3TRDBBPBPC: BPF (Delivery Version)
+R3TRDBDABPC: Data access profile (Delivery Version)
+R3TRDBITBI Web Item (NW7.0+) D-Version
+R3TRDBIXDelivery Version Control for Data Conversions in BI
+R3TRDBRSD-Version: Broadcast Settings (BW)
+R3TRDBTMBI Web Templates (NW7.0+) D-Version
+R3TRDCLSABAP Data Control Language Sources
+R3TRDCOPComposite Provider (SAP Delivery)
+R3TRDCRWCrystal Reports Template (SAP Delivery)
+R3TRDCTRCurrency Translation Type (SAP Delivery)
+R3TRDCUBInfoCube  (SAP Delivery)
+R3TRDDASModeled Data Access Service
+R3TRDDBFLogical Transport Object
+R3TRDDDAModeled Data Access Service (SAP Delivery)
+R3TRDDDDChanges to Nametab Structure
+R3TRDDESOpen Hub Destination (SAP Delivery)
+R3TRDDLSData Definition Language Source
+R3TRDDLVCDS Variant
+R3TRDDLXCDS metadata extension
+R3TRDDMMDataMining Model (Shipped Version)
+R3TRDDMOData Flow (SAP Shipment)
+R3TRDDSODatastore Object (SAP Delivery)
+R3TRDELMElements of the Query Builder (SAP Delivery)
+R3TRDENVBPC: Environment (Delivery Version)
+R3TRDESTOpen Hub Destination
+R3TRDEVCPackage
+R3TRDEVEEvent Chain Processing (SAP Delivery)
+R3TRDFTHStructure Buffer for Scenarios: Definition of Nodes
+R3TRDHAAHANA Analysis Process (SAP Delivery)
+R3TRDHCPHana Composite Provider (SAP Delivery)
+R3TRDHIEBW Hierarchy (SAP Delivery)
+R3TRDHYBHybridProvider  (SAP Delivery)
+R3TRDIALDialog Module
+R3TRDICAInfoCatalog (SAP Delivery)
+R3TRDINSIQM Inspection Plan (BI) (D Version)
+R3TRDIOBInfoObject (SAP Delivery)
+R3TRDIOCInfoObjectCatalog (SAP Delivery)
+R3TRDISCCall Package (SAP Delivery)
+R3TRDISEInfoSet in BW (SAP Delivery)
+R3TRDISGInfoPackage Groups (SAP Delivery)
+R3TRDITMTransport Object for BW Web Items (D Version)
+R3TRDKEYLogical Transport Object for Differentiation Key Types
+R3TRDKPCBI: KPI Catalog Folder (Delivery)
+R3TRDKPDBI: KPI Definition (Delivery)
+R3TRDLCCCRM UIF, Dynamic Layout Configuration / Customer Layer
+R3TRDLCSCRM UIF, Dynamic Layout Configuration / SAP layer
+R3TRDMDLBPC: Model (Delivery Version)
+R3TRDME1DMEE Format Tree for Outgoing/Incoming Files
+R3TRDMEADMEE Format Tree for Incoming Files
+R3TRDMEEData Medium Exchange Engine (Formats)
+R3TRDMMODataMining Model
+R3TRDMODData Flow
+R3TRDMPRMulti Provider (SAP Delivery)
+R3TRDOCTGeneral Text
+R3TRDOCVDocumentation (Independent)
+R3TRDODSDataStore Object (SAP Delivery)
+R3TRDOKUNodes for Documentation Structure
+R3TRDOMADomain
+R3TRDPLCPlanning: Characteristic Relationship Object (SAP Delivery)
+R3TRDPLDPlanning: Data Slices (SAP Delivery)
+R3TRDPLQPlanning Sequence (SAP Delivery)
+R3TRDPLSPlanning Service (SAP Delivery)
+R3TRDPLTPlanning Service Type (SAP Delivery)
+R3TRDQVITransport Object for BW Query Views (D Version)
+R3TRDRELReport Designer: Reusable Elements, D Version
+R3TRDROURoutine (SAP Delivery)
+R3TRDRPMDictionary Replication Metadata
+R3TRDRPTBW Enterprise Report Delivery Version
+R3TRDRULRemodeling Rule (SAP Delivery)
+R3TRDSAADataSource Application Component Hierarchy (Active Version)
+R3TRDSADDataSource Application Component (Delivered Version)
+R3TRDSCSCommunication Structure (SAP Delivery)
+R3TRDSELSelection View
+R3TRDSFOBW Formula (Version for Delivery)
+R3TRDSPCProcess Chain (SAP Delivery)
+R3TRDSPIInterrupting Process (SAP Delivery)
+R3TRDSPTProcess Chain Starter (SAP Delivery)
+R3TRDSPVProcess Variant (SAP Delivery)
+R3TRDSTDInfoSource Transaction Data (SAP Delivery)
+R3TRDSYSChapter of a Book Structure
+R3TRDTEABPC: Team (Delivery Version)
+R3TRDTELData Element
+R3TRDTF1Logical Transport Object for Date Functions
+R3TRDTHJKey Date Derivation Type (SAP Delivery)
+R3TRDTMPTransport Object for BW Web Templates (D Version)
+R3TRDTPAData Transfer Process: Active Version
+R3TRDTPDData Transfer Process (SAP Delivery)
+R3TRDTRCCommunication Structure for Transfomration (SAP Delivery)
+R3TRDTRFTransformation (SAP Delivery)
+R3TRDUOMQuantity Conversion Type (SAP Delivery)
+R3TRDUPDUpdate Rules (SAP Delivery)
+R3TRDVSLKW: Logical info object (DVS)
+R3TRDVSPKW: Physical info object (DVS)
+R3TRDVSSKW: Structure storage for DVS
+R3TRDWIBBW Web Item (BI-Runtime)
+R3TRDWKSBPC: workspace (Delivery Version)
+R3TRDWPABW Web Runtime:  Parameter (for Web Item or Command)
+R3TRDXCLXcelcius Dashboard Delivery version
+R3TRDXLWExcel Workbook (SAP Delivery)
+R3TRDZAPAnalysis Application (SAP Delivery Version)
+R3TRDZEXDesign Studio Extension (SAP Delivery Version)
+R3TRECATeCATT Test Script
+R3TRECSDeCATT System Data Container
+R3TRECSPeCATT Start Profile
+R3TRECTCeCATT Test Configuration
+R3TRECTDeCATT Test Data Container
+R3TRECVOeCATT Validation Object
+R3TRED01SD: EDI Customizing: Table EDPAR
+R3TRED02SD: EDI Customizing: Table EDSYN
+R3TRED03SD: EDI Customizing: Table EDMAP
+R3TRED04SD: EDI Customizing: Table EDPVW
+R3TRED05SD: EDI Customizing: Table EDSDC
+R3TREFCLForm Class
+R3TREFOMPrint Workbench Application Form
+R3TRELEMElements of the Query Builder
+R3TRELEVQuery Designer: Text Verticalization
+R3TRENBCSwitch On/Off BAdI Implementation per IMG
+R3TRENHCComposite Enhancement Implementation
+R3TRENHOEnhancement Implementation
+R3TRENHSEnhancement Spot
+R3TRENQULock Object
+R3TRENSCComposite Enhancement Spot
+R3TRENVMBPC: Environment
+R3TRERELReport Designer: Reusable Element
+R3TRERPTBW Enterprise Report
+R3TREUARTransport object for table ADMI_CRIT
+R3TREVENEvent- Administration Chains
+R3TREXCCExternal operating system command defined by customer
+R3TREXCSExternal operating system command delivered by SAP
+R3TRF011Financial statement version
+R3TRF01UCompany Code Clearing
+R3TRF03Document Types
+R3TRF09Fiscal Year Variants
+R3TRF12House Banks/Bank Accounts in Company Code
+R3TRF211Line Layout Variants - Document Display
+R3TRF212Line Layout Variants - Line Items
+R3TRF213Line Layout Variants - Clearing Transactions
+R3TRF214Line Layout Variants - Automatic Payment
+R3TRF215Line Layout Variants - Automatic Payments/Line Items
+R3TRF216Line Layout Variants for Payment Advice Items
+R3TRF217Line Layout Variants - External Documents
+R3TRF218Line Layout Variants - Invoice Parking
+R3TRF219Line Layout Variant for Overview when Posting Document
+R3TRF21BTotals Variants
+R3TRF21CLine structure variants - credit management
+R3TRF21RField Selection Lists
+R3TRF21VDefault Values for Line Layout/Totals variants
+R3TRF221Credit Management Sort Variants
+R3TRF222Sort Variants - Payment Media/Correspondence
+R3TRF223Sort Variants - Payment Media/Line Items
+R3TRF224Sort Variants - Correspondence/Nodes
+R3TRF225Sort Variants - Correspondence/Internal Documents
+R3TRF226Sort Variants - Correspondence/Line Items
+R3TRF227Sort Variants for Line Item Display
+R3TRF22NSort variants: Printing of dunning notice/dunning header
+R3TRF22QSort variants: Printing of dunning notice/dunning line item
+R3TRF30Automatic Postings - Account Determination
+R3TRF30BAutomatic Postings - Posting Keys
+R3TRF30GAutomatic Postings - Business Area Breakdown
+R3TRF30KAutomatic Tax Postings - Account Determination
+R3TRF30RAutomatic Postings: Rules
+R3TRF30SAutomat. Postings Exchange Rate Diff. - Account Determin.
+R3TRF30UAutomatic Postings - Bal.Sheet Prep./Bus.Area Breakdown
+R3TRF33FAccount Determination (Posting Interface)
+R3TRF41AClearing Transactions
+R3TRF42Payment Program: Company Codes
+R3TRF42APayment Program: Bank Selection (ranking)
+R3TRF42BPayment Program: Paying Company Codes
+R3TRF42DPayment Program: Available Amounts
+R3TRF42EPayment Program: Payment Methods in Company Code
+R3TRF42IPayment Program: Account Determination
+R3TRF42PPayment Program: Bank Selection (by Postal Code)
+R3TRF42SPayment Program: Charges
+R3TRF42VPayment Program: Value Date
+R3TRF42ZPayment Program: Payment Methods in Country
+R3TRF47Dunning program: Company code data
+R3TRF47ADunning program: Dunning procedure
+R3TRF47FDunning program: Sort fields
+R3TRF47IDunning program: Texts
+R3TRF74Special G/L: Account Determination
+R3TRF74USpecial G/L: Indicator
+R3TRFARCTABU entries in TR01 ( Archiving )
+R3TRFAVWorklists
+R3TRFAVAAutomatic Worklists
+R3TRFBCPConfigurable Components
+R3TRFBCTContent
+R3TRFBLCLocal Content
+R3TRFBPABW: Open ODS View
+R3TRFBPDBW: Open ODS View (SAP Delivery)
+R3TRFC01Copy company code: XSKB1
+R3TRFC02Copy company code: XT012
+R3TRFC03Copy company code: XT001S
+R3TRFC04Copy company code: XT001T
+R3TRFC07Copy company code: XT043T
+R3TRFC08Copy company code: XT043G
+R3TRFC10Copy company code: XT079D
+R3TRFC11Copy company code: XT079K
+R3TRFC12Copy company code: XT042
+R3TRFC13Copy company code: XT047
+R3TRFC14Copy company code: XT031
+R3TRFC15Copy company code: XT001R
+R3TRFC16Copy company code: XTBAER
+R3TRFC17Copy company code: XT035
+R3TRFC18Copy company code: XT048I
+R3TRFC19Copy company code: XT001N
+R3TRFC30Copy company code: XT012 + XT042
+R3TRFC31Copy company code: XT012 + XT035
+R3TRFC32Copy company code: XT001T (T056D)
+R3TRFC40Copy company code: Without condition
+R3TRFC42Transport company code: Fixed ledgers (T895)
+R3TRFC43Copy company code: Special Ledgers (T886B)
+R3TRFC44Transport company code: Fixed ledgers (T882)
+R3TRFC60Transport chart of accounts: Chart of accounts (T004)
+R3TRFC61Transport Chart of Accounts: Accounts (SKA1,SKM1)
+R3TRFC62Transport chart of accounts: T030,T030R with restrictions
+R3TRFC63Transport chart of accounts: Acct. det. (T030x,T045W,T074)
+R3TRFC64Transport Chart of Accounts: Accounts (Texts in Sep.Lang.)
+R3TRFC65Transport Chart of Accounts: Accounts (T077S/Z)
+R3TRFC66Transport chart of accounts: Posting interface (T033G)
+R3TRFC67Transport chart of accounts:  T030, T030R w/out restrictions
+R3TRFC68Transport Chart of Accounts: Accounts in Company Code (SKB1)
+R3TRFC69Transport Chart of Accts: Accounts (Texts in All Languages)
+R3TRFDT0FDT/BRFplus: System Application
+R3TRFDT1FDT/BRFplus: Customizing Application
+R3TRFF$6Check setting
+R3TRFILEFile Container
+R3TRFKM0TABLES WITH CHANGED DOCUMENT TYPES
+R3TRFO12Management contract field status transport
+R3TRFO6AApplication field status transport
+R3TRFORMSAPscript Form
+R3TRFS01Fast Entry: SAPMF05A-RE/GU
+R3TRFS02Fast Entry: SAPMF05A-SAKOP
+R3TRFS03Fast Entry: SAPMF40K-KNTAZ
+R3TRFS04Fast Entry: SAPMF40S-SCHKR
+R3TRFS05Fast Entry: SAPMK23B-CI
+R3TRFS06Fast Entry: SAPMK23B-CL
+R3TRFS07Fast Entry: SAPMK23B-CU
+R3TRFS08Fast Entry: SAPLF040-PRPOS
+R3TRFS09Fast Entry: SAPLFICP-ICPOS
+R3TRFS10Fast Entry: SAPMK23B-CU2
+R3TRFS11Fast Entry: SAPMK23B-CN
+R3TRFS12Fast Entry: SAPMKMA1-COMA1
+R3TRFS13Fast Entry: SAPLFKMT-KMPOS
+R3TRFS14Fast Entry: SAPLFRAD-AVIP
+R3TRFS15Fast Entry: SAPMKAUF-ORC
+R3TRFS20Fast Entry: SAPLKWM3-COBPR
+R3TRFS21Fast Entry: SAPLKMA1-COKST
+R3TRFSIPImplementation Project (Service Implementation Workbench)
+R3TRFSLPosting Keys
+R3TRFSLTPosting Key Texts
+R3TRFT01Document Type/Posting Key - Default Values
+R3TRFTGLFeature toggle
+R3TRFTRLFINB Transport-Tool: Client Copy - Bill of Material
+R3TRFTXPTax Code
+R3TRFUGRFunction Group
+R3TRFUGSFunction Group with Customer Include: SAP Part
+R3TRFUGXFunction Group with Customer Include: Customer Part
+R3TRFVACDMC: Migration Settings of a Fixed Value
+R3TRFVALLogical Transport Object
+R3TRFXERRelevant Text IDs
+R3TRFXIDText IDs
+R3TRG4BASAP Gateway OData V4 Backend Service Group & Assigments
+R3TRG4BGOBSOLETE - replaced by G4BA
+R3TRG4BSSAP Gateway OData V4 Backend Service
+R3TRGCLPRegistry Entry of a Code in Generic Codelist Provider
+R3TRGFSQGeneric Fast Search Query
+R3TRGFSVGeneric Fast Search View
+R3TRGILEGenIL Component Enhancement
+R3TRGLE0ECS Derivation Strategy
+R3TRGLE1ECS Derivation Strategy (Steps)
+R3TRGLOSTransport of Glossary Tables
+R3TRGPVDVariants for locally gen.proga. with client-spec.meta object
+R3TRGPVIVariants for locally gen.prog.with client-indep.meta object
+R3TRGS00Generic Segmentation - Scoping Meta Data
+R3TRGS01Generic Segmentation - Application Meta Data
+R3TRGS02Generic Segmentation - Preview Type Meta Data
+R3TRGS03Generic Segmentation - Data Source Meta Data
+R3TRGS04Generic Segmentation - Value Help Data Source Meta Data
+R3TRGS05Generic Segmentation - Segmentation Object Meta Data
+R3TRGS06Generic Segmentation - Profile Meta Data
+R3TRGS11Generic Segmentation - Application Meta Data
+R3TRGS12Generic Segmentation - Preview Type Meta Data
+R3TRGS13Generic Segmentation - Data Source Meta Data
+R3TRGS14Generic Segmentation - Value Help Data Source Meta Data
+R3TRGS15Generic Segmentation - Segmentation Object
+R3TRGS16Generic Segmentation - Profile Meta Data
+R3TRGURLPre-defined URL
+R3TRHAAPHANA Analysis Process
+R3TRHCFQHelp Center: FAQs
+R3TRHCLNHelp Center: Documents
+R3TRHCNSHelp Center: Namespace
+R3TRHCPRSAP HANA Composite Provider
+R3TRHDSADerivation Tree (HDS) / Application Data
+R3TRHDSIDerivation Tree (HDS) / System Customizing
+R3TRHDSTDerivation Tree (HDS)
+R3TRHEURLogical Transport Object
+R3TRHIERBW Hierarchies
+R3TRHLPFLink DS/screen field
+R3TRHOTA
+R3TRHRFCHR Forms: Form Class
+R3TRHRFDHR Forms: Relations LDB Fields-MetaFields
+R3TRHRFOHR Forms
+R3TRHRMDHR Forms: MetaDimension
+R3TRHRMFHR Forms: MetaFigure
+R3TRHRMNHR Forms: MetaNet
+R3TRHRMOHR Forms: Country-Specific MetaStars for Int. MetaNet
+R3TRHRMSHR Forms: MetaStar
+R3TRHRMTHR Forms: Country-Specific MetaDims for Int. MetaStar
+R3TRHRNROrganizational Management and Workflow: Prefix Numbers
+R3TRHRPMHR Process Model
+R3TRHTSTHTTP State
+R3TRHTTPHTTP Service
+R3TRHYBRHybridProvider
+R3TRIAJUIAC - JavaScript Objects (Non-Language-Specific)
+R3TRIAKCTable for Converting IAC Object Names
+R3TRIAMAMiniApps
+R3TRIAMLLanguage-Dependent IAC Binary Data
+R3TRIAMULanguage-Independent IAC Binary Data
+R3TRIAMXMiniApp
+R3TRIAPDProject Data for Implementation Assistant Nodes
+R3TRIARPParameters of IAC Language Resource
+R3TRIASPParameters of an IAC service
+R3TRIATHImplementation Assistant: Nodes
+R3TRIATLLanguage-Dependent IAC Templates
+R3TRIATULanguage-Independent IAC Templates
+R3TRIAXUITS: XML Templates for HTML Templates
+R3TRICFAAdministrative ICF services
+R3TRIDCVView of logical message for IDoc type
+R3TRIDOCIDoc Type
+R3TRIEXTEnhancement
+R3TRILOTLogic. Transport Object for Object Types for Object Relships
+R3TRILTPLogical Transport Object for Relationship Types
+R3TRINSPIQM Inspection Plan (BI)
+R3TRINTFInterface (ABAP Objects)
+R3TRIOBCInfoObject catalog
+R3TRIOBJInfoObject
+R3TRIOBVBI InfoObject Texts for Text Verticalization
+R3TRISCPCall Package
+R3TRISCSCommunication structure
+R3TRISETInfoSet in BW
+R3TRISFSDataSource Replica
+R3TRISIGInfoPackage group
+R3TRISIPInfoPackage
+R3TRISMDInfoSource master data
+R3TRISMPTransfer Rules
+R3TRISMTTransfer InfoSource master data
+R3TRISRVIntelligent Services
+R3TRISTDInfoSource transaction data
+R3TRISTSTransfer structure
+R3TRISTTTransfer InfoSource transaction data
+R3TRISVCServices: Assignment to Classes
+R3TRITEMTransport Object for BW Web Items
+R3TRIWCLLogical information object
+R3TRIWCPPhysical Information Object
+R3TRIWCSStructure storage system
+R3TRIWMOSAP Gateway Business Suite Enablement - Model
+R3TRIWNGNotification Gateway - Notification Provider Registration
+R3TRIWOMSAP Gateway: Model Metadata
+R3TRIWPRSAP Gateway BSE - Service Builder Project
+R3TRIWSCSAP Gateway:Screen scraping
+R3TRIWSGSAP Gateway: Service Groups Metadata
+R3TRIWSVSAP Gateway Business Suite Enablement - Service
+R3TRIWVBSAP Gateway Business Suite Enablement -Vocabulary Annotation
+R3TRIWVOSAP Gateway Business Suite Enablement - Vocabulary
+R3TRJARCJava Archive
+R3TRJCFGTechnical Java Configuration
+R3TRJOBDTechnical Job Definition
+R3TRKCDMSAP-EIS: Sender programs and environment
+R3TRKCHISAP EIS: Hierarchies
+R3TRKCKFSAP-EIS: Key figures - formula levels
+R3TRKCKKSAP-EIS: Key figures - aspect assignment
+R3TRKCKRSAP-EIS: Key figures
+R3TRKCKTSAP-EIS: Key figure - table assignment
+R3TRKEFICO-PA: logical object for characteristics, value fields
+R3TRKEHRCO-PA General Structure Repository
+R3TRKEOPLogical object for an operating concern
+R3TRKEPFPlanning Profile
+R3TRKEPVPlanning Level
+R3TRKES1Transport form/Report Painter
+R3TRKOM1Controlling: Model order
+R3TRKOM2Controlling: Model order - dependent data
+R3TRKPCEBI: KPI Catalog Folder
+R3TRKPDFBI: KPI Definition
+R3TRKPPLKPP: Logical Information Object
+R3TRKPPPKPP: Physical Information Object
+R3TRKPPRKPP: Relationship Between Information Objects
+R3TRKWPLKWPW: Logical Information Object
+R3TRKWPPKWPW: Physical Information Object (Help)
+R3TRKWPWKWPW: Structure Storage
+R3TRLAYOPage Layout
+R3TRLDBALogical Database
+R3TRLDPLProcess Sheet: Logical Information Object
+R3TRLDPPProcess Sheet: Physical Information Object
+R3TRLDPSProcess Sheet: Physical Info Object (Delivery)
+R3TRLGNRMM-WM: Warehouse number
+R3TRLOBJObject relevant for translation
+R3TRLODCHRDSYS: Logical information object client-dep. table C
+R3TRLODEHRDSYS: Logical information object client-dep. table E
+R3TRLODSHRDSYS: Logical information object client-dep. table E SYST
+R3TRLOIEHRDSYS: Logical information object client-indep. table E
+R3TRLOIOSolution Manager Document: Logical Info Object
+R3TRLPDCLaunchpad short texts
+R3TRLPDSLaunchpad Short Texts
+R3TRLPDTLaunchpad Short Texts
+R3TRLPOASemantically partitioned object: Active version
+R3TRLPODSemantically partitioned object: Content version
+R3TRLRCCLRepository cross-client content
+R3TRLRCDLRepository client-dependent content
+R3TRLTHRALV: HTML Templates (Raw Version)
+R3TRLTHTALV: HTML Templates (Translated Templates)
+R3TRLTRCLandscape Transformation Repository: Object Version
+R3TRLTRDLandscape Transformation Repository: Object Header
+R3TRLTXPLanguage Transport: Exit Handling
+R3TRM457Profile for Master Production Scheduling Evaluations
+R3TRMAPNSolution Map: Node definition
+R3TRMBCAMeasure Catalog (Active Version)
+R3TRMBCDMeasure Catalog (SAP Delivery Version)
+R3TRMBHAMeasure Hierarchy (Active Version)
+R3TRMBHDMeasure Hierarchy (SAP Delivery Version)
+R3TRMBMAMeasures (Active Version)
+R3TRMBMDMeasures (SAP Delivery Version)
+R3TRMBNAMeasure Nodes (Active Version)
+R3TRMBNDMeasure Nodes (SAP Delivery Version)
+R3TRMBRAMeasure Reference
+R3TRMCEVLIS Event
+R3TRMCIDMatchcode ID
+R3TRMCINInfo Structure: Lockable Object
+R3TRMCOBMatchcode Object
+R3TRMCPTLIS: planning type, macro
+R3TRMCUAUpdate Setting of an Info Structure
+R3TRMCUNLIS Units
+R3TRMD25Planning Calendar
+R3TRMESDMobile Solution Descriptor
+R3TRMGCFDevice Configuration - Configuration Template
+R3TRMGVSLAMA screens
+R3TRMKTUMarketing UI Adaptations
+R3TRMODLBPC: Model
+R3TRMPROMultiProvider
+R3TRMSAGMessage Class
+R3TRMSPIRepresentative List of Rents
+R3TRMTXTManual Activities in the Correction Instructions
+R3TRMWBULogical Transport Object
+R3TRNHDUHANA Transport Container
+R3TRNHLCHANA Language Container
+R3TRNOTESAP Note
+R3TRNROBNumber Range Objects
+R3TRNSPCNamespace in R/3 Repository
+R3TROA2GOAuth 2.0 Scopeset
+R3TROA2POAuth 2.0 Client Profile
+R3TROA2SOAuth2 Scope
+R3TROBJASOBJ: API called by an after import method
+R3TROBJMSOBJ: Meta data of an AIM of a transport object
+R3TRODPEOperational Data Provider (ESH-Based)
+R3TRODPNODP
+R3TRODSODataStore Object
+R3TROFAMLogical Transport Object for Object Families
+R3TROMLMOutput Management: T100 Longtext Link Mapping
+R3TROSOADataSource (Active Version)
+R3TROSODDataSource (Delivered Version)
+R3TROTGRObject type group
+R3TRPA01SD: Partner customizing - partner determination procedure
+R3TRPA02SD: Partner Customizing - Partner Roles
+R3TRPA03SD: Partner customizing - partner roles
+R3TRPARASPA/GPA Parameters
+R3TRPCEXExceptions for Package Check
+R3TRPCHKSetting Parameters for Package Check
+R3TRPCI1Interface toolbox: Transport object, interface format
+R3TRPCI2Interface toolbox: Transport object for file layout
+R3TRPCLAProgram Class for BW Generation Tools
+R3TRPCYCHR: Transport customer PC rules
+R3TRPCYSHR: Transport standard personnel calculation rules
+R3TRPDACStandard rule
+R3TRPDTGTask Group
+R3TRPDTSStandard Task
+R3TRPDWAWorkflow Pattern with All Versions
+R3TRPDWSWorkflow templates
+R3TRPERSPersonalization object
+R3TRPFCCTransport User-Defined Functions in Payroll
+R3TRPFCSTransport SAP Standard Function in Payroll
+R3TRPFLVPersonas: Flavor
+R3TRPFRMForm for payroll remuneration statement
+R3TRPFRSPersonas: Flavor Role sharing
+R3TRPFTCTransport user-defined function in time management
+R3TRPFTSTransport SAP standard function in time management
+R3TRPFUSPersonas: User Sharing
+R3TRPHDCHRDSYS: physical information object client-dep. table C
+R3TRPHDEHRDSYS: physical information object client-dep. table E
+R3TRPHDSHRDSYS: physical information object client-dep. table E SYST
+R3TRPHIEHRDSYS: physical information object client-indep. table E
+R3TRPHIOSolution Manager Document: Physical Info Object
+R3TRPICNPersonas: Icon
+R3TRPINFPackage interface
+R3TRPLCRCharacteristic Relationship Object for Planning
+R3TRPLDSPlanning Data Slices
+R3TRPLGNPlugin
+R3TRPLGXLogical Transport Object
+R3TRPLSEPlanning Service
+R3TRPLSQPlanning Sequence
+R3TRPLSTPlanning Service Type
+R3TRPMKCHR: Transport customer features
+R3TRPMKSHR: Transport of standard features
+R3TRPOCCTransport User-Defined Operation in Payroll
+R3TRPOCSTransport SAP standard operation in payroll
+R3TRPORGOrganizational Dependency Types (Product Master)
+R3TRPOTCTransport user-defined operation in time management
+R3TRPOTSTransport SAP standard operation in time management
+R3TRPRAGPragma in ABAP Source Code
+R3TRPRAPLogical Transport Object for Applications in Product Master
+R3TRPRAWPersonas: RAW data (resource or icon)
+R3TRPREOPersonas: Resource
+R3TRPRINPrinter Description
+R3TRPROGProgram
+R3TRPROJDMC: Definition of a Project
+R3TRPROLPersonas: Role
+R3TRPROXProxy for Interface from IFR
+R3TRPRTAPersonas: Role-/Theme-Assignment
+R3TRPRWZWizard Definition
+R3TRPSCCHR: Transport customer schemas
+R3TRPSCSHR: Transport standard schemas
+R3TRPSROProject Status Report (Element and Sample)
+R3TRPTHEPersonas: Theme
+R3TRPTMLPersonas: Template
+R3TRPTYPLogical Transport Object for Product Types
+R3TRPUPGProduct Master: Logical Transport Object for Upgrades
+R3TRPURPPurpose
+R3TRPVPAHR-CH: PC Parameters
+R3TRPVSPHR-CH: Processing schedule
+R3TRQMMLKW: Logical Information Object (QM_MANUAL)
+R3TRQMMPLogical Transport Object
+R3TRQMMSKW: Structure repository for QMMANUAL
+R3TRQVIWTransport Object for BW Query View
+R3TRRADYRead Access Logging: Dynpro
+R3TRRAGCRead Access Logging Configuration: Generic Channel
+R3TRRAPAPlanning package for the Report Agent
+R3TRRARFRead Access Logging Configuration: Remote Function Call
+R3TRRASESettings for the Report Agent (BW)
+R3TRRAWDRead Access Logging Configuration: Web Dynpro
+R3TRRAWSRead Access Logging Configuration: Web Service
+R3TRRCALDMC: Rule Calls
+R3TRRD01Route Definition: Routes
+R3TRRD02Route Definition: Legs
+R3TRRD03Route Definition: Nodes
+R3TRRD04Route Definition: Modes of Transport
+R3TRRD05Route Definition: Shipping Type
+R3TRRECWRecording Object for Web Dynpro Applications
+R3TRREP0Reports
+R3TRREP1Report Evaluations
+R3TRREVNNodes for SAP Review Program
+R3TRRF01Route Determination: Actual Routes for Delivery
+R3TRRF02Route Determination: In Sales Documents/Deliveries
+R3TRRF03Route Determination: Shipping Points/Shipping p. for Routes
+R3TRRF04Route Determination: Weight Groups for Deliveries
+R3TRRF05Route Determination: Transportation Zones
+R3TRRF06Route Determination: Transportation groups
+R3TRRF07Route Determination: Shipping Conditions
+R3TRRF08Route Determination: Weights per Weight Group
+R3TRRFCTTransport RFC Destination
+R3TRRFSTRFC State
+R3TRRLBLReuse Library: Libraries
+R3TRRLBPReuse Library: Products
+R3TRRLBTReuse Library: Transport Object for Structure Repository
+R3TRRLSVService of the Runlevel Framework
+R3TRROUTRoutine
+R3TRRPDFReport definition for the classification tool-set
+R3TRRRCABW: RRI InfoCube Recipient
+R3TRRRCDBW: RRI InfoCube Recipient (SAP Outbound Delivery)
+R3TRRRQABW: RRI Query Recipient
+R3TRRRQDBW: RRI Query Recipient (SAP Outbound Delivery)
+R3TRRRULRemodeling Rule
+R3TRRSDCDisplay Component Tree
+R3TRRSDSDataSource in BW
+R3TRRSFOBW Formula
+R3TRRSPCProcess chain
+R3TRRSPEBEx Personalization Application
+R3TRRSPIInterrupt Process
+R3TRRSPTProcess Chain Starter
+R3TRRSPVProcess variants
+R3TRRSRVPackage for RSRV Tests
+R3TRRTCAReal-Time Consolidation Model Objects
+R3TRRTCMReal-time Consolidation Model
+R3TRRULCDMC: Migration Settings of a Rule
+R3TRRULEDMC: Definition and Implementation of a Rule
+R3TRSAACComponent Use in the System Administration Assistant
+R3TRSAATCustomizing Settings for System Administration Assistant
+R3TRSAIDLanguage-Independent Doc. for mySAP.com Application Server
+R3TRSAJCApplication job catalog entry
+R3TRSAJTApplication job template
+R3TRSALCApplication log catalog entry
+R3TRSALOLogical Info Object in SAP Solution Architect
+R3TRSAMCABAP Messaging Channels
+R3TRSAMDS&AM Design Time Metadata
+R3TRSAMSSAM Metadata
+R3TRSAMTMessage Types for ABAP Messaging Channels
+R3TRSAPCObjecttype for APC
+R3TRSAPHPhysical Info Object in SAP Solution Architect
+R3TRSAPLStorage Plan: SAP Records
+R3TRSARCEntries in the tables of the archiving tool (TRK00 etc.)
+R3TRSASDDocument for mySAP.com Application Server
+R3TRSAUAABAP Unit Method Attributes
+R3TRSBDLLogical information object for BDS
+R3TRSBDPPhysical information object
+R3TRSBDRBDS: Relationship between information objects
+R3TRSBELBW: LOIO Class Metadata
+R3TRSBEPBW: PHIO Class Metadata
+R3TRSBGLBW: LOIO Class Transaction Data
+R3TRSBGPBW: PHIO Class Transaction Data
+R3TRSBHLLogical Information Object for BDS
+R3TRSBHPLogical Information Object for BDS
+R3TRSBHRBDS: Relationship Between Information Objects
+R3TRSBILLogical Information Object for BDS
+R3TRSBIPPhysical Information Object
+R3TRSBIRRelationship between Information Objects
+R3TRSBJLLogical Information Object for BDS
+R3TRSBJPLogical Information Object for BDS
+R3TRSBJRBDS: Relationship Between Information Objects
+R3TRSBKLLogical Information Object for BDS
+R3TRSBKPLogical Information Object for BDS
+R3TRSBKRBDS: Relationship Between Information Objects
+R3TRSBLECustomer Extension of Business Logic with restricted ABAP
+R3TRSBNLLogical Information Object for BDS
+R3TRSBNPLogical Information Object for BDS
+R3TRSBNRBDS: Relationship Between Information Objects
+R3TRSBOLLogical information object for BDS
+R3TRSBOPPhysical information object
+R3TRSBORBDS: Relationship between information objects
+R3TRSBPLLogical Information Object for BDS: Bid Invitation
+R3TRSBPPPhysical Information Object for BDS
+R3TRSBPRBDS: Relationship Between Information Objects
+R3TRSBRLLogical Information Object for BDS
+R3TRSBRPPhysical Information Object
+R3TRSBRRBDS: Relationship Between Information Objects
+R3TRSBSLLogical Information Object for BDS
+R3TRSBSPPhysical Information Object
+R3TRSBSRBDS: Relationship Between Information Objects
+R3TRSBTLLogical Information Object for BDS
+R3TRSBTPPhysical Information Object
+R3TRSBTRBDS: Relationship Between Information Objects
+R3TRSBVLLogical Information Object for BDS
+R3TRSBVPPhysical Information Object for BDS
+R3TRSBVRBDS: Relationship Between Information Objects
+R3TRSBWLLogical information object for BDS
+R3TRSBWPLogical information object for BDS
+R3TRSBWRBDS: Relationship between information objects
+R3TRSBXLLogical information object for BDS: AEW ABAP tools
+R3TRSBXPPhysical information object
+R3TRSBXRBDS: Relationship between information objects
+R3TRSBYLLogical information object for BDS
+R3TRSBYPLogical information object for BDS
+R3TRSBYRBDS: Relationship between information objects
+R3TRSBZLLogical Information Object for BDS
+R3TRSBZPLogical Information Object for BDS
+R3TRSBZRBDS: Relationship Between Information Objects
+R3TRSC2ABC Service Interface Definition in C2 Server
+R3TRSC2OConfiguration Object in C2 Server
+R3TRSC2RBC Service Interface Registration
+R3TRSCATTest case
+R3TRSCAUCustomer authorization groups (SREPOATH)
+R3TRSCBOCustom Business Object
+R3TRSCCLCustom Code List
+R3TRSCDTMapping Information for Scout and Customizing Synchronizer
+R3TRSCGRService Consumer Group
+R3TRSCHESCHEMA
+R3TRSCHKCheck Results Management: Check ID
+R3TRSCNTWorkflow Container PPF (Definition + Data)
+R3TRSCO1Communication: Communication Scenario
+R3TRSCO2Communication: Inbound Service Interface
+R3TRSCONParameter Condition
+R3TRSCP1BC Set or Customizing Profile
+R3TRSCP2Switch BC Sets
+R3TRSCPDSAP codepage definition
+R3TRSCPRCustomizing Profile
+R3TRSCPSCode Page Segment
+R3TRSCPXBC Set: Exception Handling
+R3TRSCSCTest L object for client switched BC Sets
+R3TRSCSSTest L object for system switched BC Sets
+R3TRSCTAKontext Attribute (Central Context Management)
+R3TRSCTMContext Object Type (Central Context Management)
+R3TRSCUHReplacement information for hierarchies
+R3TRSCUTCustomizing templates
+R3TRSCVIScreen variants
+R3TRSDBPMicrosoft SQL Server
+R3TRSDEPObject dependency
+R3TRSDERSpool: Device Description - Use SPDV Instead
+R3TRSDEVOutput Devices (Use SPDV Instead)
+R3TRSDM0DME: Metadata to describe a maintenance object
+R3TRSDM1DME: Dialog pool
+R3TRSDP1APO Planning Object Structure (Through Transport Tables)
+R3TRSDP2APO Storage Buckets Profile (Through Transport Tables)
+R3TRSDP3APO Planning Area (Through Transport Tables)
+R3TRSDP8SCM DP/SNP: User Settings for Interactive Planning
+R3TRSDPAAPO: Planning Books for Macros
+R3TRSDPBAPO: Planning Area
+R3TRSDPEAPO Selection ID
+R3TRSDPIPeriodicities for Planning Areas
+R3TRSDPJAPO: Mass Processing Jobs
+R3TRSDPKAPO: Activities for Mass Processing Jobs
+R3TRSDPPAPO: Planning Book
+R3TRSDPRAPO: Time bucktes profile for Demand PLanning & SNP
+R3TRSDPSAPO: Planning Object Structures
+R3TRSDPTSCM Demand Planning Seasons
+R3TRSDPUSCM Demand Planning Season Years
+R3TRSDPVSCM Demand Planning Seasonal Pattern
+R3TRSE19BAdi Implementation
+R3TRSEGRSemantic Group
+R3TRSESAEnterprise Search: DDL Activation
+R3TRSESTEnterprise Search: Template
+R3TRSETAEntries in the Table COMC_SETTYP_ATTR
+R3TRSETGObject List for the Set Type Generation
+R3TRSETOObject Types in the Set Type Generation
+R3TRSETTLogical Transport Object for Set Types
+R3TRSF01Status Tables Switch Framework Client-Specific
+R3TRSF02Status Tables Switch Framework Client-Independent
+R3TRSFB1Business Function Set
+R3TRSFB2Business Function
+R3TRSFBFBusiness Function + Assignment
+R3TRSFBSBusiness Function Set + Assignment
+R3TRSFCSConflict Switch Assignment - Dependent Switches
+R3TRSFHILogical object - information object: System info - note
+R3TRSFNHHierarchy Nodes in Complete List of Release Notes
+R3TRSFPFForm Object: Form
+R3TRSFPIForm Object: Interface
+R3TRSFRHSAPscript Form Tree: Transport Object for Node
+R3TRSFRNLogical object - information object: Release note
+R3TRSFSSStatus of Switch
+R3TRSFSWSwitch + Assignment of Objects to the Switch
+R3TRSFSYLogical object - hypertext: System profile parameter supplmt
+R3TRSGFLGlobal fields
+R3TRSHAPShadow Tables for Application Components (Obsolete!)
+R3TRSHARNodes for archived structures read back
+R3TRSHCSOBSOLET shadow table communication structure
+R3TRSHDIImage data for transaction variants
+R3TRSHDSShadow Table DataSource
+R3TRSHFSCan Maintain Data Source Manually - not R/3 (SAP Delivery)
+R3TRSHI0Link type definition of general structure storage
+R3TRSHI1Node type definition of general structure storage
+R3TRSHI2Structure types of general structure storage
+R3TRSHI3General structure storage: Definition of a structure
+R3TRSHI5Gen. hierarchy storage extrension name
+R3TRSHI6Gen. structure repos.: Extension ID / structure assignment
+R3TRSHI7General hierarchy store node attribute
+R3TRSHI8SFW Switch Assignment in Hierarchy Tool
+R3TRSHI9Gen. Structure Repository: Enhancement ID Sequence
+R3TRSHICHierarchy Tool: Comparison of Structures
+R3TRSHIGInfoPackage Group (SAP Delivery) Obsolete !!!
+R3TRSHIMOBSOLETE Shadow Tables InfoSource Master Data
+R3TRSHINGeneral structure storage: Definition of nodes
+R3TRSHIPInfoPackage (SAP Delivery)
+R3TRSHITOBSOLETE Shadow Tables InfoSource Transaction Data
+R3TRSHIVHierarchy Tool: Version of a Structure
+R3TRSHK4SDOK: KPro Structure Repository (Definition of Nodes)
+R3TRSHLPSearch Help
+R3TRSHMAShared Objects: Defined Area Attributes
+R3TRSHMPMapping DataS./Fields and InfoS/Objects (SAP Delivery)
+R3TRSHPHProject management: Node definitions
+R3TRSHTRTransfer Structure - 2.0  (SAP Delivery)
+R3TRSHTSShadow Tables Transfer Structure
+R3TRSI0LKEN: Logical information object (general)
+R3TRSI0PKEN: Physical information object (general)
+R3TRSI0RKEN: Relationship between information objects (general)
+R3TRSI0SKEN: Structure repository for general objects
+R3TRSI2LKEN: Logical information object (training)
+R3TRSI2PKEN: Physical information object (training)
+R3TRSI2RKEN: Relationship between information objects (training)
+R3TRSI2SKW: Structure repository for training
+R3TRSI3LNR3: Logical Information Object (Help)
+R3TRSI3PNR3: Physical Information Object (Help)
+R3TRSI3RNR3: Relationship Between Information Objects (Help)
+R3TRSIA1IAM: Business Catalog
+R3TRSIA2IAM: Restriction Type
+R3TRSIA3IAM: Authorization Object Extension
+R3TRSIA4IAM: Restriction Rule
+R3TRSIA5IAM: Restriction Field
+R3TRSIA6IAM: App
+R3TRSIA7IAM: Business Catalog App Assignment
+R3TRSIA8IAM: Business Role Template
+R3TRSIA9IAM: Business Role Template Business Catalog Assignment
+R3TRSICFICF Service
+R3TRSIFLWorkflow Documents: Logical Information Object
+R3TRSIFPWorkflow Documents: Physical Information Object
+R3TRSIM1IMG attributes
+R3TRSIMHIMG Structure Repository: Nodes
+R3TRSIRADefinition of an IO attribute (runtime object)
+R3TRSIRCDefinition of an IO class (runtime object)
+R3TRSIREKPro: Content Repository for contents of information objects
+R3TRSIRLLogical information object
+R3TRSIRMPhysical Information Object (Language Delivery-Compatible)
+R3TRSIRPPhysical information object
+R3TRSIRRRelationship between information objects
+R3TRSIRSCustomizing for Content Repositories
+R3TRSISMISM Channel Group
+R3TRSIWLKEN: Logical information object (help)
+R3TRSIWPKEN: Physical information object (help)
+R3TRSIWRKEN: Relationship between information objects (help)
+R3TRSIWSKW: Structure repository for application help
+R3TRSIXOIndex objects for logical databases
+R3TRSIXTIndex types for logical databases
+R3TRSKDLKW: Logical Info Object (KW_DEMO)
+R3TRSKDPKW: Physical Info Object (KW_DEMO)
+R3TRSKDSStructure Storage for KW_DEMO
+R3TRSKWLKW: Logical Information Object (KWNet)
+R3TRSKWNKW: Structure Storage for HTML-Based Documents
+R3TRSKWPKW: Physical Information Object (KWNet)
+R3TRSKWSCM: Status Management
+R3TRSLDCActive Generic Whitelist
+R3TRSLDDGeneric Whitelist (Design Mode)
+R3TRSLDOSLAD: Object Set
+R3TRSLDPSLAD: Profile
+R3TRSLECLEI Event Linkages (Customizing)
+R3TRSLEILEI Event Linkages (Design)
+R3TRSLOMLogical output management systems
+R3TRSMBLXML Message Broker: Pipeline
+R3TRSMCXSLC UI Extension Configuration
+R3TRSMD1Definition of an R-LOIO class
+R3TRSMD2Definition of a V-LOIO class
+R3TRSMD3Definition of an R-PHIO class
+R3TRSMD4Definition of a V-PHIO class
+R3TRSMD5Definition of an R-RELA class
+R3TRSMD6Definition of a V-RELA class
+R3TRSMDADefinition of an IO attribute
+R3TRSMDCIO class link area
+R3TRSMDKDefinition of a context class
+R3TRSMDLInternal Use
+R3TRSMDMDocument model area
+R3TRSMEHArea Menu
+R3TRSMIFMatching Interface
+R3TRSMIMInfo Object from the MIME Repository
+R3TRSMODSAP enhancements
+R3TRSMP0Solution Map: Process category
+R3TRSMP1Solution Map: Main process
+R3TRSMP2Solution Map: Process
+R3TRSMPBSolution Map: Best Practice
+R3TRSMPCSolution Map: Component
+R3TRSMPDSolution Map: Product information
+R3TRSMPISolution Map: Key Performance Indicator
+R3TRSMPPSolution Map: Partner product
+R3TRSMTCService Mapping Tool, Customer Mappings
+R3TRSMTEService Mapping Tool: Extension
+R3TRSMTGOM: Email Template
+R3TRSMTOService Mapping Tool
+R3TRSMTVService Mapping Tool: Variant
+R3TRSNAPSNAPT texts (long texts for ABAP/4 short dump analysis)
+R3TRSOASBTFR: Object Type-Specific Attributes Long Texts
+R3TRSOATBTFR: Object Type-Specific Attributes Short Texts
+R3TRSOBJBusiness object types
+R3TRSOMSOutput management systems
+R3TRSOTRAll Concepts (OTR) of a Package - Short Texts
+R3TRSOTSAll Concepts (OTR) of a Package - Long Texts
+R3TRSPARParameter Storage: Transport Object
+R3TRSPCDCommand records to print
+R3TRSPCOChar. set manufacturers
+R3TRSPCSCharacter sets
+R3TRSPCVSpool: Configuration of External Data Converter
+R3TRSPDVSpool: Output Devices
+R3TRSPFLProfile parameter
+R3TRSPIADefinition of PMI Agent
+R3TRSPIPProcess Monitoring: Meta Data
+R3TRSPISDefinition Signature of Tracking Agent
+R3TRSPLOFormat Types
+R3TRSPOKBW InfoSpoke
+R3TRSPPCNormal Print Controls
+R3TRSPPFPage formats
+R3TRSPRFCheckMan: Logical Transport Object Check Profile
+R3TRSPRJDMC: Definition of a Sub-Project
+R3TRSPRLSPRO: Transport object for logical information objects
+R3TRSPROProjects
+R3TRSPRPSPRO: Physical transport object for project documents
+R3TRSPRSPrinter Resources
+R3TRSPRXProxy Object
+R3TRSPSVSpool: Formatting server
+R3TRSPTPText pool for print formats
+R3TRSQABIndustry-specific question
+R3TRSQACQuestion Category
+R3TRSQAGIndustry-specific configuration group
+R3TRSQAKConfiguration group
+R3TRSQAQQuestion
+R3TRSQAVQuestion Context
+R3TRSQBRIndustry
+R3TRSQLILinks for Implementation Assistant
+R3TRSQLTPooled/Cluster Table
+R3TRSQSCDatabase Procedure Proxy
+R3TRSRAEIndex Management Application Exit
+R3TRSRALLogical object for RAL
+R3TRSRC0Logical Information Object For SRM
+R3TRSRC1Physical Information Object for SRM
+R3TRSRC2Logical Information Object For SRM
+R3TRSRC3Physical Information Object for SRM
+R3TRSRC4Logical Information Object For SRM
+R3TRSRC5Physical Information Object for SRM
+R3TRSRC6Logical Information Object For SRM
+R3TRSRC7Physical Information Object for SRM
+R3TRSRELDMC: Structure Relations
+R3TRSRFCRFC Service
+R3TRSRFQSRF Report Category
+R3TRSRFRSRF Report Definition
+R3TRSRFSSRF Schema Definition
+R3TRSRHLSRM: Hierarchical Lists
+R3TRSRLDLanguage-Dependent Client-Specific Retrieval Index Objekt
+R3TRSRLILanguage-Dependent Client-Independent Retrieval Index Objekt
+R3TRSRM1Element Type
+R3TRSRM2Service Provider
+R3TRSRM3Area - Definition
+R3TRSRM4Area - Value for SPS Classification Parameter
+R3TRSRM5Class Role
+R3TRSRM6Service Provider Type
+R3TRSRM7Records Management: Component Role
+R3TRSRMLSEM-SRM: Logical InfoObject
+R3TRSRMPSEM-SRM: Physical InfoObject
+R3TRSRSRSearch Server Relation
+R3TRSRTDTransport Release/Configuration for SOAP Runtime
+R3TRSRTIIndex Category
+R3TRSRTLTransport Object: SOAP Runtime Logical Port
+R3TRSRTRReport tree
+R3TRSSB0Indicators (KPIs, OPIs ...) in SAP Smart Business
+R3TRSSB1Evaluations in SAP Smart Business
+R3TRSSB2DO NOT USE -- Basic Data of Chips Representing KPI-Tiles
+R3TRSSB3DO NOT USE -- Drill-Down-App Configurations in SSB
+R3TRSSB4Associations between Indicators in SAP Smart Business
+R3TRSSB5Indicators in SAP Smart Business
+R3TRSSB6Evaluations, Drilldown & Tiles
+R3TRSSB7Smart Business Associations
+R3TRSSFOSAP Smart Form
+R3TRSSSTSAP Smart Style
+R3TRSSUISSUI Transport Object
+R3TRSTC1Configuration Entity
+R3TRSTCBTC Task List Group
+R3TRSTCSTC Task List
+R3TRSTCVTC Task List Variant
+R3TRSTOBStructured Object
+R3TRSTORStorage Parameters
+R3TRSTUEStatus in overview screen of sales order
+R3TRSTVITransaction variants (cross-client)
+R3TRSTVRTransaction variants
+R3TRSTYLSAPscript Style
+R3TRSUCCScenario for Switchable Authorization Check (Runtime)
+R3TRSUCDScenario for Switchable Authorization Check (Definition)
+R3TRSUCKHeader Data for General Authorization Groups
+R3TRSUCOAssign Authorization Container -> Application
+R3TRSUCUAuthorization Groups (TBRG_AUTH)
+R3TRSUKRKernel Trace Revocation Object
+R3TRSUSCAuthorization object class
+R3TRSUSGAuthorization object groups (assignment TCode --> auth.gr.)
+R3TRSUSHAssignment: Service --> Authorization Objects
+R3TRSUSIAssignment: Service --> Authorization Objects (with TADIR)
+R3TRSUSKCustomer: Assignment of transaction -> authorization object
+R3TRSUSOAuthorization object
+R3TRSUSPTemplates for authorization profiles (Profile Generator)
+R3TRSUSTAssignment transaction > auth. objects
+R3TRSVALVersion Management: Object Type Alias
+R3TRSVCISelection Variants (Cross-Client)
+R3TRSWCDLogical Transport Object
+R3TRSWFCWorkflow Correlation Definition
+R3TRSWFLWF: Logical Information Object
+R3TRSWFPWF: Physical Information Object
+R3TRSWFSService-Definition for WebFlow
+R3TRSWFTWorkflow: process type
+R3TRSWFXWorkflow XML Proxy
+R3TRSWHLLogical Information Object for BDS: Excel Templates
+R3TRSWHPLogical Information Object for BDS: Excel Templates
+R3TRSWHRBDS: Relationship Between Information Objects:Excel Template
+R3TRSWILLogical Information Object for BDS
+R3TRSWIPLogical Information Object for BDS
+R3TRSWIRBDS: Relationship Between Information Objects
+R3TRSWKLTransport Object for SEM_STS
+R3TRSWKPLogical Information Object for BDS
+R3TRSWKRBDS: Relationship Between Information Objects
+R3TRSXCCCustomizing Entries for Business Add-In Implementations
+R3TRSXCIBusiness Add-Ins - Implementations
+R3TRSXFTCustomizing Entries for BAdI Definitions (Sorting)
+R3TRSXMSInterfaces for Archiving
+R3TRSXSDBusiness Add-Ins - Definitions
+R3TRSYAGSystem Log Messages
+R3TRSYNDSyntax Documentation
+R3TRSZT3Logical tranpsort objekt 4 enablement test of OBJA and OBJM
+R3TRSZT4Test object for OBJM test
+R3TRT681Condition Table: Lockable Object
+R3TRTAAVTable Analysis: Analysis Variant
+R3TRTABLTable
+R3TRTABUTable Contents
+R3TRTAPLCTS: Template application type
+R3TRTAVFTable Analysis: Virtual Field
+R3TRTBPSLong texts for Tasked-Based Process Steps
+R3TRTDATCustomizing: Table Contents
+R3TRTEAMBPC: Team
+R3TRTERMTransport of Terminology Tables
+R3TRTEXTSAPscript Text
+R3TRTFRMFormulae and Requirements: Table Entries
+R3TRTFRTFont
+R3TRTG01Target Group - Origin Meta Data
+R3TRTG02Target Group - Activate Features Meta Data
+R3TRTG03Target Group - Member Type Meta Data
+R3TRTG11Target Group - Origin
+R3TRTG12Target Group - Activate Features
+R3TRTG13Target Group - Member Type
+R3TRTG99Target Group - Member Type Cust Data
+R3TRTHEDThemes D version
+R3TRTHEMThemes for BW Frontend (Analyzer, Reportdesigner)
+R3TRTHJTKey Date of Type Derivation
+R3TRTIMRDate Rule
+R3TRTMC1Condition Table, Info Structure: Lockable Object
+R3TRTMPLBW Web Templates
+R3TRTOBJDefinition of a Maintenance and Transport Object
+R3TRTRANTransaction
+R3TRTRCSCommunication Structure for Transformation
+R3TRTRFNTransformation
+R3TRTRMSLogical Transport Object
+R3TRTROBLogical Transport Object
+R3TRTROCDMC: Migration Settings of a Translation Object
+R3TRTTPLTransaction Templates for Activity Groups
+R3TRTTYPTable Type
+R3TRTVNSVariant Group Definition
+R3TRTVUSAssignment User - Variant Group
+R3TRTWBHTest catalog
+R3TRTX01Text Control: Text Types and Text Procedures
+R3TRTX02Text Control: Access Sequences
+R3TRTX03Text Control: Generated Access Sequence Table
+R3TRTX04Text Control: Allowed Text Objects
+R3TRTX05Text Controlling: Text Procedure Assignments
+R3TRTYPEType Group
+R3TRUAPOLogical object ADW position
+R3TRUCLOLogical object area
+R3TRUCOCTransportobject UCON HTTP Customizing Object
+R3TRUCOPUCON: Transport object for Ucon Http Server Profile
+R3TRUCSAUnified Connectivity Service Assembly
+R3TRUCSMTransport object for SMTP hosts
+R3TRUCVHTransportobject for virtual hosts
+R3TRUDMOData model
+R3TRUDSCWeb Service User defined Search Configuration
+R3TRUENOEntity type
+R3TRUFKTLogical object - function
+R3TRUHIELogical object - hierarchy
+R3TRUIADMass Maintenance App Descriptors
+R3TRUMB0Scorecard
+R3TRUMB1Performance Overview
+R3TRUMB2Strategy Map
+R3TRUMB3Derived Scorecard
+R3TRUMB4Scorecard (Without Initiatives, Reports, and Links)
+R3TRUMB5Scorecard (Initiatives)
+R3TRUMB6Scorecard (Reports and Links)
+R3TRUMB7Derived Scorecard (Without Initiatives, Reports, and Links)
+R3TRUMBRScorecard - Report Builder
+R3TRUMR0Risk Management Common Table
+R3TRUOMTQuantity Conversion Type
+R3TRUPDRUpdate rules
+R3TRUWSFWeb Service Definition
+R3TRUWSSWeb Survey Definition
+R3TRUWSTTarget Group Hierarchy
+R3TRUXSDWeb Service Component
+R3TRV80BTotals variants
+R3TRV80PSelection fields per variant
+R3TRV80VDefault Value Layout Variant
+R3TRV80ZLayouts
+R3TRVBAPVisual Business Application
+R3TRVBEDVOFM
+R3TRVBP0Analytical Query publishing from View Browser
+R3TRVCLSView cluster
+R3TRVCN0VRS/CWB Testobject
+R3TRVCN1VRS/CWB Testobject
+R3TRVDATView Maintenance: Data
+R3TRVERSVersion Number
+R3TRVIEWView
+R3TRVKOICondition Table, Info Structure: Lockable Object
+R3TRVKOSCondition Table: Object can be Locked
+R3TRVNPAIndex update for business partners
+R3TRVRBLLogical Transport Object
+R3TRVUV1SD: Incompletion Customizing
+R3TRVWDFView Definition of Migration Object Modeler
+R3TRW3HTWeb Reporting/Internet Transaction Server HTML Templates
+R3TRW3MIWeb Reporting/Internet Transaction Server MIME Types(binary
+R3TRWAPABSP (Business Server Pages) Application
+R3TRWB1AWB demo object type 1A
+R3TRWB2AWB demo object type 2A
+R3TRWB2BWB demo object type 2B
+R3TRWB2CWB demo object type 2C
+R3TRWB2DWB demo object type 2D
+R3TRWBTTABAP Workbench: Dummy object type for unit tests
+R3TRWDCAWeb Dynpro Application Configuration
+R3TRWDCCWeb Dynpro Component Configuration
+R3TRWDCPWeb Dynpro CHIP
+R3TRWDRCWeb Dynpro Condition for a Recording Plug-In
+R3TRWDRPWeb Dynpro Recording Plug-In
+R3TRWDYAWeb Dynpro Application
+R3TRWDYLWeb Dynpro : UI Element Library
+R3TRWDYNWeb Dynpro Component
+R3TRWEBIVirtual End Point
+R3TRWEBSWeb Services
+R3TRWGRPObject Type Group (ABAP Workbench / R3TR)
+R3TRWKSPBPC: workspace
+R3TRWSNOWorkspace Folder
+R3TRWSPTAPC WebSocket protocol type
+R3TRWTAGBSP Extension
+R3TRWTHMO2: Topics for BSP Application
+R3TRWWIBBW Web Item (BI-Runtime)
+R3TRWWITItem in Web framework
+R3TRWWPABW Web Runtime:  Parameter (for Web Item or Command)
+R3TRWXML02: XML Descriptions
+R3TRXCLALogical Transport Object
+R3TRXCLSXcelcius Dashboard
+R3TRXDPLSAP KW: Logical IO for Area XML_DOKU
+R3TRXDPPKW: Physical IO for Area XML_DOKU
+R3TRXDPSKW: Structure Repository for Area XML_DOKU
+R3TRXDYNScreens with field exit
+R3TRXGSMGSEG HOME: MD Migration Control
+R3TRXINXExt. Index
+R3TRXLWBExcel workbook
+R3TRXMLLKW: Logical IO
+R3TRXMLPKW: Physical IO
+R3TRXMLSKW: Structure repository for objects
+R3TRXPDTXPRA data for approval
+R3TRXPRAProgram Run after Transport
+R3TRXSLTTransformation
+R3TRXTRATransformation/Mapping Between XML and ABAP
+R3TRXWRDTable of changed key words
+R3TRXZ98gseg_poc - 2
+R3TRXZ99gseg poc

@@ -1,0 +1,17 @@
+
+package test;
+
+import org.apache.commons.codec.binary.Base64;
+
+public class tool {
+
+	public static void main(String[] args) {
+		String content = "WANGJER:Saptest1";
+		byte[] authEncBytes = Base64.encodeBase64(content.getBytes());
+		String result = new String(authEncBytes);
+		System.out.println("Basic " + result);
+		// header name: Authorization
+
+	}
+
+}
