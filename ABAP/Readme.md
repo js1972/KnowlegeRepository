@@ -6,3 +6,12 @@
 DATA(ls3) = VALUE #( lt_data[ name = 'Spring2' ]
               DEFAULT VALUE #( name = 'SpringInvalid' value = 999 ) ).
 ```
+4. check whether we are in IC - interaction center context
+```abap
+lt_page_instances = cl_bsp_context=>c_page_instances.
+  READ TABLE lt_page_instances ASSIGNING <ic_instance>
+     WITH KEY class = 'CL_BSP_WD_VIEW_MANAGER'.
+  IF sy-subrc = 0.
+    lv_ic_mode = 'X'.
+  ENDIF.
+``` 
