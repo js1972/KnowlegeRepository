@@ -1,2 +1,0 @@
-business transaction category决定了某个business transaction最多允许的structure, 而具体的由customizing决定。
-error fix之后error message必须删除。
