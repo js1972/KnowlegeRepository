@@ -2,3 +2,6 @@
 2. include CRM_OBJECTTYPES_CON defines constant value for object type name,
 for example gc_objtype-orderadm_h type crmt_object_type value '05'.
 3. Input function module: CRM_OBJECT_NAMES_DETERMINE, input is object name. And CRM_ORDER_UPDATE_TABLES_DETERM.
+
+# Short cut
+1. 9ZONEORDER_MODIFY
