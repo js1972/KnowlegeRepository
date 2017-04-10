@@ -1,6 +1,11 @@
 <html>
 <script>
 function createClass(conf){
+
+    function _injectAttribute(){
+
+    }
+
 	var fn, prototype, privates;
     publics = conf.publics;
     privates = conf.privates || new Object();
@@ -8,7 +13,7 @@ function createClass(conf){
     	return function(){
     		return fn.apply(privates, arguments);
     	};
-    }(conf.constructor ||new Function());
+    }(conf.constructor || new Function());
     
     prototype = fn.prototype;
     for(var publicName in publics){
@@ -20,35 +25,41 @@ function createClass(conf){
             		return publics[publicName].apply(privates, arguments);
             	}
             }(publicName);
-        else prototype[publicName] = publics[publicName];
+        else 
+            prototype[publicName] = publics[publicName];
         if(!privates[publicName])
             privates[publicName] = prototype[publicName];
     }
     return fn;
 }
-
-var klass = createClass({
+var MyClass = createClass({
     constructor:function(){
-        console.log(this.message);// hello
+        console.log(this.message);
     },
-
     publics:{
-        message:"world",
-        message2:"javascript",
-        sayHello:function(){return this.message;},
-        sayJavaScript:function(){return this.message2;},
-        sayYouCantSeeMe:function(){return this.message3;},
-        sayInteresting:function(msg){return this.interesting();}},
-
+        message:"Hello, World",
+        sayJavaScript:function(){
+            return this._message;
+        },
+        sayABAP:function(msg){
+            return msg + ", " + this.ABAP();
+        }
+    },
     privates:{
-        message:"hello",
-        message3:"you cant see me",
-        interesting:function(){return "interesting";}
+        _message: "Hello, JavaScript",
+        ABAP :function(){
+            return "ABAP";
+        }
     }
 });
 
-var instance = new klass();
+var myClassInstance = new MyClass();
 
-debugger;
+console.log(myClassInstance.message);
+console.log(myClassInstance.sayJavaScript());
+console.log(myClassInstance.sayABAP("Hello"));
+console.log(myClassInstance._message);
+console.log(myClassInstance.ABAP());
+
 </script>
 </html>
