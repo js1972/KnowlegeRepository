@@ -2,39 +2,41 @@
 <script>
 function createClass(conf){
 
-    function _injectAttribute(){
-
+    function _injectAttribute(fn){
+        var prototype = fn.prototype;
+        for(var publicName in publics){
+            if(!publics.hasOwnProperty(publicName))
+                continue;
+            if(typeof publics[publicName]=="function")
+                prototype[publicName] = function(publicName){
+                    return function(){
+                        return publics[publicName].apply(privates, arguments);
+                    }
+                }(publicName);
+            else 
+                prototype[publicName] = publics[publicName];
+            if(!privates[publicName])
+                privates[publicName] = prototype[publicName];
+        }
+        return fn;
     }
 
-	var fn, prototype, privates;
-    publics = conf.publics;
-    privates = conf.privates || new Object();
-    fn = function(fn){
+    var publics, privates;
+        publics = conf.publics;
+        privates = conf.privates || new Object();
+
+    var fn = function(fn){
     	return function(){
     		return fn.apply(privates, arguments);
     	};
     }(conf.constructor || new Function());
-    
-    prototype = fn.prototype;
-    for(var publicName in publics){
-    	if(!publics.hasOwnProperty(publicName))
-    		continue;
-    	if(typeof publics[publicName]=="function")
-            prototype[publicName] = function(publicName){
-            	return function(){
-            		return publics[publicName].apply(privates, arguments);
-            	}
-            }(publicName);
-        else 
-            prototype[publicName] = publics[publicName];
-        if(!privates[publicName])
-            privates[publicName] = prototype[publicName];
-    }
-    return fn;
+
+    return _injectAttribute(fn);
 }
+
 var MyClass = createClass({
     constructor:function(){
-        console.log(this.message);
+        console.log("constructor is called: " + this.message);
     },
     publics:{
         message:"Hello, World",
