@@ -61,9 +61,9 @@ CLASS ZCL_WB_CLEDITOR IMPLEMENTATION.
         state  = 'A'
       IMPORTING
         source = lt_source.
-    check_list_object = NEW #( ).
 
     IF lines( lt_source ) > cv_threshold.
+      check_list_object = NEW #( ).
       APPEND `This warning message is raised by Jerry's custom syntax check`  TO lt_text.
       APPEND | method: { mtdkey-cpdname } has totally { lines( lt_source ) } lines of source code, please refact it to ensure   | TO lt_text.
       APPEND | no more than { cv_threshold } lines in a single method. | TO lt_text.
