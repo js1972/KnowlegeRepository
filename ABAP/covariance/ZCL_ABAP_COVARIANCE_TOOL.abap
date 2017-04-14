@@ -99,6 +99,9 @@ private section.
       !IV_VARIABLE_NAME type STRING
     returning
       value(RV_VARIABLE_TYPE) type STRING .
+  methods CHECK_INSTANCE_COVARIANCE
+    importing
+      !IS_METHOD_DEF type TY_METHOD_DETAIL .
 ENDCLASS.
 
 
@@ -118,6 +121,24 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
        report_error( iv_method_name   = is_method_def-method_name
                      iv_generic_type  = lv_generic_type
                      iv_concrete_type = is_method_def-call_parameter_name
+                     iv_line          = is_method_def-line ).
+    ENDIF.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->CHECK_INSTANCE_COVARIANCE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IS_METHOD_DEF                  TYPE        TY_METHOD_DETAIL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method CHECK_INSTANCE_COVARIANCE.
+    data(lv_generic_type) = get_container_generic_type( iv_container_name = is_method_def-method_cls_name ).
+    DATA(lv_concrete_type) = GET_VARIABLE_TYPE( is_method_def-call_parameter_name ).
+    IF is_covariance_fulfilled( iv_generic_type = lv_generic_type
+                                iv_concrete_type = lv_concrete_type ) = abap_false.
+       report_error( iv_method_name   = is_method_def-method_name
+                     iv_generic_type  = lv_generic_type
+                     iv_concrete_type = lv_concrete_type
                      iv_line          = is_method_def-line ).
     ENDIF.
   endmethod.
@@ -352,9 +373,12 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     DELETE mt_method_detail WHERE caller_variable_name IS INITIAL.
     LOOP AT mt_method_detail ASSIGNING FIELD-SYMBOL(<result>).
       CHECK is_covariance_check_needed( <result>-caller_variable_name ) = abap_true.
-      IF <result>-method_type = cs_method_type-constructor.
+      CASE <result>-method_type.
+        WHEN cs_method_type-constructor.
          check_ctor_covariance( <result> ).
-      ENDIF.
+        WHEN cs_method_type-instance.
+         check_instance_covariance( <result> ).
+      ENDCASE.
     ENDLOOP.
   ENDMETHOD.
 
@@ -366,7 +390,11 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 * | [<-()] RV_VARIABLE_TYPE               TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method GET_VARIABLE_TYPE.
+  READ TABLE mt_method_detail ASSIGNING FIELD-SYMBOL(<ctr>) WITH KEY
+    method_type = cs_method_type-constructor caller_variable_name = iv_variable_name.
+  CHECK sy-subrc = 0.
 
+  RV_VARIABLE_TYPE = <ctr>-method_cls_name.
   endmethod.
 
 
@@ -379,7 +407,7 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
   METHOD is_covariance_check_needed.
 
     READ TABLE mt_method_detail ASSIGNING FIELD-SYMBOL(<method>) WITH KEY
-    caller_variable_name = iv_caller_name method_name = 'CONSTRUCTOR'.
+    caller_variable_name = iv_caller_name method_type = cs_method_type-constructor.
     CHECK sy-subrc = 0.
     DATA(lo_descr) = CAST cl_abap_objectdescr( cl_abap_classdescr=>describe_by_name( <method>-method_cls_name ) ).
 
