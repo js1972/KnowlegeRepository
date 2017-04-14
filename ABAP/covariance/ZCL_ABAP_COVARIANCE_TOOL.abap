@@ -35,7 +35,13 @@ private section.
   data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
   data MT_SOURCE_CODE type SEOP_SOURCE_STRING .
   data MS_WORKING_METHOD type SEOCPDKEY .
+  constants CV_COVARIANCE_INF type STRING value 'ZIF_COVARIANCE' ##NO_TEXT.
 
+  methods IS_COVARIANCE_CHECK_NEEDED
+    importing
+      !IV_CALLER_NAME type STRING
+    returning
+      value(RV_NEEDED) type ABAP_BOOL .
   methods FILL_CALLER_VARIABLE_NAME
     importing
       !IV_CURRENT_INDEX type INT4
@@ -58,6 +64,11 @@ private section.
       !IV_PARAM_NAME type STRING
     returning
       value(RV_PARAM_VALUE) type STRING .
+  methods GET_VARIABLE_TYPE
+    importing
+      !IV_VARIABLE_NAME type STRING
+    returning
+      value(RV_VARIABLE_TYPE) type STRING .
 ENDCLASS.
 
 
@@ -232,7 +243,7 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
           lv_main    TYPE progname,
           lv_index   TYPE int4 VALUE 1.
 
-    ms_working_method = IS_METHOD_DEF.
+    ms_working_method = is_method_def.
     fill_method_source( ).
     lv_include = cl_oo_classname_service=>get_method_include( is_method_def ).
     lv_main = cl_oo_classname_service=>get_classpool_name( is_method_def-clsname ).
@@ -259,5 +270,43 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
       ADD 1 TO lv_index.
     ENDLOOP.
 
+    DELETE mt_method_detail WHERE caller_variable_name IS INITIAL.
+    LOOP AT mt_method_detail ASSIGNING FIELD-SYMBOL(<result>).
+      CHECK is_covariance_check_needed( <result>-caller_variable_name ) = abap_true.
+
+    ENDLOOP.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->GET_VARIABLE_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_VARIABLE_NAME               TYPE        STRING
+* | [<-()] RV_VARIABLE_TYPE               TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_VARIABLE_TYPE.
+
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->IS_COVARIANCE_CHECK_NEEDED
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_CALLER_NAME                 TYPE        STRING
+* | [<-()] RV_NEEDED                      TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD is_covariance_check_needed.
+
+    READ TABLE mt_method_detail ASSIGNING FIELD-SYMBOL(<method>) WITH KEY
+    caller_variable_name = iv_caller_name method_name = 'CONSTRUCTOR'.
+    CHECK sy-subrc = 0.
+    DATA(lo_descr) = CAST cl_abap_objectdescr( cl_abap_classdescr=>describe_by_name( <method>-method_cls_name ) ).
+
+    CHECK lo_descr->interfaces IS NOT INITIAL.
+    READ TABLE lo_descr->interfaces ASSIGNING FIELD-SYMBOL(<interface>) INDEX 1.
+
+    IF <interface> = cv_covariance_inf.
+      rv_needed = abap_true.
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.
