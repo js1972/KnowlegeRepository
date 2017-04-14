@@ -1,38 +1,42 @@
-class ZCL_ABAP_COVARIANCE_TOOL definition
-  public
-  final
-  create public .
+CLASS zcl_abap_covariance_tool DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  methods GET_METHODS_INCLUDE
-    importing
-      !IS_METHOD_DEF type SEOCPDKEY
-    exporting
-      !EV_PROGRAM type PROGNAME
-      !EV_INCLUDE type PROGRAM .
-  methods GET_USED_OBJECTS
-    importing
-      !IS_METHOD_DEF type SEOCPDKEY .
-protected section.
+    METHODS get_methods_include
+      IMPORTING
+        !is_method_def TYPE seocpdkey
+      EXPORTING
+        !ev_program    TYPE progname
+        !ev_include    TYPE program .
+    METHODS get_used_objects
+      IMPORTING
+        !is_method_def TYPE seocpdkey .
+  PROTECTED SECTION.
 private section.
 
   types:
     BEGIN OF ty_method_detail,
-           method_type TYPE c length 1,
-           caller_variable_name TYPE string,
-           method_cls_name TYPe string,
-           method_name TYPE string,
-           method_signature TYPE SEOSUBCODF,
-        END OF Ty_method_detail .
+        method_type          TYPE c LENGTH 1,
+        caller_variable_name TYPE string,
+        method_cls_name      TYPE string,
+        method_name          TYPE string,
+        call_parameter_name  TYPE string, "should be a string_table in productive use
+* for simpliciation reason in this POC Jerry assume each constructor / instance method
+* only define ONLY ONE parameter, in productive use should use TABLE OF instead to
+* support multiple parameter
+        method_signature     TYPE seosubcodf,
+      END OF ty_method_detail .
   types:
     tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
 
   constants:
-    BEGIN OF cs_method_Type,
-              constructor TYPE c length 1 value 1,
-              instance type c length 1 value 2,
-            end of cs_method_type .
+    BEGIN OF cs_method_type,
+        constructor TYPE c LENGTH 1 VALUE 1,
+        instance    TYPE c LENGTH 1 VALUE 2,
+      END OF cs_method_type .
   data MT_RESULT type SCR_REFS .
   data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
 
@@ -46,6 +50,11 @@ private section.
       !IV_RAW type STRING
     returning
       value(RS_METHOD_DETAIL) type TY_METHOD_DETAIL .
+  methods FILL_CALL_PARAMETER
+    importing
+      !IV_CURRENT_INDEX type INT4
+    changing
+      !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
 ENDCLASS.
 
 
@@ -71,6 +80,31 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
       ENDIF.
 
       lv_index = lv_index - 1.
+    ENDWHILE.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->FILL_CALL_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_CURRENT_INDEX               TYPE        INT4
+* | [<-->] CS_METHOD_DETAIL               TYPE        TY_METHOD_DETAIL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD FILL_CALL_PARAMETER.
+    DATA: lv_index TYPE int4,
+          lv_total TYPE int4.
+
+    lv_total = lines( mt_result ).
+
+    lv_index = iv_current_index.
+    WHILE lv_index < lv_total.
+      READ TABLE mt_result ASSIGNING FIELD-SYMBOL(<line>) INDEX lv_index.
+      IF <line>-tag = 'DA'.
+        cs_method_detail-call_parameter_name = <line>-name.
+        RETURN.
+      ENDIF.
+
+      lv_index = lv_index + 1.
     ENDWHILE.
   ENDMETHOD.
 
@@ -146,7 +180,7 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
   METHOD get_used_objects.
     DATA: lv_include TYPE progname,
           lv_main    TYPE progname,
-          lv_index   TYPE int4 value 1.
+          lv_index   TYPE int4 VALUE 1.
 
     CALL METHOD get_methods_include
       EXPORTING
@@ -178,15 +212,23 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 
     FIELD-SYMBOLS:<method> LIKE LINE OF mt_result.
 
-    LOOP AT mt_result ASSIGNING <method> WHERE tag = 'ME'.
-      DATA(ls_method) = VALUE ty_method( method_name = <method>-name
-                                         method_type = <method>-full_name ).
-      DATA(ls_method_detail) = GET_METHOD_TYPE( <method>-full_name ).
-      fill_caller_variable_name( EXPORTING iv_current_index = lv_index
-                                 CHANGING  cs_method_Detail = ls_method_detail ).
-      APPEND ls_method_detail TO mt_method_detail.
-      APPEND ls_method TO lt_method.
-      ADD 1 to lv_index.
+    LOOP AT mt_result ASSIGNING <method>.
+      CASE <method>-tag.
+        WHEN 'ME'.
+          DATA(ls_method) = VALUE ty_method( method_name = <method>-name
+                                             method_type = <method>-full_name ).
+          DATA(ls_method_detail) = get_method_type( <method>-full_name ).
+          fill_caller_variable_name( EXPORTING iv_current_index = lv_index
+                                     CHANGING  cs_method_detail = ls_method_detail ).
+          IF ls_method_detail-method_signature IS NOT INITIAL.
+             fill_call_parameter( EXPORTING iv_current_index = lv_index
+                                     CHANGING cs_method_detail = ls_method_detail ).
+          ENDIF.
+          APPEND ls_method_detail TO mt_method_detail.
+          APPEND ls_method TO lt_method.
+        WHEN OTHERS.
+      ENDCASE.
+      ADD 1 TO lv_index.
     ENDLOOP.
 
     LOOP AT mt_result ASSIGNING FIELD-SYMBOL(<variable>) WHERE tag = 'DA'.
