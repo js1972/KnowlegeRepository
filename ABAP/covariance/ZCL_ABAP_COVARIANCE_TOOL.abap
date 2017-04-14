@@ -44,6 +44,7 @@ private section.
   data MS_WORKING_METHOD type SEOCPDKEY .
   data MT_CONTAINER_GENERIC_TYPE type TT_CONTAINER_GENERIC_TYPE .
   constants CV_COVARIANCE_INF type STRING value 'ZIF_COVARIANCE' ##NO_TEXT.
+  data MT_ERROR_MESSAGE type RSFB_SOURCE .
 
   methods IS_COVARIANCE_FULFILLED
     importing
@@ -51,6 +52,11 @@ private section.
       !IV_CONCRETE_TYPE type STRING
     returning
       value(RV_FULFILLED) type ABAP_BOOL .
+  methods REPORT_ERROR
+    importing
+      !IV_METHOD_NAME type STRING
+      !IV_GENERIC_TYPE type STRING
+      !IV_CONCRETE_TYPE type STRING .
   methods CHECK_CTOR_COVARIANCE
     importing
       !IS_METHOD_DEF type TY_METHOD_DETAIL .
@@ -107,6 +113,9 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     data(lv_generic_type) = get_container_generic_type( iv_container_name = is_method_def-method_cls_name ).
     IF is_covariance_fulfilled( iv_generic_type = lv_generic_type
                                 iv_concrete_type = is_method_def-call_parameter_name ) = abap_false.
+       report_error( iv_method_name = is_method_def-method_name
+                     iv_generic_type = lv_generic_type
+                     iv_concrete_type = is_method_def-call_parameter_name ).
     ENDIF.
   endmethod.
 
@@ -411,4 +420,18 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
       ENDIF.
     ENDDO.
   ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->REPORT_ERROR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_METHOD_NAME                 TYPE        STRING
+* | [--->] IV_GENERIC_TYPE                TYPE        STRING
+* | [--->] IV_CONCRETE_TYPE               TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method REPORT_ERROR.
+     APPEND | Covariance violation in method: { iv_method_name } !| to MT_error_message.
+     APPEND | The container has generic type: { iv_generic_type } | TO MT_error_message.
+     APPEND | However the assigned concrete type: { iv_concrete_type } is not a subclass of it! | TO MT_error_message.
+  endmethod.
 ENDCLASS.
