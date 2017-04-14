@@ -20,7 +20,7 @@ private section.
   types:
     BEGIN OF ty_method_detail,
            method_type TYPE c length 1,
-           caller_name TYPE string,
+           caller_variable_name TYPE string,
            method_cls_name TYPe string,
            method_name TYPE string,
            method_signature TYPE SEOSUBCODF,
@@ -36,6 +36,11 @@ private section.
   data MT_RESULT type SCR_REFS .
   data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
 
+  methods FILL_CALLER_VARIABLE_NAME
+    importing
+      !IV_CURRENT_INDEX type INT4
+    changing
+      !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
   methods GET_METHOD_TYPE
     importing
       !IV_RAW type STRING
@@ -46,6 +51,28 @@ ENDCLASS.
 
 
 CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->FILL_CALLER_VARIABLE_NAME
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_CURRENT_INDEX               TYPE        INT4
+* | [<-->] CS_METHOD_DETAIL               TYPE        TY_METHOD_DETAIL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD fill_caller_variable_name.
+    DATA: lv_index TYPE int4.
+
+    lv_index = iv_current_index.
+    WHILE lv_index > 0.
+      READ TABLE mt_result ASSIGNING FIELD-SYMBOL(<line>) INDEX lv_index.
+      IF <line>-tag = 'DA'.
+        cs_method_detail-caller_variable_name = <line>-name.
+        RETURN.
+      ENDIF.
+
+      lv_index = lv_index - 1.
+    ENDWHILE.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -118,7 +145,8 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_used_objects.
     DATA: lv_include TYPE progname,
-          lv_main    TYPE progname.
+          lv_main    TYPE progname,
+          lv_index   TYPE int4 value 1.
 
     CALL METHOD get_methods_include
       EXPORTING
@@ -154,8 +182,11 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
       DATA(ls_method) = VALUE ty_method( method_name = <method>-name
                                          method_type = <method>-full_name ).
       DATA(ls_method_detail) = GET_METHOD_TYPE( <method>-full_name ).
+      fill_caller_variable_name( EXPORTING iv_current_index = lv_index
+                                 CHANGING  cs_method_Detail = ls_method_detail ).
       APPEND ls_method_detail TO mt_method_detail.
       APPEND ls_method TO lt_method.
+      ADD 1 to lv_index.
     ENDLOOP.
 
     LOOP AT mt_result ASSIGNING FIELD-SYMBOL(<variable>) WHERE tag = 'DA'.
