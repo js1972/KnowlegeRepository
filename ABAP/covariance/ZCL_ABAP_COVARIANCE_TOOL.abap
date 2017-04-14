@@ -8,6 +8,9 @@ public section.
   methods GET_USED_OBJECTS
     importing
       !IS_METHOD_DEF type SEOCPDKEY .
+  methods GET_ERROR_MESSAGE
+    returning
+      value(RT_MESSAGE) type RSFB_SOURCE .
   PROTECTED SECTION.
 private section.
 
@@ -281,6 +284,16 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     ls_buffer = value #( container_name = iv_container_name
                          type = RV_GENERIC_TYPE ).
     APPEND ls_buffer TO mt_container_generic_type.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_ABAP_COVARIANCE_TOOL->GET_ERROR_MESSAGE
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RT_MESSAGE                     TYPE        RSFB_SOURCE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_ERROR_MESSAGE.
+    rt_message = MT_error_message.
   endmethod.
 
 
