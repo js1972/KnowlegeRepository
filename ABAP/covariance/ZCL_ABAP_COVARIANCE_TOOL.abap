@@ -26,6 +26,12 @@ private section.
   types:
     tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
 
+  TYPES: BEGIN OF ty_container_generic_type,
+            container_name TYPE string,
+            type TYPE string,
+         END OF ty_container_generic_type.
+
+  TYPES: tt_container_generic_type TYPE TABLE OF ty_container_generic_type.
   constants:
     BEGIN OF cs_method_type,
         constructor TYPE c LENGTH 1 VALUE 1,
@@ -35,8 +41,17 @@ private section.
   data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
   data MT_SOURCE_CODE type SEOP_SOURCE_STRING .
   data MS_WORKING_METHOD type SEOCPDKEY .
+  data mt_container_generic_type TYPE tt_container_generic_type.
   constants CV_COVARIANCE_INF type STRING value 'ZIF_COVARIANCE' ##NO_TEXT.
 
+  methods CHECK_CTOR_COVARIANCE
+    importing
+      !IS_METHOD_DEF type TY_METHOD_DETAIL .
+  methods GET_CONTAINER_GENERIC_TYPE
+    importing
+      !IV_CONTAINER_NAME type STRING
+    returning
+      value(RV_GENERIC_TYPE) type STRING .
   methods IS_COVARIANCE_CHECK_NEEDED
     importing
       !IV_CALLER_NAME type STRING
@@ -74,6 +89,16 @@ ENDCLASS.
 
 
 CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->CHECK_CTOR_COVARIANCE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IS_METHOD_DEF                  TYPE        TY_METHOD_DETAIL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method CHECK_CTOR_COVARIANCE.
+    data(lv_generic_type) = get_container_generic_type( iv_container_name = is_method_def-method_cls_name ).
+  endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -186,6 +211,37 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->GET_CONTAINER_GENERIC_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_CONTAINER_NAME              TYPE        STRING
+* | [<-()] RV_GENERIC_TYPE                TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_CONTAINER_GENERIC_TYPE.
+
+    data: lv_type type SEOREDEF-attvalue,
+          ls_buffer like line of mt_container_generic_type.
+
+    READ TABLE mt_container_generic_type ASSIGNING FIELD-SYMBOL(<type>)
+     WITH KEY container_name = iv_container_name.
+    IF sy-subrc = 0.
+       RV_GENERIC_TYPE = <type>-type.
+       RETURN.
+    ENDIF.
+
+    SELECT single attvalue FROM SEOREDEF into RV_GENERIC_TYPE
+       where clsname = iv_container_name and refclsname = cv_covariance_inf.
+    CHECK sy-subrc = 0.
+
+    replace ALL OCCURRENCES OF '''' in RV_GENERIC_TYPE with space.
+    CONDENSE RV_GENERIC_TYPE NO-GAPS.
+
+    ls_buffer = value #( container_name = iv_container_name
+                         type = RV_GENERIC_TYPE ).
+    APPEND ls_buffer TO mt_container_generic_type.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->GET_METHOD_TYPE
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_RAW                         TYPE        STRING
@@ -273,7 +329,9 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     DELETE mt_method_detail WHERE caller_variable_name IS INITIAL.
     LOOP AT mt_method_detail ASSIGNING FIELD-SYMBOL(<result>).
       CHECK is_covariance_check_needed( <result>-caller_variable_name ) = abap_true.
-
+      IF <result>-method_type = cs_method_type-constructor.
+         check_ctor_covariance( <result> ).
+      ENDIF.
     ENDLOOP.
   ENDMETHOD.
 
