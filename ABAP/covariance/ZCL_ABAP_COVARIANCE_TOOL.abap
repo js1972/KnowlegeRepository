@@ -39,7 +39,7 @@ private section.
       END OF cs_method_type .
   data MT_RESULT type SCR_REFS .
   data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
-  data MT_SOURCE_CODE type SEOP_SOURCE .
+  data MT_SOURCE_CODE type SEOP_SOURCE_STRING .
   data MS_WORKING_METHOD type SEOCPDKEY .
 
   methods FILL_CALLER_VARIABLE_NAME
@@ -97,13 +97,14 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     DATA: lv_index TYPE int4,
           lv_total TYPE int4.
 
+    FIELD-SYMBOLS: <line> LIKE LINE OF mt_result.
+    lv_total = lines( mt_result ).
+    lv_index = iv_current_index.
+
     CASE cs_method_detail-method_type.
       WHEN cs_method_type-instance.
-        lv_total = lines( mt_result ).
-
-        lv_index = iv_current_index.
         WHILE lv_index < lv_total.
-          READ TABLE mt_result ASSIGNING FIELD-SYMBOL(<line>) INDEX lv_index.
+          READ TABLE mt_result ASSIGNING <line> INDEX lv_index.
           IF <line>-tag = 'DA'.
             cs_method_detail-call_parameter_name = <line>-name.
             RETURN.
@@ -111,7 +112,15 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
           lv_index = lv_index + 1.
         ENDWHILE.
       WHEN cs_method_type-constructor.
-
+         WHILE lv_index < lv_total.
+           READ TABLE mt_result ASSIGNING <line> INDEX lv_index.
+          IF <line>-name = cs_method_Detail-method_signature-sconame.
+            READ TABLE mt_source_code ASSIGNING FIELD-SYMBOL(<codeline>) INDEX <line>-line.
+            cs_method_detail-call_parameter_name = <codeline>.
+            RETURN.
+          ENDIF.
+          lv_index = lv_index + 1.
+        endwhile.
     ENDCASE.
   ENDMETHOD.
 
@@ -126,7 +135,7 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
        EXPORTING
           MTDKEY = ms_working_method
        IMPORTING
-          SOURCE = mt_source_code.
+          SOURCE_expanded = mt_source_code.
 
   endmethod.
 
