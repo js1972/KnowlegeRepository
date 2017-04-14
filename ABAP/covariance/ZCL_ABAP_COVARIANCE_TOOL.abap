@@ -58,6 +58,12 @@ private section.
     changing
       !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
   methods FILL_METHOD_SOURCE .
+  methods GET_CONSTRUCTOR_CALL_PARAMETER
+    importing
+      !IV_CODE type STRING
+      !IV_PARAM_NAME type STRING
+    returning
+      value(RV_PARAM_VALUE) type STRING .
 ENDCLASS.
 
 
@@ -116,7 +122,8 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
            READ TABLE mt_result ASSIGNING <line> INDEX lv_index.
           IF <line>-name = cs_method_Detail-method_signature-sconame.
             READ TABLE mt_source_code ASSIGNING FIELD-SYMBOL(<codeline>) INDEX <line>-line.
-            cs_method_detail-call_parameter_name = <codeline>.
+            cs_method_detail-call_parameter_name = GET_CONSTRUCTOR_CALL_PARAMETER( iv_code = <codeline>
+                           iv_param_name = <line>-name ).
             RETURN.
           ENDIF.
           lv_index = lv_index + 1.
@@ -138,6 +145,39 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
           SOURCE_expanded = mt_source_code.
 
   endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->GET_CONSTRUCTOR_CALL_PARAMETER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_CODE                        TYPE        STRING
+* | [--->] IV_PARAM_NAME                  TYPE        STRING
+* | [<-()] RV_PARAM_VALUE                 TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_constructor_call_parameter.
+    DATA(lv_source_code) = | { iv_code CASE = UPPER } |.
+
+    DATA(reg_pattern) = |^.*{ iv_param_name }.*=(.*)$|.
+
+    DATA(lo_regex) = NEW cl_abap_regex( pattern = reg_pattern ).
+    DATA(lo_matcher) = lo_regex->create_matcher( EXPORTING text = lv_source_code ).
+
+    CHECK lo_matcher->match( ) = abap_true.
+
+    DATA(lt_reg_match_result) = lo_matcher->find_all( ).
+
+    READ TABLE lt_reg_match_result ASSIGNING FIELD-SYMBOL(<reg_entry>) INDEX 1.
+
+    CHECK sy-subrc = 0.
+
+    READ TABLE <reg_entry>-submatches ASSIGNING FIELD-SYMBOL(<match>) INDEX 1.
+
+    rv_param_value = lv_source_code+<match>-offset(<match>-length).
+
+    REPLACE ALL OCCURRENCES OF REGEX `[\.()']` IN rv_param_value WITH space.
+
+    CONDENSE rv_param_value NO-GAPS.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -264,12 +304,12 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
       ADD 1 TO lv_index.
     ENDLOOP.
 
+    DELETE MT_METHOD_DETAIL WHERE caller_variable_name IS INITIAL.
     LOOP AT mt_result ASSIGNING FIELD-SYMBOL(<variable>) WHERE tag = 'DA'.
       DATA(ls_variable) = VALUE ty_variable( variable_name = <variable>-name
                                          variable_type = <variable>-full_name ).
       APPEND ls_variable TO lt_variable.
     ENDLOOP.
-
 
     DATA: lt_ref TYPE scr_glrefs.
 
