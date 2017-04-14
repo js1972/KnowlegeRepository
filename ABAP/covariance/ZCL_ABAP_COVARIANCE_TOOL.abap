@@ -25,13 +25,14 @@ private section.
       END OF ty_method_detail .
   types:
     tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
-
-  TYPES: BEGIN OF ty_container_generic_type,
+  types:
+    BEGIN OF ty_container_generic_type,
             container_name TYPE string,
             type TYPE string,
-         END OF ty_container_generic_type.
+         END OF ty_container_generic_type .
+  types:
+    tt_container_generic_type TYPE TABLE OF ty_container_generic_type .
 
-  TYPES: tt_container_generic_type TYPE TABLE OF ty_container_generic_type.
   constants:
     BEGIN OF cs_method_type,
         constructor TYPE c LENGTH 1 VALUE 1,
@@ -41,9 +42,15 @@ private section.
   data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
   data MT_SOURCE_CODE type SEOP_SOURCE_STRING .
   data MS_WORKING_METHOD type SEOCPDKEY .
-  data mt_container_generic_type TYPE tt_container_generic_type.
+  data MT_CONTAINER_GENERIC_TYPE type TT_CONTAINER_GENERIC_TYPE .
   constants CV_COVARIANCE_INF type STRING value 'ZIF_COVARIANCE' ##NO_TEXT.
 
+  methods IS_COVARIANCE_FULFILLED
+    importing
+      !IV_GENERIC_TYPE type STRING
+      !IV_CONCRETE_TYPE type STRING
+    returning
+      value(RV_FULFILLED) type ABAP_BOOL .
   methods CHECK_CTOR_COVARIANCE
     importing
       !IS_METHOD_DEF type TY_METHOD_DETAIL .
@@ -98,6 +105,9 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method CHECK_CTOR_COVARIANCE.
     data(lv_generic_type) = get_container_generic_type( iv_container_name = is_method_def-method_cls_name ).
+    IF is_covariance_fulfilled( iv_generic_type = lv_generic_type
+                                iv_concrete_type = is_method_def-call_parameter_name ) = abap_false.
+    ENDIF.
   endmethod.
 
 
@@ -366,5 +376,39 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     IF <interface> = cv_covariance_inf.
       rv_needed = abap_true.
     ENDIF.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->IS_COVARIANCE_FULFILLED
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_GENERIC_TYPE                TYPE        STRING
+* | [--->] IV_CONCRETE_TYPE               TYPE        STRING
+* | [<-()] RV_FULFILLED                   TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD is_covariance_fulfilled.
+    DATA: lv_super TYPE string,
+          lv_child TYPE string.
+    rv_fulfilled = abap_false.
+
+    IF iv_generic_type = iv_concrete_type.
+      rv_fulfilled = abap_true.
+      RETURN.
+    ENDIF.
+
+    lv_child = iv_concrete_type.
+
+    DO.
+      SELECT SINGLE refclsname INTO lv_super FROM seometarel
+         WHERE clsname = lv_child.
+      IF sy-subrc = 4.
+        RETURN.
+      ELSEIF lv_super = iv_generic_type.
+        rv_fulfilled = abap_true.
+        RETURN.
+      ELSE.
+        lv_child = lv_super.
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 ENDCLASS.
