@@ -17,6 +17,7 @@ private section.
         caller_variable_name TYPE string,
         method_cls_name      TYPE string,
         method_name          TYPE string,
+        line                 TYPE int4,
         call_parameter_name  TYPE string, "should be a string_table in productive use
 * for simpliciation reason in this POC Jerry assume each constructor / instance method
 * only define ONLY ONE parameter, in productive use should use TABLE OF instead to
@@ -56,7 +57,8 @@ private section.
     importing
       !IV_METHOD_NAME type STRING
       !IV_GENERIC_TYPE type STRING
-      !IV_CONCRETE_TYPE type STRING .
+      !IV_CONCRETE_TYPE type STRING
+      !IV_LINE type INT4 .
   methods CHECK_CTOR_COVARIANCE
     importing
       !IS_METHOD_DEF type TY_METHOD_DETAIL .
@@ -113,9 +115,10 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     data(lv_generic_type) = get_container_generic_type( iv_container_name = is_method_def-method_cls_name ).
     IF is_covariance_fulfilled( iv_generic_type = lv_generic_type
                                 iv_concrete_type = is_method_def-call_parameter_name ) = abap_false.
-       report_error( iv_method_name = is_method_def-method_name
-                     iv_generic_type = lv_generic_type
-                     iv_concrete_type = is_method_def-call_parameter_name ).
+       report_error( iv_method_name   = is_method_def-method_name
+                     iv_generic_type  = lv_generic_type
+                     iv_concrete_type = is_method_def-call_parameter_name
+                     iv_line          = is_method_def-line ).
     ENDIF.
   endmethod.
 
@@ -339,6 +342,7 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
             fill_call_parameter( EXPORTING iv_current_index = lv_index
                                     CHANGING cs_method_detail = ls_method_detail ).
           ENDIF.
+          ls_method_detail-line = <method>-line.
           APPEND ls_method_detail TO mt_method_detail.
         WHEN OTHERS.
       ENDCASE.
@@ -428,10 +432,11 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 * | [--->] IV_METHOD_NAME                 TYPE        STRING
 * | [--->] IV_GENERIC_TYPE                TYPE        STRING
 * | [--->] IV_CONCRETE_TYPE               TYPE        STRING
+* | [--->] IV_LINE                        TYPE        INT4
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method REPORT_ERROR.
      APPEND | Covariance violation in method: { iv_method_name } !| to MT_error_message.
      APPEND | The container has generic type: { iv_generic_type } | TO MT_error_message.
-     APPEND | However the assigned concrete type: { iv_concrete_type } is not a subclass of it! | TO MT_error_message.
+     APPEND | However the assigned concrete type: { iv_concrete_type } in line { iv_line } is not a subclass of it! | TO MT_error_message.
   endmethod.
 ENDCLASS.
