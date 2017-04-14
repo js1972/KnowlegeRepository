@@ -15,10 +15,10 @@ CLASS zcl_abap_covariance_tool DEFINITION
       IMPORTING
         !is_method_def TYPE seocpdkey .
   PROTECTED SECTION.
-private section.
+  PRIVATE SECTION.
 
-  types:
-    BEGIN OF ty_method_detail,
+    TYPES:
+      BEGIN OF ty_method_detail,
         method_type          TYPE c LENGTH 1,
         caller_variable_name TYPE string,
         method_cls_name      TYPE string,
@@ -29,32 +29,32 @@ private section.
 * support multiple parameter
         method_signature     TYPE seosubcodf,
       END OF ty_method_detail .
-  types:
-    tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
+    TYPES:
+      tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
 
-  constants:
-    BEGIN OF cs_method_type,
+    CONSTANTS:
+      BEGIN OF cs_method_type,
         constructor TYPE c LENGTH 1 VALUE 1,
         instance    TYPE c LENGTH 1 VALUE 2,
       END OF cs_method_type .
-  data MT_RESULT type SCR_REFS .
-  data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
+    DATA mt_result TYPE scr_refs .
+    DATA mt_method_detail TYPE tt_method_detail .
 
-  methods FILL_CALLER_VARIABLE_NAME
-    importing
-      !IV_CURRENT_INDEX type INT4
-    changing
-      !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
-  methods GET_METHOD_TYPE
-    importing
-      !IV_RAW type STRING
-    returning
-      value(RS_METHOD_DETAIL) type TY_METHOD_DETAIL .
-  methods FILL_CALL_PARAMETER
-    importing
-      !IV_CURRENT_INDEX type INT4
-    changing
-      !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
+    METHODS fill_caller_variable_name
+      IMPORTING
+        !iv_current_index TYPE int4
+      CHANGING
+        !cs_method_detail TYPE ty_method_detail .
+    METHODS get_method_type
+      IMPORTING
+        !iv_raw                 TYPE string
+      RETURNING
+        VALUE(rs_method_detail) TYPE ty_method_detail .
+    METHODS fill_call_parameter
+      IMPORTING
+        !iv_current_index TYPE int4
+      CHANGING
+        !cs_method_detail TYPE ty_method_detail .
 ENDCLASS.
 
 
@@ -90,22 +90,26 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 * | [--->] IV_CURRENT_INDEX               TYPE        INT4
 * | [<-->] CS_METHOD_DETAIL               TYPE        TY_METHOD_DETAIL
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD FILL_CALL_PARAMETER.
+  METHOD fill_call_parameter.
     DATA: lv_index TYPE int4,
           lv_total TYPE int4.
 
-    lv_total = lines( mt_result ).
+    CASE cs_method_detail-method_type.
+      WHEN cs_method_type-instance.
+        lv_total = lines( mt_result ).
 
-    lv_index = iv_current_index.
-    WHILE lv_index < lv_total.
-      READ TABLE mt_result ASSIGNING FIELD-SYMBOL(<line>) INDEX lv_index.
-      IF <line>-tag = 'DA'.
-        cs_method_detail-call_parameter_name = <line>-name.
-        RETURN.
-      ENDIF.
+        lv_index = iv_current_index.
+        WHILE lv_index < lv_total.
+          READ TABLE mt_result ASSIGNING FIELD-SYMBOL(<line>) INDEX lv_index.
+          IF <line>-tag = 'DA'.
+            cs_method_detail-call_parameter_name = <line>-name.
+            RETURN.
+          ENDIF.
 
-      lv_index = lv_index + 1.
-    ENDWHILE.
+          lv_index = lv_index + 1.
+        ENDWHILE.
+      WHEN cs_method_type-constructor.
+    ENDCASE.
   ENDMETHOD.
 
 
@@ -221,8 +225,8 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
           fill_caller_variable_name( EXPORTING iv_current_index = lv_index
                                      CHANGING  cs_method_detail = ls_method_detail ).
           IF ls_method_detail-method_signature IS NOT INITIAL.
-             fill_call_parameter( EXPORTING iv_current_index = lv_index
-                                     CHANGING cs_method_detail = ls_method_detail ).
+            fill_call_parameter( EXPORTING iv_current_index = lv_index
+                                    CHANGING cs_method_detail = ls_method_detail ).
           ENDIF.
           APPEND ls_method_detail TO mt_method_detail.
           APPEND ls_method TO lt_method.
