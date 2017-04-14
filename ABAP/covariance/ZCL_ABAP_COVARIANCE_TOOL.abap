@@ -15,10 +15,10 @@ CLASS zcl_abap_covariance_tool DEFINITION
       IMPORTING
         !is_method_def TYPE seocpdkey .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    TYPES:
-      BEGIN OF ty_method_detail,
+  types:
+    BEGIN OF ty_method_detail,
         method_type          TYPE c LENGTH 1,
         caller_variable_name TYPE string,
         method_cls_name      TYPE string,
@@ -29,32 +29,35 @@ CLASS zcl_abap_covariance_tool DEFINITION
 * support multiple parameter
         method_signature     TYPE seosubcodf,
       END OF ty_method_detail .
-    TYPES:
-      tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
+  types:
+    tt_method_detail TYPE STANDARD TABLE OF ty_method_detail .
 
-    CONSTANTS:
-      BEGIN OF cs_method_type,
+  constants:
+    BEGIN OF cs_method_type,
         constructor TYPE c LENGTH 1 VALUE 1,
         instance    TYPE c LENGTH 1 VALUE 2,
       END OF cs_method_type .
-    DATA mt_result TYPE scr_refs .
-    DATA mt_method_detail TYPE tt_method_detail .
+  data MT_RESULT type SCR_REFS .
+  data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
+  data MT_SOURCE_CODE type SEOP_SOURCE .
+  data MS_WORKING_METHOD type SEOCPDKEY .
 
-    METHODS fill_caller_variable_name
-      IMPORTING
-        !iv_current_index TYPE int4
-      CHANGING
-        !cs_method_detail TYPE ty_method_detail .
-    METHODS get_method_type
-      IMPORTING
-        !iv_raw                 TYPE string
-      RETURNING
-        VALUE(rs_method_detail) TYPE ty_method_detail .
-    METHODS fill_call_parameter
-      IMPORTING
-        !iv_current_index TYPE int4
-      CHANGING
-        !cs_method_detail TYPE ty_method_detail .
+  methods FILL_CALLER_VARIABLE_NAME
+    importing
+      !IV_CURRENT_INDEX type INT4
+    changing
+      !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
+  methods GET_METHOD_TYPE
+    importing
+      !IV_RAW type STRING
+    returning
+      value(RS_METHOD_DETAIL) type TY_METHOD_DETAIL .
+  methods FILL_CALL_PARAMETER
+    importing
+      !IV_CURRENT_INDEX type INT4
+    changing
+      !CS_METHOD_DETAIL type TY_METHOD_DETAIL .
+  methods FILL_METHOD_SOURCE .
 ENDCLASS.
 
 
@@ -105,12 +108,27 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
             cs_method_detail-call_parameter_name = <line>-name.
             RETURN.
           ENDIF.
-
           lv_index = lv_index + 1.
         ENDWHILE.
       WHEN cs_method_type-constructor.
+
     ENDCASE.
   ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->FILL_METHOD_SOURCE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method FILL_METHOD_SOURCE.
+
+     CALL FUNCTION 'SEO_METHOD_GET_SOURCE'
+       EXPORTING
+          MTDKEY = ms_working_method
+       IMPORTING
+          SOURCE = mt_source_code.
+
+  endmethod.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -186,6 +204,8 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
           lv_main    TYPE progname,
           lv_index   TYPE int4 VALUE 1.
 
+    ms_working_method = IS_METHOD_DEF.
+    fill_method_source( ).
     CALL METHOD get_methods_include
       EXPORTING
         is_method_def = is_method_def
