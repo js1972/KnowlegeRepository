@@ -1,19 +1,13 @@
-CLASS zcl_abap_covariance_tool DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZCL_ABAP_COVARIANCE_TOOL definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    METHODS get_methods_include
-      IMPORTING
-        !is_method_def TYPE seocpdkey
-      EXPORTING
-        !ev_program    TYPE progname
-        !ev_include    TYPE program .
-    METHODS get_used_objects
-      IMPORTING
-        !is_method_def TYPE seocpdkey .
+  methods GET_USED_OBJECTS
+    importing
+      !IS_METHOD_DEF type SEOCPDKEY .
   PROTECTED SECTION.
 private section.
 
@@ -181,21 +175,6 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_ABAP_COVARIANCE_TOOL->GET_METHODS_INCLUDE
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IS_METHOD_DEF                  TYPE        SEOCPDKEY
-* | [<---] EV_PROGRAM                     TYPE        PROGNAME
-* | [<---] EV_INCLUDE                     TYPE        PROGRAM
-* +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD get_methods_include.
-    ev_include = cl_oo_classname_service=>get_method_include( is_method_def ).
-
-    ev_program = cl_oo_classname_service=>get_classpool_name( is_method_def-clsname ).
-
-  ENDMETHOD.
-
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_ABAP_COVARIANCE_TOOL->GET_METHOD_TYPE
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_RAW                         TYPE        STRING
@@ -255,41 +234,18 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 
     ms_working_method = IS_METHOD_DEF.
     fill_method_source( ).
-    CALL METHOD get_methods_include
-      EXPORTING
-        is_method_def = is_method_def
-      IMPORTING
-        ev_program    = lv_main
-        ev_include    = lv_include.
+    lv_include = cl_oo_classname_service=>get_method_include( is_method_def ).
+    lv_main = cl_oo_classname_service=>get_classpool_name( is_method_def-clsname ).
 
     DATA(lo_compiler) = NEW cl_abap_compiler( p_name = lv_main p_include = lv_include ).
 
     lo_compiler->get_all( IMPORTING p_result = mt_result ).
-
-    TYPES: BEGIN OF ty_method,
-             method_name TYPE string,
-             method_type TYPE string,
-           END OF ty_method.
-
-    TYPES: tt_method TYPE STANDARD TABLE OF ty_method.
-
-    TYPES: BEGIN OF ty_variable,
-             variable_name TYPE string,
-             variable_type TYPE string,
-           END OF ty_variable.
-
-    TYPES: tt_variable TYPE STANDARD TABLE OF ty_variable.
-
-    DATA: lt_method   TYPE tt_method,
-          lt_variable TYPE tt_variable.
 
     FIELD-SYMBOLS:<method> LIKE LINE OF mt_result.
 
     LOOP AT mt_result ASSIGNING <method>.
       CASE <method>-tag.
         WHEN 'ME'.
-          DATA(ls_method) = VALUE ty_method( method_name = <method>-name
-                                             method_type = <method>-full_name ).
           DATA(ls_method_detail) = get_method_type( <method>-full_name ).
           fill_caller_variable_name( EXPORTING iv_current_index = lv_index
                                      CHANGING  cs_method_detail = ls_method_detail ).
@@ -298,22 +254,10 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
                                     CHANGING cs_method_detail = ls_method_detail ).
           ENDIF.
           APPEND ls_method_detail TO mt_method_detail.
-          APPEND ls_method TO lt_method.
         WHEN OTHERS.
       ENDCASE.
       ADD 1 TO lv_index.
     ENDLOOP.
-
-    DELETE MT_METHOD_DETAIL WHERE caller_variable_name IS INITIAL.
-    LOOP AT mt_result ASSIGNING FIELD-SYMBOL(<variable>) WHERE tag = 'DA'.
-      DATA(ls_variable) = VALUE ty_variable( variable_name = <variable>-name
-                                         variable_type = <variable>-full_name ).
-      APPEND ls_variable TO lt_variable.
-    ENDLOOP.
-
-    DATA: lt_ref TYPE scr_glrefs.
-
-    lo_compiler->get_all_refs( EXPORTING p_local = 'X' IMPORTING p_result = lt_ref ).
 
   ENDMETHOD.
 ENDCLASS.
