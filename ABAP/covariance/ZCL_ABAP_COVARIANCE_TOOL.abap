@@ -59,5 +59,41 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 
      lo_compiler->get_all( IMPORTING p_result = lt_result ).
 
+types: BEGIN OF TY_METHOD,
+              METHOD_NAME type STRING,
+              method_type type string,
+       end of ty_method.
+
+ types: tt_method TYPE STANDARD TABLE OF ty_method.
+
+ types: BEGIN OF TY_variable,
+              variable_NAME type STRING,
+              variable_type type string,
+       end of ty_variable.
+
+ types: tt_variable TYPE STANDARD TABLE OF ty_variable.
+
+ data: lt_method TYPE tt_method,
+       lt_variable TYPE tt_variable.
+
+ FIELD-SYMBOLS:<method> LIKE LINE OF lt_result.
+
+   LOOP AT lt_result ASSIGNING <method> where tag = 'ME'.
+      data(ls_method) = value ty_method( METHOD_NAME = <method>-name
+                                         method_type = <method>-full_name ).
+      APPEND ls_method TO lt_method.
+   ENDLOOP.
+
+    LOOP AT lt_result ASSIGNING FIELD-SYMBOL(<variable>) where tag = 'DA'.
+      data(ls_variable) = value ty_variable( variable_NAME = <variable>-name
+                                         variable_type = <variable>-full_name ).
+      APPEND ls_variable TO lt_variable.
+   ENDLOOP.
+
+
+     data: lt_ref TYPE SCR_GLREFS.
+
+     lo_compiler->get_all_refs( EXPORTING p_local = 'X' IMPORTING p_result = lt_ref ).
+
   endmethod.
 ENDCLASS.
