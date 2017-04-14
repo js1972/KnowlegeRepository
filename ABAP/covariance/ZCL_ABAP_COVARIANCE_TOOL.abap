@@ -34,6 +34,7 @@ private section.
               instance type c length 1 value 2,
             end of cs_method_type .
   data MT_RESULT type SCR_REFS .
+  data MT_METHOD_DETAIL type TT_METHOD_DETAIL .
 
   methods GET_METHOD_TYPE
     importing
@@ -69,7 +70,8 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 * | [<-()] RS_METHOD_DETAIL               TYPE        TY_METHOD_DETAIL
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_method_type.
-    CONSTANTS : cv_instance TYPE string VALUE '^\\TY:(.*)\\ME:(.*)$'.
+    CONSTANTS : cv_instance    TYPE string VALUE '^\\TY:(.*)\\ME:(.*)$',
+                cv_constructor TYPE string VALUE '^\\TY:(.*)$'.
 
     DATA: lo_regex            TYPE REF TO cl_abap_regex,
           lo_matcher          TYPE REF TO cl_abap_matcher,
@@ -82,20 +84,30 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
 
     lo_matcher = lo_regex->create_matcher( EXPORTING text = iv_raw ).
 
-    IF lo_matcher->match( ) = abap_true.
+    IF lo_matcher->match( ) = abap_false.
+      lo_regex = NEW #( pattern = cv_constructor ).
+      lo_matcher = lo_regex->create_matcher( EXPORTING text = iv_raw ).
+      CHECK lo_matcher->match( ) = abap_true.
+      rs_method_detail-method_type = cs_method_type-constructor.
+    ELSE.
       rs_method_detail-method_type = cs_method_type-instance.
-      lt_reg_match_result = lo_matcher->find_all( ).
-      READ TABLE lt_reg_match_result ASSIGNING <reg_entry> INDEX 1.
+    ENDIF.
 
-      READ TABLE <reg_entry>-submatches ASSIGNING <match1> INDEX 1.
-      rs_method_detail-method_cls_name = iv_raw+<match1>-offset(<match1>-length).
+    lt_reg_match_result = lo_matcher->find_all( ).
+    READ TABLE lt_reg_match_result ASSIGNING <reg_entry> INDEX 1.
+
+    READ TABLE <reg_entry>-submatches ASSIGNING <match1> INDEX 1.
+    rs_method_detail-method_cls_name = iv_raw+<match1>-offset(<match1>-length).
+    IF lines( <reg_entry>-submatches ) = 2.
 
       READ TABLE <reg_entry>-submatches ASSIGNING <match2> INDEX 2.
       rs_method_detail-method_name = iv_raw+<match2>-offset(<match2>-length).
-
-      SELECT SINGLE * INTO rs_method_detail-method_signature FROM SEOSUBCODF
-          where CLSNAME = rs_method_detail-method_cls_name and cmpname = rs_method_detail-method_name.
+    ELSE.
+      rs_method_detail-method_name = 'CONSTRUCTOR'.
     ENDIF.
+    SELECT SINGLE * INTO rs_method_detail-method_signature FROM seosubcodf
+        WHERE clsname = rs_method_detail-method_cls_name AND cmpname = rs_method_detail-method_name.
+
   ENDMETHOD.
 
 
@@ -141,6 +153,8 @@ CLASS ZCL_ABAP_COVARIANCE_TOOL IMPLEMENTATION.
     LOOP AT mt_result ASSIGNING <method> WHERE tag = 'ME'.
       DATA(ls_method) = VALUE ty_method( method_name = <method>-name
                                          method_type = <method>-full_name ).
+      DATA(ls_method_detail) = GET_METHOD_TYPE( <method>-full_name ).
+      APPEND ls_method_detail TO mt_method_detail.
       APPEND ls_method TO lt_method.
     ENDLOOP.
 
