@@ -12,6 +12,12 @@ Object-Oriented Languages - Part2 | Orlando | 61~69 | 9
 * Orlando: 7 + 12 + 7 + 9 = 35
 * Jerry: 5 + 13 + 14 = 32 
 
+# Orlando's assignment
+
+* how to avoid repeated calculation for recursive fib() function?
+* how to prove that tail recursive function could be replaced by for/while loop?
+* how to check compiler, which supports tail recursion, actually happened as expected?
+
 
 
 
