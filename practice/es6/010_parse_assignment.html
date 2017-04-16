@@ -22,5 +22,14 @@ function getFullName({ firstName, lastName }) {
 }
 console.log(getFullName(user)); // Jerry Wang
 
+// deep match, also called object parse
+function settings() {
+  return { display: { color: 'red' }, keyboard: { layout: 'querty'} };
+}
+const { display: { color: displayColor }, keyboard: { layout: keyboardLayout }} = settings();
+console.log(displayColor, keyboardLayout); // red querty
+
+
+
 </script>
 </html>
