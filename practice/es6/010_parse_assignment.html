@@ -29,7 +29,54 @@ function settings() {
 const { display: { color: displayColor }, keyboard: { layout: keyboardLayout }} = settings();
 console.log(displayColor, keyboardLayout); // red querty
 
+var Animal = (function () {
+  function MyConstructor(name) {
+    this.name = name;
+  }
+  MyConstructor.prototype.speak = function speak() {
+    console.log(this.name + ' makes a noise.');
+  };
+  return MyConstructor;
+})();
+var animal = new Animal('animal');
+animal.speak(); // animal makes a noise.
 
+class Animal2 {
+  constructor(name) {
+    this.name = name;
+  }
+  speak() {
+    console.log(this.name + ' makes a noise.');
+  }
+}
+const animal2 = new Animal2('animal');
+animal2.speak(); // animal makes a noise.
+
+var Lion = (function () {
+  function MyConstructor(name){
+    Animal.call(this, name);
+  }
+  // prototypal inheritance
+  MyConstructor.prototype = Object.create(Animal.prototype);
+  MyConstructor.prototype.constructor = Animal;
+  MyConstructor.prototype.speak = function speak() {
+    Animal.prototype.speak.call(this);
+    console.log(this.name + ' roars ');
+  };
+  return MyConstructor;
+})();
+var lion = new Lion('Simba');
+lion.speak(); // Simba makes a noise.
+// Simba roars.
+
+class Lion2 extends Animal2 {
+  speak() {
+    super.speak();
+    console.log(this.name + ' roars ');
+  }
+}
+const lion2 = new Lion2('Simba');
+lion2.speak(); // Simba makes a noise.
 
 </script>
 </html>
