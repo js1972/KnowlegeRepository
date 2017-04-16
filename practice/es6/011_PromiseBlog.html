@@ -2,13 +2,13 @@
 <script src="../timer/timer.js"></script>
 <script>
 JerryTimer.start();
-var p = new Promise(function(resolve, reject){
+var p = new Promise(function(resolveJerry, reject){
     console.log("inside Promise constructor: " + JerryTimer.end());
     JerryTimer.start();
     setTimeout(function(){
         console.log('执行完成: ' + JerryTimer.end());
         JerryTimer.start();
-        resolve('随便什么数据');
+        resolveJerry('随便什么数据');
     }, 4000);
     console.log("do a heavy task begin!!");
     JerryTimer.block(2);
