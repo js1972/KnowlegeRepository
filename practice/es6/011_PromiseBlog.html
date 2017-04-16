@@ -1,9 +1,12 @@
 <html>
+<script src="../timer/timer.js"></script>
 <script>
+JerryTimer.start();
 var p = new Promise(function(resolve, reject){
-    //做一些异步操作
+    console.log("inside Promise constructor: " + JerryTimer.end());
+    JerryTimer.start();
     setTimeout(function(){
-        console.log('执行完成');
+        console.log('执行完成: ' + JerryTimer.end());
         resolve('随便什么数据');
     }, 2000);
 }); // this p will immediately be executed
