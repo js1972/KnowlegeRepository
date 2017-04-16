@@ -7,6 +7,7 @@ var p = new Promise(function(resolve, reject){
     JerryTimer.start();
     setTimeout(function(){
         console.log('执行完成: ' + JerryTimer.end());
+        JerryTimer.start();
         resolve('随便什么数据');
     }, 4000);
     console.log("do a heavy task begin!!");
@@ -16,5 +17,24 @@ var p = new Promise(function(resolve, reject){
 
 }); // this p will immediately be executed
 
+console.log("outside p");
+
+var thenCallback = function(result){
+	setTimeout( (function(result){
+		 return function(){
+		 	console.log("in then function: " + result + " consumed time: " + 	JerryTimer.end());
+		 }	
+	})(result), 5000);
+}
+/*
+p.then(
+	setTimeout(
+		function(result){
+			console.log("in then function: " + result + " consumed time: " + 	JerryTimer.end());	
+	}, 1000));
+*/
+JerryTimer.start();
+p.then(thenCallback);
+console.log("after p.then");
 </script>
 </html>
