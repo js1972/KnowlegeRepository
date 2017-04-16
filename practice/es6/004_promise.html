@@ -48,7 +48,7 @@ function runAsync(){
     return p;            
 }
 runAsync().then(function(data){
-    console.log("Jerry in then callback: " + data + a);
+    console.log("Jerry in then callback: " + data);
     //后面可以用传过来的数据做些其他操作
     //......
 });
@@ -60,5 +60,22 @@ after runAsync
 Jerry in then callback: 随便什么数据
 
 */
+
+function printAfterTimeout(string, timeout){
+  return new Promise((resolve, reject) => {
+    setTimeout(function(){
+      resolve(string);
+    }, timeout);
+  });
+}
+
+printAfterTimeout('<Hello> ', 2000).then((result) => {
+  console.log(result);
+  return printAfterTimeout(result + '<World>', 3000);
+}).then((result) => {
+  console.log("In then...");
+  console.log(result);
+});
+
 </script>
 </html>
