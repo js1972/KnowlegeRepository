@@ -8,7 +8,12 @@ var p = new Promise(function(resolve, reject){
     setTimeout(function(){
         console.log('执行完成: ' + JerryTimer.end());
         resolve('随便什么数据');
-    }, 2000);
+    }, 4000);
+    console.log("do a heavy task begin!!");
+    JerryTimer.block(2);
+    console.log("do a heavy task end!!: " + JerryTimer.end());
+    JerryTimer.start();
+
 }); // this p will immediately be executed
 
 </script>
