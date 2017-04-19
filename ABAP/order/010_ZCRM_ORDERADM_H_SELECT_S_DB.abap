@@ -84,6 +84,11 @@ FUNCTION zcrm_orderadm_h_select_s_db .
       EXPORTING
         is_wrk_structure = <ls_wrk_structure>.
 
+*  Jerry: Ugly!!
+     IF <lv_object> = 'ORDERADM_H'.
+        es_orderadm_h_db = <ls_wrk_structure>.
+     ENDIF.
+
   ENDLOOP.
 
 ENDFUNCTION.
