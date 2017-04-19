@@ -20,6 +20,7 @@ FUNCTION zcrm_orderadm_h_select_s_db .
         lv_kind               TYPE zcrmc_objects-kind,
         lv_wrk_structure_name TYPE string,
         lr_wrk_structure      TYPE REF TO data,
+        lo_convertor          TYPE REF TO zif_crms4_btx_data_model,
         lv_conv_class         TYPE seoclass-clsname.
 
   FIELD-SYMBOLS: <ls_dbtab>         TYPE any,
@@ -53,14 +54,14 @@ FUNCTION zcrm_orderadm_h_select_s_db .
 
   SELECT SINGLE * FROM (lv_dbtab_name)
     INTO <ls_dbtab>
-    WHERE header_guid = iv_guid.
+    WHERE guid = iv_guid.
 
   IF sy-subrc <> 0.
     MESSAGE i203(crm_order_misc) RAISING record_not_found.
   ENDIF.
 
 * Get all possible components for the given header object type
-  SELECT name FROM crmc_object_assi INTO TABLE lt_objects WHERE subobj_category = ls_btx_h-object_type.
+  SELECT name FROM zcrmc_object_ass INTO TABLE lt_objects WHERE subobj_category = ls_btx_h-object_type.
 
   LOOP AT lt_objects ASSIGNING <lv_object>.
     CLEAR lv_conv_class.
@@ -68,17 +69,18 @@ FUNCTION zcrm_orderadm_h_select_s_db .
       INTO (lv_type, lv_kind, lv_conv_class)
       WHERE name = <lv_object>.
     CHECK lv_conv_class IS NOT INITIAL.
-    CALL METHOD (lv_conv_class)=>zif_crms4_btx_data_model~get_wrk_structure_name
+    CREATE OBJECT lo_convertor TYPE (lv_conv_class).
+    CALL METHOD lo_convertor->get_wrk_structure_name
       RECEIVING
         rv_wrk_structure_name = lv_wrk_structure_name.
     CREATE DATA lr_wrk_structure TYPE (lv_wrk_structure_name).
     ASSIGN lr_wrk_structure->* TO <ls_wrk_structure>.
-    CALL METHOD (lv_conv_class)=>zif_crms4_btx_data_model~convert_s4_to_1o
+    CALL METHOD lo_convertor->convert_s4_to_1o
       EXPORTING
         is_workarea = <ls_dbtab>
       IMPORTING
         es_workarea = <ls_wrk_structure>.
-    CALL METHOD (lv_conv_class)=>zif_crms4_btx_data_model~put_to_db_buffer
+    CALL METHOD lo_convertor->put_to_db_buffer
       EXPORTING
         is_wrk_structure = <ls_wrk_structure>.
 
