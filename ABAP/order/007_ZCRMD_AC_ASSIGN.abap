@@ -20,6 +20,12 @@ SELECT * INTO TABLE lt_order_h FROM crmd_orderadm_h FOR ALL ENTRIES IN lt_link
 
 DATA: lt_type TYPE TABLE OF crmc_proc_type_t.
 
+select * INTO TABLE lt_Type FROM crmc_proc_type_t FOR ALL ENTRIES IN lt_order_h
+   where process_type = lt_order_h-process_type and LANGU = sy-langu.
+
 LOOP AT lt_order_h ASSIGNING FIELD-SYMBOL(<order>).
-   WRITE: / 'Order id:' , <ordeR>-object_id, 'Description:' , <order>-description, ' type:' , <order>-process_type.
+   READ TABLE lt_type INTO DATA(type_description) WITH KEY process_type = <order>-process_type.
+   WRITE: / 'Order id:' , <ordeR>-object_id, 'Description:' , <order>-description, ' type:' , <order>-process_type,
+   'Type description:', type_description-p_description.
+
 ENDLOOP.
