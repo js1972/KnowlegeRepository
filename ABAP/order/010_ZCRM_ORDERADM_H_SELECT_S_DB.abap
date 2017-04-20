@@ -33,12 +33,6 @@ FUNCTION zcrm_orderadm_h_select_s_db .
     MESSAGE i202(crm_order_misc) RAISING parameter_error.
   ENDIF.
 
-*  SELECT SINGLE * INTO  es_orderadm_h_db FROM  crmd_orderadm_h WHERE guid = iv_guid.
-*
-*  IF sy-subrc NE 0.
-*      MESSAGE i203(crm_order_misc) RAISING record_not_found.
-*  ENDIF.
-
   SELECT SINGLE * INTO ls_btx_h FROM zcrms4d_btx WHERE order_guid = iv_guid.
   IF sy-subrc NE 0.
     MESSAGE i203(crm_order_misc) RAISING record_not_found.
@@ -65,6 +59,8 @@ FUNCTION zcrm_orderadm_h_select_s_db .
 
   LOOP AT lt_objects ASSIGNING <lv_object>.
     CLEAR lv_conv_class.
+    " ORDERADM_I will be handled in its own context
+    CHECK <lv_object> <> 'ORDERADM_I'.
     SELECT SINGLE type kind conv_class FROM zcrmc_objects
       INTO (lv_type, lv_kind, lv_conv_class)
       WHERE name = <lv_object>.

@@ -24,7 +24,9 @@ for example gc_objtype-orderadm_h type crmt_object_type value '05'.
 3. item's read logic: if a specific item guid is specified, first CRMD_ORDERADM_I is read against guid = 
 lv_item_guid, once one entry is found, the header guid is available in <entry>-header. Then all items are fetched 
 by this header guid.
+4. CRM_ORDER_OBJECT_ASSI_SEL_CB - input is transaction type
 
 # table
 1. item object type: CRMC_SUBOB_CAT_I
 2. CRMC_BT_BTI_ASSI - from Oliver
+3. 
