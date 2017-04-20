@@ -20,3 +20,4 @@ for example gc_objtype-orderadm_h type crmt_object_type value '05'.
 # Useful FM
 
 1. CRM_OBJECT_NAMES_DETERMINE
+2. CRM_ORDERADM_H_ON_DATABASE_OW - works under new DB.
