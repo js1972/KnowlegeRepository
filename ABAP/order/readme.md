@@ -27,3 +27,4 @@ by this header guid.
 
 # table
 1. item object type: CRMC_SUBOB_CAT_I
+2. CRMC_BT_BTI_ASSI - from Oliver
