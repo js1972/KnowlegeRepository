@@ -21,6 +21,7 @@ START-OF-SELECTION.
     EXPORTING
       it_header_guid       = lt_header_guid
       it_requested_objects = lt_requested
+      iv_no_auth_check     = abap_true
     IMPORTING
       et_orderadm_h        = lt_orderadm_h
       et_srv_req_h         = lt_srv_req_h.
