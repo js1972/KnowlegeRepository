@@ -22,7 +22,6 @@ CLASS ZCL_CRMS4_BTX_SRV_REQ_H_CONV IMPLEMENTATION.
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_CRMS4_BTX_DATA_MODEL~CONVERT_S4_TO_1O.
-    BREAK-POINT.
     MOVE-CORRESPONDING is_workarea to es_workarea.
   endmethod.
 
@@ -44,5 +43,9 @@ CLASS ZCL_CRMS4_BTX_SRV_REQ_H_CONV IMPLEMENTATION.
 * | [--->] IS_WRK_STRUCTURE               TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method ZIF_CRMS4_BTX_DATA_MODEL~PUT_TO_DB_BUFFER.
+
+    CALL FUNCTION 'CRM_SRV_REQ_H_PUT_OB'
+      EXPORTING
+         IS_SRV_REQ_H_WRK = IS_WRK_STRUCTURE.
   endmethod.
 ENDCLASS.
