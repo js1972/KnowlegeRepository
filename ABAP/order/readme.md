@@ -16,3 +16,7 @@ for example gc_objtype-orderadm_h type crmt_object_type value '05'.
 --CRM_ORDER_INDEX_UPDATE_DU
 # Short cut
 1. 9ZONEORDER_MODIFY
+
+# Useful FM
+
+1. CRM_OBJECT_NAMES_DETERMINE
