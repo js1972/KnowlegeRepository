@@ -33,3 +33,8 @@ by this header guid.
 
 # BUS type
 1. BUS2000140 - CRM Service Product Item
+
+# Question
+
+SRVO can have SRV_REQ_H? 5700000380 in AG3
+
