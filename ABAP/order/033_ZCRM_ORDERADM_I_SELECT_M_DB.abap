@@ -12,15 +12,15 @@ FUNCTION zcrm_orderadm_i_select_m_db.
 *"----------------------------------------------------------------------
 
   DATA:
-    lv_mode        TYPE crmt_boolean VALUE false,
-    lt_guid        TYPE crmt_object_guid_tab,
-    lt_item_guid   TYPE crmt_object_guid_tab,
-    lt_item_by_header TYPE CRMT_ORDERADM_I_DU_TAB,
-    ls_result_line TYPE crmd_orderadm_i,
-    lv_header      TYPE crmt_boolean VALUE false,
-    lv_lines       TYPE i,
-    lv_guid        TYPE crmt_object_guid,
-    lt_btx_i       TYPE TABLE OF ZCRMS4D_BTX_I.
+    lv_mode           TYPE crmt_boolean VALUE false,
+    lt_guid           TYPE crmt_object_guid_tab,
+    lt_item_guid      TYPE crmt_object_guid_tab,
+    lt_item_by_header TYPE crmt_orderadm_i_du_tab,
+    ls_result_line    TYPE crmd_orderadm_i,
+    lv_header         TYPE crmt_boolean VALUE false,
+    lv_lines          TYPE i,
+    lv_guid           TYPE crmt_object_guid,
+    lt_btx_i          TYPE TABLE OF zcrms4d_btx_i.
 
   FIELD-SYMBOLS:
     <ls_header_guid> LIKE LINE OF it_header_guid.
@@ -62,19 +62,19 @@ FUNCTION zcrm_orderadm_i_select_m_db.
 
   IF lt_guid IS NOT INITIAL.
 
-     SELECT * INTO TABLE lt_btx_i FROM ZCRMS4D_BTX_I FOR ALL ENTRIES IN lt_guid
-        where header_guid = lt_guid-table_line.
+    SELECT * INTO TABLE lt_btx_i FROM zcrms4d_btx_i FOR ALL ENTRIES IN lt_guid
+       WHERE header_guid = lt_guid-table_line.
 
-     CHECK sy-subrc = 0.
+    CHECK sy-subrc = 0.
 
-     LOOP AT lt_btx_i ASSIGNING FIELD-SYMBOL(<btx_i>).
-        APPEND <btx_i>-item_guid TO lt_item_guid.
-     ENDLOOP.
+    LOOP AT lt_btx_i ASSIGNING FIELD-SYMBOL(<btx_i>).
+      APPEND <btx_i>-item_guid TO lt_item_guid.
+    ENDLOOP.
 
-     lo_tool->get_item( EXPORTING it_item_guid = lt_item_guid
-                     IMPORTING et_orderadm_i_db = lt_item_by_header ).
+    lo_tool->get_item( EXPORTING it_item_guid = lt_item_guid
+                    IMPORTING et_orderadm_i_db = lt_item_by_header ).
 
-     APPEND LINES OF lt_item_by_header TO et_orderadm_i_db.
+    APPEND LINES OF lt_item_by_header TO et_orderadm_i_db.
 
 * Jerry 2017-04-21 18:45PM - possible duplicate records?
   ELSE.
