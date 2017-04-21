@@ -13,7 +13,7 @@ DATA: lv_dummy_message(1)   TYPE   c,
         ls_btx_i              TYPE zcrms4d_btx_i,
         lv_acronym            TYPE zcrmc_subob_cat-acronym,
         lr_dbtab              TYPE REF TO data,
-        lt_objects            TYPE TABLE OF ZCRMC_OBJ_ASSI_I-name,
+        lt_objects            TYPE TABLE OF crmc_object_assi-name,
         lv_type               TYPE zcrmc_objects-type,
         lv_kind               TYPE zcrmc_objects-kind,
         lv_wrk_structure_name TYPE string,
@@ -36,22 +36,24 @@ DATA: lv_dummy_message(1)   TYPE   c,
     MESSAGE i203(crm_order_misc) RAISING record_not_found.
   ENDIF.
 
-  SELECT SINGLE acronym FROM zcrmc_sub_cat_i INTO lv_acronym
+  SELECT SINGLE acronym FROM zcrmc_subob_cat INTO lv_acronym
        WHERE subobj_category = ls_btx_i-object_type.
 
-  DATA(lv_dbtab_name) = 'ZCRMS4D_' && lv_acronym && '_I'.
+  DATA(lv_dbtab_name) = 'ZCRMS4D_' && lv_acronym && '_H'.
 
   CREATE DATA lr_dbtab TYPE (lv_dbtab_name).
   ASSIGN lr_dbtab->* TO <ls_dbtab>.
 
-  SELECT SINGLE * FROM (lv_dbtab_name) INTO <ls_dbtab> WHERE guid = iv_guid.
+  SELECT SINGLE * FROM (lv_dbtab_name)
+    INTO <ls_dbtab>
+    WHERE guid = iv_guid.
 
   IF sy-subrc <> 0.
     MESSAGE i203(crm_order_misc) RAISING record_not_found.
   ENDIF.
 
 * Get all possible components for the given header object type
-  SELECT name FROM ZCRMC_OBJ_ASSI_I INTO TABLE lt_objects WHERE subobj_category = ls_btx_i-object_type.
+  SELECT name FROM zcrmc_obj_assi_i INTO TABLE lt_objects WHERE subobj_category = ls_btx_i-object_type.
 
   LOOP AT lt_objects ASSIGNING <lv_object>.
     CLEAR lv_conv_class.
