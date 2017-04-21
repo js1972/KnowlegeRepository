@@ -1,21 +1,43 @@
-class ZCL_CRMS4_BTX_DATA_MODEL_TOOL definition
-  public
-  final
-  create public .
+CLASS zcl_crms4_btx_data_model_tool DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PRIVATE .
 
-public section.
+  PUBLIC SECTION.
 
-  methods GET_ITEM
-    importing
-      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
-    exporting
-      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
-protected section.
-private section.
+    CLASS-METHODS class_constructor .
+    METHODS get_item
+      IMPORTING
+        !it_item_guid     TYPE crmt_object_guid_tab
+      EXPORTING
+        !et_orderadm_i_db TYPE crmt_orderadm_i_du_tab .
+    CLASS-METHODS get_instance
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO zcl_crms4_btx_data_model_tool .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 
-  methods CONVERT_S4_2_1ORDER
-    changing
-      !CS_ITEM type ANY .
+    TYPES:
+      BEGIN OF ty_convertor,
+        cls_name  TYPE crmt_object_name,
+        convertor TYPE REF TO zif_crms4_btx_data_model,
+      END OF ty_convertor .
+    TYPES:
+      tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
+
+    DATA mt_convertor TYPE tt_convertor .
+    CLASS-DATA so_instance TYPE REF TO zcl_crms4_btx_data_model_tool .
+
+    METHODS convert_s4_2_1order
+      IMPORTING
+        !it_objects TYPE crmt_object_name_tab
+      CHANGING
+        !cs_item    TYPE any .
+    METHODS get_convertor
+      IMPORTING
+        !iv_cls_name        TYPE crmt_object_name
+      RETURNING
+        VALUE(ro_convertor) TYPE REF TO zif_crms4_btx_data_model .
 ENDCLASS.
 
 
@@ -24,12 +46,83 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL=>CLASS_CONSTRUCTOR
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD class_constructor.
+    so_instance = NEW #( ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->CONVERT_S4_2_1ORDER
 * +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_OBJECTS                     TYPE        CRMT_OBJECT_NAME_TAB
 * | [<-->] CS_ITEM                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method CONVERT_S4_2_1ORDER.
-  endmethod.
+  METHOD convert_s4_2_1order.
+    DATA: lv_wrk_structure_name TYPE string,
+          lr_wrk_structure      TYPE REF TO data,
+          lt_convert_class      TYPE TABLE OF zcrmc_objects,
+          lo_convertor          TYPE REF TO zif_crms4_btx_data_model.
+
+    FIELD-SYMBOLS: <ls_wrk_structure> TYPE any.
+
+    SELECT name conv_class INTO CORRESPONDING FIELDS OF TABLE lt_convert_class FROM zcrmc_objects
+       FOR ALL ENTRIES IN it_objects WHERE name = it_objects-table_line.
+
+    LOOP AT it_objects ASSIGNING FIELD-SYMBOL(<lv_object>).
+
+      READ TABLE lt_convert_class ASSIGNING FIELD-SYMBOL(<cls_name>) WITH KEY
+          name = <lv_object>.
+      lo_convertor = get_convertor( iv_cls_name = <cls_name>-conv_class ).
+
+      CALL METHOD lo_convertor->get_wrk_structure_name
+        RECEIVING
+          rv_wrk_structure_name = lv_wrk_structure_name.
+      CREATE DATA lr_wrk_structure TYPE (lv_wrk_structure_name).
+      ASSIGN lr_wrk_structure->* TO <ls_wrk_structure>.
+      CALL METHOD lo_convertor->convert_s4_to_1o
+        EXPORTING
+          is_workarea = cs_item
+        IMPORTING
+          es_workarea = <ls_wrk_structure>.
+      CALL METHOD lo_convertor->put_to_db_buffer
+        EXPORTING
+          is_wrk_structure = <ls_wrk_structure>.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_CONVERTOR
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_CLS_NAME                    TYPE        CRMT_OBJECT_NAME
+* | [<-()] RO_CONVERTOR                   TYPE REF TO ZIF_CRMS4_BTX_DATA_MODEL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_convertor.
+    READ TABLE mt_convertor ASSIGNING FIELD-SYMBOL(<convertor>) WITH KEY cls_name = iv_cls_name.
+    IF sy-subrc = 0.
+      ro_convertor = <convertor>-convertor.
+      RETURN.
+    ENDIF.
+
+    CREATE OBJECT ro_convertor TYPE (<convertor>-cls_name).
+    APPEND INITIAL LINE TO mt_convertor ASSIGNING FIELD-SYMBOL(<new_convertor>).
+    <new_convertor> = VALUE ty_convertor( cls_name = iv_cls_name convertor = ro_convertor ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL=>GET_INSTANCE
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RO_INSTANCE                    TYPE REF TO ZCL_CRMS4_BTX_DATA_MODEL_TOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_instance.
+    ro_instance = so_instance.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -39,20 +132,12 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [<---] ET_ORDERADM_I_DB               TYPE        CRMT_ORDERADM_I_DU_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_item.
-    DATA: lt_btx_i              TYPE TABLE OF zcrms4d_btx_i,
-          lt_acronym            TYPE TABLE OF zcrmc_subob_cat,
-          lr_dbtab              TYPE REF TO data,
-          lt_objects            TYPE crmt_object_name_tab,
-          lv_type               TYPE zcrmc_objects-type,
-          lv_kind               TYPE zcrmc_objects-kind,
-          lv_wrk_structure_name TYPE string,
-          lr_wrk_structure      TYPE REF TO data,
-          lo_convertor          TYPE REF TO zif_crms4_btx_data_model,
-          lv_conv_class         TYPE seoclass-clsname.
+    DATA: lt_btx_i   TYPE TABLE OF zcrms4d_btx_i,
+          lt_acronym TYPE TABLE OF zcrmc_subob_cat,
+          lr_dbtab   TYPE REF TO data,
+          lt_objects TYPE crmt_object_name_tab.
 
-    FIELD-SYMBOLS: <lt_dbtab>         TYPE ANY TABLE,
-                   <ls_wrk_structure> TYPE any,
-                   <lv_object>        TYPE crmc_object_assi-name.
+    FIELD-SYMBOLS: <lt_dbtab>         TYPE ANY TABLE.
 
     CHECK it_item_guid IS NOT INITIAL.
 
@@ -85,7 +170,8 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
     SELECT name FROM zcrmc_obj_assi_i INTO TABLE lt_objects WHERE subobj_category = ls_btx_i-object_type.
 
     LOOP AT <lt_dbtab> ASSIGNING FIELD-SYMBOL(<ls_dbtab>).
-      convert_s4_2_1order( CHANGING cs_item = <ls_dbtab> ).
+      convert_s4_2_1order( EXPORTING it_objects = lt_objects
+                           CHANGING cs_item = <ls_dbtab> ).
       APPEND <ls_dbtab> TO et_orderadm_i_db.
     ENDLOOP.
   ENDMETHOD.
