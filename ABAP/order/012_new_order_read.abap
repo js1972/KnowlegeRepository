@@ -7,12 +7,13 @@ REPORT z_new_order_read.
 
 DATA: lt_header_guid TYPE crmt_object_guid_tab,
       lt_cum_h       TYPE crmt_cumulat_h_wrkt,
-      lt_orderadm_h  TYPE crmt_orderadm_h_wrkt.
+      lt_orderadm_h  TYPE crmt_orderadm_h_wrkt,
+      lt_orderadm_i  TYPE CRMT_ORDERADM_I_WRKT.
 
 START-OF-SELECTION.
 
   " it is a service order
-  APPEND '00163EA720041EE29F86484C5645774D' TO lt_header_guid.
+  APPEND 'FA163E8EAB031ED682EF2F89113485EF' TO lt_header_guid.
 
   CALL FUNCTION 'ZCRM_ORDER_READ'
     EXPORTING
@@ -20,7 +21,8 @@ START-OF-SELECTION.
       iv_no_auth_check = abap_true
     IMPORTING
       et_cumulat_h     = lt_cum_h
-      et_orderadm_h    = lt_orderadm_h.
+      et_orderadm_h    = lt_orderadm_h
+      et_orderadm_i    = lt_orderadm_i.
 
   PERFORM print_result USING lt_orderadm_h lt_cum_h.
 
@@ -32,7 +34,8 @@ START-OF-SELECTION.
       iv_no_auth_check = abap_true
     IMPORTING
       et_cumulat_h     = lt_cum_h
-      et_orderadm_h    = lt_orderadm_h.
+      et_orderadm_h    = lt_orderadm_h
+      et_orderadm_i    = lt_orderadm_i.
 
   PERFORM print_result USING lt_orderadm_h lt_cum_h.
 
