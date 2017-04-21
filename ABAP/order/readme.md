@@ -30,3 +30,6 @@ by this header guid.
 1. item object type: CRMC_SUBOB_CAT_I
 2. CRMC_BT_BTI_ASSI - from Oliver
 3. 
+
+# BUS type
+1. BUS2000140 - CRM Service Product Item
