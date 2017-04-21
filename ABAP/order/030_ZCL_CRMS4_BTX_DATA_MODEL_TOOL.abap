@@ -133,7 +133,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_item.
     DATA: lt_btx_i   TYPE TABLE OF zcrms4d_btx_i,
-          lt_acronym TYPE TABLE OF zcrmc_subob_cat,
+          lt_acronym TYPE TABLE OF zcrmc_sub_cat_i,
           lr_dbtab   TYPE REF TO data,
           lt_objects TYPE crmt_object_name_tab.
 
@@ -146,7 +146,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
     CHECK sy-subrc = 0.
 
-    SELECT * FROM zcrmc_subob_cat INTO TABLE lt_acronym
+    SELECT * FROM zcrmc_sub_cat_i INTO TABLE lt_acronym
        FOR ALL ENTRIES IN lt_btx_i
          WHERE subobj_category = lt_btx_i-object_type.
 
@@ -158,7 +158,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
     DATA(lv_dbtab_name) = 'ZCRMS4D_' && <acronym>-acronym && '_I'.
 
-    CREATE DATA lr_dbtab TYPE (lv_dbtab_name).
+    CREATE DATA lr_dbtab TYPE TABLE OF (lv_dbtab_name).
     ASSIGN lr_dbtab->* TO <lt_dbtab>.
 
     SELECT  * FROM (lv_dbtab_name) INTO TABLE <lt_dbtab> FOR ALL ENTRIES IN
