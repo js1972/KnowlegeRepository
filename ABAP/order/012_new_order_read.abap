@@ -6,33 +6,39 @@
 REPORT z_new_order_read.
 
 DATA: lt_header_guid TYPE crmt_object_guid_tab,
+      lt_cum_h       TYPE crmt_cumulat_h_wrkt,
       lt_orderadm_h  TYPE crmt_orderadm_h_wrkt.
 
-" it is a service order
-APPEND 'FA163E8EAB031ED682EF2F89113485EF' TO lt_header_guid.
+START-OF-SELECTION.
 
-CALL FUNCTION 'ZCRM_ORDER_READ'
-  EXPORTING
-    it_header_guid = lt_header_guid
-  IMPORTING
-    et_orderadm_h  = lt_orderadm_h.
+  " it is a service order
+  APPEND '00163EA720041EE29F86484C5645774D' TO lt_header_guid.
 
-READ TABLE lt_orderadm_h ASSIGNING FIELD-SYMBOL(<result>) INDEX 1.
-IF sy-subrc = 0.
-  WRITE: / 'found order: ' , <result>-object_id, ' type:', <result>-process_type, ' description:' ,
-   <result>-description.
-ENDIF.
+  CALL FUNCTION 'ZCRM_ORDER_READ'
+    EXPORTING
+      it_header_guid   = lt_header_guid
+      iv_no_auth_check = abap_true
+    IMPORTING
+      et_cumulat_h     = lt_cum_h
+      et_orderadm_h    = lt_orderadm_h.
 
-CLEAR: lt_orderadm_h.
-* this time result should directly be returned from buffer.
-CALL FUNCTION 'ZCRM_ORDER_READ'
-  EXPORTING
-    it_header_guid = lt_header_guid
-  IMPORTING
-    et_orderadm_h  = lt_orderadm_h.
+  PERFORM print_result USING lt_orderadm_h lt_cum_h.
 
-READ TABLE lt_orderadm_h ASSIGNING <result> INDEX 1.
-IF sy-subrc = 0.
-  WRITE: / 'found order: ' , <result>-object_id, ' type:', <result>-process_type, ' description:' ,
-   <result>-description.
-ENDIF.
+  CLEAR: lt_cum_h, lt_orderadm_h.
+
+  CALL FUNCTION 'ZCRM_ORDER_READ'
+    EXPORTING
+      it_header_guid   = lt_header_guid
+      iv_no_auth_check = abap_true
+    IMPORTING
+      et_cumulat_h     = lt_cum_h
+      et_orderadm_h    = lt_orderadm_h.
+
+  PERFORM print_result USING lt_orderadm_h lt_cum_h.
+
+FORM print_result USING it_order TYPE crmt_orderadm_h_wrkt
+                         it_cum_h TYPE crmt_cumulat_h_wrkt.
+  READ TABLE it_order INTO DATA(is_order) INDEX 1.
+  READ TABLE it_cum_h INTO DATA(is_cum_h) INDEX 1.
+  WRITE: / 'Order:' , is_order-object_id, ' Gross weight:', is_cum_h-gross_weight.
+ENDFORM.
