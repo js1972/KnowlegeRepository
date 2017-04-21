@@ -15,29 +15,29 @@ CLASS zcl_crms4_btx_data_model_tool DEFINITION
       RETURNING
         VALUE(ro_instance) TYPE REF TO zcl_crms4_btx_data_model_tool .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    TYPES:
-      BEGIN OF ty_convertor,
+  types:
+    BEGIN OF ty_convertor,
         cls_name  TYPE crmt_object_name,
         convertor TYPE REF TO zif_crms4_btx_data_model,
       END OF ty_convertor .
-    TYPES:
-      tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
+  types:
+    tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
 
-    DATA mt_convertor TYPE tt_convertor .
-    CLASS-DATA so_instance TYPE REF TO zcl_crms4_btx_data_model_tool .
+  data MT_CONVERTOR type TT_CONVERTOR .
+  class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
 
-    METHODS convert_s4_2_1order
-      IMPORTING
-        !it_objects TYPE crmt_object_name_tab
-      CHANGING
-        !cs_item    TYPE any .
-    METHODS get_convertor
-      IMPORTING
-        !iv_cls_name        TYPE crmt_object_name
-      RETURNING
-        VALUE(ro_convertor) TYPE REF TO zif_crms4_btx_data_model .
+  methods CONV_S4_2_1ORDER_AND_FILL_BUFF
+    importing
+      !IT_OBJECTS type CRMT_OBJECT_NAME_TAB
+    changing
+      !CS_ITEM type ANY .
+  methods GET_CONVERTOR
+    importing
+      !IV_CLS_NAME type CRMT_OBJECT_NAME
+    returning
+      value(RO_CONVERTOR) type ref to ZIF_CRMS4_BTX_DATA_MODEL .
 ENDCLASS.
 
 
@@ -55,12 +55,12 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->CONVERT_S4_2_1ORDER
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->CONV_S4_2_1ORDER_AND_FILL_BUFF
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_OBJECTS                     TYPE        CRMT_OBJECT_NAME_TAB
 * | [<-->] CS_ITEM                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD convert_s4_2_1order.
+  METHOD CONV_S4_2_1ORDER_AND_FILL_BUFF.
     DATA: lv_wrk_structure_name TYPE string,
           lr_wrk_structure      TYPE REF TO data,
           lt_convert_class      TYPE TABLE OF zcrmc_objects,
@@ -170,7 +170,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
     SELECT name FROM zcrmc_obj_assi_i INTO TABLE lt_objects WHERE subobj_category = ls_btx_i-object_type.
 
     LOOP AT <lt_dbtab> ASSIGNING FIELD-SYMBOL(<ls_dbtab>).
-      convert_s4_2_1order( EXPORTING it_objects = lt_objects
+      conv_s4_2_1order_and_fill_buff( EXPORTING it_objects = lt_objects
                            CHANGING cs_item = <ls_dbtab> ).
       APPEND <ls_dbtab> TO et_orderadm_i_db.
     ENDLOOP.
