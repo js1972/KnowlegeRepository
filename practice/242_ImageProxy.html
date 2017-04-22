@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <button id='btnLoadImg'>加载图片</button>
+        <br>
+        <div id='imgContainer'>
+        </div>
+        <br>
+
+        <script type='text/javascript' src="./jQuery/jquery1.7.1.js"></script>
+        <script type='text/javascript'>
+            $(document).ready(function(){
+                $('#btnLoadImg').bind('click', doLoadImg);
+            });
+
+            function doLoadImg(){
+
+                var eleImg = createImgElement();
+                document.getElementById('imgContainer').appendChild(eleImg);
+
+                //使用代理函数进行加载
+                //如果某一天不需要预加载了，就把loadImgProxy换成loadImg即可
+                loadImgProxy(eleImg, 'http://img.wanchezhijia.com/A/2015/3/20/17/11/de63f77c-f74f-413a-951b-5390101a7d74.jpg');
+            }
+
+            //创建img标签
+            //这里用自执行函数加一个闭包，是为了可以创建多个id不同的img标签。
+            var createImgElement = (function(){
+                var index = 0;
+
+                return function() {
+                    var eleImg = document.createElement('img');
+                    eleImg.setAttribute('width', '200');
+                    eleImg.setAttribute('heght', '150');
+                    eleImg.setAttribute('id', 'img' + index++);
+                    return eleImg;
+                };
+            })();
+           
+            //加载图片本体函数
+            function loadImg(img, src) {
+                img.src = src;
+            }
+
+            //加载图片代理函数
+            var loadImgProxy = (function(){
+                var imgCache = new Image();
+
+                return function(img, src){
+                    imgCache.onload = function(){
+                        loadImg(img, this.src);
+                    };
+
+                    loadImg(img, 'loading.gif');
+                    imgCache.src = src;
+                };
+            })();
+
+        </script>
+    </body>
+</html>
