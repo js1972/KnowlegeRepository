@@ -15,3 +15,7 @@ lt_page_instances = cl_bsp_context=>c_page_instances.
     lv_ic_mode = 'X'.
   ENDIF.
 ``` 
+
+# 2017-04-22
+
+good tip: find //bas/745_COR/src/krn/abap/ -name "*.c" | xargs grep "IF_BADI_INTERFACE"
