@@ -1,5 +1,7 @@
 <html>
 <script type="text/javascript">
+
+alert = console.log;
 var rectangle = {
     area : function(){
         return this.width * this.height ;
@@ -8,6 +10,8 @@ var rectangle = {
 
 // rect is an empty object, which has a prototype pointing to rectange
 var rect = Object.create(rectangle) ;
+console.log( "rect.__proto__ = rectangle?: " + ( rect.__proto__ === rectangle ));
+console.log( "Object.getPrototypeOf(rect) === rectangle? " + ( Object.getPrototypeOf(rect) === rectangle));
 
 console.log(rect.area()); // NaN
 /*
@@ -89,5 +93,37 @@ function get(object,property){
 } ;
 
 console.log(get(sq, "area") === sq.area);
+
+Object.prototype.extend = function(){
+    var hasOwnProperty = Object.hasOwnProperty ;
+    // after that object.__proto__ === this;
+    var object = Object.create(this) ;
+    var length = arguments.length ;
+    var index = length ;
+    
+    while(index){
+        var extension = arguments[length - (index--)] ;
+        for(var property in extension){
+            if(hasOwnProperty.call(extension,property)||
+                typeof object[property] === 'undefined'){
+                //这里同样应该使用深复制
+            	// the attribute is defined in object itself, not its prototype
+                object[property] = extension[property] ;
+            }
+        }
+    }
+    return object;
+} ;
+
+var origin = {
+	name: "Jerry"
+};
+
+var enhance = {
+	language: "Java"
+};
+
+var mix = origin.extend(enhance);
+debugger;
 </script>
 </html>
