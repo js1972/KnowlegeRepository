@@ -124,6 +124,45 @@ var enhance = {
 };
 
 var mix = origin.extend(enhance);
-debugger;
+
+var eventEmitter = {
+    on : function(event,listener){
+        if(typeof this[event] !== 'undefined')
+            this[event].push(listener) ;
+        else
+            this[event] = [listener] ;
+    } ,
+    emit : function(event){
+        if(typeof this[event] !== 'undefined'){
+            var listeners = this[event] ;
+            var length = listeners.length,index = length ;
+            var args = Array.prototype.slice.call(arguments,1) ;
+            
+            while(index){
+                var listener = listeners[length - (index--)] ;
+                listener.apply(this,args) ;
+            }
+        }
+    }
+} ;
+console.log("start to test on SquereMultiple");
+var squareMultiple = rectangle2.extend(eventEmitter,{
+    create : function(side){
+        return rectangle2.create.call(this,side,side) ;
+    } ,
+    performResize : function(newSize){
+        var oldSize = this.width ;
+        this.width = this.height = newSize ;
+        this.emit('resize',oldSize,newSize) ;
+    }
+}) ;
+var sq = squareMultiple.create(5) ;
+sq.on('resize',function(oldSize,newSize){
+    alert('sq resized from ' + oldSize + ' to ' + newSize + '.') ;
+}) ;
+
+sq.performResize(10);
+alert(sq.area()) ;
+
 </script>
 </html>
