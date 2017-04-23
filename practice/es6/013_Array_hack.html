@@ -1,0 +1,22 @@
+<html>
+<script>
+const arr = Array.apply(null, new Array(4)); // 4 items: undefined 
+const arr2 = new Array(4); // empty array with length = 4
+// arr and arr2 are different! 
+const arr3 = [...new Array(4)];
+const result = arr3.map((elem, index) => index+1);
+
+function method (a1, a2, a3) { 
+	console.log("a1: " + a1 + " a2: " + a2 + " a3: " + a3); 
+}
+
+// unexpected token
+// method('parameter1', , 'parameter3');
+
+method(...['parameter1', , 'parameter3']);
+
+const set = [...new Set([1, 2, 3, 3])];
+console.log(set);
+debugger;
+</script>
+</html>
