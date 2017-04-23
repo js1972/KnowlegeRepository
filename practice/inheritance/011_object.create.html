@@ -1,0 +1,93 @@
+<html>
+<script type="text/javascript">
+var rectangle = {
+    area : function(){
+        return this.width * this.height ;
+    }
+};
+
+// rect is an empty object, which has a prototype pointing to rectange
+var rect = Object.create(rectangle) ;
+
+console.log(rect.area()); // NaN
+/*
+我们需要在每个rectangle对象的克隆上手动定义width和height属性。如果有一个方法能够为我们来完成这些工作就很好了
+*/
+
+var rectangle2 = {
+    create : function(width,height){
+        var self = Object.create(this) ;
+        self.height = height ;
+        self.width = width ;
+        return self ;
+    } ,
+    area : function(){
+        return this.width * this.height ;
+    }
+} ;
+var rect = rectangle2.create(5,10) ;
+console.log(rect.area());
+
+function People(name){
+	this._name = name;
+}
+
+var jerry = new People("Jerry");
+console.log(People.prototype === Object.getPrototypeOf(jerry));
+
+//使用构造函数的原型继承相比使用原型的原型继承更加复杂，我们先看看使用原型的原型继承:
+
+var square = Object.create(rectangle2);
+square.create = function (side) {
+    return rectangle2.create.call(this, side, side);
+} ;
+var sq = square.create(5) ;
+alert(sq.area()) ;
+
+// 相反的，使用构造函数的原型继承像下面这样:
+
+function Rectangle(width, height) {
+    this.height = height;
+    this.width = width;
+} ;
+
+Rectangle.prototype.area = function () {
+    return this.width * this.height;
+};
+
+function Square3(side){
+    Rectangle.call(this,side,side) ;
+} ;
+
+Square3.prototype = Object.create(Rectangle.prototype) ;
+
+Square3.prototype.constructor = Square3 ;
+
+var sq = new Square3(6) ;
+
+alert(sq.area()) ;
+
+/*
+委派(差异化继承)
+
+很多Javascript程序员对于差别继承比较熟悉。维基百科是这么解释的:
+
+大部分对象是从其他更一般的对象中得到的，只是在一些很小的地方进行了修改。每个对象通常在内部维护一个指向其他对象的引用列表，这些对象就是该对象本身进行差异化继承的对象。
+Javascript中的原型继承是基于差异化继承的。每个对象都有个内部指针叫做[[proto]] (在大部分浏览器中可以通过__proto__属性访问)，这个指针指向对象的原型。多个对象之间通过内部[[proto]]属性链接起来形成了原型链，链的最后指向null。
+
+当你试图获取一个对象的属性时Javascript引擎会首先查找对象自身的属性。如果在对象上没找到该属性，那么它就会去对象的原型中去查找。以此类推，它会沿着原型链一直查找直到找到或者到原型链的末尾。
+*/
+
+function get(object,property){
+    if(!Object.hasOwnProperty.call(object,property)){
+        var prototype = Object.getPrototypeOf(object) ;
+        if(prototype) 
+        	return get(prototype,property) ;
+    }else{
+        return object[property] ;
+    }
+} ;
+
+console.log(get(sq, "area") === sq.area);
+</script>
+</html>
