@@ -1,0 +1,28 @@
+<html>
+<script>
+Object.prototype.instanceof = function(prototype){
+    var object = this ;
+    do{
+        if(object === prototype) 
+        	return true ;
+        var object = Object.getPrototypeOf(object) ;
+    } while(object) ;
+    return false ;
+}
+
+var a = 1;
+console.log(a.instanceof(Number)); // false
+console.log(a.instanceof(Number.prototype)); // true
+console.log(Object.getPrototypeOf(a));
+var b = new Number(1);
+console.log(b.instanceof(Number)); // false
+console.log(Number === Number.prototype.constructor);
+
+var a = "1";
+var b = 2;
+var c = { a: 1};
+var d = [1,2,3];
+var e = [a,b,c,d]; // in JavaScript it is allowed to have different element in an array
+debugger;
+</script>
+</html>
