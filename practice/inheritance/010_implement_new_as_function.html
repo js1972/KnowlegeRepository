@@ -1,0 +1,22 @@
+<html>
+<script type="text/javascript">
+Function.prototype.new = function () {
+    function functor() { 
+    	// this is a closure when new functor is executed
+    	return constructor.apply(this, args); 
+    }
+    var args = Array.prototype.slice.call(arguments);
+    functor.prototype = this.prototype;
+    var constructor = this;
+    return new functor;
+};
+
+function Person(firstname,lastname){
+    this.firstname = firstname ;
+    this.lastname = lastname ;
+}
+
+var author = Person.new.apply(Person,['Aadit','Shah']) ;
+debugger;
+</script>
+</html>
