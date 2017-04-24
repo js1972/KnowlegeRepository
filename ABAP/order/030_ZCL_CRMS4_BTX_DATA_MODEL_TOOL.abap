@@ -109,7 +109,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    CREATE OBJECT ro_convertor TYPE (<convertor>-cls_name).
+    CREATE OBJECT ro_convertor TYPE (iv_cls_name).
     APPEND INITIAL LINE TO mt_convertor ASSIGNING FIELD-SYMBOL(<new_convertor>).
     <new_convertor> = VALUE ty_convertor( cls_name = iv_cls_name convertor = ro_convertor ).
   ENDMETHOD.

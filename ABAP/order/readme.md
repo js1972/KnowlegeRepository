@@ -45,3 +45,5 @@ SRVO can have SRV_REQ_H? 5700000380 in AG3
 ```abap
 INSERT ls_orderadm_h_wrk INTO TABLE gt_orderadm_h_wrk.
 ```
+
+3. fill one entry in table ZCRMC_OBJ_ASSI_I. Sub cate:BUS2000140, Name: PRODUCT_I. 
