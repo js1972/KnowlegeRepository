@@ -8,7 +8,8 @@ REPORT z_new_order_read.
 DATA: lt_header_guid TYPE crmt_object_guid_tab,
       lt_cum_h       TYPE crmt_cumulat_h_wrkt,
       lt_orderadm_h  TYPE crmt_orderadm_h_wrkt,
-      lt_orderadm_i  TYPE CRMT_ORDERADM_I_WRKT.
+      lt_orderadm_i  TYPE CRMT_ORDERADM_I_WRKT,
+      lt_product_i   TYPE CRMT_PRODUCT_I_WRKT.
 
 START-OF-SELECTION.
 
@@ -22,11 +23,12 @@ START-OF-SELECTION.
     IMPORTING
       et_cumulat_h     = lt_cum_h
       et_orderadm_h    = lt_orderadm_h
-      et_orderadm_i    = lt_orderadm_i.
+      et_orderadm_i    = lt_orderadm_i
+      et_product_i     = lt_product_i.
 
-  PERFORM print_result USING lt_orderadm_h lt_cum_h lt_orderadm_i.
+  PERFORM print_result USING lt_orderadm_h lt_cum_h lt_orderadm_i lt_product_i.
 
-  CLEAR: lt_cum_h, lt_orderadm_h, lt_orderadm_i.
+  CLEAR: lt_cum_h, lt_orderadm_h, lt_orderadm_i, lt_product_i.
 
   CALL FUNCTION 'ZCRM_ORDER_READ'
     EXPORTING
@@ -35,16 +37,20 @@ START-OF-SELECTION.
     IMPORTING
       et_cumulat_h     = lt_cum_h
       et_orderadm_h    = lt_orderadm_h
-      et_orderadm_i    = lt_orderadm_i.
+      et_orderadm_i    = lt_orderadm_i
+      et_product_i     = lt_product_i.
 
-  PERFORM print_result USING lt_orderadm_h lt_cum_h lt_orderadm_i.
+  PERFORM print_result USING lt_orderadm_h lt_cum_h lt_orderadm_i lt_product_i.
 
 FORM print_result USING it_order TYPE crmt_orderadm_h_wrkt
                          it_cum_h TYPE crmt_cumulat_h_wrkt
-                         it_item TYPE crmt_orderadm_i_wrkt.
+                         it_item TYPE crmt_orderadm_i_wrkt
+                         it_product type CRMT_PRODUCT_I_WRKT.
   READ TABLE it_order INTO DATA(is_order) INDEX 1.
   READ TABLE it_cum_h INTO DATA(is_cum_h) INDEX 1.
   READ TABLE it_item INTO DATA(is_item) INDEX 1.
-  WRITE: / 'Order:' , is_order-object_id, ' Gross weight:', is_cum_h-gross_weight,
+  READ TABLE it_product INTO DATA(is_product) INDEX 1.
+  WRITE: / 'Order:' , is_order-object_id, ' Gross weight in Header:', is_cum_h-gross_weight,
     'Item:' , is_item-number_int.
+  WRITE: / 'Product gross weight in item:' , is_product-gross_weight.
 ENDFORM.

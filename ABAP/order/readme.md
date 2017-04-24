@@ -47,3 +47,7 @@ INSERT ls_orderadm_h_wrk INTO TABLE gt_orderadm_h_wrk.
 ```
 
 3. fill one entry in table ZCRMC_OBJ_ASSI_I. Sub cate:BUS2000140, Name: PRODUCT_I. 
+
+4. item to be read: FA163EE56C3A1EE789BA15E33B2218B6 in shadow table.
+
+SVPR: Service Product Item
