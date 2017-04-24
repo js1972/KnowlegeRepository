@@ -28,6 +28,7 @@ function indexOf2(arr, item) {
     	try {
           arr.forEach( (e, i) => {
             if (e === item) {
+                Error().stack();
                 throw new Error(i);
             }
         } );

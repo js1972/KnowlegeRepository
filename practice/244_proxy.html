@@ -1,0 +1,62 @@
+<html>
+<script>
+var handler = {
+    get: function(target, name) {
+
+    	console.log("proxy handler called, context: " + target + " proxy name: " + name);
+    	for( var pr in target){
+    		console.log("property: " + pr + " native? " + target.hasOwnProperty(pr));
+    	}
+        return name in target ?
+            target[name]:
+            37;
+    }
+};
+/*
+var p = new Proxy({ac: "Jerry"}, handler);
+p.a = 1;
+p.b = undefined;
+
+console.log(p.a, p.b); // 1, undefined
+console.log('c' in p, p.c); // false, 37
+*/
+function Employee(name){
+	this.name = name;
+};
+
+Employee.prototype.work = function(language){
+	console.log(this.name + " is developing with: " + language);
+}
+
+
+let jerry = new Employee("Jerry");
+jerry.work("JavaScript");
+
+
+var proxyLogic = {
+    get: function(target, name) {
+    	if( name == "work"){
+    		console.log("native? " + target.hasOwnProperty(name));
+    		var oriFun = target[name].bind(target);
+    		return function(language){
+    			oriFun(language);
+    			console.log("and also study other language in spare time");
+    		}
+    	}
+    }
+};
+
+function hireEmployee(employee, language){
+	employee.work(language);
+}
+var jerryProxy = new Proxy(jerry, proxyLogic );
+
+hireEmployee(jerryProxy, "JavaScript");
+hireEmployee(jerry, "JavaScript");
+
+var Sara = new Employee("Sara");
+
+hireEmployee(Sara, "ABAP");
+
+</script>
+</html>
