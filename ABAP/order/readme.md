@@ -51,3 +51,6 @@ INSERT ls_orderadm_h_wrk INTO TABLE gt_orderadm_h_wrk.
 4. item to be read: FA163EE56C3A1EE789BA15E33B2218B6 in shadow table.
 
 SVPR: Service Product Item
+
+5. CRM_EVENT_SET_EXETIME_MULTI_OW, line 54
+6. event: CRM_EVENT_FILTER_PROC_TYPE_OW
