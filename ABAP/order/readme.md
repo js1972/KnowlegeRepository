@@ -38,3 +38,10 @@ by this header guid.
 
 SRVO can have SRV_REQ_H? 5700000380 in AG3
 
+# 2017-04-24
+1. Even I didn't put item buffer by calling PUT_OB explicitly, the buffer is inserted automatically.Where?
+
+2. it seems no convertor class is needed for item component, since it is already done in FM CRM_ORDERADM_H_READ_OB, subroutine ORDERADM_H_READ_WITH_GUID_LIST, line 155:
+```abap
+INSERT ls_orderadm_h_wrk INTO TABLE gt_orderadm_h_wrk.
+```
