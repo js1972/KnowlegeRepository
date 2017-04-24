@@ -5,30 +5,45 @@
 *&---------------------------------------------------------------------*
 REPORT ZONEORDER_MODIFY.
 
-PARAMETERS: newda TYPE crmt_opport_h_com-expect_end OBLIGATORY DEFAULT '20170101'.
+PARAMETERS: newda TYPE crmt_opport_h_com-expect_end OBLIGATORY DEFAULT '20170101',
+             txt TYPE crmd_orderadm_h-description OBLIGATORY DEFAULT 'txt'.
 
-CONSTANTS: gv_guid TYPE crmt_object_guid VALUE 'FA163E8EAB031ED682EF2F89113485EF'.
+CONSTANTS: gv_guid TYPE crmt_object_guid VALUE '00163EA71FFC1ED19D98873599E85BAB'. "opportunity
 DATA: lt_opport_h    TYPE crmt_opport_h_comt,
+          lt_header        TYPE crmt_orderadm_h_comt,
+          ls_header LIKE LINE OF lt_header,
       ls_opport_h    LIKE LINE OF lt_opport_h,
-      lt_change      TYPE crmt_input_field_tab,
-      ls_change      LIKE LINE OF lt_change,
       lt_saved       TYPE crmt_return_objects,
       lt_exception   TYPE crmt_exception_t,
+       lt_changed_input TYPE crmt_input_field_tab,
+      ls_changed_input LIKE LINE OF lt_changed_input,
       lt_to_save     TYPE crmt_object_guid_tab,
       lt_not_to_save TYPE crmt_object_guid_tab.
 
 ls_opport_h-ref_guid = gv_guid.
 ls_opport_h-expect_end = newda.
 
-ls_change = VALUE #( ref_guid = gv_guid ref_kind = 'A' objectname = 'OPPORT_H' ).
-APPEND 'EXPECT_END' TO ls_change-field_names.
-APPEND ls_change TO lt_change.
+ls_changed_input = VALUE #( ref_guid = gv_guid ref_kind = 'A' objectname = 'OPPORT_H' ).
+APPEND 'EXPECT_END' TO ls_changed_input-field_names.
+INSERT ls_changed_input INTO TABLE lt_changed_input.
 APPEND ls_opport_h TO lt_opport_h.
+
+    ls_header-guid = gv_guid.
+    ls_header-description = txt.
+    APPEND ls_header TO lt_header.
+    clear: ls_changed_input.
+
+    ls_changed_input-ref_guid = gv_guid.
+    ls_changed_input-objectname = 'ORDERADM_H'.
+    APPEND 'DESCRIPTION' TO ls_changed_input-field_names.
+    APPEND ls_changed_input TO lt_changed_input.
+
 CALL FUNCTION 'CRM_ORDER_MAINTAIN'
   EXPORTING
     it_opport_h       = lt_opport_h
   CHANGING
-    ct_input_fields   = lt_change
+    ct_orderadm_h     = lt_header
+    ct_input_fields   = lt_changed_input
   EXCEPTIONS
     error_occurred    = 1
     document_locked   = 2
