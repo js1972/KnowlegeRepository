@@ -51,6 +51,9 @@ CALL FUNCTION 'CRM_ORDER_MAINTAIN'
     no_authority      = 4.
 
 APPEND gv_guid TO lt_to_save.
+
+PERFORM populate_update_table.
+
 CALL FUNCTION 'CRM_ORDER_SAVE'
   EXPORTING
     it_objects_to_save   = lt_to_save
@@ -76,4 +79,23 @@ FORM check_save.
   SELECT SINGLE * INTO @DATA(opp) FROM crmd_opport_h WHERE guid = @gv_guid.
   ASSERT sy-subrc = 0.
   WRITE: / 'new date:', opp-expect_end.
+ENDFORM.
+
+FORM populate_update_table.
+  DATA: lt_insert TYPE CRMT_OPPORT_H_DU_TAB,
+        lt_update TYPE CRMT_OPPORT_H_DU_TAB,
+        lt_delete TYPE CRMT_OPPORT_H_DU_TAB.
+
+   call function 'CRM_ORDER_UPDATE_TABLES_DETERM'
+      exporting
+        iv_object_name            = 'OPPORT_H'
+        iv_field_name_key         = 'GUID'
+        it_guids_to_process       = lt_to_save
+        iv_header_to_save         = gv_guid
+      importing
+        et_records_to_insert      = lt_insert
+        et_records_to_update      = lt_update
+        et_records_to_delete      = lt_delete.
+
+   BREAK-POINT.
 ENDFORM.
