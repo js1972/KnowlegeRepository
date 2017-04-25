@@ -68,3 +68,9 @@ target today: CRM_OPPORT_H_SAVE_EC
 should be changed to PUT_TO_DB buffer
 
 2. DLV_SYSTC table contains the modification of component.
+ZCRM_SRVO_H_SAVE_EC
+SRVO_HEAD_SAVE
+ZSRVO_H
+
+CRM_EVENT_FILTER_PROC_TYPE_OW
+
