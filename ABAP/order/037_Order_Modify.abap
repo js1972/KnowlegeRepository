@@ -8,7 +8,7 @@ REPORT zoneorder_modify.
 PARAMETERS: newda TYPE crmt_opport_h_com-expect_end OBLIGATORY DEFAULT '20170101',
             txt   TYPE crmd_orderadm_h-description OBLIGATORY DEFAULT 'txt'.
 
-CONSTANTS: gv_guid TYPE crmt_object_guid VALUE '00163EA71FFC1ED19D98873599E85BAB'. "opportunity
+CONSTANTS: gv_oppt_guid TYPE crmt_object_guid VALUE '00163EA71FFC1ED19D98873599E85BAB'. "opportunity
 DATA: lt_opport_h      TYPE crmt_opport_h_comt,
       lt_header        TYPE crmt_orderadm_h_comt,
       ls_header        LIKE LINE OF lt_header,
@@ -20,20 +20,20 @@ DATA: lt_opport_h      TYPE crmt_opport_h_comt,
       lt_to_save       TYPE crmt_object_guid_tab,
       lt_not_to_save   TYPE crmt_object_guid_tab.
 
-ls_opport_h-ref_guid = gv_guid.
+ls_opport_h-ref_guid = gv_oppt_guid.
 ls_opport_h-expect_end = newda.
 
-ls_changed_input = VALUE #( ref_guid = gv_guid ref_kind = 'A' objectname = 'OPPORT_H' ).
+ls_changed_input = VALUE #( ref_guid = gv_oppt_guid ref_kind = 'A' objectname = 'OPPORT_H' ).
 APPEND 'EXPECT_END' TO ls_changed_input-field_names.
 INSERT ls_changed_input INTO TABLE lt_changed_input.
 APPEND ls_opport_h TO lt_opport_h.
 
-ls_header-guid = gv_guid.
+ls_header-guid = gv_oppt_guid.
 ls_header-description = txt.
 APPEND ls_header TO lt_header.
 CLEAR: ls_changed_input.
 
-ls_changed_input-ref_guid = gv_guid.
+ls_changed_input-ref_guid = gv_oppt_guid.
 ls_changed_input-objectname = 'ORDERADM_H'.
 APPEND 'DESCRIPTION' TO ls_changed_input-field_names.
 APPEND ls_changed_input TO lt_changed_input.
@@ -50,7 +50,7 @@ CALL FUNCTION 'CRM_ORDER_MAINTAIN'
     no_change_allowed = 3
     no_authority      = 4.
 
-APPEND gv_guid TO lt_to_save.
+APPEND gv_oppt_guid TO lt_to_save.
 
 PERFORM populate_update_table.
 
@@ -72,11 +72,11 @@ COMMIT WORK AND WAIT.
 PERFORM check_save.
 
 FORM check_save.
-  SELECT SINGLE * INTO @DATA(ls) FROM crmd_orderadm_h WHERE guid = @gv_guid.
+  SELECT SINGLE * INTO @DATA(ls) FROM crmd_orderadm_h WHERE guid = @gv_oppt_guid.
   ASSERT sy-subrc = 0.
   WRITE: / 'new description:' , ls-description.
 
-  SELECT SINGLE * INTO @DATA(opp) FROM crmd_opport_h WHERE guid = @gv_guid.
+  SELECT SINGLE * INTO @DATA(opp) FROM crmd_opport_h WHERE guid = @gv_oppt_guid.
   ASSERT sy-subrc = 0.
   WRITE: / 'new date:', opp-expect_end.
 ENDFORM.
@@ -91,11 +91,10 @@ FORM populate_update_table.
         iv_object_name            = 'OPPORT_H'
         iv_field_name_key         = 'GUID'
         it_guids_to_process       = lt_to_save
-        iv_header_to_save         = gv_guid
+        iv_header_to_save         = gv_oppt_guid
       importing
         et_records_to_insert      = lt_insert
         et_records_to_update      = lt_update
         et_records_to_delete      = lt_delete.
 
-   BREAK-POINT.
 ENDFORM.
