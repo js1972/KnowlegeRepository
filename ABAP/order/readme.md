@@ -58,3 +58,8 @@ SVPR: Service Product Item
 8. next task: CRM_CUMULATED_I_SAVE_EC, CRM_CUMULAT_H_SAVE_EC
 9. EC called via CRM_EVENT_SET_EXETIME_MULTI_OW
 10. marvellous绝妙的; 不可思议的; 惊奇的; 极好的
+
+# 2017-04-25
+1. search service order header against a product. add header information in item table. 
+
+CRMD_ORDERADM_H is updated by CRM_ORDERADM_H_UPDATE_DU.

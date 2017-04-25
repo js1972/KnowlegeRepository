@@ -20,6 +20,8 @@ p.b = undefined;
 console.log(p.a, p.b); // 1, undefined
 console.log('c' in p, p.c); // false, 37
 */
+
+console.log("test employee");
 function Employee(name){
 	this.name = name;
 };
@@ -28,15 +30,17 @@ Employee.prototype.work = function(language){
 	console.log(this.name + " is developing with: " + language);
 }
 
-
 let jerry = new Employee("Jerry");
-jerry.work("JavaScript");
 
+function hireEmployee(employee, language){
+    employee.work(language);
+}
+
+hireEmployee(jerry, "JavaScript");
 
 var proxyLogic = {
     get: function(target, name) {
     	if( name == "work"){
-    		console.log("native? " + target.hasOwnProperty(name));
     		var oriFun = target[name].bind(target);
     		return function(language){
     			oriFun(language);
@@ -46,13 +50,11 @@ var proxyLogic = {
     }
 };
 
-function hireEmployee(employee, language){
-	employee.work(language);
-}
+
 var jerryProxy = new Proxy(jerry, proxyLogic );
 
 hireEmployee(jerryProxy, "JavaScript");
-hireEmployee(jerry, "JavaScript");
+
 
 var Sara = new Employee("Sara");
 
