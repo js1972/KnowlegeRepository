@@ -64,3 +64,5 @@ SVPR: Service Product Item
 
 CRMD_ORDERADM_H is updated by CRM_ORDERADM_H_UPDATE_DU.
 target today: CRM_OPPORT_H_SAVE_EC
+
+should be changed to PUT_TO_DB buffer
