@@ -43,9 +43,14 @@ CLASS ZCL_CRMS4_BTX_ORDERADM_H_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IS_WRK_STRUCTURE               TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method ZIF_CRMS4_BTX_DATA_MODEL~PUT_TO_DB_BUFFER.
-    CALL FUNCTION 'CRM_ORDERADM_H_PUT_OB'
+  METHOD zif_crms4_btx_data_model~put_to_db_buffer.
+
+    DATA: lt_orderadm_h_db TYPE crmt_orderadm_h_du_tab.
+
+    APPEND is_wrk_structure TO lt_orderadm_h_db.
+
+    CALL FUNCTION 'ZCRM_ORDERADM_H_PUT_DB'
       EXPORTING
-         IS_ORDERADM_H_WRK = IS_WRK_STRUCTURE.
-  endmethod.
+        it_orderadm_h_db = lt_orderadm_h_db.
+  ENDMETHOD.
 ENDCLASS.
