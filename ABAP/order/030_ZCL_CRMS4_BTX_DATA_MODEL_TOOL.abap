@@ -447,11 +447,11 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
           ct_to_delete = <to_delete>.
     ENDLOOP.
 
-*    CALL FUNCTION 'Z'
-*       EXPORTING
-*          it_to_insert =
-*          it_to_update =
-*          it_to_delete =
+    CALL FUNCTION 'ZCRM_SRVO_H_UPDATE_DU'
+      EXPORTING
+        it_to_insert = <to_insert>
+        it_to_update = <to_update>
+        it_to_delete = <to_delete>.
 
   ENDMETHOD.
 ENDCLASS.
