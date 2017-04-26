@@ -5,10 +5,11 @@
 *&---------------------------------------------------------------------*
 REPORT zchange_cumulat_h.
 
-PARAMETERS: quantity TYPE int4 OBLIGATORY DEFAULT 1.
+PARAMETERS: quantity TYPE int4 OBLIGATORY DEFAULT 1,
+             item TYPE crmd_orderadm_i-number_int OBLIGATORY DEFAULT 20,
+             srvo_id TYPE crmd_orderadm_h-object_id OBLIGATORY DEFAULT '5700000242'.
 CONSTANTS: cv_sales_item TYPE crmt_subobject_category_db VALUE 'BUS2000131'.
-DATA: lv_srvo_id         TYPE crmd_orderadm_h-object_id VALUE '5700000242',
-      lv_srvo_guid       TYPE crmd_orderadm_h-guid,
+DATA: lv_srvo_guid       TYPE crmd_orderadm_h-guid,
       lt_to_save         TYPE crmt_object_guid_tab,
       lt_saved           TYPE crmt_return_objects,
       lv_schedule_guid   TYPE crmt_object_guid,
@@ -20,23 +21,29 @@ DATA: lv_srvo_id         TYPE crmd_orderadm_h-object_id VALUE '5700000242',
       ls_changed_fields  LIKE LINE OF lt_changed_fields,
       lt_orderadm_i      TYPE TABLE OF crmd_orderadm_i.
 
-SELECT SINGLE * INTO @DATA(ls_header) FROM crmd_orderadm_h WHERE object_id = @lv_srvo_id.
+START-OF-SELECTION.
+
+SELECT SINGLE * INTO @DATA(ls_header) FROM crmd_orderadm_h WHERE object_id = @srvo_id.
 
 CHECK sy-subrc = 0.
 
-WRITE: / ls_header-description.
 SELECT SINGLE * INTO @DATA(ls_cum_h) FROM crmd_cumulat_h WHERE guid = @ls_header-guid.
 
 CHECK sy-subrc = 0.
 lv_srvo_guid = ls_header-guid.
 
 WRITE:/ 'Old gross weight', ls_cum_h-gross_weight COLOR COL_GROUP.
+PERFORM print_gross_weight_detail.
 
 SELECT * INTO TABLE lt_orderadm_i FROM crmd_orderadm_i WHERE header = lv_srvo_guid AND object_type = cv_sales_item.
 CHECK sy-subrc = 0.
 
 " Jerry 2017-04-26 4:57PM - for test data preparation, you should only have one item as sales item
-READ TABLE lt_orderadm_i ASSIGNING FIELD-SYMBOL(<sales_item>) INDEX 1.
+READ TABLE lt_orderadm_i ASSIGNING FIELD-SYMBOL(<sales_item>) with key number_int = item.
+IF sy-subrc <> 0.
+   WRITE:/ 'Cannot find line item for item id:', item.
+   RETURN.
+ENDIF.
 
 SELECT SINGLE guid INTO lv_schedule_guid FROM crmd_schedlin WHERE item_guid = <sales_item>-guid.
 CHECK lv_schedule_guid IS NOT INITIAL.
@@ -94,3 +101,21 @@ SELECT SINGLE * INTO ls_cum_h FROM crmd_cumulat_h WHERE guid = ls_header-guid.
 
 CHECK sy-subrc = 0.
 WRITE: / 'New Gross weight after change:' COLOR COL_NEGATIVE, ls_cum_h-gross_weight.
+PERFORM print_gross_weight_detail.
+
+FORM print_gross_weight_detail.
+  DATA: lt_product TYPE TABLE OF crmd_product_i,
+        lt_item TYPE TABLE OF crmd_orderadm_i.
+
+  SELECT * INTO TABLE lt_item FROM crmd_orderadm_i where header = lv_srvo_guid.
+  CHECK lt_item IS NOT INITIAL.
+  SELECT * INTO TABLE lt_product FROM crmd_product_i FOR ALL ENTRIES IN lt_item
+     WHERE guid = lt_item-guid.
+
+  LOOP AT lt_item ASSIGNING FIELD-SYMBOL(<item>).
+     WRITE: / 'Item id:' COLOR COL_POSITIVE, <item>-number_int COLOR COL_HEADING.
+     READ TABLE lt_product ASSIGNING FIELD-SYMBOL(<prod>) WITH KEY guid = <item>-guid.
+     CHECK sy-subrc = 0.
+     WRITE: / 'Item Gross Weight:' COLOR COL_POSITIVE, <prod>-gross_weight COLOR COL_GROUP.
+  ENDLOOP.
+ENDFORM.
