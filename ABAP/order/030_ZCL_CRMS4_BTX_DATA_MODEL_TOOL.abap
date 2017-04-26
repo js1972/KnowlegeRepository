@@ -1,19 +1,22 @@
-CLASS zcl_crms4_btx_data_model_tool DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PRIVATE .
+class ZCL_CRMS4_BTX_DATA_MODEL_TOOL definition
+  public
+  final
+  create private .
 
-  PUBLIC SECTION.
+public section.
 
-    CLASS-METHODS class_constructor .
-    METHODS get_item
-      IMPORTING
-        !it_item_guid     TYPE crmt_object_guid_tab
-      EXPORTING
-        !et_orderadm_i_db TYPE crmt_orderadm_i_du_tab .
-    CLASS-METHODS get_instance
-      RETURNING
-        VALUE(ro_instance) TYPE REF TO zcl_crms4_btx_data_model_tool .
+  methods SAVE_HEADER
+    importing
+      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
+  class-methods CLASS_CONSTRUCTOR .
+  methods GET_ITEM
+    importing
+      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
+    exporting
+      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
+  class-methods GET_INSTANCE
+    returning
+      value(RO_INSTANCE) type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
   PROTECTED SECTION.
 private section.
 
@@ -25,9 +28,21 @@ private section.
   types:
     tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
 
+  TYPES: BEGIN OF ty_header_object_type,
+                       guid TYPE crmt_object_guid,
+                       object_type TYPE CRMT_SUBOBJECT_CATEGORY_DB,
+         end of ty_header_object_type.
+
+  TYPES: tt_header_object_type TYPE TABLE OF ty_header_object_type with key guid.
+
   data MT_CONVERTOR type TT_CONVERTOR .
   class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
 
+  methods GET_HEADER_OBJECT_TYPE_BY_GUID
+    importing
+      !IV_HEADER_GUI type CRMT_OBJECT_GUID
+    returning
+      value(RV_OBJECT_TYPE) type CRMT_SUBOBJECT_CATEGORY_DB .
   methods CONV_S4_2_1ORDER_AND_FILL_BUFF
     importing
       !IT_OBJECTS type CRMT_OBJECT_NAME_TAB
@@ -116,6 +131,16 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_HEADER_OBJECT_TYPE_BY_GUID
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_HEADER_GUI                  TYPE        CRMT_OBJECT_GUID
+* | [<-()] RV_OBJECT_TYPE                 TYPE        CRMT_SUBOBJECT_CATEGORY_DB
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_HEADER_OBJECT_TYPE_BY_GUID.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Static Public Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL=>GET_INSTANCE
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RO_INSTANCE                    TYPE REF TO ZCL_CRMS4_BTX_DATA_MODEL_TOOL
@@ -151,6 +176,8 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
          WHERE subobj_category = lt_btx_i-object_type.
 
 * Jerry 2017-04-21 14:21PM for POC, I assume all items belong to the same item table
+* Jerry 2017-04-25 9:21AM - one order can have multiple item with different item object type!!!
+* this scenario needs to be enhanced later!!
     ASSERT lines( lt_acronym ) = 1.
     READ TABLE lt_btx_i INTO DATA(ls_btx_i) INDEX 1.
 
@@ -175,4 +202,13 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
       APPEND <ls_dbtab> TO et_orderadm_i_db.
     ENDLOOP.
   ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->SAVE_HEADER
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method SAVE_HEADER.
+  endmethod.
 ENDCLASS.

@@ -74,3 +74,8 @@ ZSRVO_H
 
 CRM_EVENT_FILTER_PROC_TYPE_OW
 
+transaction type and allowed object type.
+
+SRVO->BUS2000116 - ZSRVO_H - table: CRMC_OBJECT_ASSI
+FM CRM_ORDER_OBJECT_ASSI_SEL_CB, tcode 
+entry point for event callback execution: CRM_EVENT_SET_EXETIME_MULTI_OW, line 108
