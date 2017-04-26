@@ -35,6 +35,7 @@ WRITE:/ 'Old gross weight', ls_cum_h-gross_weight COLOR COL_GROUP.
 SELECT * INTO TABLE lt_orderadm_i FROM crmd_orderadm_i WHERE header = lv_srvo_guid AND object_type = cv_sales_item.
 CHECK sy-subrc = 0.
 
+" Jerry 2017-04-26 4:57PM - for test data preparation, you should only have one item as sales item
 READ TABLE lt_orderadm_i ASSIGNING FIELD-SYMBOL(<sales_item>) INDEX 1.
 
 SELECT SINGLE guid INTO lv_schedule_guid FROM crmd_schedlin WHERE item_guid = <sales_item>-guid.
@@ -79,14 +80,12 @@ CALL FUNCTION 'CRM_ORDER_SAVE'
     iv_update_task_local = abap_true
   IMPORTING
     et_saved_objects     = lt_saved
-*   et_exception         = lt_exception
-*   et_objects_not_saved = lt_not_to_save
   EXCEPTIONS
     document_not_saved   = 1.
 
 IF sy-subrc <> 0.
-   WRITE:/ 'Save failed'.
-   RETURN.
+  WRITE:/ 'Save failed'.
+  RETURN.
 ENDIF.
 
 COMMIT WORK AND WAIT.
@@ -95,4 +94,3 @@ SELECT SINGLE * INTO ls_cum_h FROM crmd_cumulat_h WHERE guid = ls_header-guid.
 
 CHECK sy-subrc = 0.
 WRITE: / 'New Gross weight after change:' COLOR COL_NEGATIVE, ls_cum_h-gross_weight.
-"ls_schedule_line-ref_guid =

@@ -89,3 +89,8 @@ I can still get cumulat_h change based on determine FM.
 CRM_OBJECT_NAMES_DETERMINE
 CRM_CUMULAT_H_CHANGE_OW
 
+why CUMULAT_H is changed when quantity in line item is changed? 
+
+CRM_CUMULAT_H_UPD_COLLECT_EC
+CRM_CUMULAT_H_UPD_BUFFER_OB
+CRM_CUMULAT_H_UPD_BUFFER_EC
