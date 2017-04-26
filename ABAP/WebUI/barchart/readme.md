@@ -1,0 +1,1 @@
+source code of main.html of UI component view could be found from [here]().
