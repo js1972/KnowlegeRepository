@@ -3,16 +3,13 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT zoneorder_modify.
+REPORT zsrvo_modify.
 
-PARAMETERS: newda TYPE crmt_opport_h_com-expect_end OBLIGATORY DEFAULT '20170101',
-            txt   TYPE crmd_orderadm_h-description OBLIGATORY DEFAULT 'txt'.
+PARAMETERS: txt   TYPE crmd_orderadm_h-description OBLIGATORY DEFAULT 'txt'.
 
-CONSTANTS: gv_oppt_guid TYPE crmt_object_guid VALUE '00163EA71FFC1ED19D98873599E85BAB'. "opportunity
-DATA: lt_opport_h      TYPE crmt_opport_h_comt,
-      lt_header        TYPE crmt_orderadm_h_comt,
+CONSTANTS: gv_srvo_guid TYPE crmt_object_guid VALUE 'FA163EEF573D1ED5808E7E04835A02E9'. "Service Order
+DATA: lt_header        TYPE crmt_orderadm_h_comt,
       ls_header        LIKE LINE OF lt_header,
-      ls_opport_h      LIKE LINE OF lt_opport_h,
       lt_saved         TYPE crmt_return_objects,
       lt_exception     TYPE crmt_exception_t,
       lt_changed_input TYPE crmt_input_field_tab,
@@ -20,27 +17,17 @@ DATA: lt_opport_h      TYPE crmt_opport_h_comt,
       lt_to_save       TYPE crmt_object_guid_tab,
       lt_not_to_save   TYPE crmt_object_guid_tab.
 
-ls_opport_h-ref_guid = gv_oppt_guid.
-ls_opport_h-expect_end = newda.
-
-ls_changed_input = VALUE #( ref_guid = gv_oppt_guid ref_kind = 'A' objectname = 'OPPORT_H' ).
-APPEND 'EXPECT_END' TO ls_changed_input-field_names.
-INSERT ls_changed_input INTO TABLE lt_changed_input.
-APPEND ls_opport_h TO lt_opport_h.
-
-ls_header-guid = gv_oppt_guid.
+ls_header-guid = gv_srvo_guid.
 ls_header-description = txt.
 APPEND ls_header TO lt_header.
 CLEAR: ls_changed_input.
 
-ls_changed_input-ref_guid = gv_oppt_guid.
+ls_changed_input-ref_guid = gv_srvo_guid.
 ls_changed_input-objectname = 'ORDERADM_H'.
 APPEND 'DESCRIPTION' TO ls_changed_input-field_names.
 APPEND ls_changed_input TO lt_changed_input.
 
 CALL FUNCTION 'CRM_ORDER_MAINTAIN'
-  EXPORTING
-    it_opport_h       = lt_opport_h
   CHANGING
     ct_orderadm_h     = lt_header
     ct_input_fields   = lt_changed_input
@@ -50,9 +37,11 @@ CALL FUNCTION 'CRM_ORDER_MAINTAIN'
     no_change_allowed = 3
     no_authority      = 4.
 
-APPEND gv_oppt_guid TO lt_to_save.
+WRITE: / 'order maintain successful?', sy-subrc.
 
-PERFORM populate_update_table.
+APPEND gv_srvo_guid TO lt_to_save.
+
+"PERFORM populate_update_table.
 
 CALL FUNCTION 'CRM_ORDER_SAVE'
   EXPORTING
@@ -72,26 +61,23 @@ COMMIT WORK AND WAIT.
 PERFORM check_save.
 
 FORM check_save.
-  SELECT SINGLE * INTO @DATA(ls) FROM crmd_orderadm_h WHERE guid = @gv_oppt_guid.
+  SELECT SINGLE * INTO @DATA(ls) FROM crmd_orderadm_h WHERE guid = @gv_srvo_guid.
   ASSERT sy-subrc = 0.
   WRITE: / 'new description:' , ls-description.
 
-  SELECT SINGLE * INTO @DATA(opp) FROM crmd_opport_h WHERE guid = @gv_oppt_guid.
-  ASSERT sy-subrc = 0.
-  WRITE: / 'new date:', opp-expect_end.
 ENDFORM.
 
 FORM populate_update_table.
-  DATA: lt_insert TYPE CRMT_OPPORT_H_DU_TAB,
-        lt_update TYPE CRMT_OPPORT_H_DU_TAB,
-        lt_delete TYPE CRMT_OPPORT_H_DU_TAB.
+  DATA: lt_insert TYPE CRMT_ORDERADM_H_DU_TAB,
+        lt_update TYPE CRMT_ORDERADM_H_DU_TAB,
+        lt_delete TYPE CRMT_ORDERADM_H_DU_TAB.
 
    call function 'CRM_ORDER_UPDATE_TABLES_DETERM'
       exporting
-        iv_object_name            = 'OPPORT_H'
+        iv_object_name            = 'ORDERADM_H'
         iv_field_name_key         = 'GUID'
         it_guids_to_process       = lt_to_save
-        iv_header_to_save         = gv_oppt_guid
+        iv_header_to_save         = gv_srvo_guid
       importing
         et_records_to_insert      = lt_insert
         et_records_to_update      = lt_update
