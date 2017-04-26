@@ -1,22 +1,22 @@
-class ZCL_CRMS4_BTX_DATA_MODEL_TOOL definition
-  public
-  final
-  create private .
+CLASS zcl_crms4_btx_data_model_tool DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PRIVATE .
 
-public section.
+  PUBLIC SECTION.
 
-  methods SAVE_HEADER
-    importing
-      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  class-methods CLASS_CONSTRUCTOR .
-  methods GET_ITEM
-    importing
-      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
-    exporting
-      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
-  class-methods GET_INSTANCE
-    returning
-      value(RO_INSTANCE) type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
+    METHODS save_header
+      IMPORTING
+        !it_header_guid TYPE crmt_object_guid_tab .
+    CLASS-METHODS class_constructor .
+    METHODS get_item
+      IMPORTING
+        !it_item_guid     TYPE crmt_object_guid_tab
+      EXPORTING
+        !et_orderadm_i_db TYPE crmt_orderadm_i_du_tab .
+    CLASS-METHODS get_instance
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO zcl_crms4_btx_data_model_tool .
   PROTECTED SECTION.
 private section.
 
@@ -29,25 +29,43 @@ private section.
     tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
   types:
     BEGIN OF ty_header_object_type,
-                       guid TYPE crmt_object_guid,
-                       object_type TYPE CRMT_SUBOBJECT_CATEGORY_DB,
-         end of ty_header_object_type .
+        guid        TYPE crmt_object_guid,
+        object_type TYPE crmt_subobject_category_db,
+      END OF ty_header_object_type .
   types:
-    tt_header_object_type TYPE TABLE OF ty_header_object_type with key guid .
+    tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
   types:
     BEGIN OF ty_object_supported_component,
-             object_type TYPE CRMT_SUBOBJECT_CATEGORY_DB,
-             supported_comps TYPE CRMT_OBJECT_NAME_TAB,
-         END OF ty_object_supported_component .
+        object_type     TYPE crmt_subobject_category_db,
+        supported_comps TYPE crmt_object_name_tab,
+      END OF ty_object_supported_component .
   types:
     tt_object_supported_component TYPE TABLE OF ty_object_supported_component
-    WITH KEY object_type .
+      WITH KEY object_type .
+  types:
+    BEGIN of ty_component_conv_cls,
+                   component TYPE crmt_object_name,
+                   conv_cls TYPE string,
+     END of ty_component_conv_cls .
+  types:
+    tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
 
   data MT_CONVERTOR type TT_CONVERTOR .
+  data MT_COMPONENT_CONV_CLS type TT_COMPONENT_CONV_CLS .
   class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
   data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
   data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
 
+  methods GET_HEADER_DB_TYPE
+    importing
+      !IV_HEADER_GUID type CRMT_OBJECT_GUID
+    returning
+      value(RV_DB_TYPE) type STRING .
+  methods GET_HEADER_SUPPORTED_COMP
+    importing
+      !IV_HEADER_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
+    returning
+      value(RT_HEADER_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
   methods FETCH_HEADER_OBJECT_TYPE
     importing
       !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
@@ -61,12 +79,21 @@ private section.
       !IT_OBJECTS type CRMT_OBJECT_NAME_TAB
     changing
       !CS_ITEM type ANY .
-  methods GET_CONVERTOR
+  methods GET_CONVERTOR_INSTANCE
     importing
       !IV_CLS_NAME type CRMT_OBJECT_NAME
     returning
       value(RO_CONVERTOR) type ref to ZIF_CRMS4_BTX_DATA_MODEL .
   methods FETCH_HEADER_SUPPORTED_COMP .
+  methods SAVE_SINGLE
+    importing
+      !IV_HEADER_GUID type CRMT_OBJECT_GUID .
+  methods FETCH_COMPONENT_CONV_CLS .
+  methods GET_CONV_CLS_NAME_BY_COMPONENT
+    importing
+      !IV_COMPONENT_NAME type CRMT_OBJECT_NAME
+    returning
+      value(RV_CLS_NAME) type STRING .
 ENDCLASS.
 
 
@@ -89,7 +116,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IT_OBJECTS                     TYPE        CRMT_OBJECT_NAME_TAB
 * | [<-->] CS_ITEM                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD CONV_S4_2_1ORDER_AND_FILL_BUFF.
+  METHOD conv_s4_2_1order_and_fill_buff.
     DATA: lv_wrk_structure_name TYPE string,
           lr_wrk_structure      TYPE REF TO data,
           lt_convert_class      TYPE TABLE OF zcrmc_objects,
@@ -104,7 +131,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
       READ TABLE lt_convert_class ASSIGNING FIELD-SYMBOL(<cls_name>) WITH KEY
           name = <lv_object>.
-      lo_convertor = get_convertor( iv_cls_name = <cls_name>-conv_class ).
+      lo_convertor = get_convertor_instance( iv_cls_name = <cls_name>-conv_class ).
 
       CALL METHOD lo_convertor->get_wrk_structure_name
         RECEIVING
@@ -126,18 +153,48 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->FETCH_COMPONENT_CONV_CLS
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method FETCH_COMPONENT_CONV_CLS.
+     DATA: lt_missing_comp TYPE crmt_object_name_tab,
+           lt_ZCRMC_OBJECTS TYPe TABLE OF ZCRMC_OBJECTS.
+
+     LOOP AT mt_header_supported_comps ASSIGNING FIELD-SYMBOL(<comp>).
+        LOOP AT <comp>-supported_comps ASSIGNING FIELD-SYMBOL(<component>).
+           READ TABLE mt_component_conv_cls wITH KEY component = <component>
+              TRANSPORTING NO FIELDS.
+           IF sy-subrc <> 0.
+              insert <component> INTO TABLE lt_missing_comp.
+           ENDIF.
+        ENDLOOP.
+     ENDLOOP.
+
+     SELECT name conv_class INTO CORRESPONDING FIELDS OF TABLE lt_ZCRMC_OBJECTS
+         FROM ZCRMC_OBJECTS FOR ALL ENTRIES IN lt_missing_comp
+           where name = lt_missing_comp-table_line.
+
+     LOOP AT lt_ZCRMC_OBJECTS ASSIGNING FIELD-SYMBOL(<missing_comp>).
+        APPEND INITIAL LINE TO mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<new_buffer>).
+        <new_buffer>-component = <missing_comp>-name.
+        <new_buffer>-conv_cls = <missing_comp>-conv_class.
+     ENDLOOP.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->FETCH_HEADER_OBJECT_TYPE
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method FETCH_HEADER_OBJECT_TYPE.
-    DATA: lt_header_buffer_miss TYPE CRMT_OBJECT_GUID_TAB,
-          lt_header_shadow TYPE TABLE OF zcrms4d_btx.
+  METHOD fetch_header_object_type.
+    DATA: lt_header_buffer_miss TYPE crmt_object_guid_tab,
+          lt_header_shadow      TYPE TABLE OF zcrms4d_btx.
     LOOP AT it_header_guid ASSIGNING FIELD-SYMBOL(<guid>).
-       READ TABLE MT_HEADER_OBJECT_TYPE_BUF WITH KEY guid = <guid> TRANSPORTING NO FIELDS.
-       IF sy-subrc <> 0.
-          APPEND <guid> TO lt_header_buffer_miss.
-       ENDIF.
+      READ TABLE mt_header_object_type_buf WITH KEY guid = <guid> TRANSPORTING NO FIELDS.
+      IF sy-subrc <> 0.
+        APPEND <guid> TO lt_header_buffer_miss.
+      ENDIF.
     ENDLOOP.
 
     CHECK lt_header_buffer_miss IS NOT INITIAL.
@@ -146,55 +203,55 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
         WHERE order_guid = lt_header_buffer_miss-table_line.
 
     LOOP AT lt_header_shadow ASSIGNING FIELD-SYMBOL(<header_shadow>).
-       APPEND INITIAL LINE TO MT_HEADER_OBJECT_TYPE_BUF ASSIGNING FIELD-SYMBOL(<new_buffer>).
-       <new_buffer> = value #( guid = <header_shadow>-order_guid
-                                object_type = <header_shadow>-object_type ).
+      APPEND INITIAL LINE TO mt_header_object_type_buf ASSIGNING FIELD-SYMBOL(<new_buffer>).
+      <new_buffer> = VALUE #( guid = <header_shadow>-order_guid
+                               object_type = <header_shadow>-object_type ).
     ENDLOOP.
-  endmethod.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->FETCH_HEADER_SUPPORTED_COMP
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method FETCH_HEADER_SUPPORTED_COMP.
-    DATA: lt_missed_header_object TYPE TABLE OF CRMT_SUBOBJECT_CATEGORY_DB,
-          lt_ZCRMC_OBJECT_ASS TYPE TABLE OF ZCRMC_OBJECT_ASS.
+  METHOD fetch_header_supported_comp.
+    DATA: lt_missed_header_object TYPE TABLE OF crmt_subobject_category_db,
+          lt_zcrmc_object_ass     TYPE TABLE OF zcrmc_object_ass.
 
-    LOOP AT MT_HEADER_OBJECT_TYPE_BUF ASSIGNING FIELD-SYMBOL(<header_buf>).
-        READ TABLE mt_header_supported_comps WITH KEY object_type = <header_buf>-object_type
-          TRANSPORTING NO FIELDS.
-        IF sy-subrc <> 0.
-          APPEND <header_buf>-object_type TO lt_missed_header_object.
-        ENDIF.
+    LOOP AT mt_header_object_type_buf ASSIGNING FIELD-SYMBOL(<header_buf>).
+      READ TABLE mt_header_supported_comps WITH KEY object_type = <header_buf>-object_type
+        TRANSPORTING NO FIELDS.
+      IF sy-subrc <> 0.
+        APPEND <header_buf>-object_type TO lt_missed_header_object.
+      ENDIF.
     ENDLOOP.
 
     CHECK lt_missed_header_object IS NOT INITIAL.
     SORT lt_missed_header_object.
     DELETE ADJACENT DUPLICATES FROM lt_missed_header_object.
 
-    SELECT * INTO TABLE lt_ZCRMC_OBJECT_ASS FROM ZCRMC_OBJECT_ASS FOR ALL ENTRIES IN
-         lt_missed_header_object WHERE SUBOBJ_CATEGORY = lt_missed_header_object-table_line.
-    check sy-subrc = 0.
+    SELECT * INTO TABLE lt_zcrmc_object_ass FROM zcrmc_object_ass FOR ALL ENTRIES IN
+         lt_missed_header_object WHERE subobj_category = lt_missed_header_object-table_line.
+    CHECK sy-subrc = 0.
 
-  LOOP AT lt_missed_header_object ASSIGNING FIELD-SYMBOL(<missing>).
-     APPEND INITIAL LINE TO mt_header_supported_comps ASSIGNING FIELD-SYMBOL(<new_buffer>).
-     <new_buffer>-object_type = <missing>.
-     LOOP AT lt_ZCRMC_OBJECT_ASS ASSIGNING FIELD-SYMBOL(<header_supported>)
-         WHERE SUBOBJ_CATEGORY = <missing>.
-       APPEND <header_supported>-name TO <new_buffer>-supported_comps.
-     ENDLOOP.
-  ENDLOOP.
-  endmethod.
+    LOOP AT lt_missed_header_object ASSIGNING FIELD-SYMBOL(<missing>).
+      APPEND INITIAL LINE TO mt_header_supported_comps ASSIGNING FIELD-SYMBOL(<new_buffer>).
+      <new_buffer>-object_type = <missing>.
+      LOOP AT lt_zcrmc_object_ass ASSIGNING FIELD-SYMBOL(<header_supported>)
+          WHERE subobj_category = <missing>.
+        APPEND <header_supported>-name TO <new_buffer>-supported_comps.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_CONVERTOR
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_CONVERTOR_INSTANCE
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_CLS_NAME                    TYPE        CRMT_OBJECT_NAME
 * | [<-()] RO_CONVERTOR                   TYPE REF TO ZIF_CRMS4_BTX_DATA_MODEL
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD get_convertor.
+  METHOD GET_CONVERTOR_INSTANCE.
     READ TABLE mt_convertor ASSIGNING FIELD-SYMBOL(<convertor>) WITH KEY cls_name = iv_cls_name.
     IF sy-subrc = 0.
       ro_convertor = <convertor>-convertor.
@@ -208,17 +265,63 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_CONV_CLS_NAME_BY_COMPONENT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_COMPONENT_NAME              TYPE        CRMT_OBJECT_NAME
+* | [<-()] RV_CLS_NAME                    TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_CONV_CLS_NAME_BY_COMPONENT.
+    READ TABLE mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<buffer>)
+     with key component = iv_component_name.
+    rv_cls_name = <buffer>-conv_cls.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_HEADER_DB_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
+* | [<-()] RV_DB_TYPE                     TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_HEADER_DB_TYPE.
+     DATA(lv_object_type) = GET_HEADER_OBJECT_TYPE_BY_GUID( IV_HEADER_GUId ).
+     DATA: ls_ZCRMC_SUBOB_CAT TYPE ZCRMC_SUBOB_CAT.
+
+     SELECT SINGLE * INTO ls_ZCRMC_SUBOB_CAT FROM ZCRMC_SUBOB_CAT
+        WHERE SUBOBJ_CATEGORY = lv_object_type.
+     assert sy-subrc = 0.
+     rv_db_type = 'ZCRMS4D_' && ls_ZCRMC_SUBOB_CAT-acronym && '_H'.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_HEADER_OBJECT_TYPE_BY_GUID
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
 * | [<-()] RV_OBJECT_TYPE                 TYPE        CRMT_SUBOBJECT_CATEGORY_DB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method GET_HEADER_OBJECT_TYPE_BY_GUID.
-    read TABLE MT_HEADER_OBJECT_TYPE_BUF ASSIGNING FIELD-SYMBOL(<header_type>)
-     with key guid = IV_HEADER_GUId.
+  METHOD get_header_object_type_by_guid.
+    READ TABLE mt_header_object_type_buf ASSIGNING FIELD-SYMBOL(<header_type>)
+     WITH KEY guid = iv_header_guid.
+    CHECK sy-subrc = 0.
+
+    rv_object_type = <header_type>-object_type.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_HEADER_SUPPORTED_COMP
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_HEADER_OBJECT_TYPE          TYPE        CRMT_SUBOBJECT_CATEGORY_DB
+* | [<-()] RT_HEADER_SUPPORTED_COMP       TYPE        CRMT_OBJECT_NAME_TAB
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_HEADER_SUPPORTED_COMP.
+    READ TABLE mt_header_supported_comps ASSIGNING FIELD-SYMBOL(<supported>)
+     with key object_type = iv_header_object_type.
+
     check sy-subrc = 0.
 
-    RV_OBJECT_TYPE = <header_type>-object_type.
+    rt_header_supported_comp = <supported>-supported_comps.
   endmethod.
 
 
@@ -293,6 +396,49 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD save_header.
     fetch_header_object_type( it_header_guid ).
+    fetch_header_supported_comp( ).
+    FETCH_COMPONENT_CONV_CLS( ).
+    LOOP AT it_header_guid ASSIGNING FIELD-SYMBOL(<guid>).
+       save_single( <guid> ).
+    ENDLOOP.
+  ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->SAVE_SINGLE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD save_single.
+
+     data(lv_object_type) = GET_HEADER_OBJECT_TYPE_BY_GUID( IV_HEADER_GUId ).
+     data(lt_header_supported) = GET_HEADER_SUPPORTED_COMP( lv_object_type ).
+     LOOP AT lt_header_supported ASSIGNING FIELD-SYMBOL(<component>).
+
+     ENDLOOP.
+
+*    DATA: lv_new_header_db_name TYPE string.
+*
+*    lv_new_header_db_name = get_header_db_type( iv_header_guid ).
+*
+*    DATA: lt_insert  TYPE crmt_orderadm_h_du_tab,
+*          lt_update  TYPE crmt_orderadm_h_du_tab,
+*          lt_delete  TYPE crmt_orderadm_h_du_tab,
+*          lt_to_save TYPE crmt_object_guid_tab.
+*
+*    APPEND iv_header_guid TO lt_to_save.
+*
+*    CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
+*      EXPORTING
+*        iv_object_name       = 'ORDERADM_H'
+*        iv_field_name_key    = 'GUID'
+*        it_guids_to_process  = lt_to_save
+*        iv_header_to_save    = iv_header_guid
+*      IMPORTING
+*        et_records_to_insert = lt_insert
+*        et_records_to_update = lt_update
+*        et_records_to_delete = lt_delete.
+*
+*    BREAK-POINT.
   ENDMETHOD.
 ENDCLASS.
