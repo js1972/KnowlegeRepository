@@ -18,89 +18,89 @@ CLASS zcl_crms4_btx_data_model_tool DEFINITION
       RETURNING
         VALUE(ro_instance) TYPE REF TO zcl_crms4_btx_data_model_tool .
   PROTECTED SECTION.
-private section.
+  PRIVATE SECTION.
 
-  types:
-    BEGIN OF ty_convertor,
+    TYPES:
+      BEGIN OF ty_convertor,
         cls_name  TYPE crmt_object_name,
         convertor TYPE REF TO zif_crms4_btx_data_model,
       END OF ty_convertor .
-  types:
-    tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
-  types:
-    BEGIN OF ty_header_object_type,
+    TYPES:
+      tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
+    TYPES:
+      BEGIN OF ty_header_object_type,
         guid        TYPE crmt_object_guid,
         object_type TYPE crmt_subobject_category_db,
       END OF ty_header_object_type .
-  types:
-    tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
-  types:
-    BEGIN OF ty_object_supported_component,
+    TYPES:
+      tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
+    TYPES:
+      BEGIN OF ty_object_supported_component,
         object_type     TYPE crmt_subobject_category_db,
         supported_comps TYPE crmt_object_name_tab,
       END OF ty_object_supported_component .
-  types:
-    tt_object_supported_component TYPE TABLE OF ty_object_supported_component
-        WITH KEY object_type .
-  types:
-    BEGIN OF ty_component_conv_cls,
+    TYPES:
+      tt_object_supported_component TYPE TABLE OF ty_object_supported_component
+          WITH KEY object_type .
+    TYPES:
+      BEGIN OF ty_component_conv_cls,
         component TYPE crmt_object_name,
         conv_cls  TYPE string,
       END OF ty_component_conv_cls .
-  types:
-    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name with key TABLE_LINE .
-  types:
-    tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
+    TYPES:
+      tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
+    TYPES:
+      tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
 
-  data MT_CONVERTOR type TT_CONVERTOR .
-  data MT_COMPONENT_CONV_CLS type TT_COMPONENT_CONV_CLS .
-  class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
-  data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
-  data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
+    DATA mt_convertor TYPE tt_convertor .
+    DATA mt_component_conv_cls TYPE tt_component_conv_cls .
+    CLASS-DATA so_instance TYPE REF TO zcl_crms4_btx_data_model_tool .
+    DATA mt_header_object_type_buf TYPE tt_header_object_type .
+    DATA mt_header_supported_comps TYPE tt_object_supported_component .
 
-  methods GET_HEADER_DB_TYPE
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_DB_TYPE) type STRING .
-  methods GET_HEADER_SUPPORTED_COMP
-    importing
-      !IV_HEADER_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
-    returning
-      value(RT_HEADER_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
-  methods FETCH_HEADER_OBJECT_TYPE
-    importing
-      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  methods GET_HEADER_OBJECT_TYPE_BY_GUID
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_OBJECT_TYPE) type CRMT_SUBOBJECT_CATEGORY_DB .
-  methods CONV_S4_2_1ORDER_AND_FILL_BUFF
-    importing
-      !IT_OBJECTS type CRMT_OBJECT_NAME_TAB
-    changing
-      !CS_ITEM type ANY .
-  methods GET_CONVERTOR_INSTANCE
-    importing
-      !IV_CLS_NAME type CRMT_OBJECT_NAME
-    returning
-      value(RO_CONVERTOR) type ref to ZIF_CRMS4_BTX_DATA_MODEL .
-  methods FETCH_HEADER_SUPPORTED_COMP .
-  methods SAVE_SINGLE
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID .
-  methods FETCH_COMPONENT_CONV_CLS .
-  methods GET_CONV_CLS_NAME_BY_COMPONENT
-    importing
-      !IV_COMPONENT_NAME type CRMT_OBJECT_NAME
-    returning
-      value(RV_CLS_NAME) type CRMT_OBJECT_NAME .
-  methods GET_UNSORTED_COMPONENT_LIST
-    importing
-      !IT_SORTED_COMP type CRMT_OBJECT_NAME_TAB
-    returning
-      value(RT_UNSORTED_COMP) type TT_SUPPORTED_COMPONENTS .
+    METHODS get_header_db_type
+      IMPORTING
+        !iv_header_guid   TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_db_type) TYPE string .
+    METHODS get_header_supported_comp
+      IMPORTING
+        !iv_header_object_type          TYPE crmt_subobject_category_db
+      RETURNING
+        VALUE(rt_header_supported_comp) TYPE crmt_object_name_tab .
+    METHODS fetch_header_object_type
+      IMPORTING
+        !it_header_guid TYPE crmt_object_guid_tab .
+    METHODS get_header_object_type_by_guid
+      IMPORTING
+        !iv_header_guid       TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_object_type) TYPE crmt_subobject_category_db .
+    METHODS conv_s4_2_1order_and_fill_buff
+      IMPORTING
+        !it_objects TYPE crmt_object_name_tab
+      CHANGING
+        !cs_item    TYPE any .
+    METHODS get_convertor_instance
+      IMPORTING
+        !iv_cls_name        TYPE crmt_object_name
+      RETURNING
+        VALUE(ro_convertor) TYPE REF TO zif_crms4_btx_data_model .
+    METHODS fetch_header_supported_comp .
+    METHODS save_single
+      IMPORTING
+        !iv_header_guid TYPE crmt_object_guid .
+    METHODS fetch_component_conv_cls .
+    METHODS get_conv_cls_name_by_component
+      IMPORTING
+        !iv_component_name TYPE crmt_object_name
+      RETURNING
+        VALUE(rv_cls_name) TYPE crmt_object_name .
+    METHODS get_unsorted_component_list
+      IMPORTING
+        !it_sorted_comp         TYPE crmt_object_name_tab
+      RETURNING
+        VALUE(rt_unsorted_comp) TYPE tt_supported_components .
 ENDCLASS.
 
 
@@ -402,13 +402,13 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IT_SORTED_COMP                 TYPE        CRMT_OBJECT_NAME_TAB
 * | [<-()] RT_UNSORTED_COMP               TYPE        TT_SUPPORTED_COMPONENTS
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method GET_UNSORTED_COMPONENT_LIST.
-    data: lv_line TYPE crmt_object_name.
+  METHOD get_unsorted_component_list.
+    DATA: lv_line TYPE crmt_object_name.
     rt_unsorted_comp = it_sorted_comp.
-    delete rt_unsorted_comp where table_line = 'ORDERADM_H'.
+    DELETE rt_unsorted_comp WHERE table_line = 'ORDERADM_H'.
     lv_line = 'ORDERADM_H'.
     INSERT lv_line INTO rt_unsorted_comp INDEX 1.
-  endmethod.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -444,19 +444,19 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
     DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
     DATA(lt_header_supported_comp) = get_header_supported_comp( lv_object_type ).
     DATA(lt_unsorted) = get_unsorted_component_list( lt_header_supported_comp ).
+    DATA(lv_comp_db_name) = get_header_db_type( iv_header_guid ).
+
+    CREATE DATA lr_to_insert_db TYPE TABLE OF (lv_comp_db_name).
+    ASSIGN lr_to_insert_db->* TO <to_insert>.
+
+    CREATE DATA lr_to_update_db TYPE TABLE OF (lv_comp_db_name).
+    ASSIGN lr_to_update_db->* TO <to_update>.
+
+    CREATE DATA lr_to_delete_db TYPE TABLE OF (lv_comp_db_name).
+    ASSIGN lr_to_delete_db->* TO <to_delete>.
     LOOP AT lt_unsorted ASSIGNING FIELD-SYMBOL(<component>).
       DATA(lv_conv_cls) = get_conv_cls_name_by_component( <component> ).
       CHECK lv_conv_cls IS NOT INITIAL.
-      DATA(lv_comp_db_name) = get_header_db_type( iv_header_guid ).
-
-      CREATE DATA lr_to_insert_db TYPE TABLE OF (lv_comp_db_name).
-      ASSIGN lr_to_insert_db->* TO <to_insert>.
-
-      CREATE DATA lr_to_update_db TYPE TABLE OF (lv_comp_db_name).
-      ASSIGN lr_to_update_db->* TO <to_update>.
-
-      CREATE DATA lr_to_delete_db TYPE TABLE OF (lv_comp_db_name).
-      ASSIGN lr_to_delete_db->* TO <to_delete>.
 
       DATA(lo_convertor) = get_convertor_instance( lv_conv_cls ).
 
