@@ -79,3 +79,13 @@ transaction type and allowed object type.
 SRVO->BUS2000116 - ZSRVO_H - table: CRMC_OBJECT_ASSI
 FM CRM_ORDER_OBJECT_ASSI_SEL_CB, tcode 
 entry point for event callback execution: CRM_EVENT_SET_EXETIME_MULTI_OW, line 108
+
+# 2017-04-26
+1. no fields in signature of CRM_ORDER_MAINTAIN so it means I could not directly make changes on CUMULAT_H simply via CRM_ORDER_MAIN.
+When I change quantity in Service order line item, SCHEDLIN is changed and change field name: QUANTITY. 
+2. today do this: CRM_CUMULAT_H_SAVE_EC
+CRM_EVENT_PUBLISH_OW
+I can still get cumulat_h change based on determine FM. 
+CRM_OBJECT_NAMES_DETERMINE
+CRM_CUMULAT_H_CHANGE_OW
+
