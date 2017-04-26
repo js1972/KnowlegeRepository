@@ -34,19 +34,19 @@ private section.
          end of ty_header_object_type .
   types:
     tt_header_object_type TYPE TABLE OF ty_header_object_type with key guid .
-
-  types: BEGIN OF ty_object_supported_component,
+  types:
+    BEGIN OF ty_object_supported_component,
              object_type TYPE CRMT_SUBOBJECT_CATEGORY_DB,
              supported_comps TYPE CRMT_OBJECT_NAME_TAB,
-         END OF ty_object_supported_component.
-
-  TYPES: tt_object_supported_component TYPE TABLE OF ty_object_supported_component
-    WITH KEY object_type.
+         END OF ty_object_supported_component .
+  types:
+    tt_object_supported_component TYPE TABLE OF ty_object_supported_component
+    WITH KEY object_type .
 
   data MT_CONVERTOR type TT_CONVERTOR .
   class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
   data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
-  data mt_header_supported_comps TYPE tt_object_supported_component.
+  data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
 
   methods FETCH_HEADER_OBJECT_TYPE
     importing
@@ -66,6 +66,7 @@ private section.
       !IV_CLS_NAME type CRMT_OBJECT_NAME
     returning
       value(RO_CONVERTOR) type ref to ZIF_CRMS4_BTX_DATA_MODEL .
+  methods FETCH_HEADER_SUPPORTED_COMP .
 ENDCLASS.
 
 
@@ -149,6 +150,41 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
        <new_buffer> = value #( guid = <header_shadow>-order_guid
                                 object_type = <header_shadow>-object_type ).
     ENDLOOP.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->FETCH_HEADER_SUPPORTED_COMP
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method FETCH_HEADER_SUPPORTED_COMP.
+    DATA: lt_missed_header_object TYPE TABLE OF CRMT_SUBOBJECT_CATEGORY_DB,
+          lt_ZCRMC_OBJECT_ASS TYPE TABLE OF ZCRMC_OBJECT_ASS.
+
+    LOOP AT MT_HEADER_OBJECT_TYPE_BUF ASSIGNING FIELD-SYMBOL(<header_buf>).
+        READ TABLE mt_header_supported_comps WITH KEY object_type = <header_buf>-object_type
+          TRANSPORTING NO FIELDS.
+        IF sy-subrc <> 0.
+          APPEND <header_buf>-object_type TO lt_missed_header_object.
+        ENDIF.
+    ENDLOOP.
+
+    CHECK lt_missed_header_object IS NOT INITIAL.
+    SORT lt_missed_header_object.
+    DELETE ADJACENT DUPLICATES FROM lt_missed_header_object.
+
+    SELECT * INTO TABLE lt_ZCRMC_OBJECT_ASS FROM ZCRMC_OBJECT_ASS FOR ALL ENTRIES IN
+         lt_missed_header_object WHERE SUBOBJ_CATEGORY = lt_missed_header_object-table_line.
+    check sy-subrc = 0.
+
+  LOOP AT lt_missed_header_object ASSIGNING FIELD-SYMBOL(<missing>).
+     APPEND INITIAL LINE TO mt_header_supported_comps ASSIGNING FIELD-SYMBOL(<new_buffer>).
+     <new_buffer>-object_type = <missing>.
+     LOOP AT lt_ZCRMC_OBJECT_ASS ASSIGNING FIELD-SYMBOL(<header_supported>)
+         WHERE SUBOBJ_CATEGORY = <missing>.
+       APPEND <header_supported>-name TO <new_buffer>-supported_comps.
+     ENDLOOP.
+  ENDLOOP.
   endmethod.
 
 
