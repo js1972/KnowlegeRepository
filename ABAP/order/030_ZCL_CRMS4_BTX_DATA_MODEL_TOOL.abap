@@ -93,7 +93,7 @@ private section.
     importing
       !IV_COMPONENT_NAME type CRMT_OBJECT_NAME
     returning
-      value(RV_CLS_NAME) type STRING .
+      value(RV_CLS_NAME) type CRMT_OBJECT_NAME .
 ENDCLASS.
 
 
@@ -268,7 +268,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_CONV_CLS_NAME_BY_COMPONENT
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_COMPONENT_NAME              TYPE        CRMT_OBJECT_NAME
-* | [<-()] RV_CLS_NAME                    TYPE        STRING
+* | [<-()] RV_CLS_NAME                    TYPE        CRMT_OBJECT_NAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method GET_CONV_CLS_NAME_BY_COMPONENT.
     READ TABLE mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<buffer>)
@@ -411,11 +411,27 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD save_single.
 
-     data(lv_object_type) = GET_HEADER_OBJECT_TYPE_BY_GUID( IV_HEADER_GUId ).
-     data(lt_header_supported) = GET_HEADER_SUPPORTED_COMP( lv_object_type ).
-     LOOP AT lt_header_supported ASSIGNING FIELD-SYMBOL(<component>).
+    data: lr_header_db TYPE REF TO data.
 
-     ENDLOOP.
+    FIELD-SYMBOLS: <workarea> TYPE any.
+
+    DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
+    DATA(lt_header_supported_comp) = get_header_supported_comp( lv_object_type ).
+    LOOP AT lt_header_supported_comp ASSIGNING FIELD-SYMBOL(<component>).
+      DATA(lv_conv_cls) = get_conv_cls_name_by_component( <component> ).
+      CHECK lv_conv_cls IS NOT INITIAL.
+      data(lv_comp_db_name) = GET_HEADER_DB_TYPE( IV_HEADER_GUId ).
+      CREATE DATA lr_header_db type (lv_comp_db_name).
+      ASSIGN lr_header_db->* TO <workarea>.
+      DATA(lo_convertor) = get_convertor_instance( lv_conv_cls ).
+
+      CALL METHOD lo_convertor->convert_1o_to_s4
+         EXPORTING
+             iv_ref_guid = IV_HEADER_GUId
+             iv_ref_kind = 'A'
+         CHANGING
+             CS_WORKAREA = <workarea>.
+    ENDLOOP.
 
 *    DATA: lv_new_header_db_name TYPE string.
 *
