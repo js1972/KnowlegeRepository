@@ -52,13 +52,14 @@ private section.
   types:
     tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
 
-  data MT_CONVERTOR_INST_BUFFER type tt_convertor_instance .
+  data MT_CONVERTOR_INST_BUFFER type TT_CONVERTOR_INSTANCE .
   data MT_COMPONENT_CONV_CLS type TT_COMPONENT_CONV_CLS .
   class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
   data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
   data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
   data MT_ITEM_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
 
+  methods FETCH_ITEM_CONV_CLASS .
   methods FETCH_ITEM_SUPPORTED_COMP
     importing
       !IT_ITEM_WRKT type CRMT_ORDERADM_I_WRKT .
@@ -114,6 +115,11 @@ private section.
       !IV_ITEM_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
     returning
       value(RT_ITEM_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
+  methods GET_ITEM_DB_TYPE
+    importing
+      !IV_ITEM_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
+    returning
+      value(RV_DB_TYPE) type STRING .
 ENDCLASS.
 
 
@@ -261,6 +267,40 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
           WHERE subobj_category = <missing>.
         APPEND <header_supported>-name TO <new_buffer>-supported_comps.
       ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->FETCH_ITEM_CONV_CLASS
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD fetch_item_conv_class.
+    DATA: lt_missing_comp TYPE TABLE OF CRMT_OBJECT_NAME,
+          lt_objects TYPE TABLE OF ZCRMC_OBJECTS.
+
+    LOOP AT mt_item_supported_comps ASSIGNING FIELD-SYMBOL(<item_comp_buffer>).
+      LOOP AT <item_comp_buffer>-supported_comps ASSIGNING FIELD-SYMBOL(<comp>).
+        READ TABLE mt_component_conv_cls WITH KEY component = <comp> TRANSPORTING NO FIELDS.
+        IF sy-subrc <> 0.
+          APPEND <comp> TO lt_missing_comp.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+
+    SORT lt_missing_comp.
+    DELETE ADJACENT DUPLICATES FROM lt_missing_comp.
+    CHECK lt_missing_comp IS NOT INITIAL.
+
+    SELECT name conv_class INTO CORRESPONDING FIELDS OF TABLE lt_objects FROM ZCRMC_OBJECTS FOR ALL ENTRIES IN lt_missing_comp
+        WHERE name = lt_missing_comp-table_line.
+
+    LOOP AT lt_missing_comp ASSIGNING FIELD-SYMBOL(<missing_comp>).
+       APPEND INITIAL LINE TO mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<new_buffer>).
+       <new_buffer>-component = <missing_comp>.
+       READ TABLE lt_objects ASSIGNING FIELD-SYMBOL(<crm_object>) WITH KEY name = <missing_comp>.
+       ASSERT sy-subrc = 0.
+       <new_buffer>-conv_cls = <crm_object>-conv_class.
     ENDLOOP.
   ENDMETHOD.
 
@@ -446,6 +486,23 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_ITEM_DB_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ITEM_OBJECT_TYPE            TYPE        CRMT_SUBOBJECT_CATEGORY_DB
+* | [<-()] RV_DB_TYPE                     TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD GET_ITEM_DB_TYPE.
+
+    DATA: ls_zcrmc_subob_cat TYPE ZCRMC_SUB_CAT_I.
+
+    SELECT SINGLE * INTO ls_zcrmc_subob_cat FROM ZCRMC_SUB_CAT_I
+       WHERE subobj_category = iv_item_object_type.
+    ASSERT sy-subrc = 0.
+    rv_db_type = 'ZCRMS4D_' && ls_zcrmc_subob_cat-acronym && '_I'.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method ZCL_CRMS4_BTX_DATA_MODEL_TOOL->GET_ITEM_SUPPORTED_COMP
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_ITEM_OBJECT_TYPE            TYPE        CRMT_SUBOBJECT_CATEGORY_DB
@@ -560,6 +617,15 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
   METHOD save_single_items.
     DATA: lt_orderadm_i_wrk TYPE crmt_orderadm_i_wrkt,
           lt_objects        TYPE crmt_object_name_tab.
+
+    DATA: lr_to_insert_db TYPE REF TO data,
+          lr_to_update_db TYPE REF TO data,
+          lr_to_delete_db TYPE REF TO data.
+
+    FIELD-SYMBOLS: <to_insert> TYPE ANY TABLE,
+                   <to_update> TYPE ANY TABLE,
+                   <to_delete> TYPE ANY TABLE.
+
     CALL FUNCTION 'CRM_ORDERADM_I_READ_OB'
       EXPORTING
         iv_header         = iv_header_guid
@@ -569,32 +635,36 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
         OTHERS            = 0.
 
     fetch_item_supported_comp( lt_orderadm_i_wrk ).
-    "fetch_item_conv_class( lt_orderadm_i_wrk ).
-    LOOP AT lt_orderadm_i_wrk ASSIGNING FIELD-SYMBOL(<ls_orderadm_i_wrk>).
-* Check if the item has really changed. How this is done: discussed below
+    fetch_item_conv_class( ).
 
-* First identify the target structure, depending on the item object type
-*  SELECT SINGLE acronym FROM crmc_subob_cat_i
-*    INTO lv_acronym
-*    WHERE subobj_category = <ls_orderadm_i_wrk>-object_type.
-*  lv_struc_name = 'LS_' && lv_acronym && '_I'.
-*  lv_table_name = 'LT_' && lv_acronym && '_I'.
-*  ASSIGN (lv_struc_name) TO <ls_struc>.
-*  ASSIGN (lv_table_name) TO <lt_table>.
+    LOOP AT lt_orderadm_i_wrk ASSIGNING FIELD-SYMBOL(<orderadm_i_wrk>).
 
-      DATA(lt_item_supported_comp) = get_item_supported_comp( <ls_orderadm_i_wrk>-object_type ).
+      DATA(lt_item_supported_comp) = get_item_supported_comp( <orderadm_i_wrk>-object_type ).
       DATA(lt_unsorted) = get_unsorted_component_list( it_sorted_comp = lt_item_supported_comp
                                                        iv_header      = abap_false ).
 
-      LOOP AT lt_unsorted ASSIGNING FIELD-SYMBOL(<lv_object>).
-*    CLEAR lv_conv_class.
-*    SELECT SINGLE conv_class FROM crmc_objects
-*      INTO lv_conv_class
-*      WHERE name = <lv_object>.
-*    CHECK lv_conv_class IS NOT INITIAL.
-*    CALL METHOD (lv_conv_class)=>if_crms4_btx_data_model~convert_1o_to_s4
-*      CHANGING
-*          <ls_struc>.
+      DATA(lv_comp_db_name) = get_item_db_type( <orderadm_i_wrk>-object_type ).
+      CREATE DATA lr_to_insert_db TYPE TABLE OF (lv_comp_db_name).
+      ASSIGN lr_to_insert_db->* TO <to_insert>.
+
+      CREATE DATA lr_to_update_db TYPE TABLE OF (lv_comp_db_name).
+      ASSIGN lr_to_update_db->* TO <to_update>.
+
+      CREATE DATA lr_to_delete_db TYPE TABLE OF (lv_comp_db_name).
+      ASSIGN lr_to_delete_db->* TO <to_delete>.
+
+      LOOP AT lt_unsorted ASSIGNING FIELD-SYMBOL(<comp>).
+        DATA(lv_conv_class) = get_conv_cls_name_by_component( <comp> ).
+        CHECK lv_conv_class IS NOT INITIAL.
+        DATA(lo_conv_class) = get_convertor_instance( lv_conv_class ).
+        CALL METHOD lo_conv_class->convert_1o_to_s4
+        EXPORTING
+          iv_ref_guid  = <orderadm_i_wrk>-guid
+          iv_ref_kind  = 'B'
+        CHANGING
+          ct_to_insert = <to_insert>
+          ct_to_update = <to_update>
+          ct_to_delete = <to_delete>.
       ENDLOOP.
     ENDLOOP.
   ENDMETHOD.
