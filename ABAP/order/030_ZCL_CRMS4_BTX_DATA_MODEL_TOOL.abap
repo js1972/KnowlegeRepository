@@ -18,102 +18,102 @@ CLASS zcl_crms4_btx_data_model_tool DEFINITION
       RETURNING
         VALUE(ro_instance) TYPE REF TO zcl_crms4_btx_data_model_tool .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    TYPES:
-      BEGIN OF ty_convertor,
+  types:
+    BEGIN OF ty_convertor_instance,
         cls_name  TYPE crmt_object_name,
         convertor TYPE REF TO zif_crms4_btx_data_model,
-      END OF ty_convertor .
-    TYPES:
-      tt_convertor TYPE TABLE OF ty_convertor WITH KEY cls_name .
-    TYPES:
-      BEGIN OF ty_header_object_type,
+      END OF ty_convertor_instance .
+  types:
+    tt_convertor_instance TYPE TABLE OF ty_convertor_instance WITH KEY cls_name .
+  types:
+    BEGIN OF ty_header_object_type,
         guid        TYPE crmt_object_guid,
         object_type TYPE crmt_subobject_category_db,
       END OF ty_header_object_type .
-    TYPES:
-      tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
-    TYPES:
-      BEGIN OF ty_object_supported_component,
+  types:
+    tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
+  types:
+    BEGIN OF ty_object_supported_component,
         object_type     TYPE crmt_subobject_category_db,
         supported_comps TYPE crmt_object_name_tab,
       END OF ty_object_supported_component .
-    TYPES:
-      tt_object_supported_component TYPE TABLE OF ty_object_supported_component
+  types:
+    tt_object_supported_component TYPE TABLE OF ty_object_supported_component
             WITH KEY object_type .
-    TYPES:
-      BEGIN OF ty_component_conv_cls,
+  types:
+    BEGIN OF ty_component_conv_cls,
         component TYPE crmt_object_name,
         conv_cls  TYPE string,
       END OF ty_component_conv_cls .
-    TYPES:
-      tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
-    TYPES:
-      tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
+  types:
+    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
+  types:
+    tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
 
-    DATA mt_convertor TYPE tt_convertor .
-    DATA mt_component_conv_cls TYPE tt_component_conv_cls .
-    CLASS-DATA so_instance TYPE REF TO zcl_crms4_btx_data_model_tool .
-    DATA mt_header_object_type_buf TYPE tt_header_object_type .
-    DATA mt_header_supported_comps TYPE tt_object_supported_component .
-    DATA mt_item_supported_comps TYPE tt_object_supported_component .
+  data MT_CONVERTOR_INST_BUFFER type tt_convertor_instance .
+  data MT_COMPONENT_CONV_CLS type TT_COMPONENT_CONV_CLS .
+  class-data SO_INSTANCE type ref to ZCL_CRMS4_BTX_DATA_MODEL_TOOL .
+  data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
+  data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
+  data MT_ITEM_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
 
-    METHODS fetch_item_supported_comp
-      IMPORTING
-        !it_item_wrkt TYPE crmt_orderadm_i_wrkt .
-    METHODS get_header_db_type
-      IMPORTING
-        !iv_header_guid   TYPE crmt_object_guid
-      RETURNING
-        VALUE(rv_db_type) TYPE string .
-    METHODS get_header_supported_comp
-      IMPORTING
-        !iv_header_object_type          TYPE crmt_subobject_category_db
-      RETURNING
-        VALUE(rt_header_supported_comp) TYPE crmt_object_name_tab .
-    METHODS fetch_header_object_type
-      IMPORTING
-        !it_header_guid TYPE crmt_object_guid_tab .
-    METHODS get_header_object_type_by_guid
-      IMPORTING
-        !iv_header_guid       TYPE crmt_object_guid
-      RETURNING
-        VALUE(rv_object_type) TYPE crmt_subobject_category_db .
-    METHODS conv_s4_2_1order_and_fill_buff
-      IMPORTING
-        !it_objects TYPE crmt_object_name_tab
-      CHANGING
-        !cs_item    TYPE any .
-    METHODS get_convertor_instance
-      IMPORTING
-        !iv_cls_name        TYPE crmt_object_name
-      RETURNING
-        VALUE(ro_convertor) TYPE REF TO zif_crms4_btx_data_model .
-    METHODS fetch_header_supported_comp .
-    METHODS save_single_header
-      IMPORTING
-        !iv_header_guid TYPE crmt_object_guid .
-    METHODS fetch_component_conv_cls .
-    METHODS get_conv_cls_name_by_component
-      IMPORTING
-        !iv_component_name TYPE crmt_object_name
-      RETURNING
-        VALUE(rv_cls_name) TYPE crmt_object_name .
-    METHODS get_unsorted_component_list
-      IMPORTING
-        !it_sorted_comp         TYPE crmt_object_name_tab
-        !iv_header              TYPE abap_bool DEFAULT abap_true
-      RETURNING
-        VALUE(rt_unsorted_comp) TYPE tt_supported_components .
-    METHODS save_single_items
-      IMPORTING
-        !iv_header_guid TYPE crmt_object_guid .
-    METHODS get_item_supported_comp
-      IMPORTING
-        !iv_item_object_type          TYPE crmt_subobject_category_db
-      RETURNING
-        VALUE(rt_item_supported_comp) TYPE crmt_object_name_tab .
+  methods FETCH_ITEM_SUPPORTED_COMP
+    importing
+      !IT_ITEM_WRKT type CRMT_ORDERADM_I_WRKT .
+  methods GET_HEADER_DB_TYPE
+    importing
+      !IV_HEADER_GUID type CRMT_OBJECT_GUID
+    returning
+      value(RV_DB_TYPE) type STRING .
+  methods GET_HEADER_SUPPORTED_COMP
+    importing
+      !IV_HEADER_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
+    returning
+      value(RT_HEADER_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
+  methods FETCH_HEADER_OBJECT_TYPE
+    importing
+      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
+  methods GET_HEADER_OBJECT_TYPE_BY_GUID
+    importing
+      !IV_HEADER_GUID type CRMT_OBJECT_GUID
+    returning
+      value(RV_OBJECT_TYPE) type CRMT_SUBOBJECT_CATEGORY_DB .
+  methods CONV_S4_2_1ORDER_AND_FILL_BUFF
+    importing
+      !IT_OBJECTS type CRMT_OBJECT_NAME_TAB
+    changing
+      !CS_ITEM type ANY .
+  methods GET_CONVERTOR_INSTANCE
+    importing
+      !IV_CLS_NAME type CRMT_OBJECT_NAME
+    returning
+      value(RO_CONVERTOR) type ref to ZIF_CRMS4_BTX_DATA_MODEL .
+  methods FETCH_HEADER_SUPPORTED_COMP .
+  methods SAVE_SINGLE_HEADER
+    importing
+      !IV_HEADER_GUID type CRMT_OBJECT_GUID .
+  methods FETCH_COMPONENT_CONV_CLS .
+  methods GET_CONV_CLS_NAME_BY_COMPONENT
+    importing
+      !IV_COMPONENT_NAME type CRMT_OBJECT_NAME
+    returning
+      value(RV_CLS_NAME) type CRMT_OBJECT_NAME .
+  methods GET_UNSORTED_COMPONENT_LIST
+    importing
+      !IT_SORTED_COMP type CRMT_OBJECT_NAME_TAB
+      !IV_HEADER type ABAP_BOOL default ABAP_TRUE
+    returning
+      value(RT_UNSORTED_COMP) type TT_SUPPORTED_COMPONENTS .
+  methods SAVE_SINGLE_ITEMS
+    importing
+      !IV_HEADER_GUID type CRMT_OBJECT_GUID .
+  methods GET_ITEM_SUPPORTED_COMP
+    importing
+      !IV_ITEM_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
+    returning
+      value(RT_ITEM_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
 ENDCLASS.
 
 
@@ -308,15 +308,15 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [<-()] RO_CONVERTOR                   TYPE REF TO ZIF_CRMS4_BTX_DATA_MODEL
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_convertor_instance.
-    READ TABLE mt_convertor ASSIGNING FIELD-SYMBOL(<convertor>) WITH KEY cls_name = iv_cls_name.
+    READ TABLE mt_convertor_inst_buffer ASSIGNING FIELD-SYMBOL(<convertor>) WITH KEY cls_name = iv_cls_name.
     IF sy-subrc = 0.
       ro_convertor = <convertor>-convertor.
       RETURN.
     ENDIF.
 
     CREATE OBJECT ro_convertor TYPE (iv_cls_name).
-    APPEND INITIAL LINE TO mt_convertor ASSIGNING FIELD-SYMBOL(<new_convertor>).
-    <new_convertor> = VALUE ty_convertor( cls_name = iv_cls_name convertor = ro_convertor ).
+    APPEND INITIAL LINE TO mt_convertor_inst_buffer ASSIGNING FIELD-SYMBOL(<new_convertor>).
+    <new_convertor> = VALUE ty_convertor_instance( cls_name = iv_cls_name convertor = ro_convertor ).
   ENDMETHOD.
 
 
@@ -569,6 +569,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
         OTHERS            = 0.
 
     fetch_item_supported_comp( lt_orderadm_i_wrk ).
+    "fetch_item_conv_class( lt_orderadm_i_wrk ).
     LOOP AT lt_orderadm_i_wrk ASSIGNING FIELD-SYMBOL(<ls_orderadm_i_wrk>).
 * Check if the item has really changed. How this is done: discussed below
 
