@@ -31,7 +31,7 @@ ENDIF.
 
 MOVE-CORRESPONDING ls_db TO ls_orderadm_i.
 
-ls_changed_fields-ref_guid = lv_srvo_guid.
+ls_changed_fields-ref_guid = ls_db-guid.
 ls_changed_fields-objectname = 'ORDERADM_I'.
 APPEND 'DESCRIPTION' TO ls_changed_fields-field_names.
 APPEND ls_changed_fields TO lt_changed_fields.
