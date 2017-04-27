@@ -265,7 +265,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
       <new_buffer>-object_type = <missing>.
       LOOP AT lt_zcrmc_object_ass ASSIGNING FIELD-SYMBOL(<header_supported>)
           WHERE subobj_category = <missing>.
-        APPEND <header_supported>-name TO <new_buffer>-supported_comps.
+        INSERT <header_supported>-name INTO TABLE <new_buffer>-supported_comps.
       ENDLOOP.
     ENDLOOP.
   ENDMETHOD.
@@ -335,7 +335,7 @@ CLASS ZCL_CRMS4_BTX_DATA_MODEL_TOOL IMPLEMENTATION.
       <new_buffer>-object_type = <miss_item_obj_type>.
       LOOP AT lt_item_supported_compo ASSIGNING FIELD-SYMBOL(<support_comp>)
           WHERE subobj_category = <miss_item_obj_type>.
-        APPEND <support_comp>-name TO <new_buffer>-supported_comps.
+        INSERT <support_comp>-name INTO TABLE <new_buffer>-supported_comps.
       ENDLOOP.
     ENDLOOP.
   ENDMETHOD.
