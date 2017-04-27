@@ -6,11 +6,14 @@
 REPORT zchange_cumulat_h.
 
 PARAMETERS: quantity TYPE int4 OBLIGATORY DEFAULT 1,
+             txt TYPE crmd_orderadm_h-description OBLIGATORY DEFAULT 'txt',
              item TYPE crmd_orderadm_i-number_int OBLIGATORY DEFAULT 20,
              srvo_id TYPE crmd_orderadm_h-object_id OBLIGATORY DEFAULT '5700000242'.
 CONSTANTS: cv_sales_item TYPE crmt_subobject_category_db VALUE 'BUS2000131'.
 DATA: lv_srvo_guid       TYPE crmd_orderadm_h-guid,
       lt_to_save         TYPE crmt_object_guid_tab,
+      lt_order        TYPE crmt_orderadm_h_comt,
+      ls_order        LIKE LINE OF lt_order,
       lt_saved           TYPE crmt_return_objects,
       lv_schedule_guid   TYPE crmt_object_guid,
       lt_schedule_line   TYPE crmt_schedlin_i_comt,
@@ -63,11 +66,23 @@ ls_changed_fields-logical_key = lv_schedule_guid.
 APPEND 'QUANTITY' TO ls_changed_fields-field_names.
 APPEND ls_changed_fields TO lt_changed_fields.
 
+CLEAR: ls_changed_fields.
+
+ls_changed_fields-ref_guid = lv_srvo_guid.
+ls_changed_fields-objectname = 'ORDERADM_H'.
+APPEND 'DESCRIPTION' TO ls_changed_fields-field_names.
+INSERT ls_changed_fields INTO TABLE lt_changed_fields.
+
+ls_order-guid = lv_srvo_guid.
+ls_order-description = txt.
+APPEND ls_order TO lt_order.
+
 CALL FUNCTION 'CRM_ORDER_MAINTAIN'
   EXPORTING
     it_schedlin_i     = lt_schedule_line
   CHANGING
     ct_input_fields   = lt_changed_fields
+    ct_orderadm_h     = lt_order
   EXCEPTIONS
     error_occurred    = 1
     document_locked   = 2
