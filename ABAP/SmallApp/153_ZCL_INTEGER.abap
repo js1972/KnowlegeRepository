@@ -21,11 +21,15 @@ private section.
   types:
     tt_cache TYPE TABLE OF ty_cache WITH KEY int_value .
 
+  data MV_BINARY_FORMAT type STRING .
   class-data MT_CACHE type TT_CACHE .
+  data MV_VALUE type INT4 .
+  data MT_BITS type ZBIT_TYPE_T .
 
   methods CONSTRUCTOR
     importing
       !IV_VALUE type INT4 .
+  methods POPULATE_BINARY_BITS .
 ENDCLASS.
 
 
@@ -39,7 +43,37 @@ CLASS ZCL_INTEGER IMPLEMENTATION.
 * | [--->] IV_VALUE                       TYPE        INT4
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method CONSTRUCTOR.
+    me->mv_value = IV_VALUE.
+    me->populate_binary_BITS( ).
   endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_INTEGER->POPULATE_BINARY_BITS
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD POPULATE_BINARY_BITS.
+    datA: lt_bits LIKE mt_bits.
+    DATA(lv) = mv_value.
+    DO.
+      DATA(div_result) = lv DIV 2.
+      DATA(div_left) = lv MOD 2.
+      APPEND div_left TO lt_bits.
+
+      IF div_result = 0.
+        EXIT.
+      ENDIF.
+      lv = div_result.
+    ENDDO.
+
+    DATA(lv_len) = lines( lt_bits ).
+    DATA(lv_index) = lv_len.
+    DO lv_len TIMES.
+       READ TABLE lt_bits ASSIGNING FIELD-SYMBOL(<bit>) INDEX lv_index.
+       APPEND <bit> TO mt_bits.
+       lv_index = lv_index - 1.
+    ENDDO.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
