@@ -98,3 +98,9 @@ CRM_CUMULAT_H_UPD_BUFFER_EC
 # 2017-04-27
 1. CRM_ORDER_GET_OBJECTS_TO_SAVE check whether header object is changed.
 2. ZCRM_SRVO_H_SAVE_EC 
+
+# 2017-04-28
+1. CRM_1O_TOOLS
+CRM_ORDER_NEW_MODEL 
+USE_1ORDER_NEW_MODEL
+Via debugging Jerry confirmes that when you click object id hyperlink for the first time, the object buffer is initial.
