@@ -10,8 +10,21 @@ CLASS zcl_mergesort DEFINITION
         !iv_table       TYPE abadr_tab_int4
       RETURNING
         VALUE(rv_table) TYPE abadr_tab_int4 .
+    CLASS-METHODS sort2
+      IMPORTING
+        !iv_table       TYPE abadr_tab_int4
+      RETURNING
+        VALUE(rv_table) TYPE abadr_tab_int4 .
   PROTECTED SECTION.
   PRIVATE SECTION.
+
+    TYPES:
+      BEGIN OF ty_work_area,
+        index   TYPE int4,
+        content TYPE abadr_tab_int4,
+      END OF ty_work_area .
+    TYPES:
+      tt_work_area TYPE TABLE OF ty_work_area WITH KEY index .
 
     CLASS-METHODS concat
       IMPORTING
@@ -28,9 +41,9 @@ CLASS zcl_mergesort DEFINITION
       RETURNING
         VALUE(rv_sub) TYPE abadr_tab_int4 .
     CLASS-METHODS merge
-      IMPORTING
-        !iv_left         TYPE abadr_tab_int4
-        !iv_right        TYPE abadr_tab_int4
+      CHANGING
+        !cv_left         TYPE abadr_tab_int4
+        !cv_right        TYPE abadr_tab_int4
       RETURNING
         VALUE(rv_merged) TYPE abadr_tab_int4 .
     CLASS-METHODS shift
@@ -78,27 +91,25 @@ CLASS ZCL_MERGESORT IMPLEMENTATION.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Static Private Method ZCL_MERGESORT=>MERGE
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_LEFT                        TYPE        ABADR_TAB_INT4
-* | [--->] IV_RIGHT                       TYPE        ABADR_TAB_INT4
+* | [<-->] CV_LEFT                        TYPE        ABADR_TAB_INT4
+* | [<-->] CV_RIGHT                       TYPE        ABADR_TAB_INT4
 * | [<-()] RV_MERGED                      TYPE        ABADR_TAB_INT4
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD merge.
-    DATA(lv_left) = iv_left.
-    DATA(lv_right) = iv_right.
     DATA:lv_shift TYPE int4.
 
-    WHILE lines( lv_left ) > 0 AND lines( lv_right ) > 0.
-      IF lv_left[ 1 ] < lv_right[ 1 ].
+    WHILE lines( cv_left ) > 0 AND lines( cv_right ) > 0.
+      IF cv_left[ 1 ] < cv_right[ 1 ].
         shift( IMPORTING ev_element = lv_shift
-               CHANGING cv_table = lv_left ).
+               CHANGING cv_table = cv_left ).
       ELSE.
         shift( IMPORTING ev_element = lv_shift
-               CHANGING cv_table = lv_right ).
+               CHANGING cv_table = cv_right ).
       ENDIF.
       APPEND lv_shift TO rv_merged.
     ENDWHILE.
 
-    rv_merged = concat( iv_merged = rv_merged iv_left = lv_left iv_right = lv_right ).
+    rv_merged = concat( iv_merged = rv_merged iv_left = cv_left iv_right = cv_right ).
   ENDMETHOD.
 
 
@@ -135,8 +146,61 @@ CLASS ZCL_MERGESORT IMPLEMENTATION.
     DATA(lv_left_sorted) = sort( lv_left ).
     DATA(lv_right_sorted) = sort( lv_right ).
 
-    rv_table = merge( iv_left = lv_left_sorted
-                      iv_right = lv_right_sorted ).
+    rv_table = merge( CHANGING cv_left = lv_left_sorted
+                      cv_right = lv_right_sorted ).
 
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method ZCL_MERGESORT=>SORT2
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_TABLE                       TYPE        ABADR_TAB_INT4
+* | [<-()] RV_TABLE                       TYPE        ABADR_TAB_INT4
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD sort2.
+
+    IF lines( iv_table ) = 1.
+      rv_table = iv_table.
+      RETURN.
+    ENDIF.
+
+    DATA: lt_workarea TYPE tt_work_area,
+          ls_workarea LIKE LINE OF lt_workarea,
+          lv_limit    TYPE int4,
+          j           TYPE int4,
+          k           TYPE int4.
+
+    DATA(lv_len) = lines( iv_table ).
+
+    DO lv_len TIMES.
+      CLEAR: ls_workarea.
+      ls_workarea-index = sy-index.
+      APPEND iv_table[ sy-index ] TO ls_workarea-content.
+      APPEND ls_workarea TO lt_workarea.
+    ENDDO.
+
+    CLEAR: ls_workarea.
+    ls_workarea-index = lv_len + 1.
+    APPEND ls_workarea TO lt_workarea.
+
+    lv_limit = lv_len.
+    WHILE lv_limit > 1.
+      j = k = 1.
+      WHILE k < lv_limit + 1.
+        DATA(merged) = merge( CHANGING cv_left = lt_workarea[ k ]-content
+               cv_right = lt_workarea[ k + 1 ]-content ).
+        lt_workarea[ j ]-content = merged.
+        j = j + 1.
+        k = k + 2.
+      ENDWHILE.
+
+      CLEAR: ls_workarea.
+      ls_workarea-index = j.
+      APPEND ls_workarea TO lt_workarea.
+      lv_limit = ( lv_limit + 1 ) / 2.
+    ENDWHILE.
+
+    APPEND LINES OF lt_workarea[ 1 ]-content TO rv_table.
   ENDMETHOD.
 ENDCLASS.
