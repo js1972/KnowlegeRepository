@@ -1,102 +1,102 @@
-class ZCL_INTEGER definition
-  public
-  final
-  create private .
+CLASS zcl_integer DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PRIVATE .
 
-public section.
+  PUBLIC SECTION.
 
-  methods SHIFT_LEFT
-    importing
-      !IV_POSITION type INT4 .
-  methods OR
-    importing
-      !IO_OTHER_INT type ref to ZCL_INTEGER
-    returning
-      value(RO_RESULT) type ref to ZCL_INTEGER .
-  class-methods CLASS_CONSTRUCTOR .
-  class-methods VALUE_OF
-    importing
-      !IV_VALUE type INT4
-    returning
-      value(RO_INSTANCE) type ref to ZCL_INTEGER .
-  methods GET_BINARY_FORMAT
-    returning
-      value(RV_FORMAT) type STRING .
-  methods AND
-    importing
-      !IO_OTHER_INT type ref to ZCL_INTEGER
-    returning
-      value(RO_RESULT) type ref to ZCL_INTEGER .
-  methods XOR
-    importing
-      !IO_OTHER_INT type ref to ZCL_INTEGER
-    returning
-      value(RO_RESULT) type ref to ZCL_INTEGER .
-  methods GET_RAW_VALUE
-    returning
-      value(RV_RAW) type INT4 .
-  methods SHIFT_RIGHT
-    importing
-      !IV_POSITION type INT4 .
+    METHODS shift_left
+      IMPORTING
+        !iv_position TYPE int4 .
+    METHODS or
+      IMPORTING
+        !io_other_int    TYPE REF TO zcl_integer
+      RETURNING
+        VALUE(ro_result) TYPE REF TO zcl_integer .
+    CLASS-METHODS class_constructor .
+    CLASS-METHODS value_of
+      IMPORTING
+        !iv_value          TYPE int4
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO zcl_integer .
+    METHODS get_binary_format
+      RETURNING
+        VALUE(rv_format) TYPE string .
+    METHODS and
+      IMPORTING
+        !io_other_int    TYPE REF TO zcl_integer
+      RETURNING
+        VALUE(ro_result) TYPE REF TO zcl_integer .
+    METHODS xor
+      IMPORTING
+        !io_other_int    TYPE REF TO zcl_integer
+      RETURNING
+        VALUE(ro_result) TYPE REF TO zcl_integer .
+    METHODS get_raw_value
+      RETURNING
+        VALUE(rv_raw) TYPE int4 .
+    METHODS shift_right
+      IMPORTING
+        !iv_position TYPE int4 .
   PROTECTED SECTION.
-private section.
+  PRIVATE SECTION.
 
-  types:
-    BEGIN OF ty_cache,
+    TYPES:
+      BEGIN OF ty_cache,
         int_value TYPE int4,
         instance  TYPE REF TO zcl_integer,
       END OF ty_cache .
-  types:
-    tt_cache TYPE TABLE OF ty_cache WITH KEY int_value .
-  types:
-    BEGIN OF ty_bit_operation_rule,
+    TYPES:
+      tt_cache TYPE TABLE OF ty_cache WITH KEY int_value .
+    TYPES:
+      BEGIN OF ty_bit_operation_rule,
         op_type       TYPE int4,
         left_operand  TYPE zbit_type,
         right_operand TYPE zbit_type,
         result        TYPE zbit_type,
       END OF ty_bit_operation_rule .
-  types:
-    tt_bit_operation_rule TYPE TABLE OF ty_bit_operation_rule WITH KEY
-                  op_type left_operand right_operand .
+    TYPES:
+      tt_bit_operation_rule TYPE TABLE OF ty_bit_operation_rule WITH KEY
+                    op_type left_operand right_operand .
 
-  constants:
-    BEGIN OF cs_bit_operation,
+    CONSTANTS:
+      BEGIN OF cs_bit_operation,
         or  TYPE int4 VALUE 1,
         and TYPE int4 VALUE 2,
         xor TYPE int4 VALUE 3,
       END OF cs_bit_operation .
-  data MV_BINARY_FORMAT type STRING .
-  class-data MT_CACHE type TT_CACHE .
-  data MV_VALUE type INT4 .
-  data MT_BITS type ZBIT_TYPE_T .
-  constants CV_MAX_BIT type INT4 value 32 ##NO_TEXT.
-  class-data ST_BIT_RULE type TT_BIT_OPERATION_RULE .
+    DATA mv_binary_format TYPE string .
+    CLASS-DATA mt_cache TYPE tt_cache .
+    DATA mv_value TYPE int4 .
+    DATA mt_bits TYPE zbit_type_t .
+    CONSTANTS cv_max_bit TYPE int4 VALUE 32 ##NO_TEXT.
+    CLASS-DATA st_bit_rule TYPE tt_bit_operation_rule .
 
-  methods CONSTRUCTOR
-    importing
-      !IV_VALUE type INT4 .
-  methods POPULATE_BINARY_BITS .
-  methods BIT_OPERATE
-    importing
-      !IV_BIT1 type ZBIT_TYPE
-      !IV_BIT2 type ZBIT_TYPE
-      !IV_OP_TYPE type INT4
-    returning
-      value(RV_RESULT) type ZBIT_TYPE .
-  methods BINARY_2_DECIMAL
-    importing
-      !IV_BINARY type STRING
-    returning
-      value(RV_DECIMAL) type INT4 .
-  methods PERFORM_BIT
-    importing
-      !IO_INT1 type ref to ZCL_INTEGER
-      !IO_INT2 type ref to ZCL_INTEGER
-      !IV_OP_TYPE type INT4
-    returning
-      value(RO_RESULT) type ref to ZCL_INTEGER .
-  methods LEFT_1_BIT .
-  methods RIGHT_1_BIT .
+    METHODS constructor
+      IMPORTING
+        !iv_value TYPE int4 .
+    METHODS populate_binary_bits .
+    METHODS bit_operate
+      IMPORTING
+        !iv_bit1         TYPE zbit_type
+        !iv_bit2         TYPE zbit_type
+        !iv_op_type      TYPE int4
+      RETURNING
+        VALUE(rv_result) TYPE zbit_type .
+    METHODS binary_2_decimal
+      IMPORTING
+        !iv_binary        TYPE string
+      RETURNING
+        VALUE(rv_decimal) TYPE int4 .
+    METHODS perform_bit
+      IMPORTING
+        !io_int1         TYPE REF TO zcl_integer
+        !io_int2         TYPE REF TO zcl_integer
+        !iv_op_type      TYPE int4
+      RETURNING
+        VALUE(ro_result) TYPE REF TO zcl_integer .
+    METHODS left_1_bit .
+    METHODS right_1_bit .
 ENDCLASS.
 
 
@@ -221,12 +221,12 @@ CLASS ZCL_INTEGER IMPLEMENTATION.
 * | Instance Private Method ZCL_INTEGER->LEFT_1_BIT
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method LEFT_1_BIT.
-     DELETE mt_bits INDEX 1.
-     APPEND 0 TO mt_bits.
-     DELETE mt_cache WHERE int_value = mv_value.
-     mv_value = binary_2_decimal( me->get_binary_format( ) ).
-  endmethod.
+  METHOD left_1_bit.
+    DELETE mt_bits INDEX 1.
+    APPEND 0 TO mt_bits.
+    DELETE mt_cache WHERE int_value = mv_value.
+    mv_value = binary_2_decimal( me->get_binary_format( ) ).
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -306,12 +306,12 @@ CLASS ZCL_INTEGER IMPLEMENTATION.
 * | Instance Private Method ZCL_INTEGER->RIGHT_1_BIT
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method RIGHT_1_BIT.
-     DELETE mt_bits INDEX cv_max_bit.
-     INSERT 0 INTO mt_bits INDEX 1.
-     DELETE mt_cache WHERE int_value = mv_value.
-     mv_value = binary_2_decimal( me->get_binary_format( ) ).
-  endmethod.
+  METHOD right_1_bit.
+    DELETE mt_bits INDEX cv_max_bit.
+    INSERT 0 INTO mt_bits INDEX 1.
+    DELETE mt_cache WHERE int_value = mv_value.
+    mv_value = binary_2_decimal( me->get_binary_format( ) ).
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -319,15 +319,15 @@ CLASS ZCL_INTEGER IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_POSITION                    TYPE        INT4
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method SHIFT_LEFT.
-     IF iv_position <= 0 OR iv_position >= cv_max_bit.
-        RETURN.
-     ENDIF.
+  METHOD shift_left.
+    IF iv_position <= 0 OR iv_position >= cv_max_bit.
+      RETURN.
+    ENDIF.
 
-     DO iv_position TIMES.
-        LEFT_1_BIT( ).
-     ENDDO.
-  endmethod.
+    DO iv_position TIMES.
+      left_1_bit( ).
+    ENDDO.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -335,15 +335,15 @@ CLASS ZCL_INTEGER IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_POSITION                    TYPE        INT4
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method SHIFT_RIGHT.
-     IF iv_position <= 0 OR iv_position >= cv_max_bit.
-        RETURN.
-     ENDIF.
+  METHOD shift_right.
+    IF iv_position <= 0 OR iv_position >= cv_max_bit.
+      RETURN.
+    ENDIF.
 
-     DO iv_position TIMES.
-        right_1_BIT( ).
-     ENDDO.
-  endmethod.
+    DO iv_position TIMES.
+      right_1_bit( ).
+    ENDDO.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
