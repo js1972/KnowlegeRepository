@@ -50,10 +50,14 @@ function heapSort(array) {
 function heapify(arr, x, len) {
 	if (Object.prototype.toString.call(arr).slice(8, -1) === 'Array' && typeof x === 'number') {
 		var l = 2 * x, r = 2 * x + 1, largest = x, temp;
+		console.log("x: " + x + " l: " + l + " r: " + r + " largest: " + largest);
+		console.log(" arr[l]: " + arr[l] + " arr[largest]: " + arr[largest]);
 		if (l < len && arr[l] > arr[largest]) {
+			console.log(" left child > largest, plan to swap!");
 			largest = l;
 		}
 		if (r < len && arr[r] > arr[largest]) {
+			console.log(" right child > largest, plan to swap!");
 			largest = r;
 		}
 		if (largest != x) {
@@ -68,8 +72,8 @@ function heapify(arr, x, len) {
 	}
 }
 
-var a = [1,0,3,2,5,3];
-
+var a = [1,0,3];
+// var a = [1,4,2,3]
 var result = heapSort(a);
 debugger;
 </script>
