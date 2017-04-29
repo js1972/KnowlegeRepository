@@ -1,0 +1,55 @@
+<html>
+
+  <script>
+
+    (function main() {
+      var array = [1, 4, -1, 2, 0, -5, -3, 3, -2, -4, 5];
+      var minusArray = [], positiveArray = [];
+
+      for( var i = 0; i < array.length; i++) {
+        array[i] >= 0  ? positiveArray.push(array[i]): minusArray.push(-array[i]);
+      }
+      Array.prototype.max = array_max;
+      hashSort(minusArray, positiveArray);
+    })();
+
+    function hashSort(min,positive) {
+      var result = revert(hashSortInternal(min)).concat(hashSortInternal(positive));
+      console.log("after sort: " + result);
+    }
+
+    function array_max( ){
+      var i, max = this[0];
+      for (i = 1; i < this.length; i++) {
+        if (max < this[i])
+          max = this[i];
+      }
+      return max;
+    }
+
+    function hashSortInternal(array) {
+      var bucket = [];
+      var MAX = array.max() + 1;
+      for (var i = 0; i < MAX; i++)
+        bucket[i] = 0;
+      for(var i=0; i< array.length; i++)
+        bucket[array[i]]++;
+      for(var i = 0, idx = 0; i<MAX; i++) {
+        for(var k= bucket[i]; k >0; k--) {
+          array[idx++] = i;
+        }
+      }
+      return array;
+    }
+
+    function revert(array) {
+      var result = [];
+      for( var i = array.length - 1, idx = 0; i >=0; i--)
+        result[i] = -array[idx++];
+      array.length = 0;
+      return result;
+    }
+  </script>
+</html>
+
+
