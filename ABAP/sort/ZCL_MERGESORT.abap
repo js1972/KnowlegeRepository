@@ -110,6 +110,7 @@ CLASS ZCL_MERGESORT IMPLEMENTATION.
     ENDWHILE.
 
     rv_merged = concat( iv_merged = rv_merged iv_left = cv_left iv_right = cv_right ).
+    CLEAR: cv_left, cv_right.
   ENDMETHOD.
 
 
@@ -195,10 +196,10 @@ CLASS ZCL_MERGESORT IMPLEMENTATION.
         k = k + 2.
       ENDWHILE.
 
-      CLEAR: ls_workarea.
-      ls_workarea-index = j.
-      APPEND ls_workarea TO lt_workarea.
-      lv_limit = ( lv_limit + 1 ) / 2.
+*      CLEAR: ls_workarea.
+*      ls_workarea-index = j.
+*      APPEND ls_workarea TO lt_workarea.
+      lv_limit = ( lv_limit + 1 ) DIV 2.
     ENDWHILE.
 
     APPEND LINES OF lt_workarea[ 1 ]-content TO rv_table.
