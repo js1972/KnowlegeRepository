@@ -9,8 +9,17 @@ function shellSort(array) {
     var length = array.length,
         gap = Math.floor(length / 2);
     while (gap > 0) {
+    	console.log("Current gap changed to be: " + gap);
         for (var i = gap; i < length; i++) {
+        	console.log( "in current loop, i = " + i + " gap: " + gap);
             for (var j = i; 0 < j; j -= gap) {
+            	console.log("in current loop, gap is fixed as: " + gap + " current j: " + j);
+            	var left = j - gap;
+            	console.log(" trying to evaluate left: " + left + " right: " + j);
+            	var abapLeft = left + 1;
+            	var abapRight = j + 1;
+            	console.log(" the corresponding ABAP index, LEFT: " + abapLeft + " RIGHT: " + abapRight);
+            	console.log(" array[left]: " + array[left] + " array[right]: " + array[j]);
                 if (array[j - gap] > array[j]) {
                     swap(array, j - gap, j);
                 } else {
@@ -22,7 +31,7 @@ function shellSort(array) {
     }
     return array;
 }
-var input = [1,5,3,0,1,4];
+var input = [9,4,1,2,3,4,5];
 var result = shellSort(input);
 debugger;
 </script>
