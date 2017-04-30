@@ -1,0 +1,29 @@
+<html>
+<script type="text/javascript">
+function shellSort(array) {
+    function swap(array, i, k) {
+        var temp = array[i];
+        array[i] = array[k];
+        array[k] = temp;
+    }
+    var length = array.length,
+        gap = Math.floor(length / 2);
+    while (gap > 0) {
+        for (var i = gap; i < length; i++) {
+            for (var j = i; 0 < j; j -= gap) {
+                if (array[j - gap] > array[j]) {
+                    swap(array, j - gap, j);
+                } else {
+                    break;
+                }
+            }
+        }
+        gap = Math.floor(gap / 2);
+    }
+    return array;
+}
+var input = [1,5,3,0,1,4];
+var result = shellSort(input);
+debugger;
+</script>
+</html>
