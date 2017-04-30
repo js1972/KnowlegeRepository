@@ -1,0 +1,43 @@
+<html>
+<script type="text/javascript">
+/*
+	  ● Array.prototype.reduce(callback,[initialValue])： 习惯性称之为累加器函数，对数组的每个元素执行回调函数，最后返回一个值（这个值是最后一次调用回调函数时返回的值）
+这个函数的回调函数有 4 个参数
+      ○ accumulator： 上一次调用回调函数返回的值
+      ○ currentValue： 当前在处理的值
+      ○ currentIndex
+      ○ array
+      ○ initialValue： 可选项，其值用于第一次调用 callback 的第一个参数
+  ● Array.prototype.reduceRight(callback[, initialValue])： 用法和上面的函数一样，只不过遍历方向正好相反
+*/
+var a = [1,10,5,3,8].reduce(function(accumulator,currentValue){
+    return accumulator*currentValue;
+});  // 1200
+console.log(a);
+
+var b = [[0, 1], [2, 3], [4, 5]].reduce(function(a, b) {
+    return a.concat(b);
+});  // [0, 1, 2, 3, 4, 5]
+console.log(b);
+
+var c = [[0, 1], [2, 3], [4, 5]].reduceRight(function(a, b) {
+    return a.concat(b);
+});  // [4, 5, 2, 3, 0, 1]
+console.log(c);
+
+//   ● 都可以通过形如 Array.prototype.map.call(str,callback) 的方式来操作字符串
+var str = '123,hello';
+// 反转字符串
+console.log(Array.prototype.reduceRight.call(str,function(a,b){
+    return a+b;
+}));  // olleh,321
+// 过滤字符串，只保留小写字母
+console.log(Array.prototype.filter.call('123,hello', function(a) {
+    return /[a-z]/.test(a);
+}).join(''));  // hello
+// 利用 map 遍历字符串（这个例子明显举得不太好 *_*）
+console.log(Array.prototype.map.call("Hello,World",function(a){
+    return a.toUpperCase();
+}));  // ["1", "2", "3", ",", "H", "E", "L", "L", "O"]
+</script>
+</html>
