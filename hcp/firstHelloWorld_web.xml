@@ -2,12 +2,8 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>JerryTest</display-name>
   <welcome-file-list>
+    <welcome-file>Hello</welcome-file>
     <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
     <description></description>
@@ -16,7 +12,10 @@
     <servlet-class>helloworld.HelloWorldServlet</servlet-class>
   </servlet>
   <servlet-mapping>
+  <!-- 
+  http://stackoverflow.com/questions/4140448/difference-between-and-in-servlet-mapping-url-pattern
+   -->
     <servlet-name>HelloWorldServlet</servlet-name>
-    <url-pattern>/hello</url-pattern>
+    <url-pattern>/Hello</url-pattern>
   </servlet-mapping>
 </web-app>
