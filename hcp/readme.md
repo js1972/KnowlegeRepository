@@ -8,13 +8,20 @@ When you develop applications that run on SAP Cloud Platform, you can rely on ce
 Cloud Foundry is an engaging open-source platform-as-a-service creating a buzz in the tech world
 
 # User
-D042416@gmail.com Sap12345
+1. D042416@gmail.com Sap12345
 p1942400002trial
+i042416trial
+2. [limitation of trial account](https://help.sap.com/viewer/65de2977205c403bbc107264b8eccf4b/Cloud/en-US/e4986153bb571014a2ddc2fdd682ee90.html), for example One running Java application.
 
 # Host
 hanatrial.ondemand.com
+
+# Url
+1. [cockpit](https://account.hanatrial.ondemand.com/)
+
 # work log
 ## 2017-05-01
 956我为什么没办法publish 到cloud 上去？
 1004可能我有个工具没装。新Eclipse还是需要配proxy
 Possible hint: https://archive.sap.com/discussions/thread/3857381
+finally it works: https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/
