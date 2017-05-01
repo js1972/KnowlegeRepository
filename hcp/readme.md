@@ -19,9 +19,14 @@ hanatrial.ondemand.com
 # Url
 1. [cockpit](https://account.hanatrial.ondemand.com/)
 
+# blogs
+
+1. [Logging in HCP Cloud foundry with Java and Tomee using slf4j, logback, Jolokia](https://blogs.sap.com/2016/12/02/logging-in-hcp-cloud-foundry-with-java-and-tomee-using-slf4j-logback-jolokia/)
+
 # work log
 ## 2017-05-01
 956我为什么没办法publish 到cloud 上去？
 1004可能我有个工具没装。新Eclipse还是需要配proxy
 Possible hint: https://archive.sap.com/discussions/thread/3857381
 finally it works: https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/
+1518: I would like to achieve both servlet and html work. Is it really possible? I tried in local it is possible.
