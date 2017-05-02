@@ -1,8 +1,6 @@
 report z.
 
-DATA: lv_id TYPE crmd_orderadm_h-object_id VALUE '8000000072',
-      lv_guid TYPe crmt_object_guid,
-      lt_header_guid TYPE crmt_object_guid_tab,
+DATA: lt_header_guid TYPE crmt_object_guid_tab,
       lt_requested   TYPE crmt_object_name_tab,
       lv_request_obj TYPE crmt_object_name,
       lt_srv_req_h   TYPE crmt_srv_req_h_wrkt,
@@ -12,24 +10,11 @@ DATA: lv_id TYPE crmd_orderadm_h-object_id VALUE '8000000072',
 
 START-OF-SELECTION.
 
-  SELECT single guid INTO lv_guid FROM crmd_orderadm_h where object_id = lv_id.
-  IF sy-subrc <> 0.
-     WRITE: / 'Service Order does not exist:' , lv_id.
-     RETURN.
-  ENDIF.
-  APPEND lv_guid TO lt_header_guid.
+  DATA(ls_header) = value crmd_orderadm_h( object_id = '8000000072'
+                                            guid = '6C0B84B754971ED78B83CC0F775F5A1A' ).
+  APPEND ls_header-guid TO lt_header_guid.
   lv_request_obj = 'CUMULAT_H'.
   INSERT lv_request_obj INTO TABLE lt_requested.
-
-  CALL FUNCTION 'CRM_ORDER_READ'
-    EXPORTING
-      it_header_guid       = lt_header_guid
-      it_requested_objects = lt_requested
-      iv_no_auth_check     = abap_true
-    IMPORTING
-      ET_CUMULAT_H = lt_cum_h.
-
-  CLEAR: lt_cum_h.
 
   CALL FUNCTION 'CRM_ORDER_READ'
     EXPORTING
@@ -40,4 +25,13 @@ START-OF-SELECTION.
       ET_CUMULAT_H = lt_cum_h
       ET_ORDERADM_i = lt_orderadm_i.
 
-  BREAK-POINT.
+ READ TABLE lt_cum_h INTO DATA(ls_cum_h) INDEX 1.
+ READ TABLE lt_orderadm_i INTO DATA(ls_order_i) INDEX 1.
+ IF ls_cum_h IS NOT INITIAL.
+    WRITE:/ 'Gross weight in header:' COLOR COL_NEGATIVE, ls_cum_h-gross_weight
+       COLOR COL_POSITIVE.
+ ENDIF.
+
+ IF ls_order_i IS NOT INITIAL.
+    WRITE:/ 'line item:' COLOR COL_GROUP, ls_order_i-description COLOR COL_KEY.
+ ENDIF.
