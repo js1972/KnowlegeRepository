@@ -494,7 +494,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     LOOP AT <lt_dbtab> ASSIGNING FIELD-SYMBOL(<ls_dbtab>).
       conv_s4_2_1order_and_fill_buff( EXPORTING it_objects = lt_objects
                            CHANGING cs_item = <ls_dbtab> ).
-      APPEND <ls_dbtab> TO et_orderadm_i_db.
+      INSERT <ls_dbtab> INTO TABLE et_orderadm_i_db.
     ENDLOOP.
   ENDMETHOD.
 
@@ -605,6 +605,11 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     CREATE DATA lr_to_delete_db TYPE TABLE OF (lv_comp_db_name).
     ASSIGN lr_to_delete_db->* TO <to_delete>.
     LOOP AT lt_unsorted ASSIGNING FIELD-SYMBOL(<component>).
+* Jerry 2017-05-03 16:39PM ignore ORDERADM_I in this method
+* If ORDERADM_I is not assigned to header object type like BUS2000116, there is some validation
+* error
+      CHECK <component> <> 'ORDERADM_I'.
+
       DATA(lv_conv_cls) = get_conv_cls_name_by_component( <component> ).
       CHECK lv_conv_cls IS NOT INITIAL.
 
@@ -614,6 +619,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         EXPORTING
           iv_ref_guid  = iv_header_guid
           iv_ref_kind  = 'A'
+          iv_current_guid = iv_header_guid
         CHANGING
           ct_to_insert = <to_insert>
           ct_to_update = <to_update>
@@ -683,8 +689,9 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         DATA(lo_conv_class) = get_convertor_instance( lv_conv_class ).
         CALL METHOD lo_conv_class->convert_1o_to_s4
           EXPORTING
-            iv_ref_guid  = <orderadm_i_wrk>-guid
-            iv_ref_kind  = 'B'
+            iv_ref_guid  = <orderadm_i_wrk>-header
+            iv_ref_kind  = 'A'
+            iv_current_guid = <orderadm_i_wrk>-guid
           CHANGING
             ct_to_insert = <to_insert>
             ct_to_update = <to_update>
@@ -704,8 +711,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     DATA(lv_update_field) = |{ <acronym>-acronym }_UPDATE|.
     DATA(lv_delete_field) = |{ <acronym>-acronym }_DELETE|.
     ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
-    ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
-    ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
+    ASSIGN COMPONENT lv_update_field OF STRUCTURE <update_data> TO <tab_for_update>.
+    ASSIGN COMPONENT lv_delete_field OF STRUCTURE <update_data> TO <tab_for_delete>.
 
     IF <to_insert> IS NOT INITIAL.
        INSERT LINES OF <to_insert> INTO TABLE <tab_for_insert>.
