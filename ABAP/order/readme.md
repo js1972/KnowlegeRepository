@@ -104,3 +104,6 @@ CRM_CUMULAT_H_UPD_BUFFER_EC
 CRM_ORDER_NEW_MODEL 
 USE_1ORDER_NEW_MODEL
 Via debugging Jerry confirmes that when you click object id hyperlink for the first time, the object buffer is initial.
+
+# 2017-05-02
+1. should take care object type initial case in creation.
