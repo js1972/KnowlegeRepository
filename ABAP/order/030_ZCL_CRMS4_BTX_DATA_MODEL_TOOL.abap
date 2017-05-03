@@ -58,7 +58,7 @@ private section.
   data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
   data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
   data MT_ITEM_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
-
+  data mt_acronym TYPE STANDARD TABLE OF CRMC_SUBOB_CAT_I.
   methods FETCH_ITEM_CONV_CLASS .
   methods FETCH_ITEM_SUPPORTED_COMP
     importing
@@ -513,6 +513,12 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
        WHERE subobj_category = iv_item_object_type.
     ASSERT sy-subrc = 0.
     rv_db_type = 'CRMS4D_' && ls_zcrmc_subob_cat-acronym && '_I'.
+
+    READ TABLE mt_acronym ASSIGNING FIELD-SYMBOL(<acronum>)
+      WITH KEY subobj_category = iv_item_object_type.
+    IF sy-subrc <> 0.
+       APPEND ls_zcrmc_subob_cat TO mt_acronym.
+    ENDIF.
   ENDMETHOD.
 
 
@@ -628,9 +634,10 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD SAVE_SINGLE_ITEMS.
+  METHOD save_single_items.
     DATA: lt_orderadm_i_wrk TYPE crmt_orderadm_i_wrkt,
-          lt_objects        TYPE crmt_object_name_tab.
+          lt_objects        TYPE crmt_object_name_tab,
+          ls_item_update    TYPE crms4s_btx_i_update_records.
 
     DATA: lr_to_insert_db TYPE REF TO data,
           lr_to_update_db TYPE REF TO data,
@@ -675,15 +682,48 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         CHECK lv_conv_class IS NOT INITIAL.
         DATA(lo_conv_class) = get_convertor_instance( lv_conv_class ).
         CALL METHOD lo_conv_class->convert_1o_to_s4
-        EXPORTING
-          iv_ref_guid  = <orderadm_i_wrk>-guid
-          iv_ref_kind  = 'B'
-        CHANGING
-          ct_to_insert = <to_insert>
-          ct_to_update = <to_update>
-          ct_to_delete = <to_delete>.
-
+          EXPORTING
+            iv_ref_guid  = <orderadm_i_wrk>-guid
+            iv_ref_kind  = 'B'
+          CHANGING
+            ct_to_insert = <to_insert>
+            ct_to_update = <to_update>
+            ct_to_delete = <to_delete>.
       ENDLOOP.
+
+      READ TABLE mt_acronym ASSIGNING FIELD-SYMBOL(<acronym>) WITH KEY
+         subobj_category = <orderadm_i_wrk>-object_type.
+    ASSERT sy-subrc = 0.
+
+    ASSIGN COMPONENT <acronym>-acronym OF STRUCTURE ls_item_update TO FIELD-SYMBOL(<update_data>).
+    ASSERT sy-subrc = 0.
+    FIELD-SYMBOLS:<tab_for_insert> TYPE ANY TABLE,
+                   <tab_for_update> TYPE ANY TABLE,
+                   <tab_for_delete> TYPE ANY TABLE.
+    DATA(lv_insert_field) = |{ <acronym>-acronym }_INSERT|.
+    DATA(lv_update_field) = |{ <acronym>-acronym }_UPDATE|.
+    DATA(lv_delete_field) = |{ <acronym>-acronym }_DELETE|.
+    ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
+    ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
+    ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
+
+    IF <to_insert> IS NOT INITIAL.
+       INSERT LINES OF <to_insert> INTO TABLE <tab_for_insert>.
+    ENDIF.
+
+    IF <to_update> IS NOT INITIAL.
+       INSERT LINES OF <to_update> INTO TABLE <tab_for_update>.
+    ENDIF.
+
+    IF <to_delete> IS NOT INITIAL.
+       INSERT LINES OF <to_delete> INTO TABLE <tab_for_delete>.
+    ENDIF.
+* Jerry 2017-05-03 15:37PM - loop is end, ready to fill update records now
     ENDLOOP.
+
+
+    CALL FUNCTION 'CRM_BTX_I_UPDATE_DU' IN UPDATE TASK
+      EXPORTING
+        is_update_record = ls_item_update.
   ENDMETHOD.
 ENDCLASS.
