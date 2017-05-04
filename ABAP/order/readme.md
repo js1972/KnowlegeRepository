@@ -107,3 +107,7 @@ Via debugging Jerry confirmes that when you click object id hyperlink for the fi
 
 # 2017-05-02
 1. should take care object type initial case in creation.
+
+# 2017-05-04
+1. CRM_SCHEDLIN_I_MAINTAIN_OW
+2. CRM_PRODUCT_I_A_CHANGE_QUAN_EC

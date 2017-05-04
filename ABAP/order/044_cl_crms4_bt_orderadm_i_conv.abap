@@ -30,10 +30,12 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
           lt_update  TYPE crmt_orderadm_i_du_tab,
           lt_delete  TYPE crmt_orderadm_i_du_tab,
           lt_to_save TYPE crmt_object_guid_tab,
-          lt_header  LIKE lt_to_save.
+          lt_header  LIKE lt_to_save,
+          lr_new_line TYPE REF TO DATA.
 
     FIELD-SYMBOLS:<i_update> TYPE ANY TABLE,
-                  <i_insert> TYPE ANY TABLE.
+                  <i_insert> TYPE ANY TABLE,
+                  <new_line_item> TYPE any.
     CHECK iv_ref_kind = 'A'.
     APPEND iv_current_guid TO lt_to_save.
     APPEND iv_ref_guid TO lt_header.
@@ -75,7 +77,10 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
         ENDIF.
       ENDLOOP.
       IF <i_update> IS INITIAL.
-        INSERT <update> INTO TABLE <i_update>.
+        CREATE DATA lr_new_line LIKE LINE OF ct_to_update.
+        ASSIGN lr_new_line->* TO <new_line_item>.
+        MOVE-CORRESPONDING <update> TO <new_line_item>.
+        INSERT <new_line_item> INTO TABLE <i_update>.
       ENDIF.
     ENDIF.
 
@@ -96,7 +101,12 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
         ENDIF.
       ENDLOOP.
       IF <i_insert> IS INITIAL.
-        INSERT <insert> INTO TABLE <i_insert>.
+* Jerry 2017-05-04 10:56AM - reason for this code:
+* https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/36
+        CREATE DATA lr_new_line LIKE LINE OF ct_to_insert.
+        ASSIGN lr_new_line->* TO <new_line_item>.
+        MOVE-CORRESPONDING <insert> TO <new_line_item>.
+        INSERT <new_line_item> INTO TABLE <i_insert>.
       ENDIF.
     ENDIF.
 
