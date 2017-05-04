@@ -30,12 +30,8 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
           lt_update  TYPE crmt_orderadm_i_du_tab,
           lt_delete  TYPE crmt_orderadm_i_du_tab,
           lt_to_save TYPE crmt_object_guid_tab,
-          lt_header  LIKE lt_to_save,
-          lr_new_line TYPE REF TO DATA.
+          lt_header  LIKE lt_to_save.
 
-    FIELD-SYMBOLS:<i_update> TYPE ANY TABLE,
-                  <i_insert> TYPE ANY TABLE,
-                  <new_line_item> TYPE any.
     CHECK iv_ref_kind = 'A'.
     APPEND iv_current_guid TO lt_to_save.
     APPEND iv_ref_guid TO lt_header.
@@ -56,61 +52,17 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
         et_records_to_update = lt_update
         et_records_to_delete = lt_delete.
 
+    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 
-* ct_* can have different table type like CRMS4D_SALE_I_T, CRMS4D_SVPR_I_T
-* Jerry 2017-04-26 12:11PM only support update currently
-
-    READ TABLE lt_update ASSIGNING FIELD-SYMBOL(<update>) INDEX 1.
-    IF sy-subrc = 0.
-      DATA(lr_to_update) = REF #( ct_to_update ).
-      ASSIGN lr_to_update->* TO <i_update>.
-
-      LOOP AT <i_update> ASSIGNING FIELD-SYMBOL(<update_queue>).
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <update_queue> TO
-           FIELD-SYMBOL(<update_record_in_queue>).
-        CHECK sy-subrc = 0.
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <update> TO
-           FIELD-SYMBOL(<currently_determined_update>).
-        CHECK sy-subrc = 0.
-        IF <update_record_in_queue> = <currently_determined_update>.
-          MOVE-CORRESPONDING <update> TO <update_queue>.
-        ENDIF.
-      ENDLOOP.
-      IF <i_update> IS INITIAL.
-        CREATE DATA lr_new_line LIKE LINE OF ct_to_update.
-        ASSIGN lr_new_line->* TO <new_line_item>.
-        MOVE-CORRESPONDING <update> TO <new_line_item>.
-        INSERT <new_line_item> INTO TABLE <i_update>.
-      ENDIF.
-    ENDIF.
-
-    READ TABLE lt_insert ASSIGNING FIELD-SYMBOL(<insert>) INDEX 1.
-    IF sy-subrc = 0.
-      DATA(lr_to_insert) = REF #( ct_to_insert ).
-      ASSIGN lr_to_insert->* TO <i_insert>.
-
-      LOOP AT <i_insert> ASSIGNING FIELD-SYMBOL(<insert_queue>).
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <insert_queue> TO
-           FIELD-SYMBOL(<insert_record_in_queue>).
-        CHECK sy-subrc = 0.
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <insert> TO
-           FIELD-SYMBOL(<currently_determined_insert>).
-        CHECK sy-subrc = 0.
-        IF <insert_record_in_queue> = <currently_determined_insert>.
-          MOVE-CORRESPONDING <insert> TO <insert_queue>.
-        ENDIF.
-      ENDLOOP.
-      IF <i_insert> IS INITIAL.
-* Jerry 2017-05-04 10:56AM - reason for this code:
-* https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/36
-        CREATE DATA lr_new_line LIKE LINE OF ct_to_insert.
-        ASSIGN lr_new_line->* TO <new_line_item>.
-        MOVE-CORRESPONDING <insert> TO <new_line_item>.
-        INSERT <new_line_item> INTO TABLE <i_insert>.
-      ENDIF.
-    ENDIF.
-
-
+    CALL METHOD tool->merge_change_2_global_buffer
+      EXPORTING
+        it_current_insert = lt_insert
+        it_current_update = lt_update
+        it_current_delete = lt_delete
+      CHANGING
+        ct_global_insert  = ct_to_insert
+        ct_global_update  = ct_to_update
+        ct_global_delete  = ct_to_delete.
   ENDMETHOD.
 
 
