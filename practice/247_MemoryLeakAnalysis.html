@@ -1,0 +1,25 @@
+<html>
+<script>
+// https://github.wdf.sap.corp/CNFIORI/knowledge-base/issues/241 does not have memory link as well
+// https://www.slideshare.net/gonzaloruizdevilla/finding-and-debugging-memory-leaks-in-javascript-with-chrome-devtools
+var count = 0;
+var number = 1000;
+var newArray = null;
+var memoryLeak = {
+  callAgain: function() {
+      var that = this;
+      setTimeout(function() {
+        that.callAgain();
+        newArray = new Array();
+        if( count > 3 )
+         number = 10000;
+        for( var a = 0; a < number; a++)
+          newArray[a] = a;
+        count++;
+      }, 1000); 
+    } 
+}; 
+
+memoryLeak.callAgain();
+</script>
+</html>
