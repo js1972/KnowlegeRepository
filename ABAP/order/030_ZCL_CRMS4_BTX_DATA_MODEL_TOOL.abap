@@ -455,7 +455,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     DATA: lt_btx_i   TYPE TABLE OF crms4d_btx_i,
           lt_acronym TYPE TABLE OF CRMC_SUBOB_CAT_I,
           lr_dbtab   TYPE REF TO data,
-          lt_objects TYPE crmt_object_name_tab.
+          lt_objects TYPE crmt_object_name_tab,
+          ls_item    LIKE LINE OF et_orderadm_i_db.
 
     FIELD-SYMBOLS: <lt_dbtab>         TYPE ANY TABLE.
 
@@ -494,7 +495,9 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     LOOP AT <lt_dbtab> ASSIGNING FIELD-SYMBOL(<ls_dbtab>).
       conv_s4_2_1order_and_fill_buff( EXPORTING it_objects = lt_objects
                            CHANGING cs_item = <ls_dbtab> ).
-      INSERT <ls_dbtab> INTO TABLE et_orderadm_i_db.
+* Jerry 2017-05-03 10:05AM - <ls_dbtab> has format such as CRMS4D_SALE_I, should not directly put to et_orderadm_i_db.
+      MOVE-CORRESPONDING <ls_dbtab> TO ls_item.
+      INSERT ls_item INTO TABLE et_orderadm_i_db.
     ENDLOOP.
   ENDMETHOD.
 
