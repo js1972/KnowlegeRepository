@@ -5,18 +5,12 @@ class CL_CRMS4_BT_DATA_MODEL_TOOL definition
 
 public section.
 
+  types:
+    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
+
   methods SAVE_HEADER
     importing
       !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  class-methods CLASS_CONSTRUCTOR .
-  methods GET_ITEM
-    importing
-      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
-    exporting
-      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
-  class-methods GET_INSTANCE
-    returning
-      value(RO_INSTANCE) type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
   methods MERGE_CHANGE_2_GLOBAL_BUFFER
     importing
       !IT_CURRENT_INSERT type ANY TABLE
@@ -26,6 +20,15 @@ public section.
       !CT_GLOBAL_INSERT type ANY TABLE
       !CT_GLOBAL_UPDATE type ANY TABLE
       !CT_GLOBAL_DELETE type ANY TABLE .
+  class-methods CLASS_CONSTRUCTOR .
+  methods GET_ITEM
+    importing
+      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
+    exporting
+      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
+  class-methods GET_INSTANCE
+    returning
+      value(RO_INSTANCE) type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
   PROTECTED SECTION.
 private section.
 
@@ -57,8 +60,6 @@ private section.
         conv_cls  TYPE string,
       END OF ty_component_conv_cls .
   types:
-    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
-  types:
     tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
 
   data MT_CONVERTOR_INST_BUFFER type TT_CONVERTOR_INSTANCE .
@@ -67,7 +68,16 @@ private section.
   data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
   data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
   data MT_ITEM_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
-  data mt_acronym TYPE STANDARD TABLE OF CRMC_SUBOB_CAT_I.
+  data:
+    mt_acronym TYPE STANDARD TABLE OF CRMC_SUBOB_CAT_I .
+
+  methods MERGE_FROM_COMPONENT_OB
+    importing
+      !IT_SUPPORTED_COMP type TT_SUPPORTED_COMPONENTS
+    changing
+      !CT_GLOBAL_INSERT type ANY TABLE
+      !CT_GLOBAL_UPDATE type ANY TABLE
+      !CT_GLOBAL_DELETE type ANY TABLE .
   methods FETCH_ITEM_CONV_CLASS .
   methods FETCH_ITEM_SUPPORTED_COMP
     importing
@@ -99,7 +109,7 @@ private section.
     importing
       !IV_CLS_NAME type CRMT_OBJECT_NAME
     returning
-      value(RO_CONVERTOR) type ref to if_crms4_btx_data_model_conv .
+      value(RO_CONVERTOR) type ref to IF_CRMS4_BTX_DATA_MODEL_CONV .
   methods FETCH_HEADER_SUPPORTED_COMP .
   methods SAVE_SINGLE_HEADER
     importing
@@ -129,6 +139,11 @@ private section.
       !IV_ITEM_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
     returning
       value(RV_DB_TYPE) type STRING .
+  methods MERGE_TABLE
+    importing
+      !IT_SUPPORTED_COMP type TT_SUPPORTED_COMPONENTS
+    changing
+      !CT_GLOBAL_BUFFER type ANY TABLE .
 ENDCLASS.
 
 
@@ -648,6 +663,65 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->MERGE_FROM_COMPONENT_OB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_SUPPORTED_COMP              TYPE        TT_SUPPORTED_COMPONENTS
+* | [<-->] CT_GLOBAL_INSERT               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_UPDATE               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_DELETE               TYPE        ANY TABLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD merge_from_component_ob.
+
+* See https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
+* PRODUCT_I has no change, and changes done on item SHIPPING,\
+* since these two components shares the same item table now,
+* without this method, all fields from PRODUCT_I remains initial
+
+    IF ct_global_insert IS INITIAL AND ct_global_update IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    merge_table( EXPORTING it_supported_comp = it_supported_comp
+                 CHANGING ct_global_buffer = ct_global_insert ).
+
+    merge_table( EXPORTING it_supported_comp = it_supported_comp
+                 CHANGING ct_global_buffer = ct_global_update ).
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->MERGE_TABLE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_SUPPORTED_COMP              TYPE        TT_SUPPORTED_COMPONENTS
+* | [<-->] CT_GLOBAL_BUFFER               TYPE        ANY TABLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD merge_table.
+
+    DATA: lr_data TYPE REF TO data.
+    FIELD-SYMBOLS: <any> TYPE any.
+
+    LOOP AT ct_global_buffer ASSIGNING FIELD-SYMBOL(<global_buffer>).
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE <global_buffer> TO FIELD-SYMBOL(<guid>).
+
+      LOOP AT it_supported_comp ASSIGNING FIELD-SYMBOL(<comp>).
+        DATA(lv_conv_class) = get_conv_cls_name_by_component( <comp> ).
+        CHECK lv_conv_class IS NOT INITIAL.
+        DATA(lo_conv_class) = get_convertor_instance( lv_conv_class ).
+        DATA(lv_workarea) = lo_conv_class->get_wrk_structure_name( ).
+        CREATE DATA lr_data TYPE (lv_workarea).
+        ASSIGN lr_data->* TO <any>.
+        lo_conv_class->get_ob( EXPORTING iv_guid = <guid> IMPORTING es_data = <any> ).
+        IF <any> IS NOT INITIAL.
+           MOVE-CORRESPONDING <any> TO <global_buffer>.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->SAVE_HEADER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
@@ -668,15 +742,15 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD SAVE_SINGLE_HEADER.
+  METHOD save_single_header.
 
     DATA: lr_to_insert_db TYPE REF TO data,
           lr_to_update_db TYPE REF TO data,
           lr_to_delete_db TYPE REF TO data.
 
     FIELD-SYMBOLS: <to_insert> TYPE ANY TABLE,
-                   <to_update> TYPE ANY TABLE,
-                   <to_delete> TYPE ANY TABLE.
+                    <to_update> TYPE ANY TABLE,
+                    <to_delete> TYPE ANY TABLE.
 
     DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
     DATA(lt_header_supported_comp) = get_header_supported_comp( lv_object_type ).
@@ -704,14 +778,24 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
       CALL METHOD lo_convertor->convert_1o_to_s4
         EXPORTING
-          iv_ref_guid  = iv_header_guid
-          iv_ref_kind  = 'A'
+          iv_ref_guid     = iv_header_guid
+          iv_ref_kind     = 'A'
           iv_current_guid = iv_header_guid
         CHANGING
-          ct_to_insert = <to_insert>
-          ct_to_update = <to_update>
-          ct_to_delete = <to_delete>.
+          ct_to_insert    = <to_insert>
+          ct_to_update    = <to_update>
+          ct_to_delete    = <to_delete>.
     ENDLOOP.
+
+* see: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
+
+    CALL METHOD merge_from_component_ob
+        EXPORTING
+          it_supported_comp = lt_unsorted
+        CHANGING
+          ct_global_insert  = <to_insert>
+          ct_global_update  = <to_update>
+          ct_global_delete  = <to_delete>.
 
     CALL FUNCTION 'CRM_SRVO_H_UPDATE_DU' IN UPDATE TASK
       EXPORTING
@@ -776,46 +860,55 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         DATA(lo_conv_class) = get_convertor_instance( lv_conv_class ).
         CALL METHOD lo_conv_class->convert_1o_to_s4
           EXPORTING
-            iv_ref_guid  = <orderadm_i_wrk>-header
-            iv_ref_kind  = 'A'
+            iv_ref_guid     = <orderadm_i_wrk>-header
+            iv_ref_kind     = 'A'
             iv_current_guid = <orderadm_i_wrk>-guid
           CHANGING
-            ct_to_insert = <to_insert>
-            ct_to_update = <to_update>
-            ct_to_delete = <to_delete>.
+            ct_to_insert    = <to_insert>
+            ct_to_update    = <to_update>
+            ct_to_delete    = <to_delete>.
       ENDLOOP.
+
+* See https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
+* Jerry 2017-05-05 9:01PM a second loop is inevitable here, to fill the latest
+* object buffer of each component to global update buffer to avoid data loss
+      CALL METHOD merge_from_component_ob
+        EXPORTING
+          it_supported_comp = lt_unsorted
+        CHANGING
+          ct_global_insert  = <to_insert>
+          ct_global_update  = <to_update>
+          ct_global_delete  = <to_delete>.
 
       READ TABLE mt_acronym ASSIGNING FIELD-SYMBOL(<acronym>) WITH KEY
          subobj_category = <orderadm_i_wrk>-object_type.
-    ASSERT sy-subrc = 0.
+      ASSERT sy-subrc = 0.
 
-    ASSIGN COMPONENT <acronym>-acronym OF STRUCTURE ls_item_update TO FIELD-SYMBOL(<update_data>).
-    ASSERT sy-subrc = 0.
-    FIELD-SYMBOLS:<tab_for_insert> TYPE ANY TABLE,
-                   <tab_for_update> TYPE ANY TABLE,
-                   <tab_for_delete> TYPE ANY TABLE.
-    DATA(lv_insert_field) = |{ <acronym>-acronym }_INSERT|.
-    DATA(lv_update_field) = |{ <acronym>-acronym }_UPDATE|.
-    DATA(lv_delete_field) = |{ <acronym>-acronym }_DELETE|.
-    ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
-    ASSIGN COMPONENT lv_update_field OF STRUCTURE <update_data> TO <tab_for_update>.
-    ASSIGN COMPONENT lv_delete_field OF STRUCTURE <update_data> TO <tab_for_delete>.
+      ASSIGN COMPONENT <acronym>-acronym OF STRUCTURE ls_item_update TO FIELD-SYMBOL(<update_data>).
+      ASSERT sy-subrc = 0.
+      FIELD-SYMBOLS:<tab_for_insert> TYPE ANY TABLE,
+                    <tab_for_update> TYPE ANY TABLE,
+                    <tab_for_delete> TYPE ANY TABLE.
+      DATA(lv_insert_field) = |{ <acronym>-acronym }_INSERT|.
+      DATA(lv_update_field) = |{ <acronym>-acronym }_UPDATE|.
+      DATA(lv_delete_field) = |{ <acronym>-acronym }_DELETE|.
+      ASSIGN COMPONENT lv_insert_field OF STRUCTURE <update_data> TO <tab_for_insert>.
+      ASSIGN COMPONENT lv_update_field OF STRUCTURE <update_data> TO <tab_for_update>.
+      ASSIGN COMPONENT lv_delete_field OF STRUCTURE <update_data> TO <tab_for_delete>.
 
-    IF <to_insert> IS NOT INITIAL.
-       INSERT LINES OF <to_insert> INTO TABLE <tab_for_insert>.
-    ENDIF.
+      IF <to_insert> IS NOT INITIAL.
+        INSERT LINES OF <to_insert> INTO TABLE <tab_for_insert>.
+      ENDIF.
 
-    IF <to_update> IS NOT INITIAL.
-       INSERT LINES OF <to_update> INTO TABLE <tab_for_update>.
-    ENDIF.
+      IF <to_update> IS NOT INITIAL.
+        INSERT LINES OF <to_update> INTO TABLE <tab_for_update>.
+      ENDIF.
 
-    IF <to_delete> IS NOT INITIAL.
-       INSERT LINES OF <to_delete> INTO TABLE <tab_for_delete>.
-    ENDIF.
-* Jerry 2017-05-03 15:37PM - loop is end, ready to fill update records now
+      IF <to_delete> IS NOT INITIAL.
+        INSERT LINES OF <to_delete> INTO TABLE <tab_for_delete>.
+      ENDIF.
+
     ENDLOOP.
-
-
     CALL FUNCTION 'CRM_BTX_I_UPDATE_DU' IN UPDATE TASK
       EXPORTING
         is_update_record = ls_item_update.
