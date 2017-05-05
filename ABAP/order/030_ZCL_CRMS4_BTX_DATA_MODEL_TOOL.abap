@@ -181,7 +181,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
           es_workarea = <ls_wrk_structure>.
       CALL METHOD lo_convertor->put_to_db_buffer
         EXPORTING
-          is_wrk_structure = <ls_wrk_structure>.
+          is_wrk_structure = <ls_wrk_structure>
+          iv_ref_kind      = 'B'.
 
     ENDLOOP.
 
