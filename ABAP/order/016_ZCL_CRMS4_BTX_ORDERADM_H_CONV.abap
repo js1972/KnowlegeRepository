@@ -1,38 +1,51 @@
-CLASS zcl_crms4_btx_orderadm_h_conv DEFINITION
+CLASS cl_crms4_bt_orderadm_h_conv DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
 
   PUBLIC SECTION.
 
-    INTERFACES zif_crms4_btx_data_model .
+    INTERFACES if_crms4_btx_data_model_CONV .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS ZCL_CRMS4_BTX_ORDERADM_H_CONV IMPLEMENTATION.
+CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_CRMS4_BTX_ORDERADM_H_CONV->ZIF_CRMS4_BTX_DATA_MODEL~CONVERT_1O_TO_S4
+* | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_1O_TO_S4
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
+* | [--->] IV_CURRENT_GUID                TYPE        CRMT_OBJECT_GUID
 * | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE
 * | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD zif_crms4_btx_data_model~convert_1o_to_s4.
+  METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
     DATA: lt_insert  TYPE crmt_orderadm_h_du_tab,
           lt_update  TYPE crmt_orderadm_h_du_tab,
           lt_delete  TYPE crmt_orderadm_h_du_tab,
           lt_to_save TYPE crmt_object_guid_tab.
 
-    FIELD-SYMBOLS:<srvo_h_update> TYPE zcrms4d_srvo_h_t.
+    FIELD-SYMBOLS: <srvo_h_update> TYPE crms4t_srvo_h,
+                   <srvo_h_insert> TYPE crms4t_srvo_h.
     CHECK iv_ref_kind = 'A'.
     APPEND iv_ref_guid TO lt_to_save.
+* Jerry 2017-05-02 8:40PM - in order to generate changed timestamp
+
+    CALL FUNCTION 'CRM_ORDERADM_H_SAVE_OB'
+      EXPORTING
+        it_orderadm_h_to_save       = lt_to_save
+      EXCEPTIONS
+        saving_admin_headers_error  = 1
+        admin_header_does_not_exist = 2
+        OTHERS                      = 3.
+    IF sy-subrc <> 0.
+    ENDIF.
 
     CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
       EXPORTING
@@ -47,29 +60,46 @@ CLASS ZCL_CRMS4_BTX_ORDERADM_H_CONV IMPLEMENTATION.
 
 * Jerry 2017-04-26 12:11PM only support update currently
     READ TABLE lt_update ASSIGNING FIELD-SYMBOL(<update>) INDEX 1.
-    CHECK sy-subrc = 0.
-    DATA(lr_to_update) = REF #( ct_to_update ).
-    ASSIGN lr_to_update->* TO <srvo_h_update>.
-
-    READ TABLE <srvo_h_update> ASSIGNING FIELD-SYMBOL(<to_be_merge>) WITH KEY
-        guid = iv_ref_guid.
     IF sy-subrc = 0.
-      MOVE-CORRESPONDING <update> TO <to_be_merge>.
-    ELSE.
-      APPEND INITIAL LINE TO <srvo_h_update> ASSIGNING FIELD-SYMBOL(<to_fill>).
-      MOVE-CORRESPONDING <update> TO <to_fill>.
+      DATA(lr_to_update) = REF #( ct_to_update ).
+      ASSIGN lr_to_update->* TO <srvo_h_update>.
+
+      READ TABLE <srvo_h_update> ASSIGNING FIELD-SYMBOL(<to_be_merge>) WITH KEY
+        guid = iv_ref_guid.
+      IF sy-subrc = 0.
+        MOVE-CORRESPONDING <update> TO <to_be_merge>.
+      ELSE.
+        APPEND INITIAL LINE TO <srvo_h_update> ASSIGNING FIELD-SYMBOL(<to_fill>).
+        MOVE-CORRESPONDING <update> TO <to_fill>.
+      ENDIF.
     ENDIF.
 
+* Jerry ugly code 2017-05-02 8:13PM to support creation case
+* A violation of DRY!!!
+    READ TABLE lt_insert ASSIGNING FIELD-SYMBOL(<insert>) INDEX 1.
+    IF sy-subrc = 0.
+      DATA(lr_to_insert) = REF #( ct_to_insert ).
+      ASSIGN lr_to_insert->* TO <srvo_h_insert>.
+
+      READ TABLE <srvo_h_insert> ASSIGNING FIELD-SYMBOL(<to_be_insert>) WITH KEY
+        guid = iv_ref_guid.
+      IF sy-subrc = 0.
+        MOVE-CORRESPONDING <insert> TO <to_be_insert>.
+      ELSE.
+        APPEND INITIAL LINE TO <srvo_h_insert> ASSIGNING FIELD-SYMBOL(<to_insert>).
+        MOVE-CORRESPONDING <insert> TO <to_insert>.
+      ENDIF.
+    ENDIF.
   ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_CRMS4_BTX_ORDERADM_H_CONV->ZIF_CRMS4_BTX_DATA_MODEL~CONVERT_S4_TO_1O
+* | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_S4_TO_1O
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IS_WORKAREA                    TYPE        ANY(optional)
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD zif_crms4_btx_data_model~convert_s4_to_1o.
+  METHOD if_crms4_btx_data_model_CONV~convert_s4_to_1o.
 
 * for ORDERADM_H move corresponding is enough
     MOVE-CORRESPONDING is_workarea TO es_workarea.
@@ -77,27 +107,39 @@ CLASS ZCL_CRMS4_BTX_ORDERADM_H_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_CRMS4_BTX_ORDERADM_H_CONV->ZIF_CRMS4_BTX_DATA_MODEL~GET_WRK_STRUCTURE_NAME
+* | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
+* | [<---] ES_DATA                        TYPE        ANY
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_WRK_STRUCTURE_NAME
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RV_WRK_STRUCTURE_NAME          TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD zif_crms4_btx_data_model~get_wrk_structure_name.
+  METHOD if_crms4_btx_data_model_CONV~get_wrk_structure_name.
     rv_wrk_structure_name = 'CRMT_ORDERADM_H_WRK'.
   ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_CRMS4_BTX_ORDERADM_H_CONV->ZIF_CRMS4_BTX_DATA_MODEL~PUT_TO_DB_BUFFER
+* | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~PUT_TO_DB_BUFFER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IS_WRK_STRUCTURE               TYPE        ANY
+* | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID(optional)
+* | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD zif_crms4_btx_data_model~put_to_db_buffer.
+  METHOD if_crms4_btx_data_model_CONV~put_to_db_buffer.
 
     DATA: lt_orderadm_h_db TYPE crmt_orderadm_h_du_tab.
 
     APPEND is_wrk_structure TO lt_orderadm_h_db.
 
-    CALL FUNCTION 'ZCRM_ORDERADM_H_PUT_DB'
+    CALL FUNCTION 'CRM_ORDERADM_H_PUT_DB'
       EXPORTING
         it_orderadm_h_db = lt_orderadm_h_db.
   ENDMETHOD.

@@ -80,6 +80,16 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method CL_CRMS4_BT_ORDERADM_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
+* | [<---] ES_DATA                        TYPE        ANY
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_ORDERADM_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_WRK_STRUCTURE_NAME
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RV_WRK_STRUCTURE_NAME          TYPE        STRING
@@ -93,6 +103,8 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 * | Instance Public Method CL_CRMS4_BT_ORDERADM_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~PUT_TO_DB_BUFFER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IS_WRK_STRUCTURE               TYPE        ANY
+* | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID(optional)
+* | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~put_to_db_buffer.
     DATA: lt_orderadm_i_db_buffer TYPE crmt_orderadm_i_du_tab.

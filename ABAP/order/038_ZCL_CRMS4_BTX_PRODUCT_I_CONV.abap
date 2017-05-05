@@ -62,6 +62,10 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
         ct_global_insert  = ct_to_insert
         ct_global_update  = ct_to_update
         ct_global_delete  = ct_to_delete.
+
+* See: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
+
+
   ENDMETHOD.
 
 
@@ -74,6 +78,29 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
   method IF_CRMS4_BTX_DATA_MODEL_conv~CONVERT_S4_TO_1O.
     MOVE-CORRESPONDING is_workarea to es_workarea.
   endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method CL_CRMS4_BT_PRODUCT_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
+* | [<---] ES_DATA                        TYPE        ANY
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD if_crms4_btx_data_model_conv~get_ob.
+    DATA: lt_buffer TYPE crmt_product_i_wrkt,
+          lt_guid   TYPE crmt_object_guid_tab.
+
+    APPEND iv_guid TO lt_guid.
+    CALL FUNCTION 'CRM_PRODUCT_I_GET_MULTI_OB'
+      EXPORTING
+        it_guids_to_get  = lt_guid
+      IMPORTING
+        et_object_buffer = lt_buffer.
+    READ TABLE lt_buffer ASSIGNING FIELD-SYMBOL(<buffer>) INDEX 1.
+    IF sy-subrc = 0.
+      es_data = <buffer>.
+    ENDIF.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -90,6 +117,8 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
 * | Instance Public Method CL_CRMS4_BT_PRODUCT_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~PUT_TO_DB_BUFFER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IS_WRK_STRUCTURE               TYPE        ANY
+* | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID(optional)
+* | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD IF_CRMS4_BTX_DATA_MODEL_conv~put_to_db_buffer.
     DATA: lt_product_i_db_buffer TYPE crmt_product_i_du_tab.

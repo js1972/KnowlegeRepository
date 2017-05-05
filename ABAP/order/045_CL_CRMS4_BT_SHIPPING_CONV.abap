@@ -26,6 +26,38 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_1O_TO_S4.
+    DATA: lt_insert  TYPE crmt_shipping_du_tab,
+          lt_update  TYPE crmt_shipping_du_tab,
+          lt_delete  TYPE crmt_shipping_du_tab,
+          lt_to_save TYPE crmt_object_guid_tab.
+
+    APPEND iv_current_guid TO lt_to_save.
+
+    CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
+      EXPORTING
+        iv_object_name       = 'SHIPPING'
+        iv_field_name_key    = 'GUID'
+        it_guids_to_process  = lt_to_save
+        iv_header_to_save    = iv_ref_guid
+      IMPORTING
+        et_records_to_insert = lt_insert
+        et_records_to_update = lt_update
+        et_records_to_delete = lt_delete.
+
+* ct_* can have different table type like CRMS4D_SALE_I_T, CRMS4D_SVPR_I_T
+* Jerry 2017-04-26 12:11PM only support update currently
+
+    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
+
+    CALL METHOD tool->merge_change_2_global_buffer
+      EXPORTING
+        it_current_insert = lt_insert
+        it_current_update = lt_update
+        it_current_delete = lt_delete
+      CHANGING
+        ct_global_insert  = ct_to_insert
+        ct_global_update  = ct_to_update
+        ct_global_delete  = ct_to_delete.
   endmethod.
 
 
@@ -38,6 +70,31 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
   method IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_S4_TO_1O.
     MOVE-CORRESPONDING IS_WORKAREA TO ES_WORKAREA.
   endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method CL_CRMS4_BT_SHIPPING_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
+* | [<---] ES_DATA                        TYPE        ANY
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD if_crms4_btx_data_model_conv~get_ob.
+    DATA: lt_guid   TYPE crmt_object_guid_tab,
+          lt_buffer TYPE crmt_shipping_wrkt.
+
+    APPEND iv_guid TO lt_guid.
+
+    CALL FUNCTION 'CRM_SHIPPING_GET_MULTI_OB'
+      EXPORTING
+        it_guids_to_get  = lt_guid
+      IMPORTING
+        et_object_buffer = lt_buffer.
+
+    READ TABLE lt_buffer ASSIGNING FIELD-SYMBOL(<buffer>) INDEX 1.
+    CHECK sy-subrc = 0.
+
+    MOVE-CORRESPONDING <buffer> TO es_data.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
