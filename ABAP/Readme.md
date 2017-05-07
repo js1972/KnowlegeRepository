@@ -19,3 +19,7 @@ lt_page_instances = cl_bsp_context=>c_page_instances.
 # 2017-04-22
 
 good tip: find //bas/745_COR/src/krn/abap/ -name "*.c" | xargs grep "IF_BADI_INTERFACE"
+
+# 2017-05-07
+1. txt1 = condense( txt2 && txt3 ).
+2. String template: multiple line should be joined by &.
