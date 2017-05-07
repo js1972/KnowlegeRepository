@@ -20,6 +20,7 @@ hanatrial.ondemand.com
 1. [cockpit](https://account.hanatrial.ondemand.com/)
 2. [How To Use A Servlet As Your Main Web Page](http://wiki.metawerx.net/wiki/HowToUseAServletAsYourMainWebPage)
 3. install new software with url:  https://tools.hana.ondemand.com/neon
+4. [My test application url](https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/)
 
 # blogs
 
@@ -33,3 +34,6 @@ Possible hint: https://archive.sap.com/discussions/thread/3857381
 finally it works: https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/
 1518: I would like to achieve both servlet and html work. Is it really possible? I tried in local it is possible. Verified 1628, it is possible!
 1613: 果然重启大法好。。。
+
+## 2017-05-07
+1. Sometimes after restart, I need to Maven->Update project or else the servlet could not be successfully instantiated again!
