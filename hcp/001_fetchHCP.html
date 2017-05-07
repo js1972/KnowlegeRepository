@@ -8,10 +8,12 @@
 
 <script>
 var START = "https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/";
-var LOCAL = "http://localhost:8080/JerryTest/?userId=i042411";
-var ABAP = "https://ldai2ag3.wdf.sap.corp:44356/sap/crm/social_print?userId=i042416";
+var HCP = "https://helloworldi042416trial.hanatrial.ondemand.com/jerrytest?userId=i042416";
+var LOCAL = "http://localhost:8080/jerrytest/?userId=i042416";
+var ABAP = "https://ldai2ag3.wdf.sap.corp:44356/sap/crm/social_print?userId=i042411";
 function main() {
-	var html = getPostByAJAX(LOCAL);
+	var html = getPostByAJAX(HCP);
+  console.log("response: " + html);
 }
 
 $(function(){ 

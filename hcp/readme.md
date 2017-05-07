@@ -21,6 +21,7 @@ hanatrial.ondemand.com
 2. [How To Use A Servlet As Your Main Web Page](http://wiki.metawerx.net/wiki/HowToUseAServletAsYourMainWebPage)
 3. install new software with url:  https://tools.hana.ondemand.com/neon
 4. [My test application url](https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/)
+After I changed it to Maven project on 2017-05-07, [new url](https://helloworldi042416trial.hanatrial.ondemand.com/jerrytest/)
 
 # blogs
 
@@ -37,3 +38,4 @@ finally it works: https://helloworldi042416trial.hanatrial.ondemand.com/JerryTes
 
 ## 2017-05-07
 1. Sometimes after restart, I need to Maven->Update project or else the servlet could not be successfully instantiated again!
+2. workaround does not work for resources in HCP?! Verified, workaround can still works if the web application is started in local server, but does not work in HCP.
