@@ -54,3 +54,8 @@ DATA(output) =
 
 output->display( ).
 
+* 5050:
+DATA itab  TYPE STANDARD TABLE OF i WITH EMPTY  KEY.
+
+itab = VALUE #( FOR j  = 1 WHILE j <=  100 ( j ) ).
+DATA(sum) = REDUCE i( INIT x = 0 FOR wa IN itab  NEXT x = x + wa ).
