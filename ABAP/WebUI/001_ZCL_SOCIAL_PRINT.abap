@@ -7,13 +7,16 @@ CLASS zcl_social_print DEFINITION
 
     INTERFACES if_http_extension .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    METHODS get_output_data
-      IMPORTING
-        !iv_uuid   TYPE string
-      EXPORTING
-        !fpcontent TYPE xstring .
+  methods GET_OUTPUT_DATA
+    importing
+      !IV_UUID type STRING
+    exporting
+      !FPCONTENT type XSTRING .
+  methods _HANDLE_REQUEST
+    importing
+      !SERVER type ref to IF_HTTP_SERVER .
 ENDCLASS.
 
 
@@ -100,6 +103,30 @@ CLASS ZCL_SOCIAL_PRINT IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_http_extension~handle_request.
 
+    DATA: lv_text TYPE string VALUE 'hello world'.
+    CONSTANTS: cv_white_id TYPE string VALUE 'i042416'.
+
+    DATA(lv_origin) = server->request->get_header_field( 'origin' ).
+    DATA(lv_userid) = server->request->get_form_field( 'userId' ).
+    IF lv_userid = cv_white_id.
+      server->response->set_header_field(
+         EXPORTING
+           name  = 'Access-Control-Allow-Origin'
+           value = lv_origin ).
+    ENDIF.
+    server->response->append_cdata(
+                         data   = lv_text
+                         length = strlen( lv_text ) ).
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method ZCL_SOCIAL_PRINT->_HANDLE_REQUEST
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] SERVER                         TYPE REF TO IF_HTTP_SERVER
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method _HANDLE_REQUEST.
     CONSTANTS c_linelen TYPE i VALUE 255.
     DATA: wa_data(c_linelen) TYPE x,
           lt_data            LIKE TABLE OF wa_data.
@@ -154,6 +181,5 @@ CLASS ZCL_SOCIAL_PRINT IMPLEMENTATION.
 
     server->response->delete_header_field(
              name = 'Expires' ).
-
-  ENDMETHOD.
+  endmethod.
 ENDCLASS.
