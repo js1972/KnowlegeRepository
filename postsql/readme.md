@@ -3,3 +3,10 @@
 set client_encoding to gbk;
 输入命令 SET client_encoding=GBK; - does not work!
 chcp - in my laptop it is 936 - changes to 437
+2. it can only accept default port in 5432?
+3. command line naming convention: <username>#:
+GRANT ALL PRIVILEGES ON DATABASE postgres to jerry;
+column name must be wrapped with "";
+INSERT INTO public.zcrm_product(
+	"PRODUCT_GUID", "PRODUCT_ID")
+	VALUES ('00163EA71FFC1ED28BCDD602F750AC54', '1002029');
