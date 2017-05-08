@@ -22,4 +22,5 @@ INSERT INTO public.zcrm_product(
 INSERT INTO public.comm_product(
 	client, product_guid, product_id, product_type, config, xnosearch, object_family, batch_dedicated, competitor_prod, "VALID_FROM", "VALID_TO", upname, histex, logsys)
 	VALUES ('001', '00163EA71FFC1ED28BCDD602F750AC54', '1002029', '01', 'C', 'X', '0401', 'X', '', TIMESTAMP '2011-05-16 15:36:38', current_timestamp, 'WANGJER', '', 'AG3CLNT001');
+2. If you are using Java 8 or newer then you should use the JDBC 4.2 version.
 		
