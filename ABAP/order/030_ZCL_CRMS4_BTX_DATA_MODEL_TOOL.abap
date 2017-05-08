@@ -1,149 +1,168 @@
-class CL_CRMS4_BT_DATA_MODEL_TOOL definition
-  public
-  final
-  create private .
+CLASS cl_crms4_bt_data_model_tool DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PRIVATE .
 
-public section.
+  PUBLIC SECTION.
 
-  types:
-    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
+    TYPES:
+      tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
 
-  methods SAVE_HEADER
-    importing
-      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  methods MERGE_CHANGE_2_GLOBAL_BUFFER
-    importing
-      !IT_CURRENT_INSERT type ANY TABLE
-      !IT_CURRENT_UPDATE type ANY TABLE
-      !IT_CURRENT_DELETE type ANY TABLE
-    changing
-      !CT_GLOBAL_INSERT type ANY TABLE
-      !CT_GLOBAL_UPDATE type ANY TABLE
-      !CT_GLOBAL_DELETE type ANY TABLE .
-  class-methods CLASS_CONSTRUCTOR .
-  methods GET_ITEM
-    importing
-      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
-    exporting
-      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
-  class-methods GET_INSTANCE
-    returning
-      value(RO_INSTANCE) type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
+    METHODS save_header
+      IMPORTING
+        !it_header_guid TYPE crmt_object_guid_tab .
+    METHODS merge_change_2_global_buffer
+      IMPORTING
+        !it_current_insert TYPE ANY TABLE
+        !it_current_update TYPE ANY TABLE
+        !it_current_delete TYPE ANY TABLE
+      CHANGING
+        !ct_global_insert  TYPE ANY TABLE
+        !ct_global_update  TYPE ANY TABLE
+        !ct_global_delete  TYPE ANY TABLE .
+    CLASS-METHODS class_constructor .
+    METHODS get_item
+      IMPORTING
+        !it_item_guid     TYPE crmt_object_guid_tab
+      EXPORTING
+        !et_orderadm_i_db TYPE crmt_orderadm_i_du_tab .
+    CLASS-METHODS get_instance
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO cl_crms4_bt_data_model_tool .
+    METHODS record_set_to_be_created
+      IMPORTING
+        !iv_ref_guid TYPE crmt_object_guid
+        !iv_ref_kind TYPE crmt_object_kind DEFAULT 'A'
+        !iv_set_name TYPE crmt_object_name
+        !iv_set_guid TYPE crmt_object_guid .
   PROTECTED SECTION.
-private section.
+  PRIVATE SECTION.
 
-  types:
-    BEGIN OF ty_convertor_instance,
+    TYPES:
+      BEGIN OF ty_set_to_be_created,
+        ref_guid TYPE crmt_object_guid,
+        ref_kind TYPE crmt_object_kind,
+        set_name TYPE crmt_object_name,
+        set_guid TYPE crmt_object_guid,
+      END OF ty_set_to_be_created .
+    TYPES:
+      tt_set_to_be_created TYPE STANDARD TABLE OF ty_set_to_be_created
+              WITH KEY ref_guid ref_kind set_name set_guid .
+    TYPES:
+      BEGIN OF ty_convertor_instance,
         cls_name  TYPE crmt_object_name,
         convertor TYPE REF TO if_crms4_btx_data_model_conv,
       END OF ty_convertor_instance .
-  types:
-    tt_convertor_instance TYPE TABLE OF ty_convertor_instance WITH KEY cls_name .
-  types:
-    BEGIN OF ty_header_object_type,
+    TYPES:
+      tt_convertor_instance TYPE TABLE OF ty_convertor_instance WITH KEY cls_name .
+    TYPES:
+      BEGIN OF ty_header_object_type,
         guid        TYPE crmt_object_guid,
         object_type TYPE crmt_subobject_category_db,
       END OF ty_header_object_type .
-  types:
-    tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
-  types:
-    BEGIN OF ty_object_supported_component,
+    TYPES:
+      tt_header_object_type TYPE TABLE OF ty_header_object_type WITH KEY guid .
+    TYPES:
+      BEGIN OF ty_object_supported_component,
         object_type     TYPE crmt_subobject_category_db,
         supported_comps TYPE crmt_object_name_tab,
       END OF ty_object_supported_component .
-  types:
-    tt_object_supported_component TYPE TABLE OF ty_object_supported_component
-            WITH KEY object_type .
-  types:
-    BEGIN OF ty_component_conv_cls,
+    TYPES:
+      tt_object_supported_component TYPE TABLE OF ty_object_supported_component
+              WITH KEY object_type .
+    TYPES:
+      BEGIN OF ty_component_conv_cls,
         component TYPE crmt_object_name,
         conv_cls  TYPE string,
       END OF ty_component_conv_cls .
-  types:
-    tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
+    TYPES:
+      tt_component_conv_cls TYPE TABLE OF ty_component_conv_cls WITH KEY component .
 
-  data MT_CONVERTOR_INST_BUFFER type TT_CONVERTOR_INSTANCE .
-  data MT_COMPONENT_CONV_CLS type TT_COMPONENT_CONV_CLS .
-  class-data SO_INSTANCE type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
-  data MT_HEADER_OBJECT_TYPE_BUF type TT_HEADER_OBJECT_TYPE .
-  data MT_HEADER_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
-  data MT_ITEM_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
-  data:
-    mt_acronym TYPE STANDARD TABLE OF CRMC_SUBOB_CAT_I .
+    DATA mt_convertor_inst_buffer TYPE tt_convertor_instance .
+    DATA mt_component_conv_cls TYPE tt_component_conv_cls .
+    CLASS-DATA so_instance TYPE REF TO cl_crms4_bt_data_model_tool .
+    DATA mt_header_object_type_buf TYPE tt_header_object_type .
+    DATA mt_header_supported_comps TYPE tt_object_supported_component .
+    DATA mt_item_supported_comps TYPE tt_object_supported_component .
+    DATA:
+      mt_acronym TYPE STANDARD TABLE OF crmc_subob_cat_i .
+    DATA mt_order_to_be_created TYPE crmt_object_guid_tab .
+    DATA mt_set_to_be_created TYPE tt_set_to_be_created .
 
-  methods MERGE_FROM_COMPONENT_OB
-    importing
-      !IT_SUPPORTED_COMP type TT_SUPPORTED_COMPONENTS
-    changing
-      !CT_GLOBAL_INSERT type ANY TABLE
-      !CT_GLOBAL_UPDATE type ANY TABLE
-      !CT_GLOBAL_DELETE type ANY TABLE .
-  methods FETCH_ITEM_CONV_CLASS .
-  methods FETCH_ITEM_SUPPORTED_COMP
-    importing
-      !IT_ITEM_WRKT type CRMT_ORDERADM_I_WRKT .
-  methods GET_HEADER_DB_TYPE
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_DB_TYPE) type STRING .
-  methods GET_HEADER_SUPPORTED_COMP
-    importing
-      !IV_HEADER_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
-    returning
-      value(RT_HEADER_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
-  methods FETCH_HEADER_OBJECT_TYPE
-    importing
-      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  methods GET_HEADER_OBJECT_TYPE_BY_GUID
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_OBJECT_TYPE) type CRMT_SUBOBJECT_CATEGORY_DB .
-  methods CONV_S4_2_1ORDER_AND_FILL_BUFF
-    importing
-      !IT_OBJECTS type CRMT_OBJECT_NAME_TAB
-    changing
-      !CS_ITEM type ANY .
-  methods GET_CONVERTOR_INSTANCE
-    importing
-      !IV_CLS_NAME type CRMT_OBJECT_NAME
-    returning
-      value(RO_CONVERTOR) type ref to IF_CRMS4_BTX_DATA_MODEL_CONV .
-  methods FETCH_HEADER_SUPPORTED_COMP .
-  methods SAVE_SINGLE_HEADER
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID .
-  methods FETCH_COMPONENT_CONV_CLS .
-  methods GET_CONV_CLS_NAME_BY_COMPONENT
-    importing
-      !IV_COMPONENT_NAME type CRMT_OBJECT_NAME
-    returning
-      value(RV_CLS_NAME) type CRMT_OBJECT_NAME .
-  methods GET_UNSORTED_COMPONENT_LIST
-    importing
-      !IT_SORTED_COMP type CRMT_OBJECT_NAME_TAB
-      !IV_HEADER type ABAP_BOOL default ABAP_TRUE
-    returning
-      value(RT_UNSORTED_COMP) type TT_SUPPORTED_COMPONENTS .
-  methods SAVE_SINGLE_ITEMS
-    importing
-      !IV_HEADER_GUID type CRMT_OBJECT_GUID .
-  methods GET_ITEM_SUPPORTED_COMP
-    importing
-      !IV_ITEM_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
-    returning
-      value(RT_ITEM_SUPPORTED_COMP) type CRMT_OBJECT_NAME_TAB .
-  methods GET_ITEM_DB_TYPE
-    importing
-      !IV_ITEM_OBJECT_TYPE type CRMT_SUBOBJECT_CATEGORY_DB
-    returning
-      value(RV_DB_TYPE) type STRING .
-  methods MERGE_TABLE
-    importing
-      !IT_SUPPORTED_COMP type TT_SUPPORTED_COMPONENTS
-    changing
-      !CT_GLOBAL_BUFFER type ANY TABLE .
+    METHODS cleanup .
+    METHODS merge_from_component_ob
+      IMPORTING
+        !it_supported_comp TYPE tt_supported_components
+      CHANGING
+        !ct_global_insert  TYPE ANY TABLE
+        !ct_global_update  TYPE ANY TABLE
+        !ct_global_delete  TYPE ANY TABLE .
+    METHODS fetch_item_conv_class .
+    METHODS fetch_item_supported_comp
+      IMPORTING
+        !it_item_wrkt TYPE crmt_orderadm_i_wrkt .
+    METHODS get_header_db_type
+      IMPORTING
+        !iv_header_guid   TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_db_type) TYPE string .
+    METHODS get_header_supported_comp
+      IMPORTING
+        !iv_header_object_type          TYPE crmt_subobject_category_db
+      RETURNING
+        VALUE(rt_header_supported_comp) TYPE crmt_object_name_tab .
+    METHODS fetch_header_object_type
+      IMPORTING
+        !it_header_guid TYPE crmt_object_guid_tab .
+    METHODS get_header_object_type_by_guid
+      IMPORTING
+        !iv_header_guid       TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_object_type) TYPE crmt_subobject_category_db .
+    METHODS conv_s4_2_1order_and_fill_buff
+      IMPORTING
+        !it_objects TYPE crmt_object_name_tab
+      CHANGING
+        !cs_item    TYPE any .
+    METHODS get_convertor_instance
+      IMPORTING
+        !iv_cls_name        TYPE crmt_object_name
+      RETURNING
+        VALUE(ro_convertor) TYPE REF TO if_crms4_btx_data_model_conv .
+    METHODS fetch_header_supported_comp .
+    METHODS save_single_header
+      IMPORTING
+        !iv_header_guid TYPE crmt_object_guid .
+    METHODS fetch_component_conv_cls .
+    METHODS get_conv_cls_name_by_component
+      IMPORTING
+        !iv_component_name TYPE crmt_object_name
+      RETURNING
+        VALUE(rv_cls_name) TYPE crmt_object_name .
+    METHODS get_unsorted_component_list
+      IMPORTING
+        !it_sorted_comp         TYPE crmt_object_name_tab
+        !iv_header              TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(rt_unsorted_comp) TYPE tt_supported_components .
+    METHODS save_single_items
+      IMPORTING
+        !iv_header_guid TYPE crmt_object_guid .
+    METHODS get_item_supported_comp
+      IMPORTING
+        !iv_item_object_type          TYPE crmt_subobject_category_db
+      RETURNING
+        VALUE(rt_item_supported_comp) TYPE crmt_object_name_tab .
+    METHODS get_item_db_type
+      IMPORTING
+        !iv_item_object_type TYPE crmt_subobject_category_db
+      RETURNING
+        VALUE(rv_db_type)    TYPE string .
+    METHODS merge_table
+      IMPORTING
+        !it_supported_comp TYPE tt_supported_components
+      CHANGING
+        !ct_global_buffer  TYPE ANY TABLE .
 ENDCLASS.
 
 
@@ -155,8 +174,18 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | Static Public Method CL_CRMS4_BT_DATA_MODEL_TOOL=>CLASS_CONSTRUCTOR
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD CLASS_CONSTRUCTOR.
+  METHOD class_constructor.
     so_instance = NEW #( ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->CLEANUP
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD cleanup.
+    CLEAR: mt_order_to_be_created,
+           mt_set_to_be_created.
   ENDMETHOD.
 
 
@@ -166,7 +195,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IT_OBJECTS                     TYPE        CRMT_OBJECT_NAME_TAB
 * | [<-->] CS_ITEM                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD CONV_S4_2_1ORDER_AND_FILL_BUFF.
+  METHOD conv_s4_2_1order_and_fill_buff.
     DATA: lv_wrk_structure_name TYPE string,
           lr_wrk_structure      TYPE REF TO data,
           lt_convert_class      TYPE TABLE OF crmc_objects,
@@ -208,7 +237,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->FETCH_COMPONENT_CONV_CLS
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD FETCH_COMPONENT_CONV_CLS.
+  METHOD fetch_component_conv_cls.
     DATA: lt_missing_comp  TYPE crmt_object_name_tab,
           lt_zcrmc_objects TYPE TABLE OF crmc_objects.
 
@@ -239,8 +268,9 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD FETCH_HEADER_OBJECT_TYPE.
+  METHOD fetch_header_object_type.
     DATA: lt_header_buffer_miss TYPE crmt_object_guid_tab,
+          lt_order_h            TYPE crmt_orderadm_h_wrkt,
           lt_header_shadow      TYPE TABLE OF crms4d_btx.
     LOOP AT it_header_guid ASSIGNING FIELD-SYMBOL(<guid>).
       READ TABLE mt_header_object_type_buf WITH KEY guid = <guid> TRANSPORTING NO FIELDS.
@@ -259,6 +289,28 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
       <new_buffer> = VALUE #( guid = <header_shadow>-order_guid
                                object_type = <header_shadow>-object_type ).
     ENDLOOP.
+
+* Jerry 2017-05-08 5:29PM in save case shadow table does not have record for this guid
+* Creation case!
+    IF lt_header_shadow IS INITIAL.
+      CALL FUNCTION 'CRM_ORDERADM_H_READ_OB'
+        EXPORTING
+          it_guid           = it_header_guid
+        IMPORTING
+          et_orderadm_h_wrk = lt_order_h.
+
+      LOOP AT it_header_guid ASSIGNING FIELD-SYMBOL(<order_to_create>).
+* Jerry 2017-05-08 6:48PM record those order into an internal table
+        INSERT <order_to_create> INTO TABLE mt_order_to_be_created.
+        READ TABLE lt_order_h ASSIGNING FIELD-SYMBOL(<order_header>)
+           WITH KEY guid = <order_to_create>.
+        IF sy-subrc = 0.
+          APPEND INITIAL LINE TO mt_header_object_type_buf ASSIGNING FIELD-SYMBOL(<buffer_for_created>).
+          <buffer_for_created> = VALUE #( guid = <order_to_create>
+                                          object_type = <order_header>-object_type ).
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
   ENDMETHOD.
 
 
@@ -266,7 +318,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->FETCH_HEADER_SUPPORTED_COMP
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD FETCH_HEADER_SUPPORTED_COMP.
+  METHOD fetch_header_supported_comp.
     DATA: lt_missed_header_object TYPE TABLE OF crmt_subobject_category_db,
           lt_zcrmc_object_ass     TYPE TABLE OF crmc_object_assi.
 
@@ -301,9 +353,9 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->FETCH_ITEM_CONV_CLASS
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD FETCH_ITEM_CONV_CLASS.
-    DATA: lt_missing_comp TYPE TABLE OF CRMT_OBJECT_NAME,
-          lt_objects TYPE TABLE OF CRMC_OBJECTS.
+  METHOD fetch_item_conv_class.
+    DATA: lt_missing_comp TYPE TABLE OF crmt_object_name,
+          lt_objects      TYPE TABLE OF crmc_objects.
 
     LOOP AT mt_item_supported_comps ASSIGNING FIELD-SYMBOL(<item_comp_buffer>).
       LOOP AT <item_comp_buffer>-supported_comps ASSIGNING FIELD-SYMBOL(<comp>).
@@ -318,15 +370,15 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     DELETE ADJACENT DUPLICATES FROM lt_missing_comp.
     CHECK lt_missing_comp IS NOT INITIAL.
 
-    SELECT name conv_class INTO CORRESPONDING FIELDS OF TABLE lt_objects FROM CRMC_OBJECTS FOR ALL ENTRIES IN lt_missing_comp
+    SELECT name conv_class INTO CORRESPONDING FIELDS OF TABLE lt_objects FROM crmc_objects FOR ALL ENTRIES IN lt_missing_comp
         WHERE name = lt_missing_comp-table_line.
 
     LOOP AT lt_missing_comp ASSIGNING FIELD-SYMBOL(<missing_comp>).
-       APPEND INITIAL LINE TO mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<new_buffer>).
-       <new_buffer>-component = <missing_comp>.
-       READ TABLE lt_objects ASSIGNING FIELD-SYMBOL(<crm_object>) WITH KEY name = <missing_comp>.
-       ASSERT sy-subrc = 0.
-       <new_buffer>-conv_cls = <crm_object>-conv_class.
+      APPEND INITIAL LINE TO mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<new_buffer>).
+      <new_buffer>-component = <missing_comp>.
+      READ TABLE lt_objects ASSIGNING FIELD-SYMBOL(<crm_object>) WITH KEY name = <missing_comp>.
+      ASSERT sy-subrc = 0.
+      <new_buffer>-conv_cls = <crm_object>-conv_class.
     ENDLOOP.
   ENDMETHOD.
 
@@ -336,7 +388,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_ITEM_WRKT                   TYPE        CRMT_ORDERADM_I_WRKT
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD FETCH_ITEM_SUPPORTED_COMP.
+  METHOD fetch_item_supported_comp.
     DATA: lt_missed_item_object_type TYPE TABLE OF crmt_subobject_category_db,
           lt_item_supported_compo    TYPE TABLE OF crmc_obj_assi_i.
 
@@ -373,7 +425,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_CLS_NAME                    TYPE        CRMT_OBJECT_NAME
 * | [<-()] RO_CONVERTOR                   TYPE REF TO IF_CRMS4_BTX_DATA_MODEL_CONV
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_CONVERTOR_INSTANCE.
+  METHOD get_convertor_instance.
     READ TABLE mt_convertor_inst_buffer ASSIGNING FIELD-SYMBOL(<convertor>) WITH KEY cls_name = iv_cls_name.
     IF sy-subrc = 0.
       ro_convertor = <convertor>-convertor.
@@ -392,7 +444,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_COMPONENT_NAME              TYPE        CRMT_OBJECT_NAME
 * | [<-()] RV_CLS_NAME                    TYPE        CRMT_OBJECT_NAME
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_CONV_CLS_NAME_BY_COMPONENT.
+  METHOD get_conv_cls_name_by_component.
     READ TABLE mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<buffer>)
      WITH KEY component = iv_component_name.
     rv_cls_name = <buffer>-conv_cls.
@@ -405,7 +457,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
 * | [<-()] RV_DB_TYPE                     TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_HEADER_DB_TYPE.
+  METHOD get_header_db_type.
     DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
     DATA: ls_zcrmc_subob_cat TYPE crmc_subob_cat.
 
@@ -450,7 +502,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_HEADER_OBJECT_TYPE          TYPE        CRMT_SUBOBJECT_CATEGORY_DB
 * | [<-()] RT_HEADER_SUPPORTED_COMP       TYPE        CRMT_OBJECT_NAME_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_HEADER_SUPPORTED_COMP.
+  METHOD get_header_supported_comp.
     READ TABLE mt_header_supported_comps ASSIGNING FIELD-SYMBOL(<supported>)
      WITH KEY object_type = iv_header_object_type.
 
@@ -465,7 +517,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RO_INSTANCE                    TYPE REF TO CL_CRMS4_BT_DATA_MODEL_TOOL
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_INSTANCE.
+  METHOD get_instance.
     ro_instance = so_instance.
   ENDMETHOD.
 
@@ -476,9 +528,9 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IT_ITEM_GUID                   TYPE        CRMT_OBJECT_GUID_TAB
 * | [<---] ET_ORDERADM_I_DB               TYPE        CRMT_ORDERADM_I_DU_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_ITEM.
+  METHOD get_item.
     DATA: lt_btx_i   TYPE TABLE OF crms4d_btx_i,
-          lt_acronym TYPE TABLE OF CRMC_SUBOB_CAT_I,
+          lt_acronym TYPE TABLE OF crmc_subob_cat_i,
           lr_dbtab   TYPE REF TO data,
           lt_objects TYPE crmt_object_name_tab,
           ls_item    LIKE LINE OF et_orderadm_i_db.
@@ -492,7 +544,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
     CHECK sy-subrc = 0.
 
-    SELECT * FROM CRMC_SUBOB_CAT_I INTO TABLE lt_acronym
+    SELECT * FROM crmc_subob_cat_i INTO TABLE lt_acronym
        FOR ALL ENTRIES IN lt_btx_i
          WHERE subobj_category = lt_btx_i-object_type.
 
@@ -533,11 +585,11 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_ITEM_OBJECT_TYPE            TYPE        CRMT_SUBOBJECT_CATEGORY_DB
 * | [<-()] RV_DB_TYPE                     TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_ITEM_DB_TYPE.
+  METHOD get_item_db_type.
 
-    DATA: ls_zcrmc_subob_cat TYPE CRMC_SUBOB_CAT_I.
+    DATA: ls_zcrmc_subob_cat TYPE crmc_subob_cat_i.
 
-    SELECT SINGLE * INTO ls_zcrmc_subob_cat FROM CRMC_SUBOB_CAT_I
+    SELECT SINGLE * INTO ls_zcrmc_subob_cat FROM crmc_subob_cat_i
        WHERE subobj_category = iv_item_object_type.
     ASSERT sy-subrc = 0.
     rv_db_type = 'CRMS4D_' && ls_zcrmc_subob_cat-acronym && '_I'.
@@ -545,7 +597,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     READ TABLE mt_acronym ASSIGNING FIELD-SYMBOL(<acronum>)
       WITH KEY subobj_category = iv_item_object_type.
     IF sy-subrc <> 0.
-       APPEND ls_zcrmc_subob_cat TO mt_acronym.
+      APPEND ls_zcrmc_subob_cat TO mt_acronym.
     ENDIF.
   ENDMETHOD.
 
@@ -556,7 +608,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_ITEM_OBJECT_TYPE            TYPE        CRMT_SUBOBJECT_CATEGORY_DB
 * | [<-()] RT_ITEM_SUPPORTED_COMP         TYPE        CRMT_OBJECT_NAME_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_ITEM_SUPPORTED_COMP.
+  METHOD get_item_supported_comp.
     READ TABLE mt_item_supported_comps ASSIGNING FIELD-SYMBOL(<supported>)
      WITH KEY object_type = iv_item_object_type.
 
@@ -573,7 +625,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_HEADER                      TYPE        ABAP_BOOL (default =ABAP_TRUE)
 * | [<-()] RT_UNSORTED_COMP               TYPE        TT_SUPPORTED_COMPONENTS
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD GET_UNSORTED_COMPONENT_LIST.
+  METHOD get_unsorted_component_list.
     DATA: lv_line TYPE crmt_object_name.
     rt_unsorted_comp = it_sorted_comp.
     IF iv_header = abap_true.
@@ -713,7 +765,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         ASSIGN lr_data->* TO <any>.
         lo_conv_class->get_ob( EXPORTING iv_guid = <guid> IMPORTING es_data = <any> ).
         IF <any> IS NOT INITIAL.
-           MOVE-CORRESPONDING <any> TO <global_buffer>.
+          MOVE-CORRESPONDING <any> TO <global_buffer>.
         ENDIF.
       ENDLOOP.
     ENDLOOP.
@@ -722,11 +774,27 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->RECORD_SET_TO_BE_CREATED
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
+* | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND (default ='A')
+* | [--->] IV_SET_NAME                    TYPE        CRMT_OBJECT_NAME
+* | [--->] IV_SET_GUID                    TYPE        CRMT_OBJECT_GUID
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD record_set_to_be_created.
+    APPEND INITIAL LINE TO mt_set_to_be_created ASSIGNING FIELD-SYMBOL(<create>).
+
+    <create> = VALUE #( ref_guid = iv_ref_guid ref_kind = iv_ref_kind
+                        set_name = iv_set_name set_guid = iv_set_guid ).
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->SAVE_HEADER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD SAVE_HEADER.
+  METHOD save_header.
     fetch_header_object_type( it_header_guid ).
     fetch_header_supported_comp( ).
     fetch_component_conv_cls( ).
@@ -734,6 +802,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
       save_single_header( <guid> ).
       save_single_items( <guid> ).
     ENDLOOP.
+    cleanup( ).
   ENDMETHOD.
 
 
@@ -749,8 +818,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
           lr_to_delete_db TYPE REF TO data.
 
     FIELD-SYMBOLS: <to_insert> TYPE ANY TABLE,
-                    <to_update> TYPE ANY TABLE,
-                    <to_delete> TYPE ANY TABLE.
+                   <to_update> TYPE ANY TABLE,
+                   <to_delete> TYPE ANY TABLE.
 
     DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
     DATA(lt_header_supported_comp) = get_header_supported_comp( lv_object_type ).
@@ -789,13 +858,15 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 * see: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
 
+* Step2: Merge object buffer to Global Update buffer
+
     CALL METHOD merge_from_component_ob
-        EXPORTING
-          it_supported_comp = lt_unsorted
-        CHANGING
-          ct_global_insert  = <to_insert>
-          ct_global_update  = <to_update>
-          ct_global_delete  = <to_delete>.
+      EXPORTING
+        it_supported_comp = lt_unsorted
+      CHANGING
+        ct_global_insert  = <to_insert>
+        ct_global_update  = <to_update>
+        ct_global_delete  = <to_delete>.
 
     CALL FUNCTION 'CRM_SRVO_H_UPDATE_DU' IN UPDATE TASK
       EXPORTING
