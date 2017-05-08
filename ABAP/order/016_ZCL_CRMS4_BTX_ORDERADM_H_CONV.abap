@@ -1,11 +1,17 @@
-CLASS cl_crms4_bt_orderadm_h_conv DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class CL_CRMS4_BT_ORDERADM_H_CONV definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES if_crms4_btx_data_model_CONV .
+  interfaces IF_CRMS4_BTX_DATA_MODEL_CONV .
+
+  class-methods GET_CHANGED_AT
+    importing
+      !IV_GUID type CRMT_OBJECT_GUID
+    returning
+      value(RV_CHANGED_AT) type COMT_CHANGED_AT_USR .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -13,6 +19,33 @@ ENDCLASS.
 
 
 CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method CL_CRMS4_BT_ORDERADM_H_CONV=>GET_CHANGED_AT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
+* | [<-()] RV_CHANGED_AT                  TYPE        COMT_CHANGED_AT_USR
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_changed_at.
+    DATA: lv_object_type TYPE crmt_subobject_category_db,
+          lv_acronym     TYPE char4,
+          lv_db_name     TYPE string.
+
+    SELECT SINGLE object_type INTO lv_object_type FROM crms4d_btx
+       WHERE order_guid = iv_guid.
+    ASSERT sy-subrc = 0.
+
+    SELECT SINGLE acronym INTO lv_acronym FROM crmc_subob_cat WHERE subobj_category = lv_object_type.
+
+    ASSERT sy-subrc = 0.
+
+    lv_db_name = 'CRMS4D' && lv_acronym && '_H'.
+
+    SELECT SINGLE changed_at FROM (lv_db_name) INTO rv_changed_at
+       WHERE guid = iv_guid.
+
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
