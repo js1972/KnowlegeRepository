@@ -31,8 +31,6 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
           lt_delete  TYPE crmt_orderadm_h_du_tab,
           lt_to_save TYPE crmt_object_guid_tab.
 
-    FIELD-SYMBOLS: <srvo_h_update> TYPE crms4t_srvo_h,
-                   <srvo_h_insert> TYPE crms4t_srvo_h.
     CHECK iv_ref_kind = 'A'.
     APPEND iv_ref_guid TO lt_to_save.
 * Jerry 2017-05-02 8:40PM - in order to generate changed timestamp
@@ -58,38 +56,17 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
         et_records_to_update = lt_update
         et_records_to_delete = lt_delete.
 
-* Jerry 2017-04-26 12:11PM only support update currently
-    READ TABLE lt_update ASSIGNING FIELD-SYMBOL(<update>) INDEX 1.
-    IF sy-subrc = 0.
-      DATA(lr_to_update) = REF #( ct_to_update ).
-      ASSIGN lr_to_update->* TO <srvo_h_update>.
+    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 
-      READ TABLE <srvo_h_update> ASSIGNING FIELD-SYMBOL(<to_be_merge>) WITH KEY
-        guid = iv_ref_guid.
-      IF sy-subrc = 0.
-        MOVE-CORRESPONDING <update> TO <to_be_merge>.
-      ELSE.
-        APPEND INITIAL LINE TO <srvo_h_update> ASSIGNING FIELD-SYMBOL(<to_fill>).
-        MOVE-CORRESPONDING <update> TO <to_fill>.
-      ENDIF.
-    ENDIF.
-
-* Jerry ugly code 2017-05-02 8:13PM to support creation case
-* A violation of DRY!!!
-    READ TABLE lt_insert ASSIGNING FIELD-SYMBOL(<insert>) INDEX 1.
-    IF sy-subrc = 0.
-      DATA(lr_to_insert) = REF #( ct_to_insert ).
-      ASSIGN lr_to_insert->* TO <srvo_h_insert>.
-
-      READ TABLE <srvo_h_insert> ASSIGNING FIELD-SYMBOL(<to_be_insert>) WITH KEY
-        guid = iv_ref_guid.
-      IF sy-subrc = 0.
-        MOVE-CORRESPONDING <insert> TO <to_be_insert>.
-      ELSE.
-        APPEND INITIAL LINE TO <srvo_h_insert> ASSIGNING FIELD-SYMBOL(<to_insert>).
-        MOVE-CORRESPONDING <insert> TO <to_insert>.
-      ENDIF.
-    ENDIF.
+    CALL METHOD tool->merge_change_2_global_buffer
+      EXPORTING
+        it_current_insert = lt_insert
+        it_current_update = lt_update
+        it_current_delete = lt_delete
+      CHANGING
+        ct_global_insert  = ct_to_insert
+        ct_global_update  = ct_to_update
+        ct_global_delete  = ct_to_delete.
   ENDMETHOD.
 
 
