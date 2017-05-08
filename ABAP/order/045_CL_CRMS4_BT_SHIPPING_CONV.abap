@@ -29,8 +29,11 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
     DATA: lt_insert  TYPE crmt_shipping_du_tab,
           lt_update  TYPE crmt_shipping_du_tab,
           lt_delete  TYPE crmt_shipping_du_tab,
-          lt_to_save TYPE crmt_object_guid_tab.
+          lt_to_save TYPE crmt_object_guid_tab,
+          lv_created_set_guid TYPE crmt_object_guid.
 
+    DATA(lo_tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
+* Jerry 2017-05-08 7:07PM - always header guid passed into this method
     APPEND iv_current_guid TO lt_to_save.
 
     CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
