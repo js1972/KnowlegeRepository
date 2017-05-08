@@ -16,3 +16,10 @@ INSERT INTO public.zcrm_product(
 INSERT INTO public.zcrm_product(
 	"PRODUCT_GUID", "PRODUCT_ID", "CREATED_AT")
 	VALUES ('00163EA71FFC1ED28BCDD616B9D76C5A', '12222201', current_timestamp);
+
+# 2017-05-08
+1. insert to product table:
+INSERT INTO public.comm_product(
+	client, product_guid, product_id, product_type, config, xnosearch, object_family, batch_dedicated, competitor_prod, "VALID_FROM", "VALID_TO", upname, histex, logsys)
+	VALUES ('001', '00163EA71FFC1ED28BCDD602F750AC54', '1002029', '01', 'C', 'X', '0401', 'X', '', TIMESTAMP '2011-05-16 15:36:38', current_timestamp, 'WANGJER', '', 'AG3CLNT001');
+		
