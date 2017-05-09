@@ -26,31 +26,51 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
-    DATA: lt_insert  TYPE crmt_orderadm_i_du_tab,
-          lt_update  TYPE crmt_orderadm_i_du_tab,
-          lt_delete  TYPE crmt_orderadm_i_du_tab,
-          lt_to_save TYPE crmt_object_guid_tab,
-          lt_header  LIKE lt_to_save.
+    DATA: lt_insert      TYPE crmt_orderadm_i_du_tab,
+          lt_update      TYPE crmt_orderadm_i_du_tab,
+          lt_delete      TYPE crmt_orderadm_i_du_tab,
+          lt_header      TYPE crmt_object_guid_tab,
+          lt_item_guid   TYPE crmt_object_guid_tab,
+          lt_item_db     TYPE crmt_orderadm_i_db_wrkt,
+          lv_mode        TYPE crmt_mode VALUE 'B',
+          ls_item_ob     TYPE crmt_orderadm_i_wrk,
+          ls_item_update TYPE crmd_orderadm_i.
 
-    CHECK iv_ref_kind = 'A'.
-    APPEND iv_current_guid TO lt_to_save.
     APPEND iv_ref_guid TO lt_header.
-
+    APPEND iv_current_guid TO lt_item_guid.
 * Jerry 2017-05-03 17:16PM - update created at related timestamp in item level
     CALL FUNCTION 'CRM_ORDERADM_I_SAVE_OB'
       EXPORTING
         it_header = lt_header.
 
-    CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
+    CALL FUNCTION 'CRM_ORDERADM_I_READ_OB'
       EXPORTING
-        iv_object_name       = 'ORDERADM_I'
-        iv_field_name_key    = 'GUID'
-        it_guids_to_process  = lt_to_save
-        iv_header_to_save    = iv_ref_guid
+        iv_guid           = iv_current_guid
       IMPORTING
-        et_records_to_insert = lt_insert
-        et_records_to_update = lt_update
-        et_records_to_delete = lt_delete.
+        es_orderadm_i_wrk = ls_item_ob.
+    ls_item_update = CORRESPONDING #( ls_item_ob ).
+
+    CALL FUNCTION 'CRM_ORDERADM_I_GET_MULTI_DB'
+      EXPORTING
+        it_guids_to_get    = lt_item_guid
+      IMPORTING
+        et_database_buffer = lt_item_db.
+
+    READ TABLE lt_item_db ASSIGNING FIELD-SYMBOL(<item_db>) INDEX 1.
+    ASSERT sy-subrc = 0.
+    IF <item_db>-norec_flag = 'X'.
+      lv_mode = 'A'.
+    ELSE.
+* Jerry 2017-05-09 17:38: How about delete mode?
+    ENDIF.
+
+    CASE lv_mode.
+      WHEN 'A'.
+        INSERT ls_item_update INTO TABLE lt_insert.
+      WHEN 'B'.
+        INSERT ls_item_update INTO TABLE lt_update.
+      WHEN 'D'.
+    ENDCASE.
 
     DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 
