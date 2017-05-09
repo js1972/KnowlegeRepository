@@ -27,31 +27,40 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
 
-    DATA: lt_insert  TYPE crmt_product_i_du_tab,
-          lt_update  TYPE crmt_product_i_du_tab,
-          lt_delete  TYPE crmt_product_i_du_tab,
-          lt_to_save TYPE crmt_object_guid_tab,
-          lt_header  LIKE lt_to_save.
+    DATA: lt_insert         TYPE crmt_product_i_du_tab,
+          lt_update         TYPE crmt_product_i_du_tab,
+          lt_delete         TYPE crmt_product_i_du_tab,
+          ls_product_update TYPE crmd_product_i,
+          lt_buffer TYPE crmt_product_i_wrkt,
+          lt_guid   TYPE crmt_object_guid_tab.
+* Jerry 2017-05-09 5:46PM for PRODUCT_I, deletion does not make sense -
+* if you set unit from EA to space, this is an update operation!
 
-    CHECK iv_ref_kind = 'A'.
-    APPEND iv_current_guid TO lt_to_save.
-    APPEND iv_ref_guid TO lt_header.
+    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 
-    CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
+    IF tool->mv_current_item_mode = 'D'.
+       RETURN.
+    ENDIF.
+
+    APPEND iv_current_guid TO lt_guid.
+    CALL FUNCTION 'CRM_PRODUCT_I_GET_MULTI_OB'
       EXPORTING
-        iv_object_name       = 'PRODUCT_I'
-        iv_field_name_key    = 'GUID'
-        it_guids_to_process  = lt_to_save
-        iv_header_to_save    = iv_ref_guid
+        it_guids_to_get  = lt_guid
       IMPORTING
-        et_records_to_insert = lt_insert
-        et_records_to_update = lt_update
-        et_records_to_delete = lt_delete.
+        et_object_buffer = lt_buffer.
+    READ TABLE lt_buffer ASSIGNING FIELD-SYMBOL(<buffer>) INDEX 1.
+    ASSERT sy-subrc = 0.
 
+    ls_product_update = CORRESPONDING #( <buffer> ).
 * ct_* can have different table type like CRMS4D_SALE_I_T, CRMS4D_SVPR_I_T
 * Jerry 2017-04-26 12:11PM only support update currently
 
-    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
+    CASE tool->mv_current_item_mode.
+      WHEN 'A'.
+        INSERT ls_product_update INTO TABLE lt_insert.
+      WHEN 'B'.
+        INSERT ls_product_update INTO TABLE lt_update.
+    ENDCASE.
 
     CALL METHOD tool->merge_change_2_global_buffer
       EXPORTING
@@ -64,7 +73,6 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
         ct_global_delete  = ct_to_delete.
 
 * See: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
-
 
   ENDMETHOD.
 
