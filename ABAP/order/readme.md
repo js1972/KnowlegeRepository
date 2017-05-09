@@ -111,3 +111,7 @@ Via debugging Jerry confirmes that when you click object id hyperlink for the fi
 # 2017-05-04
 1. CRM_SCHEDLIN_I_MAINTAIN_OW
 2. CRM_PRODUCT_I_A_CHANGE_QUAN_EC
+
+# 2017-05-09
+1. organization AB: should assign org determination procedure
+2. sales area AB: should be sold to party.
