@@ -29,7 +29,7 @@ CLASS CL_CRMS4_BT_PRICING_CONV IMPLEMENTATION.
     DATA: lt_insert   TYPE crmt_pricing_du_tab,
           lt_update   TYPE crmt_pricing_du_tab,
           ls_du       TYPE crmd_pricing,
-          ls_shipping TYPE crmt_pricing_wrk.
+          ls_pricing TYPE crmt_pricing_wrk.
 
     DATA(lo_tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 * Jerry 2017-05-08 7:07PM - always header guid passed into this method
@@ -41,9 +41,17 @@ CLASS CL_CRMS4_BT_PRICING_CONV IMPLEMENTATION.
         iv_ref_guid    = iv_current_guid
         iv_ref_kind    = lv_ref_kind
       IMPORTING
-        es_pricing_wrk = ls_shipping.
+        es_pricing_wrk = ls_pricing.
 
-    ls_du = CORRESPONDING #( ls_shipping ).
+* Jerry 2017-05-10 5:49PM if ls_shipping is completely initial, it means this data has never
+* been maintained yet. Please differentiate with another scenario: all fields in ls_pricing
+* are initial except guid - which means the pricing has once been maintained, but
+* cleared by end user in current transaction manually
+* see: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/55
+    IF ls_pricing IS INITIAL.
+       RETURN.
+    ENDIF.
+    ls_du = CORRESPONDING #( ls_pricing ).
     ls_du-guid = iv_current_guid.
     CASE lo_tool->mv_current_head_mode.
       WHEN 'A'.
@@ -74,10 +82,8 @@ CLASS CL_CRMS4_BT_PRICING_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_PRICING_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* | Instance Private Method CL_CRMS4_BT_PRICING_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
-* | [<---] ES_DATA                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB.
     DATA: lt_guid   TYPE crmt_object_guid_tab,
