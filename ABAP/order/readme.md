@@ -115,3 +115,7 @@ Via debugging Jerry confirmes that when you click object id hyperlink for the fi
 # 2017-05-09
 1. organization AB: should assign org determination procedure
 2. sales area AB: should be sold to party.
+
+# 2017-05-10
+1. open question1: when I change description and press enter key, order maintain will be called? Still yes.
+2. A = corresponding #( B). If field a in B is initial but in structure has value, will overwritten happen?

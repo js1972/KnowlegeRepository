@@ -1,17 +1,17 @@
-class CL_CRMS4_BT_ORDERADM_H_CONV definition
-  public
-  final
-  create public .
+CLASS cl_crms4_bt_orderadm_h_conv DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces IF_CRMS4_BTX_DATA_MODEL_CONV .
+    INTERFACES if_crms4_btx_data_model_conv .
 
-  class-methods GET_CHANGED_AT
-    importing
-      !IV_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_CHANGED_AT) type COMT_CHANGED_AT_USR .
+    CLASS-METHODS get_changed_at
+      IMPORTING
+        !iv_guid             TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_changed_at) TYPE comt_changed_at_usr .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -59,8 +59,8 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
-    DATA: lt_ob  TYPE CRMT_ORDERADM_H_WRKT,
-          ls_line TYPE CRMD_ORDERADM_H,
+    DATA: lt_ob      TYPE crmt_orderadm_h_wrkt,
+          ls_line    TYPE crmd_orderadm_h,
           lt_insert  TYPE crmt_orderadm_h_du_tab,
           lt_update  TYPE crmt_orderadm_h_du_tab,
           lt_delete  TYPE crmt_orderadm_h_du_tab,
@@ -82,18 +82,18 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
     tool->determine_head_change_mode( iv_ref_guid ).
 
     CALL FUNCTION 'CRM_ORDERADM_H_GET_MULTI_OB'
-       EXPORTING
-          IT_GUIDS_TO_GET = lt_to_save
-       IMPORTING
-          ET_OBJECT_BUFFER = lt_ob.
+      EXPORTING
+        it_guids_to_get  = lt_to_save
+      IMPORTING
+        et_object_buffer = lt_ob.
 
     READ TABLE lt_ob ASSIGNING FIELD-SYMBOL(<ob>) INDEX 1.
     ls_line = CORRESPONDING #( <ob> ).
     CASE tool->mv_current_head_mode.
-       WHEN 'A'.
-          INSERT ls_line INTO TABLE lt_insert.
-       WHEN 'B'.
-          INSERT ls_line INTO TABLE lt_update.
+      WHEN 'A'.
+        INSERT ls_line INTO TABLE lt_insert.
+      WHEN 'B'.
+        INSERT ls_line INTO TABLE lt_update.
     ENDCASE.
     CALL METHOD tool->merge_change_2_global_buffer
       EXPORTING
@@ -113,7 +113,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * | [--->] IS_WORKAREA                    TYPE        ANY(optional)
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD if_crms4_btx_data_model_CONV~convert_s4_to_1o.
+  METHOD if_crms4_btx_data_model_conv~convert_s4_to_1o.
 
 * for ORDERADM_H move corresponding is enough
     MOVE-CORRESPONDING is_workarea TO es_workarea.
@@ -126,8 +126,8 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
 * | [<---] ES_DATA                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB.
-  endmethod.
+  METHOD if_crms4_btx_data_model_conv~get_ob.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -135,7 +135,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RV_WRK_STRUCTURE_NAME          TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD if_crms4_btx_data_model_CONV~get_wrk_structure_name.
+  METHOD if_crms4_btx_data_model_conv~get_wrk_structure_name.
     rv_wrk_structure_name = 'CRMT_ORDERADM_H_WRK'.
   ENDMETHOD.
 
@@ -147,7 +147,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID(optional)
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD if_crms4_btx_data_model_CONV~put_to_db_buffer.
+  METHOD if_crms4_btx_data_model_conv~put_to_db_buffer.
 
     DATA: lt_orderadm_h_db TYPE crmt_orderadm_h_du_tab.
 
@@ -156,5 +156,9 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
     CALL FUNCTION 'CRM_ORDERADM_H_PUT_DB'
       EXPORTING
         it_orderadm_h_db = lt_orderadm_h_db.
+
+    CALL FUNCTION 'CRM_SRVO_H_PUT_DB'
+      EXPORTING
+        is_header_segment = is_wrk_structure.
   ENDMETHOD.
 ENDCLASS.

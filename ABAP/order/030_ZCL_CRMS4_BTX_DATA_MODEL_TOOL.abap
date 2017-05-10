@@ -1,48 +1,48 @@
-class CL_CRMS4_BT_DATA_MODEL_TOOL definition
-  public
-  final
-  create private .
+CLASS cl_crms4_bt_data_model_tool DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PRIVATE .
 
-public section.
+  PUBLIC SECTION.
 
-  types:
-    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
+    TYPES:
+      tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
 
-  data MV_CURRENT_HEAD_MODE type CRMT_MODE read-only .
-  data MV_CURRENT_ITEM_MODE type CRMT_MODE read-only .
+    DATA mv_current_head_mode TYPE crmt_mode READ-ONLY .
+    DATA mv_current_item_mode TYPE crmt_mode READ-ONLY .
 
-  methods SAVE_HEADER
-    importing
-      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  methods MERGE_CHANGE_2_GLOBAL_BUFFER
-    importing
-      !IT_CURRENT_INSERT type ANY TABLE
-      !IT_CURRENT_UPDATE type ANY TABLE
-      !IT_CURRENT_DELETE type ANY TABLE
-    changing
-      !CT_GLOBAL_INSERT type ANY TABLE
-      !CT_GLOBAL_UPDATE type ANY TABLE
-      !CT_GLOBAL_DELETE type ANY TABLE .
-  class-methods CLASS_CONSTRUCTOR .
-  methods GET_ITEM
-    importing
-      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
-    exporting
-      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
-  class-methods GET_INSTANCE
-    returning
-      value(RO_INSTANCE) type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
-  methods IS_ORDER_IN_CREATION
-    importing
-      !IV_ORDER_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_IN_CREATION) type ABAP_BOOL .
-  methods SET_CURRENT_ITEM_MODE
-    importing
-      !IV_MODE type CRMT_MODE .
-  methods DETERMINE_HEAD_CHANGE_MODE
-    importing
-      !IV_ORDER_GUID type CRMT_OBJECT_GUID .
+    METHODS save_header
+      IMPORTING
+        !it_header_guid TYPE crmt_object_guid_tab .
+    METHODS merge_change_2_global_buffer
+      IMPORTING
+        !it_current_insert TYPE ANY TABLE
+        !it_current_update TYPE ANY TABLE
+        !it_current_delete TYPE ANY TABLE
+      CHANGING
+        !ct_global_insert  TYPE ANY TABLE
+        !ct_global_update  TYPE ANY TABLE
+        !ct_global_delete  TYPE ANY TABLE .
+    CLASS-METHODS class_constructor .
+    METHODS get_item
+      IMPORTING
+        !it_item_guid     TYPE crmt_object_guid_tab
+      EXPORTING
+        !et_orderadm_i_db TYPE crmt_orderadm_i_du_tab .
+    CLASS-METHODS get_instance
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO cl_crms4_bt_data_model_tool .
+    METHODS is_order_in_creation
+      IMPORTING
+        !iv_order_guid        TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_in_creation) TYPE abap_bool .
+    METHODS set_current_item_mode
+      IMPORTING
+        !iv_mode TYPE crmt_mode .
+    METHODS determine_head_change_mode
+      IMPORTING
+        !iv_order_guid TYPE crmt_object_guid .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -67,7 +67,7 @@ public section.
       END OF ty_object_supported_component .
     TYPES:
       tt_object_supported_component TYPE TABLE OF ty_object_supported_component
-                WITH KEY object_type .
+                  WITH KEY object_type .
     TYPES:
       BEGIN OF ty_component_conv_cls,
         component TYPE crmt_object_name,
@@ -86,6 +86,11 @@ public section.
       mt_acronym TYPE STANDARD TABLE OF crmc_subob_cat_i .
     DATA mt_order_to_be_created TYPE crmt_object_guid_tab .
 
+    METHODS detect_change_revert
+      IMPORTING
+        !iv_order_db_buffer_name TYPE string
+      CHANGING
+        !ct_to_update            TYPE ANY TABLE .
     METHODS cleanup .
     METHODS merge_from_component_ob
       IMPORTING
@@ -160,6 +165,11 @@ public section.
         !it_supported_comp TYPE tt_supported_components
       CHANGING
         !ct_global_buffer  TYPE ANY TABLE .
+    METHODS get_header_db_buffer_type
+      IMPORTING
+        !iv_header_guid   TYPE crmt_object_guid
+      RETURNING
+        VALUE(rv_db_type) TYPE string .
 ENDCLASS.
 
 
@@ -230,16 +240,44 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->DETECT_CHANGE_REVERT
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ORDER_DB_BUFFER_NAME        TYPE        STRING
+* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD detect_change_revert.
+
+    DATA: lr_db_header TYPE REF TO data.
+
+    CREATE DATA lr_db_header TYPE (iv_order_db_buffer_name).
+    ASSIGN lr_db_header->* TO FIELD-SYMBOL(<db_header>).
+
+    LOOP AT ct_to_update ASSIGNING FIELD-SYMBOL(<to_update>).
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE <to_update> TO FIELD-SYMBOL(<guid>).
+      ASSERT sy-subrc = 0.
+      CALL FUNCTION 'CRM_SRVO_H_GET_DB'
+        EXPORTING
+          iv_order_guid = <guid>
+        IMPORTING
+          es_db_buffer  = <db_header>.
+      IF <db_header> = <to_update>.
+* Jerry 2017-05-10 14:11PM TODO
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->DETERMINE_HEAD_CHANGE_MODE
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_ORDER_GUID                  TYPE        CRMT_OBJECT_GUID
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD DETERMINE_HEAD_CHANGE_MODE.
-    READ TABLE me->mt_order_to_be_created wITH KEY table_line = iv_order_guid
+  METHOD determine_head_change_mode.
+    READ TABLE me->mt_order_to_be_created WITH KEY table_line = iv_order_guid
       TRANSPORTING NO FIELDS.
 
-    me->mv_current_head_mode = cond crmt_mode( when sy-subrc = 0 then 'A'
-                                                when sy-subrc = 4 or sy-subrc = 8 then 'B' ).
+    me->mv_current_head_mode = COND crmt_mode( WHEN sy-subrc = 0 THEN 'A'
+                                                WHEN sy-subrc = 4 OR sy-subrc = 8 THEN 'B' ).
   ENDMETHOD.
 
 
@@ -458,6 +496,23 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     READ TABLE mt_component_conv_cls ASSIGNING FIELD-SYMBOL(<buffer>)
      WITH KEY component = iv_component_name.
     rv_cls_name = <buffer>-conv_cls.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->GET_HEADER_DB_BUFFER_TYPE
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID
+* | [<-()] RV_DB_TYPE                     TYPE        STRING
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD get_header_db_buffer_type.
+    DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
+    DATA: ls_zcrmc_subob_cat TYPE crmc_subob_cat.
+
+    SELECT SINGLE * INTO ls_zcrmc_subob_cat FROM crmc_subob_cat
+       WHERE subobj_category = lv_object_type.
+    ASSERT sy-subrc = 0.
+    rv_db_type = 'CRMS4T_' && ls_zcrmc_subob_cat-acronym && '_H_DB_WRK'.
   ENDMETHOD.
 
 
@@ -887,14 +942,20 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * see: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
 
 * Step2: Merge object buffer to Global Update buffer
+* Jerry 2017-05-10 11:55AM - this step is not necessary any more after discussion with
+* Carsten on meeting 2017-05-09 Tuesday. The latest data for update has already been
+* aggregated by each convert class
 
-    CALL METHOD merge_from_component_ob
-      EXPORTING
-        it_supported_comp = lt_unsorted
-      CHANGING
-        ct_global_insert  = <to_insert>
-        ct_global_update  = <to_update>
-        ct_global_delete  = <to_delete>.
+*    CALL METHOD merge_from_component_ob
+*      EXPORTING
+*        it_supported_comp = lt_unsorted
+*      CHANGING
+*        ct_global_insert  = <to_insert>
+*        ct_global_update  = <to_update>
+*        ct_global_delete  = <to_delete>.
+
+    detect_change_revert( EXPORTING iv_order_db_buffer_name = get_header_db_buffer_type( iv_header_guid )
+                          CHANGING  ct_to_update = <to_update> ).
 
     CALL FUNCTION 'CRM_SRVO_H_UPDATE_DU' IN UPDATE TASK
       EXPORTING
