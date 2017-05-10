@@ -40,7 +40,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 
     ASSERT sy-subrc = 0.
 
-    lv_db_name = 'CRMS4D' && lv_acronym && '_H'.
+    lv_db_name = 'CRMS4D_' && lv_acronym && '_H'.
 
     SELECT SINGLE changed_at FROM (lv_db_name) INTO rv_changed_at
        WHERE guid = iv_guid.
@@ -59,12 +59,13 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
-    DATA: lt_insert  TYPE crmt_orderadm_h_du_tab,
+    DATA: lt_ob  TYPE CRMT_ORDERADM_H_WRKT,
+          ls_line TYPE CRMD_ORDERADM_H,
+          lt_insert  TYPE crmt_orderadm_h_du_tab,
           lt_update  TYPE crmt_orderadm_h_du_tab,
           lt_delete  TYPE crmt_orderadm_h_du_tab,
           lt_to_save TYPE crmt_object_guid_tab.
 
-    CHECK iv_ref_kind = 'A'.
     APPEND iv_ref_guid TO lt_to_save.
 * Jerry 2017-05-02 8:40PM - in order to generate changed timestamp
 
@@ -75,22 +76,25 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
         saving_admin_headers_error  = 1
         admin_header_does_not_exist = 2
         OTHERS                      = 3.
-    IF sy-subrc <> 0.
-    ENDIF.
-
-    CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
-      EXPORTING
-        iv_object_name       = 'ORDERADM_H'
-        iv_field_name_key    = 'GUID'
-        it_guids_to_process  = lt_to_save
-        iv_header_to_save    = iv_ref_guid
-      IMPORTING
-        et_records_to_insert = lt_insert
-        et_records_to_update = lt_update
-        et_records_to_delete = lt_delete.
+    ASSERT sy-subrc = 0.
 
     DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
+    tool->determine_head_change_mode( iv_ref_guid ).
 
+    CALL FUNCTION 'CRM_ORDERADM_H_GET_MULTI_OB'
+       EXPORTING
+          IT_GUIDS_TO_GET = lt_to_save
+       IMPORTING
+          ET_OBJECT_BUFFER = lt_ob.
+
+    READ TABLE lt_ob ASSIGNING FIELD-SYMBOL(<ob>) INDEX 1.
+    ls_line = CORRESPONDING #( <ob> ).
+    CASE tool->mv_current_head_mode.
+       WHEN 'A'.
+          INSERT ls_line INTO TABLE lt_insert.
+       WHEN 'B'.
+          INSERT ls_line INTO TABLE lt_update.
+    ENDCASE.
     CALL METHOD tool->merge_change_2_global_buffer
       EXPORTING
         it_current_insert = lt_insert
