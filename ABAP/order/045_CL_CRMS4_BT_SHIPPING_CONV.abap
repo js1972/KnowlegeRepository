@@ -35,6 +35,13 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 * Jerry 2017-05-08 7:07PM - always header guid passed into this method
     DATA(lv_ref_kind) = COND crmt_object_kind( WHEN iv_current_guid = iv_ref_guid THEN 'A'
       ELSE 'B' ).
+* Jerry 2017-05-10 8:33PM - if item is in deletion mode, do nothing since item deletion
+* is triggered by ORDERADM_I convert class
+
+    IF lv_ref_kind = 'B' and lo_tool->mv_current_item_mode = 'D'.
+       RETURN.
+    ENDIF.
+
     CALL FUNCTION 'CRM_SHIPPING_READ_OW'
       EXPORTING
         iv_ref_guid     = iv_current_guid
@@ -42,13 +49,29 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
       IMPORTING
         es_shipping_wrk = ls_shipping.
 
+    IF ls_shipping IS INITIAL.
+       RETURN.
+    ENDIF.
     ls_du = CORRESPONDING #( ls_shipping ).
     ls_du-guid = iv_current_guid.
-    CASE lo_tool->mv_current_head_mode.
+
+* Jerry 2017-05-10 8:51PM !!! set update record should consider current set context!
+* this code is ugly!!!
+    CASE lv_ref_kind.
       WHEN 'A'.
-        INSERT ls_du INTO TABLE lt_insert.
+        CASE lo_tool->mv_current_head_mode.
+          WHEN 'A'.
+             INSERT ls_du INTO TABLE lt_insert.
+          WHEN 'B'.
+             INSERT ls_du INTO TABLE lt_update.
+        ENDCASE.
       WHEN 'B'.
-        INSERT ls_du INTO TABLE lt_update.
+         CASE lo_tool->mv_current_item_mode.
+          WHEN 'A'.
+             INSERT ls_du INTO TABLE lt_insert.
+          WHEN 'B'.
+             INSERT ls_du INTO TABLE lt_update.
+         ENDCASE.
     ENDCASE.
 
     CALL METHOD lo_tool->merge_change_2_global_buffer
@@ -73,10 +96,8 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_SHIPPING_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* | Instance Private Method CL_CRMS4_BT_SHIPPING_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
-* | [<---] ES_DATA                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~get_ob.
     DATA: lt_guid   TYPE crmt_object_guid_tab,

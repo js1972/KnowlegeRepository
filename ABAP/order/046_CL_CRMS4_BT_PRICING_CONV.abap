@@ -36,6 +36,10 @@ CLASS CL_CRMS4_BT_PRICING_CONV IMPLEMENTATION.
     DATA(lv_ref_kind) = COND crmt_object_kind( WHEN iv_current_guid = iv_ref_guid THEN 'A'
           ELSE 'B' ).
 
+    IF lv_ref_kind = 'B' and lo_tool->mv_current_item_mode = 'D'.
+       RETURN.
+    ENDIF.
+
     CALL FUNCTION 'CRM_PRICING_READ_OW'
       EXPORTING
         iv_ref_guid    = iv_current_guid
@@ -53,11 +57,23 @@ CLASS CL_CRMS4_BT_PRICING_CONV IMPLEMENTATION.
     ENDIF.
     ls_du = CORRESPONDING #( ls_pricing ).
     ls_du-guid = iv_current_guid.
-    CASE lo_tool->mv_current_head_mode.
+* Jerry 2017-05-10 8:51PM !!! set update record should consider current set context!
+* this code is ugly!!!
+    CASE lv_ref_kind.
       WHEN 'A'.
-        INSERT ls_du INTO TABLE lt_insert.
+        CASE lo_tool->mv_current_head_mode.
+          WHEN 'A'.
+             INSERT ls_du INTO TABLE lt_insert.
+          WHEN 'B'.
+             INSERT ls_du INTO TABLE lt_update.
+        ENDCASE.
       WHEN 'B'.
-        INSERT ls_du INTO TABLE lt_update.
+         CASE lo_tool->mv_current_item_mode.
+          WHEN 'A'.
+             INSERT ls_du INTO TABLE lt_insert.
+          WHEN 'B'.
+             INSERT ls_du INTO TABLE lt_update.
+         ENDCASE.
     ENDCASE.
 
     CALL METHOD lo_tool->merge_change_2_global_buffer
