@@ -25,43 +25,40 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 * | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
 * +--------------------------------------------------------------------------------------</SIGNATURE>
-  method IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_1O_TO_S4.
-    DATA: lt_insert  TYPE crmt_shipping_du_tab,
-          lt_update  TYPE crmt_shipping_du_tab,
-          lt_delete  TYPE crmt_shipping_du_tab,
-          lt_to_save TYPE crmt_object_guid_tab,
-          lv_created_set_guid TYPE crmt_object_guid.
+  METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
+    DATA: lt_insert   TYPE crmt_shipping_du_tab,
+          lt_update   TYPE crmt_shipping_du_tab,
+          ls_du       TYPE crmd_shipping,
+          ls_shipping TYPE crmt_shipping_wrk.
 
     DATA(lo_tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 * Jerry 2017-05-08 7:07PM - always header guid passed into this method
-    APPEND iv_current_guid TO lt_to_save.
-
-    CALL FUNCTION 'CRM_ORDER_UPDATE_TABLES_DETERM'
+    DATA(lv_ref_kind) = COND crmt_object_kind( WHEN iv_current_guid = iv_ref_guid THEN 'A'
+      ELSE 'B' ).
+    CALL FUNCTION 'CRM_SHIPPING_READ_OW'
       EXPORTING
-        iv_object_name       = 'SHIPPING'
-        iv_field_name_key    = 'GUID'
-        it_guids_to_process  = lt_to_save
-        iv_header_to_save    = iv_ref_guid
+        iv_ref_guid     = iv_current_guid
+        iv_ref_kind     = lv_ref_kind
       IMPORTING
-        et_records_to_insert = lt_insert
-        et_records_to_update = lt_update
-        et_records_to_delete = lt_delete.
+        es_shipping_wrk = ls_shipping.
 
-* ct_* can have different table type like CRMS4D_SALE_I_T, CRMS4D_SVPR_I_T
-* Jerry 2017-04-26 12:11PM only support update currently
+    ls_du = CORRESPONDING #( ls_shipping ).
+    ls_du-guid = iv_current_guid.
+    CASE lo_tool->mv_current_head_mode.
+      WHEN 'A'.
+        INSERT ls_du INTO TABLE lt_insert.
+      WHEN 'B'.
+        INSERT ls_du INTO TABLE lt_update.
+    ENDCASE.
 
-    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
-
-    CALL METHOD tool->merge_change_2_global_buffer
+    CALL METHOD lo_tool->merge_change_2_global_buffer
       EXPORTING
         it_current_insert = lt_insert
         it_current_update = lt_update
-        it_current_delete = lt_delete
       CHANGING
         ct_global_insert  = ct_to_insert
-        ct_global_update  = ct_to_update
-        ct_global_delete  = ct_to_delete.
-  endmethod.
+        ct_global_update  = ct_to_update.
+  ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
@@ -126,6 +123,11 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 
     MOVE-CORRESPONDING is_wrk_structure TO ls_db.
     APPEND ls_db TO lt_db.
+
+    CALL FUNCTION 'CRM_SRVO_H_PUT_DB'
+      EXPORTING
+        is_header_segment = ls_db.
+
     CALL FUNCTION 'CRM_SHIPPING_PUT_DB'
       EXPORTING
         it_shipping_db = lt_db.

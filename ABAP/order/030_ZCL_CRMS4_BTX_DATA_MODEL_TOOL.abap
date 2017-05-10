@@ -1,48 +1,48 @@
-CLASS cl_crms4_bt_data_model_tool DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PRIVATE .
+class CL_CRMS4_BT_DATA_MODEL_TOOL definition
+  public
+  final
+  create private .
 
-  PUBLIC SECTION.
+public section.
 
-    TYPES:
-      tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
+  types:
+    tt_supported_components TYPE STANDARD TABLE OF crmt_object_name WITH KEY table_line .
 
-    DATA mv_current_head_mode TYPE crmt_mode READ-ONLY .
-    DATA mv_current_item_mode TYPE crmt_mode READ-ONLY .
+  data MV_CURRENT_HEAD_MODE type CRMT_MODE read-only .
+  data MV_CURRENT_ITEM_MODE type CRMT_MODE read-only .
 
-    METHODS save_header
-      IMPORTING
-        !it_header_guid TYPE crmt_object_guid_tab .
-    METHODS merge_change_2_global_buffer
-      IMPORTING
-        !it_current_insert TYPE ANY TABLE
-        !it_current_update TYPE ANY TABLE
-        !it_current_delete TYPE ANY TABLE
-      CHANGING
-        !ct_global_insert  TYPE ANY TABLE
-        !ct_global_update  TYPE ANY TABLE
-        !ct_global_delete  TYPE ANY TABLE .
-    CLASS-METHODS class_constructor .
-    METHODS get_item
-      IMPORTING
-        !it_item_guid     TYPE crmt_object_guid_tab
-      EXPORTING
-        !et_orderadm_i_db TYPE crmt_orderadm_i_du_tab .
-    CLASS-METHODS get_instance
-      RETURNING
-        VALUE(ro_instance) TYPE REF TO cl_crms4_bt_data_model_tool .
-    METHODS is_order_in_creation
-      IMPORTING
-        !iv_order_guid        TYPE crmt_object_guid
-      RETURNING
-        VALUE(rv_in_creation) TYPE abap_bool .
-    METHODS set_current_item_mode
-      IMPORTING
-        !iv_mode TYPE crmt_mode .
-    METHODS determine_head_change_mode
-      IMPORTING
-        !iv_order_guid TYPE crmt_object_guid .
+  methods SAVE_HEADER
+    importing
+      !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
+  methods MERGE_CHANGE_2_GLOBAL_BUFFER
+    importing
+      !IT_CURRENT_INSERT type ANY TABLE
+      !IT_CURRENT_UPDATE type ANY TABLE
+      !IT_CURRENT_DELETE type ANY TABLE optional
+    changing
+      !CT_GLOBAL_INSERT type ANY TABLE
+      !CT_GLOBAL_UPDATE type ANY TABLE
+      !CT_GLOBAL_DELETE type ANY TABLE optional .
+  class-methods CLASS_CONSTRUCTOR .
+  methods GET_ITEM
+    importing
+      !IT_ITEM_GUID type CRMT_OBJECT_GUID_TAB
+    exporting
+      !ET_ORDERADM_I_DB type CRMT_ORDERADM_I_DU_TAB .
+  class-methods GET_INSTANCE
+    returning
+      value(RO_INSTANCE) type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
+  methods IS_ORDER_IN_CREATION
+    importing
+      !IV_ORDER_GUID type CRMT_OBJECT_GUID
+    returning
+      value(RV_IN_CREATION) type ABAP_BOOL .
+  methods SET_CURRENT_ITEM_MODE
+    importing
+      !IV_MODE type CRMT_MODE .
+  methods DETERMINE_HEAD_CHANGE_MODE
+    importing
+      !IV_ORDER_GUID type CRMT_OBJECT_GUID .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -723,10 +723,10 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_CURRENT_INSERT              TYPE        ANY TABLE
 * | [--->] IT_CURRENT_UPDATE              TYPE        ANY TABLE
-* | [--->] IT_CURRENT_DELETE              TYPE        ANY TABLE
+* | [--->] IT_CURRENT_DELETE              TYPE        ANY TABLE(optional)
 * | [<-->] CT_GLOBAL_INSERT               TYPE        ANY TABLE
 * | [<-->] CT_GLOBAL_UPDATE               TYPE        ANY TABLE
-* | [<-->] CT_GLOBAL_DELETE               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_DELETE               TYPE        ANY TABLE(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD merge_change_2_global_buffer.
     DATA: lr_new_line TYPE REF TO data.
