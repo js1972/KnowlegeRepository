@@ -32,11 +32,6 @@ public section.
   class-methods GET_INSTANCE
     returning
       value(RO_INSTANCE) type ref to CL_CRMS4_BT_DATA_MODEL_TOOL .
-  methods IS_ORDER_IN_CREATION
-    importing
-      !IV_ORDER_GUID type CRMT_OBJECT_GUID
-    returning
-      value(RV_IN_CREATION) type ABAP_BOOL .
   methods SET_CURRENT_ITEM_MODE
     importing
       !IV_MODE type CRMT_MODE .
@@ -84,7 +79,6 @@ private section.
   data MT_ITEM_SUPPORTED_COMPS type TT_OBJECT_SUPPORTED_COMPONENT .
   data:
     mt_acronym TYPE STANDARD TABLE OF crmc_subob_cat_i .
-  data MT_ORDER_TO_BE_CREATED type CRMT_OBJECT_GUID_TAB .
 
   methods DETECT_CHANGE_REVERT
     importing
@@ -179,7 +173,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD cleanup.
-    CLEAR: mt_order_to_be_created.
+*    CLEAR: mt_order_to_be_created.
   ENDMETHOD.
 
 
@@ -261,11 +255,20 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * | [--->] IV_ORDER_GUID                  TYPE        CRMT_OBJECT_GUID
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD determine_head_change_mode.
-    READ TABLE me->mt_order_to_be_created WITH KEY table_line = iv_order_guid
-      TRANSPORTING NO FIELDS.
+* Jerry 2017-05-12 10:34AM mt_order_to_be_created not necessary!
+*    READ TABLE me->mt_order_to_be_created WITH KEY table_line = iv_order_guid
+*      TRANSPORTING NO FIELDS.
 
-    me->mv_current_head_mode = COND crmt_mode( WHEN sy-subrc = 0 THEN 'A'
-                                                WHEN sy-subrc = 4 OR sy-subrc = 8 THEN 'B' ).
+    DATA: lv_on_db TYPE abap_bool.
+
+    CALL FUNCTION 'CRM_ORDERADM_H_ON_DATABASE_OW'
+      EXPORTING
+        iv_orderadm_h_guid  = iv_order_guid
+      IMPORTING
+        ev_on_database_flag = lv_on_db.
+
+    me->mv_current_head_mode = COND crmt_mode( WHEN lv_on_db = abap_false THEN 'A'
+                                                ELSE 'B' ).
   ENDMETHOD.
 
 
@@ -337,14 +340,13 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
       LOOP AT it_header_guid ASSIGNING FIELD-SYMBOL(<order_to_create>).
 * Jerry 2017-05-08 6:48PM record those order into an internal table
-        INSERT <order_to_create> INTO TABLE mt_order_to_be_created.
+*        "INSERT <order_to_create> INTO TABLE mt_order_to_be_created.
         READ TABLE lt_order_h ASSIGNING FIELD-SYMBOL(<order_header>)
            WITH KEY guid = <order_to_create>.
-        IF sy-subrc = 0.
-          APPEND INITIAL LINE TO mt_header_object_type_buf ASSIGNING FIELD-SYMBOL(<buffer_for_created>).
+        ASSERT sy-subrc = 0.
+        APPEND INITIAL LINE TO mt_header_object_type_buf ASSIGNING FIELD-SYMBOL(<buffer_for_created>).
           <buffer_for_created> = VALUE #( guid = <order_to_create>
                                           object_type = <order_header>-object_type ).
-        ENDIF.
       ENDLOOP.
     ENDIF.
   ENDMETHOD.
@@ -694,19 +696,6 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->IS_ORDER_IN_CREATION
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_ORDER_GUID                  TYPE        CRMT_OBJECT_GUID
-* | [<-()] RV_IN_CREATION                 TYPE        ABAP_BOOL
-* +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD is_order_in_creation.
-    READ TABLE mt_order_to_be_created WITH KEY table_line = iv_order_guid TRANSPORTING
-     NO FIELDS.
-    rv_in_creation = boolc( sy-subrc = 0 ).
-  ENDMETHOD.
-
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->MERGE_CHANGE_2_GLOBAL_BUFFER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_CURRENT_INSERT              TYPE        ANY TABLE
@@ -867,21 +856,6 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
           ct_to_update    = <to_update>
           ct_to_delete    = <to_delete>.
     ENDLOOP.
-
-* see: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
-
-* Step2: Merge object buffer to Global Update buffer
-* Jerry 2017-05-10 11:55AM - this step is not necessary any more after discussion with
-* Carsten on meeting 2017-05-09 Tuesday. The latest data for update has already been
-* aggregated by each convert class
-
-*    CALL METHOD merge_from_component_ob
-*      EXPORTING
-*        it_supported_comp = lt_unsorted
-*      CHANGING
-*        ct_global_insert  = <to_insert>
-*        ct_global_update  = <to_update>
-*        ct_global_delete  = <to_delete>.
 
     detect_change_revert( EXPORTING iv_order_db_buffer_name = get_header_db_buffer_type( iv_header_guid )
                           CHANGING  ct_to_update = <to_update> ).
