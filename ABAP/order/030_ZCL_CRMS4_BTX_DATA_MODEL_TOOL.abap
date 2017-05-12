@@ -14,15 +14,6 @@ public section.
   methods SAVE_HEADER
     importing
       !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
-  methods MERGE_CHANGE_2_GLOBAL_BUFFER
-    importing
-      !IT_CURRENT_INSERT type ANY TABLE
-      !IT_CURRENT_UPDATE type ANY TABLE
-      !IT_CURRENT_DELETE type ANY TABLE optional
-    changing
-      !CT_GLOBAL_INSERT type ANY TABLE
-      !CT_GLOBAL_UPDATE type ANY TABLE
-      !CT_GLOBAL_DELETE type ANY TABLE optional .
   class-methods CLASS_CONSTRUCTOR .
   methods GET_ITEM
     importing
@@ -35,9 +26,6 @@ public section.
   methods SET_CURRENT_ITEM_MODE
     importing
       !IV_MODE type CRMT_MODE .
-  methods DETERMINE_HEAD_CHANGE_MODE
-    importing
-      !IV_ORDER_GUID type CRMT_OBJECT_GUID .
   PROTECTED SECTION.
 private section.
 
@@ -80,6 +68,9 @@ private section.
   data:
     mt_acronym TYPE STANDARD TABLE OF crmc_subob_cat_i .
 
+  methods DETERMINE_HEAD_CHANGE_MODE
+    importing
+      !IV_ORDER_GUID type CRMT_OBJECT_GUID .
   methods MERGE_LOCAL_CHANGE_2_GLOBAL
     importing
       !IS_CURRENT_INSERT type ANY optional
@@ -94,7 +85,6 @@ private section.
       !IV_ORDER_DB_BUFFER_NAME type STRING
     changing
       !CT_TO_UPDATE type ANY TABLE .
-  methods CLEANUP .
   methods FETCH_ITEM_CONV_CLASS .
   methods FETCH_ITEM_SUPPORTED_COMP
     importing
@@ -178,15 +168,6 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->CLEANUP
-* +-------------------------------------------------------------------------------------------------+
-* +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD cleanup.
-*    CLEAR: mt_order_to_be_created.
-  ENDMETHOD.
-
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->CONV_S4_2_1ORDER_AND_FILL_BUFF
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_OBJECTS                     TYPE        CRMT_OBJECT_NAME_TAB
@@ -259,7 +240,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->DETERMINE_HEAD_CHANGE_MODE
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->DETERMINE_HEAD_CHANGE_MODE
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_ORDER_GUID                  TYPE        CRMT_OBJECT_GUID
 * +--------------------------------------------------------------------------------------</SIGNATURE>
@@ -705,101 +686,6 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->MERGE_CHANGE_2_GLOBAL_BUFFER
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_CURRENT_INSERT              TYPE        ANY TABLE
-* | [--->] IT_CURRENT_UPDATE              TYPE        ANY TABLE
-* | [--->] IT_CURRENT_DELETE              TYPE        ANY TABLE(optional)
-* | [<-->] CT_GLOBAL_INSERT               TYPE        ANY TABLE
-* | [<-->] CT_GLOBAL_UPDATE               TYPE        ANY TABLE
-* | [<-->] CT_GLOBAL_DELETE               TYPE        ANY TABLE(optional)
-* +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD merge_change_2_global_buffer.
-    DATA: lr_new_line TYPE REF TO data.
-
-    FIELD-SYMBOLS:<i_update>      TYPE ANY TABLE,
-                  <i_insert>      TYPE ANY TABLE,
-                  <i_delete>      TYPE ANY TABLE,
-                  <new_line_item> TYPE any.
-
-* ct_* can have different table type like CRMS4D_SALE_I_T, CRMS4D_SVPR_I_T
-* Jerry 2017-04-26 12:11PM only support update currently
-
-    DATA(lr_to_update) = REF #( ct_global_update ).
-    ASSIGN lr_to_update->* TO <i_update>.
-    LOOP AT it_current_update ASSIGNING FIELD-SYMBOL(<update>).
-      LOOP AT <i_update> ASSIGNING FIELD-SYMBOL(<update_queue>).
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <update_queue> TO
-           FIELD-SYMBOL(<update_record_in_queue>).
-        CHECK sy-subrc = 0.
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <update> TO
-           FIELD-SYMBOL(<currently_determined_update>).
-        CHECK sy-subrc = 0.
-        IF <update_record_in_queue> = <currently_determined_update>.
-          MOVE-CORRESPONDING <update> TO <update_queue>.
-        ENDIF.
-      ENDLOOP.
-      IF <i_update> IS INITIAL.
-        CREATE DATA lr_new_line LIKE LINE OF ct_global_update.
-        ASSIGN lr_new_line->* TO <new_line_item>.
-        MOVE-CORRESPONDING <update> TO <new_line_item>.
-        INSERT <new_line_item> INTO TABLE <i_update>.
-      ENDIF.
-    ENDLOOP.
-
-    DATA(lr_to_insert) = REF #( ct_global_insert ).
-    ASSIGN lr_to_insert->* TO <i_insert>.
-    LOOP AT it_current_insert ASSIGNING FIELD-SYMBOL(<insert>).
-      LOOP AT <i_insert> ASSIGNING FIELD-SYMBOL(<insert_queue>).
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <insert_queue> TO
-           FIELD-SYMBOL(<insert_record_in_queue>).
-        CHECK sy-subrc = 0.
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <insert> TO
-           FIELD-SYMBOL(<currently_determined_insert>).
-        CHECK sy-subrc = 0.
-        IF <insert_record_in_queue> = <currently_determined_insert>.
-          MOVE-CORRESPONDING <insert> TO <insert_queue>.
-        ENDIF.
-      ENDLOOP.
-      IF <i_insert> IS INITIAL.
-* Jerry 2017-05-04 10:56AM - reason for this code:
-* https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/36
-        CREATE DATA lr_new_line LIKE LINE OF ct_global_insert.
-        ASSIGN lr_new_line->* TO <new_line_item>.
-        MOVE-CORRESPONDING <insert> TO <new_line_item>.
-        INSERT <new_line_item> INTO TABLE <i_insert>.
-      ENDIF.
-    ENDLOOP.
-
-* Jerry 2017-05-09 18:53PM - delete
-    DATA(lr_to_delete) = REF #( ct_global_delete ).
-    ASSIGN lr_to_delete->* TO <i_delete>.
-    LOOP AT it_current_delete ASSIGNING FIELD-SYMBOL(<delete>).
-      LOOP AT <i_delete> ASSIGNING FIELD-SYMBOL(<delete_queue>).
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <delete_queue> TO
-           FIELD-SYMBOL(<delete_record_in_queue>).
-        CHECK sy-subrc = 0.
-        ASSIGN COMPONENT 'GUID' OF STRUCTURE <delete> TO
-           FIELD-SYMBOL(<currently_determined_delete>).
-        CHECK sy-subrc = 0.
-        IF <delete_record_in_queue> = <currently_determined_delete>.
-          MOVE-CORRESPONDING <delete> TO <delete_queue>.
-        ENDIF.
-      ENDLOOP.
-      IF <i_delete> IS INITIAL.
-* Jerry 2017-05-04 10:56AM - reason for this code:
-* https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/36
-        CREATE DATA lr_new_line LIKE LINE OF ct_global_delete.
-        ASSIGN lr_new_line->* TO <new_line_item>.
-        MOVE-CORRESPONDING <delete> TO <new_line_item>.
-        INSERT <new_line_item> INTO TABLE <i_delete>.
-      ENDIF.
-    ENDLOOP.
-
-  ENDMETHOD.
-
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->MERGE_LOCAL_CHANGE_2_GLOBAL
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IS_CURRENT_INSERT              TYPE        ANY(optional)
@@ -903,7 +789,6 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
       save_single_header( <guid> ).
       save_single_items( <guid> ).
     ENDLOOP.
-    cleanup( ).
   ENDMETHOD.
 
 
@@ -970,9 +855,6 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
           iv_ref_guid  = iv_header_guid
           iv_ref_kind  = 'A'
         CHANGING
-          ct_to_insert = <to_insert>
-          ct_to_update = <to_update>
-          ct_to_delete = <to_delete>
           cs_workarea  = <current_change>.
 
       IF <current_change> IS INITIAL.
