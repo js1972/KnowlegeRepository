@@ -20,74 +20,43 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [--->] IV_CURRENT_GUID                TYPE        CRMT_OBJECT_GUID
-* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE
-* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE
-* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
+* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE(optional)
+* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE(optional)
+* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE(optional)
+* | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
-    DATA: lt_insert   TYPE crmt_shipping_du_tab,
-          lt_update   TYPE crmt_shipping_du_tab,
-          ls_du       TYPE crmd_shipping,
-          ls_shipping TYPE crmt_shipping_wrk.
+    DATA: ls_shipping TYPE crmt_shipping_wrk.
 
     DATA(lo_tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
 * Jerry 2017-05-08 7:07PM - always header guid passed into this method
-    DATA(lv_ref_kind) = COND crmt_object_kind( WHEN iv_current_guid = iv_ref_guid THEN 'A'
-      ELSE 'B' ).
 * Jerry 2017-05-10 8:33PM - if item is in deletion mode, do nothing since item deletion
 * is triggered by ORDERADM_I convert class
 
-    IF lv_ref_kind = 'B' and lo_tool->mv_current_item_mode = 'D'.
+    IF iv_ref_kind = 'B' and lo_tool->mv_current_item_mode = 'D'.
        RETURN.
     ENDIF.
 
-    CALL FUNCTION 'CRM_SHIPPING_READ_OW'
+    CALL FUNCTION 'CRM_SHIPPING_READ_OB'
       EXPORTING
-        iv_ref_guid     = iv_current_guid
-        iv_ref_kind     = lv_ref_kind
+        iv_ref_guid     = iv_ref_guid
+        iv_ref_kind     = iv_ref_kind
       IMPORTING
         es_shipping_wrk = ls_shipping.
 
     IF ls_shipping IS INITIAL.
        RETURN.
     ENDIF.
-    ls_du = CORRESPONDING #( ls_shipping ).
-    ls_du-guid = iv_current_guid.
+    ls_shipping-guid = iv_ref_guid.
+    cs_workarea = ls_shipping.
 
-* Jerry 2017-05-10 8:51PM !!! set update record should consider current set context!
-* this code is ugly!!!
-    CASE lv_ref_kind.
-      WHEN 'A'.
-        CASE lo_tool->mv_current_head_mode.
-          WHEN 'A'.
-             INSERT ls_du INTO TABLE lt_insert.
-          WHEN 'B'.
-             INSERT ls_du INTO TABLE lt_update.
-        ENDCASE.
-      WHEN 'B'.
-         CASE lo_tool->mv_current_item_mode.
-          WHEN 'A'.
-             INSERT ls_du INTO TABLE lt_insert.
-          WHEN 'B'.
-             INSERT ls_du INTO TABLE lt_update.
-         ENDCASE.
-    ENDCASE.
-
-    CALL METHOD lo_tool->merge_change_2_global_buffer
-      EXPORTING
-        it_current_insert = lt_insert
-        it_current_update = lt_update
-      CHANGING
-        ct_global_insert  = ct_to_insert
-        ct_global_update  = ct_to_update.
   ENDMETHOD.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_SHIPPING_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_S4_TO_1O
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IS_WORKAREA                    TYPE        ANY(optional)
+* | [--->] IS_WORKAREA                    TYPE        ANY
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_S4_TO_1O.

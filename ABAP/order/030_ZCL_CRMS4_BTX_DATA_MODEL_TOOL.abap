@@ -80,6 +80,15 @@ private section.
   data:
     mt_acronym TYPE STANDARD TABLE OF crmc_subob_cat_i .
 
+  methods MERGE_LOCAL_CHANGE_2_GLOBAL
+    importing
+      !IS_CURRENT_INSERT type ANY optional
+      !IS_CURRENT_UPDATE type ANY optional
+      !IS_CURRENT_DELETE type ANY optional
+    changing
+      !CT_GLOBAL_INSERT type ANY TABLE
+      !CT_GLOBAL_UPDATE type ANY TABLE
+      !CT_GLOBAL_DELETE type ANY TABLE optional .
   methods DETECT_CHANGE_REVERT
     importing
       !IV_ORDER_DB_BUFFER_NAME type STRING
@@ -791,6 +800,97 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->MERGE_LOCAL_CHANGE_2_GLOBAL
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IS_CURRENT_INSERT              TYPE        ANY(optional)
+* | [--->] IS_CURRENT_UPDATE              TYPE        ANY(optional)
+* | [--->] IS_CURRENT_DELETE              TYPE        ANY(optional)
+* | [<-->] CT_GLOBAL_INSERT               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_UPDATE               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_DELETE               TYPE        ANY TABLE(optional)
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD merge_local_change_2_global.
+    DATA: lr_new_line TYPE REF TO data.
+
+    FIELD-SYMBOLS:<i_update>      TYPE ANY TABLE,
+                  <i_insert>      TYPE ANY TABLE,
+                  <i_delete>      TYPE ANY TABLE,
+                  <new_line_item> TYPE any.
+
+* ct_* can have different table type like CRMS4D_SALE_I_T, CRMS4D_SVPR_I_T
+* Jerry 2017-04-26 12:11PM only support update currently
+
+    DATA(lr_to_update) = REF #( ct_global_update ).
+    ASSIGN lr_to_update->* TO <i_update>.
+    LOOP AT <i_update> ASSIGNING FIELD-SYMBOL(<update_queue>).
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE <update_queue> TO
+         FIELD-SYMBOL(<update_record_in_queue>).
+      ASSERT sy-subrc = 0.
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE is_current_update TO
+         FIELD-SYMBOL(<currently_determined_update>).
+      ASSERT sy-subrc = 0.
+      IF <update_record_in_queue> = <currently_determined_update>.
+        MOVE-CORRESPONDING is_current_update TO <update_queue>.
+      ENDIF.
+    ENDLOOP.
+    IF <i_update> IS INITIAL AND is_current_update IS NOT INITIAL.
+      CREATE DATA lr_new_line LIKE LINE OF ct_global_update.
+      ASSIGN lr_new_line->* TO <new_line_item>.
+      MOVE-CORRESPONDING is_current_update TO <new_line_item>.
+      INSERT <new_line_item> INTO TABLE <i_update>.
+    ENDIF.
+
+********** END OF update
+
+    DATA(lr_to_insert) = REF #( ct_global_insert ).
+    ASSIGN lr_to_insert->* TO <i_insert>.
+    LOOP AT <i_insert> ASSIGNING FIELD-SYMBOL(<insert_queue>).
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE <insert_queue> TO
+         FIELD-SYMBOL(<insert_record_in_queue>).
+      ASSERT sy-subrc = 0.
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE is_current_insert TO
+         FIELD-SYMBOL(<currently_determined_insert>).
+      ASSERT sy-subrc = 0.
+      IF <insert_record_in_queue> = <currently_determined_insert>.
+        MOVE-CORRESPONDING is_current_insert TO <insert_queue>.
+      ENDIF.
+    ENDLOOP.
+    IF <i_insert> IS INITIAL AND is_current_insert IS NOT INITIAL.
+* Jerry 2017-05-04 10:56AM - reason for this code:
+* https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/36
+      CREATE DATA lr_new_line LIKE LINE OF ct_global_insert.
+      ASSIGN lr_new_line->* TO <new_line_item>.
+      MOVE-CORRESPONDING is_current_insert TO <new_line_item>.
+      INSERT <new_line_item> INTO TABLE <i_insert>.
+    ENDIF.
+
+* Jerry 2017-05-09 18:53PM - delete
+    DATA(lr_to_delete) = REF #( ct_global_delete ).
+    ASSIGN lr_to_delete->* TO <i_delete>.
+    LOOP AT <i_delete> ASSIGNING FIELD-SYMBOL(<delete_queue>).
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE <delete_queue> TO
+         FIELD-SYMBOL(<delete_record_in_queue>).
+      ASSERT sy-subrc = 0.
+      ASSIGN COMPONENT 'GUID' OF STRUCTURE is_current_delete TO
+         FIELD-SYMBOL(<currently_determined_delete>).
+      ASSERT sy-subrc = 0.
+      IF <delete_record_in_queue> = <currently_determined_delete>.
+        MOVE-CORRESPONDING is_current_delete TO <delete_queue>.
+      ENDIF.
+    ENDLOOP.
+    IF <i_delete> IS INITIAL AND is_current_delete IS NOT INITIAL.
+* Jerry 2017-05-04 10:56AM - reason for this code:
+* https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/36
+      CREATE DATA lr_new_line LIKE LINE OF ct_global_delete.
+      ASSIGN lr_new_line->* TO <new_line_item>.
+      MOVE-CORRESPONDING is_current_delete TO <new_line_item>.
+      INSERT <new_line_item> INTO TABLE <i_delete>.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->SAVE_HEADER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
@@ -814,13 +914,27 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD save_single_header.
 
+* Jerry: global change
     DATA: lr_to_insert_db TYPE REF TO data,
           lr_to_update_db TYPE REF TO data,
-          lr_to_delete_db TYPE REF TO data.
+          lr_to_delete_db TYPE REF TO data,
+          lr_cur_change   TYPE REF TO data.
 
+* Jerry: local change
+    DATA: lr_local_insert TYPE REF TO data,
+          lr_local_update TYPE REF TO data,
+          lr_local_delete TYPE REF TO data.
+* Jerry: global change buffer
     FIELD-SYMBOLS: <to_insert> TYPE ANY TABLE,
                    <to_update> TYPE ANY TABLE,
                    <to_delete> TYPE ANY TABLE.
+* Jerry: local change buffer
+    FIELD-SYMBOLS:
+      <current_change> TYPE any,
+      <current_insert> TYPE any,
+      <current_update> TYPE any,
+      <current_delete> TYPE any.
+
 
     DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
     DATA(lt_header_supported_comp) = get_header_supported_comp( lv_object_type ).
@@ -835,6 +949,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
     CREATE DATA lr_to_delete_db TYPE TABLE OF (lv_comp_db_name).
     ASSIGN lr_to_delete_db->* TO <to_delete>.
+
+    determine_head_change_mode( iv_header_guid ).
     LOOP AT lt_unsorted ASSIGNING FIELD-SYMBOL(<component>).
 * Jerry 2017-05-03 16:39PM ignore ORDERADM_I in this method
 * If ORDERADM_I is not assigned to header object type like BUS2000116, there is some validation
@@ -846,15 +962,47 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
       DATA(lo_convertor) = get_convertor_instance( lv_conv_cls ).
 
+      DATA(lv_comp_type) = lo_convertor->get_wrk_structure_name( ).
+      CREATE DATA lr_cur_change TYPE (lv_comp_type).
+      ASSIGN lr_cur_change->* TO <current_change>.
       CALL METHOD lo_convertor->convert_1o_to_s4
         EXPORTING
-          iv_ref_guid     = iv_header_guid
-          iv_ref_kind     = 'A'
-          iv_current_guid = iv_header_guid
+          iv_ref_guid  = iv_header_guid
+          iv_ref_kind  = 'A'
         CHANGING
-          ct_to_insert    = <to_insert>
-          ct_to_update    = <to_update>
-          ct_to_delete    = <to_delete>.
+          ct_to_insert = <to_insert>
+          ct_to_update = <to_update>
+          ct_to_delete = <to_delete>
+          cs_workarea  = <current_change>.
+
+      IF <current_change> IS INITIAL.
+        CONTINUE.
+      ENDIF.
+
+      CREATE DATA lr_local_insert TYPE (lv_comp_type).
+      CREATE DATA lr_local_update TYPE (lv_comp_type).
+      CREATE DATA lr_local_delete TYPE (lv_comp_type).
+
+      ASSIGN lr_local_insert->* TO <current_insert>.
+      ASSIGN lr_local_update->* TO <current_update>.
+      ASSIGN lr_local_delete->* TO <current_delete>.
+
+      CASE mv_current_head_mode.
+        WHEN 'A'.
+          ASSIGN <current_change> TO <current_insert>.
+        WHEN 'B'.
+          ASSIGN <current_change> TO <current_update>.
+      ENDCASE.
+
+      CALL METHOD merge_local_change_2_global
+        EXPORTING
+          is_current_insert = <current_insert>
+          is_current_update = <current_update>
+          is_current_delete = <current_delete>
+        CHANGING
+          ct_global_insert  = <to_insert>
+          ct_global_update  = <to_update>
+          ct_global_delete  = <to_delete>.
     ENDLOOP.
 
     detect_change_revert( EXPORTING iv_order_db_buffer_name = get_header_db_buffer_type( iv_header_guid )
@@ -883,9 +1031,22 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
           lr_to_update_db TYPE REF TO data,
           lr_to_delete_db TYPE REF TO data.
 
+* global update buffer
     FIELD-SYMBOLS: <to_insert> TYPE ANY TABLE,
                    <to_update> TYPE ANY TABLE,
                    <to_delete> TYPE ANY TABLE.
+* Jerry 2017-05-12: local change buffer
+    FIELD-SYMBOLS:
+      <current_change> TYPE any,
+      <current_insert> TYPE any,
+      <current_update> TYPE any,
+      <current_delete> TYPE any.
+
+* Jerry 2017-05-12 6:14PM : local change
+    DATA: lr_local_insert TYPE REF TO data,
+          lr_local_update TYPE REF TO data,
+          lr_local_delete TYPE REF TO data,
+          lr_cur_change   TYPE REF TO data.
 
     CALL FUNCTION 'CRM_ORDERADM_I_READ_OB'
       EXPORTING
@@ -928,15 +1089,46 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         DATA(lv_conv_class) = get_conv_cls_name_by_component( <comp> ).
         CHECK lv_conv_class IS NOT INITIAL.
         DATA(lo_conv_class) = get_convertor_instance( lv_conv_class ).
+        DATA(lv_comp_workarea) = lo_conv_class->get_wrk_structure_name( ).
+        CREATE DATA lr_cur_change TYPE (lv_comp_workarea).
+        ASSIGN lr_cur_change->* TO <current_change>.
         CALL METHOD lo_conv_class->convert_1o_to_s4
           EXPORTING
-            iv_ref_guid     = <orderadm_i_wrk>-header
-            iv_ref_kind     = 'A'
-            iv_current_guid = <orderadm_i_wrk>-guid
+            iv_ref_guid = <orderadm_i_wrk>-guid
+            iv_ref_kind = 'B'
           CHANGING
-            ct_to_insert    = <to_insert>
-            ct_to_update    = <to_update>
-            ct_to_delete    = <to_delete>.
+            cs_workarea = <current_change>.
+
+        IF <current_change> IS INITIAL.
+          CONTINUE.
+        ENDIF.
+
+        CREATE DATA lr_local_insert TYPE (lv_comp_workarea).
+        CREATE DATA lr_local_update TYPE (lv_comp_workarea).
+        CREATE DATA lr_local_delete TYPE (lv_comp_workarea).
+
+        ASSIGN lr_local_insert->* TO <current_insert>.
+        ASSIGN lr_local_update->* TO <current_update>.
+        ASSIGN lr_local_delete->* TO <current_delete>.
+
+        CASE mv_current_item_mode.
+          WHEN 'A'.
+            ASSIGN <current_change> TO <current_insert>.
+          WHEN 'B'.
+            ASSIGN <current_change> TO <current_update>.
+          WHEN 'D'.
+            ASSIGN <current_change> TO <current_delete>.
+        ENDCASE.
+
+        CALL METHOD merge_local_change_2_global
+          EXPORTING
+            is_current_insert = <current_insert>
+            is_current_update = <current_update>
+            is_current_delete = <current_delete>
+          CHANGING
+            ct_global_insert  = <to_insert>
+            ct_global_update  = <to_update>
+            ct_global_delete  = <to_delete>.
       ENDLOOP.
 
       READ TABLE mt_acronym ASSIGNING FIELD-SYMBOL(<acronym>) WITH KEY

@@ -53,9 +53,9 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE
-* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE
-* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
+* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE(optional)
+* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE(optional)
+* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE(optional)
 * | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
@@ -96,21 +96,6 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
     READ TABLE lt_ob ASSIGNING FIELD-SYMBOL(<ob>) INDEX 1.
     ls_line = CORRESPONDING #( <ob> ).
     cs_workarea = ls_line.
-*    CASE tool->mv_current_head_mode.
-*      WHEN 'A'.
-*        INSERT ls_line INTO TABLE lt_insert.
-*      WHEN 'B'.
-*        INSERT ls_line INTO TABLE lt_update.
-*    ENDCASE.
-*    CALL METHOD tool->merge_change_2_global_buffer
-*      EXPORTING
-*        it_current_insert = lt_insert
-*        it_current_update = lt_update
-*        it_current_delete = lt_delete
-*      CHANGING
-*        ct_global_insert  = ct_to_insert
-*        ct_global_update  = ct_to_update
-*        ct_global_delete  = ct_to_delete.
 
   ENDMETHOD.
 
@@ -118,7 +103,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_S4_TO_1O
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IS_WORKAREA                    TYPE        ANY(optional)
+* | [--->] IS_WORKAREA                    TYPE        ANY
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_s4_to_1o.
