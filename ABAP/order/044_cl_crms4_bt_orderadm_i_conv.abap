@@ -7,7 +7,11 @@ CLASS cl_crms4_bt_orderadm_i_conv DEFINITION
 
     INTERFACES if_crms4_btx_data_model_conv .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
+
+  methods POPULATE_CHANGED_TIMESTAMP
+    changing
+      !CS_ITEM type CRMT_ORDERADM_I_WRK .
 ENDCLASS.
 
 
@@ -38,9 +42,11 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 
     APPEND iv_ref_guid TO lt_header.
 * Jerry 2017-05-03 17:16PM - update created at related timestamp in item level
-    CALL FUNCTION 'CRM_ORDERADM_I_SAVE_OB'
-      EXPORTING
-        it_header = lt_header.
+* In the productive implementation, we should extract the corresponding codes within this FM
+* below and put them to a new FM and call that FM instead.
+*    CALL FUNCTION 'CRM_ORDERADM_I_SAVE_OB'
+*      EXPORTING
+*        it_header = lt_header.
 
     CALL FUNCTION 'CRM_ORDERADM_I_READ_OB'
       EXPORTING
@@ -48,6 +54,8 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
         iv_include_deleted_items = 'X'
       IMPORTING
         es_orderadm_i_wrk        = ls_item_ob.
+
+    populate_changed_timestamp( CHANGING cs_item = ls_item_ob ).
 
     DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
     lv_mode = tool->mv_current_item_mode.
@@ -79,6 +87,10 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
       WHEN 'B'.
         INSERT ls_item_update INTO TABLE lt_update.
       WHEN 'D'.
+* Jerry 2017-05-10 8:35PM in productive implementation the following scenario needs to
+* be considered:
+* create a new service order and create a new item, delete it immediately.
+* in this case the item could not be found from DB buffer - do nothing!
         INSERT ls_item_update INTO TABLE lt_delete.
     ENDCASE.
 
@@ -108,16 +120,6 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_ORDERADM_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
-* | [<---] ES_DATA                        TYPE        ANY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
-  METHOD if_crms4_btx_data_model_conv~get_ob.
-  ENDMETHOD.
-
-
-* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_ORDERADM_I_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_WRK_STRUCTURE_NAME
 * +-------------------------------------------------------------------------------------------------+
 * | [<-()] RV_WRK_STRUCTURE_NAME          TYPE        STRING
@@ -142,5 +144,44 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
     CALL FUNCTION 'CRM_ORDERADM_I_PUT_DB'
       EXPORTING
         it_orderadm_i_db = lt_orderadm_i_db_buffer.
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_ORDERADM_I_CONV->POPULATE_CHANGED_TIMESTAMP
+* +-------------------------------------------------------------------------------------------------+
+* | [<-->] CS_ITEM                        TYPE        CRMT_ORDERADM_I_WRK
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD populate_changed_timestamp.
+    DATA: ls_orderadm_h_wrk TYPE crmt_orderadm_h_wrk.
+
+    CALL FUNCTION 'CRM_ORDERADM_H_READ_OW'
+      EXPORTING
+        iv_orderadm_h_guid = cs_item-header
+      IMPORTING
+        es_orderadm_h_wrk  = ls_orderadm_h_wrk
+      EXCEPTIONS
+        OTHERS             = 2.
+
+    CALL FUNCTION 'CRM_ORDER_GET_TIMESTAMP'
+      EXPORTING
+        iv_guid      = cs_item-header
+      IMPORTING
+        ev_timestamp = cs_item-changed_at.
+
+    cs_item-changed_by = ls_orderadm_h_wrk-changed_by.
+
+    IF cs_item-created_at IS INITIAL.
+      cs_item-created_at = cs_item-changed_at.
+    ENDIF.
+
+    IF cs_item-created_by IS INITIAL.
+      cs_item-created_by = cs_item-changed_by.
+    ENDIF.
+
+    IF cs_item-order_date IS INITIAL.
+      cs_item-order_date = cs_item-created_at.
+    ENDIF.
+
   ENDMETHOD.
 ENDCLASS.
