@@ -53,22 +53,26 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [--->] IV_CURRENT_GUID                TYPE        CRMT_OBJECT_GUID
 * | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE
 * | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE
 * | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE
+* | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
     DATA: lt_ob      TYPE crmt_orderadm_h_wrkt,
           ls_line    TYPE crmd_orderadm_h,
-          lt_insert  TYPE crmt_orderadm_h_du_tab,
-          lt_update  TYPE crmt_orderadm_h_du_tab,
-          lt_delete  TYPE crmt_orderadm_h_du_tab,
+*          lt_insert  TYPE crmt_orderadm_h_du_tab,
+*          lt_update  TYPE crmt_orderadm_h_du_tab,
+*          lt_delete  TYPE crmt_orderadm_h_du_tab,
           lt_to_save TYPE crmt_object_guid_tab.
 
     APPEND iv_ref_guid TO lt_to_save.
 * Jerry 2017-05-02 8:40PM - in order to generate changed timestamp
-
+* In the productive implementation, we should extract the corresponding codes within this FM
+* below and put them to a new FM and call that FM instead.
+* Jerry 2017-05-12 12:00PM - there are some calculation logic inside this SAVE_OB
+* so I just reuse it in POC - the update function module call in this SAVE_OB
+* has already been disabled by Jerry
     CALL FUNCTION 'CRM_ORDERADM_H_SAVE_OB'
       EXPORTING
         it_orderadm_h_to_save       = lt_to_save
@@ -78,8 +82,10 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
         OTHERS                      = 3.
     ASSERT sy-subrc = 0.
 
-    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
-    tool->determine_head_change_mode( iv_ref_guid ).
+*    DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
+** Jerry 2017-05-12 3:44PM in this way header change mode could only be determined once,
+** and this mode could be reused by other header set like shipping and pricing
+*    tool->determine_head_change_mode( iv_ref_guid ).
 
     CALL FUNCTION 'CRM_ORDERADM_H_GET_MULTI_OB'
       EXPORTING
@@ -89,21 +95,23 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 
     READ TABLE lt_ob ASSIGNING FIELD-SYMBOL(<ob>) INDEX 1.
     ls_line = CORRESPONDING #( <ob> ).
-    CASE tool->mv_current_head_mode.
-      WHEN 'A'.
-        INSERT ls_line INTO TABLE lt_insert.
-      WHEN 'B'.
-        INSERT ls_line INTO TABLE lt_update.
-    ENDCASE.
-    CALL METHOD tool->merge_change_2_global_buffer
-      EXPORTING
-        it_current_insert = lt_insert
-        it_current_update = lt_update
-        it_current_delete = lt_delete
-      CHANGING
-        ct_global_insert  = ct_to_insert
-        ct_global_update  = ct_to_update
-        ct_global_delete  = ct_to_delete.
+    cs_workarea = ls_line.
+*    CASE tool->mv_current_head_mode.
+*      WHEN 'A'.
+*        INSERT ls_line INTO TABLE lt_insert.
+*      WHEN 'B'.
+*        INSERT ls_line INTO TABLE lt_update.
+*    ENDCASE.
+*    CALL METHOD tool->merge_change_2_global_buffer
+*      EXPORTING
+*        it_current_insert = lt_insert
+*        it_current_update = lt_update
+*        it_current_delete = lt_delete
+*      CHANGING
+*        ct_global_insert  = ct_to_insert
+*        ct_global_update  = ct_to_update
+*        ct_global_delete  = ct_to_delete.
+
   ENDMETHOD.
 
 
@@ -121,10 +129,8 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
+* | Instance Private Method CL_CRMS4_BT_ORDERADM_H_CONV->IF_CRMS4_BTX_DATA_MODEL_CONV~GET_OB
 * +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_GUID                        TYPE        CRMT_OBJECT_GUID
-* | [<---] ES_DATA                        TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~get_ob.
   ENDMETHOD.
