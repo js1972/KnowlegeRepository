@@ -1,8 +1,24 @@
 <html>
-<script src="Developer.js"></script>
+<script src="employee.js"></script>
 <script src="CL_JS_CORRESPONDING.js"></script>
 <script>
 
-CL_JS_CORRESPONDING.CREATE();
+var developerList = [ new Developer("Jerry", "ABAP", 2000),
+                      new Developer("Tom",   "Java", 2050)];
+var preSalesList  = [ new Presales("Jerry"), 
+                      new Presales("Tom")]; 
+var mapping = [
+	{
+		source:"focusLanguage",
+		target:"focusArea"
+	},
+	{
+		source:"salary",
+		target:"salaryPlusBonous"
+	}
+];
+var mappingExecutor = CL_JS_CORRESPONDING.CREATE(developerList, preSalesList, mapping);
+var mappedPreSales = mappingExecutor.execute();
+debugger;
 </script>
 </html>
