@@ -13,6 +13,8 @@ public section.
        END OF ty_status_result .
   types:
     tt_status_result TYPE STANDARD TABLE OF ty_status_result WITH KEY obtyp stsma .
+  types:
+    tt_raw_input TYPE STANDARD TABLE OF CRM_JSTO WITH KEY objnr .
 
   methods GET_RESULT
     returning
@@ -22,6 +24,11 @@ public section.
       !IS_RESULT type TY_STATUS_RESULT
     returning
       value(RO_THIS) type ref to ZCL_STATUS_CALC_TOOL .
+  methods GET_RESULT_TRADITIONAL_WAY
+    importing
+      !IT_RAW type TT_RAW_INPUT
+    returning
+      value(RT_RESULT) type TT_STATUS_RESULT .
 protected section.
 private section.
 
@@ -53,5 +60,28 @@ CLASS ZCL_STATUS_CALC_TOOL IMPLEMENTATION.
   method GET_RESULT.
     SORT me->mt_result BY count DESCENDING.
     rt_result = me->mt_result.
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_STATUS_CALC_TOOL->GET_RESULT_TRADITIONAL_WAY
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IT_RAW                         TYPE        TT_RAW_INPUT
+* | [<-()] RT_RESULT                      TYPE        TT_STATUS_RESULT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method GET_RESULT_TRADITIONAL_WAY.
+    LOOP AT it_raw ASSIGNING FIELD-SYMBOL(<group>) GROUP BY (
+        obtyp = <group>-obtyp STSMA = <group>-stsma
+       size = GROUP SIZE index = GROUP INDEX )
+                  ASCENDING REFERENCE INTO DATA(group_ref).
+
+      DATA(ls_result) = value ty_status_result( obtyp = group_ref->obtyp
+                               stsma = group_ref->stsma
+                               count = group_ref->size ).
+
+      APPEND ls_result TO rT_result.
+    ENDLOOP.
+
+    SORT rt_result by count DESCENDING.
   endmethod.
 ENDCLASS.
