@@ -14,7 +14,8 @@ var mapping = [
 	},
 	{
 		source:"salary",
-		target:"salaryPlusBonous"
+		target:"salaryPlusBonous",
+		function: x => { return x * 2 }
 	}
 ];
 var mappingExecutor = CL_JS_CORRESPONDING.CREATE(developerList, preSalesList, mapping);
