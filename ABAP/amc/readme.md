@@ -13,3 +13,6 @@ lo_producer_txt->send( i_message = lv_register ).
 lo_producer_txt->send( i_message = lv_move ).
 
 how to find application APC_GAME?
+
+In Js code:
+var sUrl = "wss://ldciqgs.wdf.sap.corp:44300/sap/bc/apc/sap/ping_pong"
