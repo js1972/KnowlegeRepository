@@ -16,9 +16,41 @@ var CL_JS_CORRESPONDING = function() {
  		}
  	}
  	MappingExecutor.prototype.execute = function(){
- 		for( var i = 0; i < this.mapping.length; i++){
+ 		/*for( var i = 0; i < this.mapping.length; i++){
  			_map(this.src, this.target, this.mapping[i]);
- 		}
+ 		}*/
+    var that = this;
+    /*var temp = this.target.map(function(currentValue,index,array){
+      console.log("currentValue: " + currentValue);
+      console.log(that.targer);
+      debugger;
+    });*/
+    /* currentMapping: focusLanguage / focusArea
+    */
+    var mappingFunctor = ( currentMapping, index, wholeMapping) => { 
+      // Mapping is splited and passed into currentMapping, source and target still [2]
+      debugger;
+      console.log(this);
+     
+      /*
+      var add = (function () {
+         var counter = 0;
+        return function () {return counter += 1;}
+      })();
+     */
+      var mapEach = (function(currentMapping){
+          var _cM = currentMapping;
+          return function(x,y,z){
+                console.log(x + y + z);
+                console.log(_cM);
+                debugger;
+          };
+      })(currentMapping);
+      this.target.map(mapEach);
+     };
+
+    var temp = this.mapping.map(mappingFunctor);
+
  		return this.target;
  	}
  };
