@@ -4,54 +4,24 @@ var CL_JS_CORRESPONDING = function() {
  	this.src = src;
  	this.target = target;
  	this.mapping = mapping;
- 	function _map(source, target, mapping){
- 		for( var i = 0; i < source.length; i++){
- 			_mapEach(source[i], target[i], mapping);
- 		}
- 	}
- 	function _mapEach(source, target, mapping){
- 		target[mapping.target] = source[mapping.source];
- 		if( mapping.function){
- 			target[mapping.target] = mapping.function.call(null, target[mapping.target]);
- 		}
- 	}
+
  	MappingExecutor.prototype.execute = function(){
- 		/*for( var i = 0; i < this.mapping.length; i++){
- 			_map(this.src, this.target, this.mapping[i]);
- 		}*/
-    var that = this;
-    /*var temp = this.target.map(function(currentValue,index,array){
-      console.log("currentValue: " + currentValue);
-      console.log(that.targer);
-      debugger;
-    });*/
-    /* currentMapping: focusLanguage / focusArea
-    */
-    var mappingFunctor = ( currentMapping, index, wholeMapping) => { 
-      // Mapping is splited and passed into currentMapping, source and target still [2]
-      debugger;
-      console.log(this);
-     
-      /*
-      var add = (function () {
-         var counter = 0;
-        return function () {return counter += 1;}
-      })();
-     */
-      var mapEach = (function(currentMapping){
-          var _cM = currentMapping;
-          return function(x,y,z){
-                console.log(x + y + z);
-                console.log(_cM);
-                debugger;
-          };
-      })(currentMapping);
-      this.target.map(mapEach);
-     };
-
-    var temp = this.mapping.map(mappingFunctor);
-
- 		return this.target;
+    var mapCurrentTarget = function(currentTarget, currentSource, mapping){
+      mapping.map(function(currentMapping){
+        this.currentTarget[currentMapping.target] = this.currentSource[currentMapping.source];
+        if( currentMapping.function) {
+           this.currentTarget[currentMapping.target] = currentMapping.function.call(null, this.currentTarget[currentMapping.target]);
+        }
+      }, {
+           currentTarget: currentTarget,
+           currentSource: currentSource
+      });
+      return currentTarget;
+    }
+    var mappingFunctor = function (currentTarget, index){ 
+      return mapCurrentTarget(currentTarget, this.src[index], this.mapping);
+    };
+    return this.target.map(mappingFunctor, this);
  	}
  };
  return { 
