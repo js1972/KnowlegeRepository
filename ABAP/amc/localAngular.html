@@ -1,0 +1,30 @@
+<html ng-app="nameApp">
+  <head>
+    <meta charset="utf-8">
+    <title>Angular.js Example</title>
+    <script src="https://i042416.github.io/FioriODataTestTool2014/WebContent/angular/angular.js"></script>
+    <script>
+
+      var nameApp = angular.module('nameApp', []);
+      nameApp.controller('NameCtrl', function ($scope){
+        $scope.Ionames = ['Larry1111111111111111111111111111',
+        'Curly222222222222222222222222222', 'Moe333333333333333333333333333'];
+        var that = $scope;
+
+          var sUrl = "wss://ldciqgs.wdf.sap.corp:44300/sap/bc/apc/sap/zorder_log_apc";
+          var ws = new WebSocket(sUrl); // chrome branch
+          ws.onopen = function(){};
+          var onMessage = function(evt){
+            this.Ionames.push(evt.data);
+            this.$apply()
+          };
+          ws.onmessage = onMessage.bind($scope);
+      });
+    </script>
+  </head>
+  <body ng-controller="NameCtrl">
+    <ul>
+      <li ng-repeat="nameF in Ionames">{{nameF}}</li>
+    </ul>
+  </body>
+</html>
