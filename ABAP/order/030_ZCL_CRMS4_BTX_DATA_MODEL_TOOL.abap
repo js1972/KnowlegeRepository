@@ -11,6 +11,11 @@ public section.
   data MV_CURRENT_HEAD_MODE type CRMT_MODE read-only .
   data MV_CURRENT_ITEM_MODE type CRMT_MODE read-only .
 
+  class-methods MERGE_UNINITIAL_FIELDS
+    importing
+      !IS_SEGMENT type ANY
+    changing
+      !CS_CURRENT type ANY .
   methods SAVE_HEADER
     importing
       !IT_HEADER_GUID type CRMT_OBJECT_GUID_TAB .
@@ -151,6 +156,11 @@ private section.
       !IV_HEADER_GUID type CRMT_OBJECT_GUID
     returning
       value(RV_DB_TYPE) type STRING .
+  methods MOVE_HEADER_TO_ITEM
+    changing
+      !CT_GLOBAL_INSERT type ANY TABLE
+      !CT_GLOBAL_UPDATE type ANY TABLE
+      !CT_GLOBAL_DELETE type ANY TABLE .
 ENDCLASS.
 
 
@@ -185,7 +195,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
        FOR ALL ENTRIES IN it_objects WHERE name = it_objects-table_line.
 
     LOOP AT it_objects ASSIGNING FIELD-SYMBOL(<lv_object>).
-
+*
+      CHECK <lv_object> = 'ORDERADM_I'.
       READ TABLE lt_convert_class ASSIGNING FIELD-SYMBOL(<cls_name>) WITH KEY
           name = <lv_object>.
       CHECK sy-subrc = 0 AND <cls_name>-conv_class IS NOT INITIAL.
@@ -233,7 +244,8 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
         IMPORTING
           es_db_buffer  = <db_header>.
       IF <db_header> = <to_update>.
-* Jerry 2017-05-10 14:11PM TODO
+* Jerry 2017-05-10 14:11PM TODO Warning message should be raised to end user:
+* Actually there is no change in current transaction, save not necessary!
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
@@ -777,6 +789,133 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 
 
 * <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method CL_CRMS4_BT_DATA_MODEL_TOOL=>MERGE_UNINITIAL_FIELDS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IS_SEGMENT                     TYPE        ANY
+* | [<-->] CS_CURRENT                     TYPE        ANY
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  method MERGE_UNINITIAL_FIELDS.
+* Jerry 2017-05-16 11:26AM - of course we can also use KEYWORD BASE to avoid the unrelevant
+* fields to be overwritten by CORRESPONDING, like below:
+*  DATA(base) = ls_header.
+*  ls_header = CORRESPONDING #( BASE ( base ) is_header_segment ).
+* still it is more complex to construct a generic variable to hold the original data as BASE
+* So I just write this method on my own
+   DATA: lr_base TYPE REF TO DATA.
+   CREATE DATA lr_base LIKE cs_current.
+   ASSIGN lr_base->* TO FIELD-SYMBOL(<base>).
+
+   <base> = cs_current.
+   cs_current = CORRESPONDING #( BASE ( <base> ) is_segment ).
+  endmethod.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Private Method CL_CRMS4_BT_DATA_MODEL_TOOL->MOVE_HEADER_TO_ITEM
+* +-------------------------------------------------------------------------------------------------+
+* | [<-->] CT_GLOBAL_INSERT               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_UPDATE               TYPE        ANY TABLE
+* | [<-->] CT_GLOBAL_DELETE               TYPE        ANY TABLE
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD move_header_to_item.
+
+* currently this is hardcoded to SRVO_H
+* insert/update is not needed after redesign by jerry
+    DATA  ls_db_buffer TYPE crms4t_srvo_h_db_wrk.
+
+    FIELD-SYMBOLS:<i_update>      TYPE ANY TABLE.
+    FIELD-SYMBOLS:<i_insert>      TYPE ANY TABLE.
+
+    DATA(lr_to_update) = REF #( ct_global_update ).
+    ASSIGN lr_to_update->* TO <i_update>.
+    LOOP AT <i_update> ASSIGNING FIELD-SYMBOL(<update_queue>).
+      ASSIGN COMPONENT 'HEADER' OF STRUCTURE <update_queue> TO
+         FIELD-SYMBOL(<header_guid_update>).
+
+      "currently we have no ob
+      CALL FUNCTION 'CRM_SRVO_H_GET_DB'
+        EXPORTING
+          iv_order_guid = <header_guid_update>
+        IMPORTING
+          es_db_buffer  = ls_db_buffer.
+
+      ASSIGN COMPONENT 'HEADER_OBJECT_ID' OF STRUCTURE <update_queue> TO
+         FIELD-SYMBOL(<header_object_id_update>).
+      <header_object_id_update> = ls_db_buffer-object_id.
+
+      ASSIGN COMPONENT 'HEADER_POSTING_DATE' OF STRUCTURE <update_queue> TO
+         FIELD-SYMBOL(<header_posting_date_update>).
+      <header_posting_date_update> = ls_db_buffer-posting_date.
+
+      ASSIGN COMPONENT 'HEADER_CREATED_AT' OF STRUCTURE <update_queue> TO
+      FIELD-SYMBOL(<header_created_at_update>).
+      <header_created_at_update> = ls_db_buffer-created_at.
+
+      ASSIGN COMPONENT 'HEADER_DESCRIPTION' OF STRUCTURE <update_queue> TO
+      FIELD-SYMBOL(<header_description_update>).
+      <header_description_update> = ls_db_buffer-description.
+
+      ASSIGN COMPONENT 'HEADER_DESCRIPTION_UC' OF STRUCTURE <update_queue> TO
+      FIELD-SYMBOL(<header_description_uc_update>).
+      <header_description_uc_update> = ls_db_buffer-description_uc.
+
+      ASSIGN COMPONENT 'HEADER_PRIORITY' OF STRUCTURE <update_queue> TO
+      FIELD-SYMBOL(<header_priority_update>).
+      <header_priority_update> = ls_db_buffer-priority.
+
+      ASSIGN COMPONENT 'HEADER_CATEGORY' OF STRUCTURE <update_queue> TO
+      FIELD-SYMBOL(<header_category_update>).
+      <header_category_update> = ls_db_buffer-category.
+
+    ENDLOOP.
+
+    DATA(lr_to_insert) = REF #( ct_global_insert ).
+    ASSIGN lr_to_insert->* TO <i_insert>.
+    LOOP AT <i_insert> ASSIGNING FIELD-SYMBOL(<insert_queue>).
+      ASSIGN COMPONENT 'HEADER' OF STRUCTURE <insert_queue> TO
+         FIELD-SYMBOL(<header_guid_insert>).
+
+      "currently we have no ob
+      CALL FUNCTION 'CRM_SRVO_H_GET_DB'
+        EXPORTING
+          iv_order_guid = <header_guid_insert>
+        IMPORTING
+          es_db_buffer  = ls_db_buffer.
+
+      ASSIGN COMPONENT 'HEADER_OBJECT_ID' OF STRUCTURE <insert_queue> TO
+         FIELD-SYMBOL(<header_object_id_insert>).
+      <header_object_id_insert> = ls_db_buffer-object_id.
+
+      ASSIGN COMPONENT 'HEADER_POSTING_DATE' OF STRUCTURE <insert_queue> TO
+         FIELD-SYMBOL(<header_posting_date_insert>).
+      <header_posting_date_insert> = ls_db_buffer-posting_date.
+
+      ASSIGN COMPONENT 'HEADER_CREATED_AT' OF STRUCTURE <insert_queue> TO
+      FIELD-SYMBOL(<header_created_at_insert>).
+      <header_created_at_insert> = ls_db_buffer-created_at.
+
+      ASSIGN COMPONENT 'HEADER_DESCRIPTION' OF STRUCTURE <insert_queue> TO
+      FIELD-SYMBOL(<header_description_insert>).
+      <header_description_insert> = ls_db_buffer-description.
+
+      ASSIGN COMPONENT 'HEADER_DESCRIPTION_UC' OF STRUCTURE <insert_queue> TO
+      FIELD-SYMBOL(<header_description_uc_insert>).
+      <header_description_uc_insert> = ls_db_buffer-description_uc.
+
+      ASSIGN COMPONENT 'HEADER_PRIORITY' OF STRUCTURE <insert_queue> TO
+      FIELD-SYMBOL(<header_priority_insert>).
+      <header_priority_insert> = ls_db_buffer-priority.
+
+      ASSIGN COMPONENT 'HEADER_CATEGORY' OF STRUCTURE <insert_queue> TO
+      FIELD-SYMBOL(<header_category_insert>).
+      <header_category_insert> = ls_db_buffer-category.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
 * | Instance Public Method CL_CRMS4_BT_DATA_MODEL_TOOL->SAVE_HEADER
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IT_HEADER_GUID                 TYPE        CRMT_OBJECT_GUID_TAB
@@ -799,27 +938,16 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD save_single_header.
 
-* Jerry: global change
     DATA: lr_to_insert_db TYPE REF TO data,
           lr_to_update_db TYPE REF TO data,
           lr_to_delete_db TYPE REF TO data,
           lr_cur_change   TYPE REF TO data.
 
-* Jerry: local change
-    DATA: lr_local_insert TYPE REF TO data,
-          lr_local_update TYPE REF TO data,
-          lr_local_delete TYPE REF TO data.
-* Jerry: global change buffer
     FIELD-SYMBOLS: <to_insert> TYPE ANY TABLE,
                    <to_update> TYPE ANY TABLE,
                    <to_delete> TYPE ANY TABLE.
-* Jerry: local change buffer
     FIELD-SYMBOLS:
-      <current_change> TYPE any,
-      <current_insert> TYPE any,
-      <current_update> TYPE any,
-      <current_delete> TYPE any.
-
+      <current_changed_header> TYPE any.
 
     DATA(lv_object_type) = get_header_object_type_by_guid( iv_header_guid ).
     DATA(lt_header_supported_comp) = get_header_supported_comp( lv_object_type ).
@@ -835,57 +963,34 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
     CREATE DATA lr_to_delete_db TYPE TABLE OF (lv_comp_db_name).
     ASSIGN lr_to_delete_db->* TO <to_delete>.
 
+    CREATE DATA lr_cur_change TYPE (lv_comp_db_name).
+    ASSIGN lr_cur_change->* TO <current_changed_header>.
+
     determine_head_change_mode( iv_header_guid ).
     LOOP AT lt_unsorted ASSIGNING FIELD-SYMBOL(<component>).
 * Jerry 2017-05-03 16:39PM ignore ORDERADM_I in this method
 * If ORDERADM_I is not assigned to header object type like BUS2000116, there is some validation
 * error
       CHECK <component> <> 'ORDERADM_I'.
-
       DATA(lv_conv_cls) = get_conv_cls_name_by_component( <component> ).
       CHECK lv_conv_cls IS NOT INITIAL.
 
       DATA(lo_convertor) = get_convertor_instance( lv_conv_cls ).
 
-      DATA(lv_comp_type) = lo_convertor->get_wrk_structure_name( ).
-      CREATE DATA lr_cur_change TYPE (lv_comp_type).
-      ASSIGN lr_cur_change->* TO <current_change>.
       CALL METHOD lo_convertor->convert_1o_to_s4
         EXPORTING
           iv_ref_guid  = iv_header_guid
           iv_ref_kind  = 'A'
         CHANGING
-          cs_workarea  = <current_change>.
-
-      IF <current_change> IS INITIAL.
-        CONTINUE.
-      ENDIF.
-
-      CREATE DATA lr_local_insert TYPE (lv_comp_type).
-      CREATE DATA lr_local_update TYPE (lv_comp_type).
-      CREATE DATA lr_local_delete TYPE (lv_comp_type).
-
-      ASSIGN lr_local_insert->* TO <current_insert>.
-      ASSIGN lr_local_update->* TO <current_update>.
-      ASSIGN lr_local_delete->* TO <current_delete>.
-
-      CASE mv_current_head_mode.
-        WHEN 'A'.
-          ASSIGN <current_change> TO <current_insert>.
-        WHEN 'B'.
-          ASSIGN <current_change> TO <current_update>.
-      ENDCASE.
-
-      CALL METHOD merge_local_change_2_global
-        EXPORTING
-          is_current_insert = <current_insert>
-          is_current_update = <current_update>
-          is_current_delete = <current_delete>
-        CHANGING
-          ct_global_insert  = <to_insert>
-          ct_global_update  = <to_update>
-          ct_global_delete  = <to_delete>.
+          cs_workarea  = <current_changed_header>.
     ENDLOOP.
+
+     CASE mv_current_head_mode.
+        WHEN 'A'.
+          INSERT <current_changed_header> INTO TABLE <to_insert>.
+        WHEN 'B'.
+          INSERT <current_changed_header> INTO TABLE <to_update>.
+      ENDCASE.
 
     detect_change_revert( EXPORTING iv_order_db_buffer_name = get_header_db_buffer_type( iv_header_guid )
                           CHANGING  ct_to_update = <to_update> ).
@@ -950,6 +1055,7 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
 * Jerry 2017-05-09: make sure ORDERADM_I get processed IN THE FIRST POSITION
 * This might not be a good design to introduce dependency on execution sequence,
 * However from semantic point of view, ORDERADM_I should be processed before any other item component.
+* Jerry 2017-05-12 7:03PM this restriction may not exist any more under new design.
       DATA(lt_unsorted) = get_unsorted_component_list( it_sorted_comp = lt_item_supported_comp
                                                        iv_header      = abap_false ).
 
@@ -1012,6 +1118,13 @@ CLASS CL_CRMS4_BT_DATA_MODEL_TOOL IMPLEMENTATION.
             ct_global_update  = <to_update>
             ct_global_delete  = <to_delete>.
       ENDLOOP.
+
+*     could be adjusted as well to get workarea changed...
+      CALL METHOD move_header_to_item
+        CHANGING
+          ct_global_insert = <to_insert>
+          ct_global_update = <to_update>
+          ct_global_delete = <to_delete>.
 
       READ TABLE mt_acronym ASSIGNING FIELD-SYMBOL(<acronym>) WITH KEY
          subobj_category = <orderadm_i_wrk>-object_type.
