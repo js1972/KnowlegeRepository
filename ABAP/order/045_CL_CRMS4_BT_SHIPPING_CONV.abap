@@ -20,9 +20,6 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE(optional)
 * | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
@@ -48,7 +45,9 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
        RETURN.
     ENDIF.
     ls_shipping-guid = iv_ref_guid.
-    cs_workarea = ls_shipping.
+    cl_crms4_bt_data_model_tool=>merge_uninitial_fields(
+       EXPORTING is_segment = ls_shipping
+       CHANGING  cs_current = cs_workarea ).
 
   ENDMETHOD.
 
@@ -60,7 +59,7 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method IF_CRMS4_BTX_DATA_MODEL_CONV~CONVERT_S4_TO_1O.
-    MOVE-CORRESPONDING IS_WORKAREA TO ES_WORKAREA.
+    "MOVE-CORRESPONDING IS_WORKAREA TO ES_WORKAREA.
   endmethod.
 
 
@@ -113,10 +112,6 @@ CLASS CL_CRMS4_BT_SHIPPING_CONV IMPLEMENTATION.
 
     MOVE-CORRESPONDING is_wrk_structure TO ls_db.
     APPEND ls_db TO lt_db.
-
-    CALL FUNCTION 'CRM_SRVO_H_PUT_DB'
-      EXPORTING
-        is_header_segment = ls_db.
 
     CALL FUNCTION 'CRM_SHIPPING_PUT_DB'
       EXPORTING

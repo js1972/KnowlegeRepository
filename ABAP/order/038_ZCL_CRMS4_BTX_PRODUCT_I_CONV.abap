@@ -20,9 +20,6 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE(optional)
 * | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
@@ -47,7 +44,9 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
     READ TABLE lt_buffer ASSIGNING FIELD-SYMBOL(<buffer>) INDEX 1.
     ASSERT sy-subrc = 0.
 
-    cs_workarea = <buffer>.
+    cl_crms4_bt_data_model_tool=>merge_uninitial_fields(
+       EXPORTING is_segment = <buffer>
+       CHANGING  cs_current = cs_workarea ).
 * See: https://github.wdf.sap.corp/OneOrderModelRedesign/DesignPhase/issues/42
   ENDMETHOD.
 
@@ -59,7 +58,7 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
 * | [<---] ES_WORKAREA                    TYPE        ANY
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   method IF_CRMS4_BTX_DATA_MODEL_conv~CONVERT_S4_TO_1O.
-    MOVE-CORRESPONDING is_workarea to es_workarea.
+    "MOVE-CORRESPONDING is_workarea to es_workarea.
   endmethod.
 
 
@@ -102,9 +101,11 @@ CLASS CL_CRMS4_BT_PRODUCT_I_CONV IMPLEMENTATION.
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD IF_CRMS4_BTX_DATA_MODEL_conv~put_to_db_buffer.
-    DATA: lt_product_i_db_buffer TYPE crmt_product_i_du_tab.
+    DATA: lt_product_i_db_buffer TYPE crmt_product_i_du_tab,
+          ls_db_buffer LIKE LINE OF lt_product_i_db_buffer.
 
-    APPEND is_wrk_structure TO lt_product_i_db_buffer.
+    ls_db_buffer = CORRESPONDING #( is_wrk_structure ).
+    APPEND ls_db_buffer TO lt_product_i_db_buffer.
 
     CALL FUNCTION 'CRM_PRODUCT_I_PUT_DB'
       EXPORTING

@@ -53,17 +53,10 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE(optional)
 * | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
     DATA: lt_ob      TYPE crmt_orderadm_h_wrkt,
-          ls_line    TYPE crmd_orderadm_h,
-*          lt_insert  TYPE crmt_orderadm_h_du_tab,
-*          lt_update  TYPE crmt_orderadm_h_du_tab,
-*          lt_delete  TYPE crmt_orderadm_h_du_tab,
           lt_to_save TYPE crmt_object_guid_tab.
 
     APPEND iv_ref_guid TO lt_to_save.
@@ -94,8 +87,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
         et_object_buffer = lt_ob.
 
     READ TABLE lt_ob ASSIGNING FIELD-SYMBOL(<ob>) INDEX 1.
-    ls_line = CORRESPONDING #( <ob> ).
-    cs_workarea = ls_line.
+    cs_workarea = CORRESPONDING #( <ob> ).
 
   ENDMETHOD.
 
@@ -127,7 +119,7 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * | [<-()] RV_WRK_STRUCTURE_NAME          TYPE        STRING
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~get_wrk_structure_name.
-    rv_wrk_structure_name = 'CRMT_ORDERADM_H_WRK'.
+    rv_wrk_structure_name = 'CRMS4D_SRVO_H'.
   ENDMETHOD.
 
 
@@ -140,16 +132,15 @@ CLASS CL_CRMS4_BT_ORDERADM_H_CONV IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~put_to_db_buffer.
 
-    DATA: lt_orderadm_h_db TYPE crmt_orderadm_h_du_tab.
+    DATA: lt_orderadm_h_db TYPE crmt_orderadm_h_du_tab,
+          ls_orderadm_h_db LIKE LINE OF lt_orderadm_h_db.
 
-    APPEND is_wrk_structure TO lt_orderadm_h_db.
+    ls_orderadm_h_db = CORRESPONDING #( is_wrk_structure ).
+    APPEND ls_orderadm_h_db TO lt_orderadm_h_db.
 
     CALL FUNCTION 'CRM_ORDERADM_H_PUT_DB'
       EXPORTING
         it_orderadm_h_db = lt_orderadm_h_db.
 
-    CALL FUNCTION 'CRM_SRVO_H_PUT_DB'
-      EXPORTING
-        is_header_segment = is_wrk_structure.
   ENDMETHOD.
 ENDCLASS.

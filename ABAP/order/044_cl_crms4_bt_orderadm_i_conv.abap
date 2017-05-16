@@ -24,16 +24,13 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 * +-------------------------------------------------------------------------------------------------+
 * | [--->] IV_REF_GUID                    TYPE        CRMT_OBJECT_GUID
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND
-* | [<-->] CT_TO_INSERT                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_UPDATE                   TYPE        ANY TABLE(optional)
-* | [<-->] CT_TO_DELETE                   TYPE        ANY TABLE(optional)
 * | [<-->] CS_WORKAREA                    TYPE        ANY(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~convert_1o_to_s4.
-    DATA: lt_item_guid   TYPE crmt_object_guid_tab,
-          lv_mode        TYPE crmt_mode,
-          lt_item_db     TYPE CRMT_ORDERADM_I_DB_WRKT,
-          ls_item_ob     TYPE crmt_orderadm_i_wrk.
+    DATA: lt_item_guid TYPE crmt_object_guid_tab,
+          lv_mode      TYPE crmt_mode,
+          lt_item_db   TYPE crmt_orderadm_i_db_wrkt,
+          ls_item_ob   TYPE crmt_orderadm_i_wrk.
 
     CALL FUNCTION 'CRM_ORDERADM_I_READ_OB'
       EXPORTING
@@ -44,6 +41,7 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 
     populate_changed_timestamp( CHANGING cs_item = ls_item_ob ).
 
+* Jerry 2017-05-12 6:54PM - below logic may also be moved outside this convert class
     DATA(tool) = cl_crms4_bt_data_model_tool=>get_instance( ).
     lv_mode = tool->mv_current_item_mode.
 * Jerry 2017-05-09 6:34PM - framework cannot differentiate between A and B
@@ -66,7 +64,7 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
       ENDIF.
       tool->set_current_item_mode( lv_mode ).
     ENDIF.
-    cs_workarea = ls_item_ob.
+    cs_workarea = CORRESPONDING #( ls_item_ob ).
   ENDMETHOD.
 
 
@@ -101,9 +99,11 @@ CLASS CL_CRMS4_BT_ORDERADM_I_CONV IMPLEMENTATION.
 * | [--->] IV_REF_KIND                    TYPE        CRMT_OBJECT_KIND(optional)
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD if_crms4_btx_data_model_conv~put_to_db_buffer.
-    DATA: lt_orderadm_i_db_buffer TYPE crmt_orderadm_i_du_tab.
+    DATA: lt_orderadm_i_db_buffer TYPE crmt_orderadm_i_du_tab,
+          ls_db_buffer LIKE LINE OF lt_orderadm_i_db_buffer.
 
-    APPEND is_wrk_structure TO lt_orderadm_i_db_buffer.
+    ls_db_buffer = CORRESPONDING #( is_wrk_structure ).
+    APPEND ls_db_buffer TO lt_orderadm_i_db_buffer.
 
     CALL FUNCTION 'CRM_ORDERADM_I_PUT_DB'
       EXPORTING
