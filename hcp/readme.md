@@ -45,3 +45,9 @@ finally it works: https://helloworldi042416trial.hanatrial.ondemand.com/JerryTes
 My Fiori application in HCP: https://flpportal-i042416trial.dispatcher.hanatrial.ondemand.com/sites?siteId=6af9e0d2-8b95-413c-9dc5-7d8b0c8b0ec1#jerrylist-Display
 
 I am in Europe-Rot-Trial.
+
+cf target -s dev
+
+Error restarting application: BuildpackCompileFailed
+
+cf logs jerry_list_wiesloch --recent
