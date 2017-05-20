@@ -51,3 +51,17 @@ cf target -s dev
 Error restarting application: BuildpackCompileFailed
 
 cf logs jerry_list_wiesloch --recent
+package.json is missing
+
+npm install express - lots of file generated in my project folder :)
+
+http://localhost:3000/ui5/ - can work!
+
+cf api https://api.cf.us10.hana.ondemand.com
+
+jerry-list-wiesloch.cfapps.us10.hana.ondemand.com
+
+how the CF is clever enough to know that index.html should be executed??
+
+https://jerrylist.cfapps.eu10.hana.ondemand.com/ can access now.
+jerrylist.cfapps.eu10.hana.ondemand.com - 囧，要加https
