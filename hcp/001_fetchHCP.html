@@ -9,11 +9,15 @@
 <script>
 var START = "https://helloworldi042416trial.hanatrial.ondemand.com/JerryTest/";
 var HCP = "https://helloworldi042416trial.hanatrial.ondemand.com/jerrytest?userId=i042416";
-var LOCAL = "http://localhost:8080/jerrytest/?userId=i042416";
-var ABAP = "https://ldai2ag3.wdf.sap.corp:44356/sap/crm/social_print?userId=i042411";
+var LOCAL = "http://localhost:9098/JerryServlet/Hello?userId=";
+var ABAP = "https://ldai2ag3.wdf.sap.corp:44356/sap/crm/social_print?userId=";
+var PREFIX = "i04241";
 function main() {
-	var html = getPostByAJAX(HCP);
-  console.log("response: " + html);
+  for( var i = 0; i < 5; i++) {
+    var url = ABAP + PREFIX + i;
+	  var html = getPostByAJAX(url);
+    console.log("response: " + html);
+  }
 }
 
 $(function(){ 
@@ -23,8 +27,7 @@ $(function(){
 function getPostByAJAX(requestURL){
    var html = $.ajax({
   	url: requestURL,
-  	async: false}).responseText; 
-   debugger;
+  	async: true}).responseText; 
    return html;
 }
 

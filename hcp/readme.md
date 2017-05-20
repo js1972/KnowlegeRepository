@@ -39,3 +39,9 @@ finally it works: https://helloworldi042416trial.hanatrial.ondemand.com/JerryTes
 ## 2017-05-07
 1. Sometimes after restart, I need to Maven->Update project or else the servlet could not be successfully instantiated again!
 2. workaround does not work for resources in HCP?! Verified, workaround can still works if the web application is started in local server, but does not work in HCP.
+
+## 2017-05-20
+
+My Fiori application in HCP: https://flpportal-i042416trial.dispatcher.hanatrial.ondemand.com/sites?siteId=6af9e0d2-8b95-413c-9dc5-7d8b0c8b0ec1#jerrylist-Display
+
+I am in Europe-Rot-Trial.
