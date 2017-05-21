@@ -26,3 +26,5 @@ good tip: find //bas/745_COR/src/krn/abap/ -name "*.c" | xargs grep "IF_BADI_INT
 
 # 2017-05-21
 try SSH - works without VPN
+
+The method CHECK_TABLE_NAME_STR of the class CL_ABAP_DYN_PRG checks whether the database table specified exists and can be used.
