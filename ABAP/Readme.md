@@ -23,3 +23,6 @@ good tip: find //bas/745_COR/src/krn/abap/ -name "*.c" | xargs grep "IF_BADI_INT
 # 2017-05-07
 1. txt1 = condense( txt2 && txt3 ).
 2. String template: multiple line should be joined by &.
+
+# 2017-05-21
+try SSH
