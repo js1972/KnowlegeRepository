@@ -1,0 +1,1 @@
+1. In both table functions, the input field for the client ID could also be annotated with the predefined value #CLIENT using the annotation @Environment.systemField to stop the client ID from being passed explicitly by SELECTs.
