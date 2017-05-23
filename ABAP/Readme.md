@@ -1,3 +1,7 @@
+# 2014-03-08 17:10
+
+Use FM TH_DISPLAY_USER_LIST to simulate SM04: get logon user list.
+
 # 2017-02-21
 1. useful tool to get callstack: CL_ABAP_GET_CALL_STACK
 2. [CRQS](http://www.cnblogs.com/youxin/p/3149695.html)
