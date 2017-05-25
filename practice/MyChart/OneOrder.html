@@ -25,6 +25,15 @@
 		    title = new cfx.TitleDockable();
 			title.setText("This is Jerry chart1");
 			chart1.getTitles().add(title);
+
+            var chart2 = new cfx.Chart();
+            chart2.create('divChart2');
+            chart2.setGallery(cfx.Gallery.Bar);
+            PopulateCarProduction(chart2);
+            chart2.getView3D().setEnabled(true);
+            title = new cfx.TitleDockable();
+            title.setText("This is Jerry chart2");
+            chart2.getTitles().add(title);
         }
 
 function PopulateCarProduction(chart) {
@@ -85,6 +94,8 @@ fill: #FEFEFE;
 <body class="jchartfx_body">
 	<div class="jchartfx_container">
             <div id="divChart1" style="width:990px;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
+
+            <div id="divChart2" style="width:990px;height:270px;display:inline-block;position:absolute;left:0px;top:280px"></div>
 
         <script language="javascript">
             $(document).ready(function ($) {
