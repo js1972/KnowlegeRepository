@@ -20,7 +20,7 @@
      <script>
         function initialize() { 
             initChart("divChart1", "This is Jerry chart1", getData1());
-            initChart("divChart2", "This is Jerry chart2", getData1());
+            initChart("divChart2", "This is Jerry chart2", getData2());
         }
  
     function getData1() {
@@ -45,6 +45,10 @@
             "Order": "Order with 26 items"
         }];
         return items;
+    }
+
+    function getData2(){
+        return [{"ITEM_NUMBER":4,"OCCURANCE":1},{"ITEM_NUMBER":2,"OCCURANCE":1},{"ITEM_NUMBER":1,"OCCURANCE":94}];
     }
     </script>
          <link rel="stylesheet" type="text/css" href="jchartlib/styles/Attributes/jchartfx.attributes.aurora.css" />
