@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="../jQuery/jquery1.7.1.js">
+	<script src="../jQuery/jquery1.7.1.js" >
     </script>
-    <script type="text/javascript" src="jchartlib/js/jchartfx.system.js">
+    <script src="jchartlib/chartUtil.js" >
     </script>
-    <script type="text/javascript" src="jchartlib/js/jchartfx.coreVector.js">
+    <script src="jchartlib/js/jchartfx.system.js">
     </script>
-    <script type="text/javascript" src="jchartlib/js/jchartfx.coreVector3D.js">
+    <script src="jchartlib/js/jchartfx.coreVector.js">
     </script>
-    <script type="text/javascript" src="jchartlib/js/jchartfx.advanced.js">
+    <script src="jchartlib/js/jchartfx.coreVector3D.js">
     </script>
-    <script type="text/javascript" src="jchartlib/js/jchartfx.gauge.js">
+    <script src="jchartlib/js/jchartfx.advanced.js">
     </script>
+    <script src="jchartlib/js/jchartfx.gauge.js">
     </script>
-     <script type="text/javascript">
+    <script src="jchartlib/js/jchartfx.gauge.js">
+    </script>
+     <script>
         function initialize() { 
-        	var chart1 = new cfx.Chart();
-        	chart1.create('divChart1');
-        	chart1.setGallery(cfx.Gallery.Bar);
-			PopulateCarProduction(chart1);
-			chart1.getView3D().setEnabled(true);
-		    title = new cfx.TitleDockable();
-			title.setText("This is Jerry chart1");
-			chart1.getTitles().add(title);
-            chart1.getAllSeries().setMultipleColors(true);
+            initChart("divChart1", "This is Jerry chart1", getData1());
 
             var chart2 = new cfx.Chart();
             chart2.create('divChart2');
@@ -36,8 +31,8 @@
             title.setText("This is Jerry chart2");
             chart2.getTitles().add(title);
         }
-
-function PopulateCarProduction(chart) {
+ 
+function getData1() {
         var items = [{
             "Number": 100,
             "Order": "Order with 30 items"
@@ -58,9 +53,7 @@ function PopulateCarProduction(chart) {
             "Number": 30,
             "Order": "Order with 26 items"
         }];
-    
-    
-        chart.setDataSource(items);
+        return items;
     }
  
     function PopulateCarProduction2(chart) {
@@ -115,9 +108,9 @@ function PopulateCarProduction(chart) {
      </head>
 <body class="jchartfx_body">
 	<div class="jchartfx_container">
-            <div id="divChart1" style="width:990px;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
+            <div id="divChart1" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
 
-            <div id="divChart2" style="width:990px;height:270px;display:inline-block;position:absolute;left:0px;top:280px"></div>
+            <div id="divChart2" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:280px"></div>
 
         <script language="javascript">
             $(document).ready(function ($) {
