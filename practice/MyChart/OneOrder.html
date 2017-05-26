@@ -29,7 +29,7 @@
             var chart2 = new cfx.Chart();
             chart2.create('divChart2');
             chart2.setGallery(cfx.Gallery.Bar);
-            PopulateCarProduction(chart2);
+            PopulateCarProduction2(chart2);
             chart2.getView3D().setEnabled(true);
             title = new cfx.TitleDockable();
             title.setText("This is Jerry chart2");
@@ -62,6 +62,31 @@ function PopulateCarProduction(chart) {
         chart.setDataSource(items);
     }
  
+    function PopulateCarProduction2(chart) {
+        var items = [{
+            "Number": 100,
+            "Order": "Sales Organization 1"
+        }, 
+        {
+            "Number": 80000,
+            "Order": "Sales Organization 2"
+        }, 
+        {
+            "Number": 50,
+            "Order": "Sales Organization 3"
+        }, 
+        {
+            "Number": 49,
+            "Order": "Sales Organization 4"
+        },  
+        {
+            "Number": 30,
+            "Order": "Sales Organization 5"
+        }];
+    
+    
+        chart.setDataSource(items);
+    }
     </script>
      <link rel="stylesheet" type="text/css" href="jchartlib/styles/Attributes/jchartfx.attributes.aurora.css" />
     <link rel="stylesheet" type="text/css" href="jchartlib/styles/Palettes/jchartfx.palette.aurora.css" />
