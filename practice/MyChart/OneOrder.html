@@ -20,19 +20,10 @@
      <script>
         function initialize() { 
             initChart("divChart1", "This is Jerry chart1", getData1());
-
-            var chart2 = new cfx.Chart();
-            chart2.create('divChart2');
-            chart2.setGallery(cfx.Gallery.Bar);
-            PopulateCarProduction2(chart2);
-            chart2.getView3D().setEnabled(true);
-            chart2.getAllSeries().setMultipleColors(true);
-            title = new cfx.TitleDockable();
-            title.setText("This is Jerry chart2");
-            chart2.getTitles().add(title);
+            initChart("divChart2", "This is Jerry chart2", getData1());
         }
  
-function getData1() {
+    function getData1() {
         var items = [{
             "Number": 100,
             "Order": "Order with 30 items"
@@ -55,43 +46,17 @@ function getData1() {
         }];
         return items;
     }
- 
-    function PopulateCarProduction2(chart) {
-        var items = [{
-            "Number": 100,
-            "Order": "Sales Organization 1"
-        }, 
-        {
-            "Number": 80000,
-            "Order": "Sales Organization 2"
-        }, 
-        {
-            "Number": 50,
-            "Order": "Sales Organization 3"
-        }, 
-        {
-            "Number": 49,
-            "Order": "Sales Organization 4"
-        },  
-        {
-            "Number": 30,
-            "Order": "Sales Organization 5"
-        }];
-    
-    
-        chart.setDataSource(items);
-    }
     </script>
-     <link rel="stylesheet" type="text/css" href="jchartlib/styles/Attributes/jchartfx.attributes.aurora.css" />
+         <link rel="stylesheet" type="text/css" href="jchartlib/styles/Attributes/jchartfx.attributes.aurora.css" />
     <link rel="stylesheet" type="text/css" href="jchartlib/styles/Palettes/jchartfx.palette.aurora.css" />
 
      <style type="text/css">
-    .jchartfx .AxisY_Text {
-    fill: #FEFEFE;
+        .jchartfx .AxisY_Text {
+            fill: #FEFEFE;
     }
 
     .jchartfx .AxisX_Text {
-    fill: #FEFEFE;
+        fill: #FEFEFE;
     }
 
     .jchartfx .Title {
@@ -101,22 +66,20 @@ function getData1() {
     .jchartfx .LegendItem {
         fill: #FEFEFE;
     }
-
     </style>
-    
 }
-     </head>
+</head>
 <body class="jchartfx_body">
 	<div class="jchartfx_container">
-            <div id="divChart1" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
+    <div id="divChart1" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
 
-            <div id="divChart2" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:280px"></div>
+    <div id="divChart2" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:280px"></div>
 
-        <script language="javascript">
-            $(document).ready(function ($) {
-                initialize();
-            });
-        </script>
+    <script language="javascript">
+        $(document).ready(function ($) {
+            initialize();
+        });
+    </script>
     </div>
 </div>
 </body>
