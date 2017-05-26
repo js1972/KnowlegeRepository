@@ -15,11 +15,11 @@ CLASS zcl_crm_order_statistic DEFINITION
       tt_item_info TYPE STANDARD TABLE OF ty_item_info WITH KEY item_number .
     TYPES:
       BEGIN OF ty_item_without_detail,
-        item_number TYPE int4,
         occurance   TYPE int4,
+        item_number TYPE string,
       END OF ty_item_without_detail .
     TYPES:
-      tt_item_without_detail TYPE TABLE OF ty_item_without_detail WITH KEY item_number .
+      tt_item_without_detail TYPE TABLE OF ty_item_without_detail WITH KEY occurance .
     TYPES:
       BEGIN OF ty_saleorg_info,
         occurance     TYPE int4,
@@ -146,9 +146,6 @@ CLASS ZCL_CRM_ORDER_STATISTIC IMPLEMENTATION.
 
     SORT mt_item_result BY occurance DESCENDING.
 
-    CHECK lines( mt_item_result ) > 10.
-    DELETE mt_item_result FROM 11.
-
   ENDMETHOD.
 
 
@@ -189,13 +186,6 @@ CLASS ZCL_CRM_ORDER_STATISTIC IMPLEMENTATION.
     SORT mt_serviceorg_info BY occurance DESCENDING.
     DELETE mt_serviceorg_info WHERE service_org_id IS INITIAL.
 
-    IF lines( mt_saleorg_info ) > 10.
-       DELETE mt_saleorg_info FROM 11.
-    ENDIF.
-
-    IF lines( mt_serviceorg_info ) > 10.
-       DELETE mt_serviceorg_info FROM 11.
-    ENDIF.
   ENDMETHOD.
 
 
@@ -206,7 +196,16 @@ CLASS ZCL_CRM_ORDER_STATISTIC IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_item_json.
 
-    rv_json = abap_2_json( CORRESPONDING tt_item_without_detail( mt_item_result ) ).
+    DATA(lt_temp) = CORRESPONDING tt_item_info( mt_item_result ).
+    IF lines( lt_temp ) > 10.
+      DELETE lt_temp FROM 11.
+    ENDIF.
+
+    DATA(lt_result) = CORRESPONDING tt_item_without_detail( lt_temp ).
+    LOOP AT lt_result ASSIGNING FIELD-SYMBOL(<result>).
+        <result>-item_number = |Item number:{ <result>-item_number }|.
+    ENDLOOP.
+    rv_json = abap_2_json( CORRESPONDING tt_item_without_detail( lt_result ) ).
 
   ENDMETHOD.
 
@@ -239,7 +238,12 @@ CLASS ZCL_CRM_ORDER_STATISTIC IMPLEMENTATION.
 * +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD get_sales_json.
 
-    rv_json = abap_2_json( CORRESPONDING tt_saleorg_info( mt_saleorg_info ) ).
+    DATA(lt_temp) = CORRESPONDING tt_saleorg_info( mt_saleorg_info ).
+
+    IF lines( lt_temp ) > 10.
+       DELETE lt_temp FROM 11.
+    ENDIF.
+    rv_json = abap_2_json( CORRESPONDING tt_saleorg_info( lt_temp ) ).
 
   ENDMETHOD.
 
