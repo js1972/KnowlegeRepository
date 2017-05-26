@@ -25,12 +25,14 @@
 		    title = new cfx.TitleDockable();
 			title.setText("This is Jerry chart1");
 			chart1.getTitles().add(title);
+            chart1.getAllSeries().setMultipleColors(true);
 
             var chart2 = new cfx.Chart();
             chart2.create('divChart2');
             chart2.setGallery(cfx.Gallery.Bar);
             PopulateCarProduction2(chart2);
             chart2.getView3D().setEnabled(true);
+            chart2.getAllSeries().setMultipleColors(true);
             title = new cfx.TitleDockable();
             title.setText("This is Jerry chart2");
             chart2.getTitles().add(title);
@@ -90,12 +92,13 @@ function PopulateCarProduction(chart) {
     </script>
      <link rel="stylesheet" type="text/css" href="jchartlib/styles/Attributes/jchartfx.attributes.aurora.css" />
     <link rel="stylesheet" type="text/css" href="jchartlib/styles/Palettes/jchartfx.palette.aurora.css" />
-     <style type="text/css">
 
+     <style type="text/css">
+     /*
       .jchartfx .Attribute3 {
     fill: #FEFEFE;
     stroke: #3C3E46;
-    }
+    }*/
     .jchartfx .AxisY_Text {
     fill: #FEFEFE;
     }
@@ -105,12 +108,12 @@ function PopulateCarProduction(chart) {
     }
 
     .jchartfx .Title {
-fill: #FEFEFE;
-}
+        fill: #FEFEFE;
+    }
 
-.jchartfx .LegendItem {
-fill: #FEFEFE;
-}
+    .jchartfx .LegendItem {
+        fill: #FEFEFE;
+    }
 
     </style>
     
