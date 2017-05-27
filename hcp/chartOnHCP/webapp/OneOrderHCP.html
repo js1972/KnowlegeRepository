@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="lib/jquery1.7.1.js" >
+    </script>
+    <script src="lib/chartUtil.js" >
+    </script>
+    <script src="lib/jchartfx.system.js">
+    </script>
+    <script src="lib/jchartfx.coreVector.js">
+    </script>
+    <script src="lib/jchartfx.coreVector3d.js">
+    </script>
+    <script src="lib/jchartfx.advanced.js">
+    </script>
+    <script src="lib/jchartfx.gauge.js">
+    </script>
+     <script>
+        function initialize() { 
+            $.get("https://<host>:<port>/sap/crm/zcount?sap-client=001", function(data, status) {
+                var data = JSON.parse(data);
+                initChart("divChart1", "Order's item number overview", data.data.item);
+                initChart("divChart2", "Sales Org usage overview", data.data.sale);
+                initChart("divChart3", "Service Order usage overview", data.data.service);
+            });
+        }
+    </script>
+         <link rel="stylesheet" type="text/css" href="styles/Attributes/jchartfx.attributes.aurora.css" />
+    <link rel="stylesheet" type="text/css" href="styles/Palettes/jchartfx.palette.aurora.css" />
+
+     <style type="text/css">
+        .jchartfx .AxisY_Text {
+            fill: #FEFEFE;
+    }
+
+    .jchartfx .AxisX_Text {
+        fill: #FEFEFE;
+    }
+
+    .jchartfx .Title {
+        fill: #FEFEFE;
+    }
+
+    .jchartfx .LegendItem {
+        fill: #FEFEFE;
+    }
+    </style>
+}
+</head>
+<body class="jchartfx_body">
+	<div class="jchartfx_container">
+     <div id="divChart1" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:0px"></div>
+     <div id="divChart2" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:280px"></div>
+     <div id="divChart3" style="width:90%;height:270px;display:inline-block;position:absolute;left:0px;top:570px"></div>
+
+    <script>
+        $(document).ready(function ($) {
+            initialize();
+        });
+    </script>
+    </div>
+</div>
+</body>
+</html>
