@@ -17,10 +17,28 @@
     </script>
      <script>
         function initialize() { 
+            testJson();
             initChart("divChart1", "This is Jerry chart1", getData1());
             initChart("divChart2", "This is Jerry chart2", getData2());
         }
  
+    function testJson(){
+        var a = { "data":
+        {
+            "item": [
+            {
+                "OCCURANCE":38609,"ITEM_NUMBER":"Item number:1 "
+            },
+            { "OCCURANCE":7002,"ITEM_NUMBER":"Item number:2" },
+            { "OCCURANCE":2986,"ITEM_NUMBER":"Item number:3 "} ], 
+
+            "sale": [], 
+            "service": []
+        }};
+
+        var b = {"data": {"item": [{"OCCURANCE":38609,"ITEM_NUMBER":"Item number:1 "},{"OCCURANCE":7002,"ITEM_NUMBER":"Item number:2 "},{"OCCURANCE":2986,"ITEM_NUMBER":"Item number:3 "}], "sale": [], "service": []}};
+        debugger;
+    }
     function getData1() {
         var items = [{
             "Number": 100,

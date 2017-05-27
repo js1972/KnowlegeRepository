@@ -67,3 +67,9 @@ https://jerrylist.cfapps.eu10.hana.ondemand.com/ can access now.
 https://jerrylist.cfapps.eu10.hana.ondemand.com - 囧，要加https
 
 set HTTPS_PROXY=http://proxy.wdf.sap.corp:8080
+
+2017-05-27
+1. https://jerryordercount.cfapps.eu10.hana.ondemand.com
+
+https://jerryordercount.cfapps.eu10.hana.ondemand.com/jerry/OneOrderHCP.html
+
