@@ -1,0 +1,53 @@
+<html>
+<script>
+function person(name)
+{
+ this.name = name;
+}
+function MySort(data_to_sort) {
+ this.quicksort = function quicksort(low, high) {
+ var i = low, j = high;
+ var newIndex = parseInt ( ( high - low ) / 2 );
+    var pivot = this.data_to_sort[ low + newIndex ];
+    while (i <= j) {
+      while (this.data_to_sort[i] < pivot) {
+        i++;
+      }
+      while (this.data_to_sort[j] > pivot) {
+        j--;
+      }
+      if (i <= j) {
+        this.swap(i, j);
+        i++;
+        j--;
+      }
+    } // end of while
+    if (low < j)
+      this.quicksort(low, j);
+    if (i < high)
+      this.quicksort(i, high);
+ }; // end of quicksort
+ this.swap = function swap(left, right) {  
+     var temp = this.data_to_sort[left];
+     this.data_to_sort[left] = this.data_to_sort[right];
+     this.data_to_sort[right] = temp;
+ };
+ this.displaySorted = function() {
+ console.log(this.data_to_sort);
+ }
+ if( data_to_sort === null || data_to_sort.length == 0)
+ return;
+ this.data_to_sort = data_to_sort;
+ var number = data_to_sort.length;
+ this.quicksort(0, number - 1);
+ 
+}// end of MySort
+function doSort(data) {
+ var tool = new MySort(data);
+ tool.displaySorted();
+}
+var d = [1,3,2,4,6,3,5];
+</script>
+<body onload = doSort(d);>
+</body>
+</html>
