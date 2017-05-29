@@ -73,7 +73,6 @@ function getNewPicture(index, picRepository){
 function myFunction(){
 	var source = document.getElementById("raw");
 	var html = source.value;
-	// Jerry 2017-05-29 14:50PM does not work, a line break is needed here
 	var div = document.createElement('div');
 	div.innerHTML = html;
 	var elements = div.childNodes;
@@ -86,8 +85,9 @@ function myFunction(){
 		imageToRemove.push(record);
 	}
 	for( var i = 0; i < imageToRemove.length;i++){
+		// Jerry 2017-05-29 14:50PM does not work, a line break is needed here
 		var newNode = document.createElement("div");
-		newNode.innerHTML = imageToRemove[i].newPicUrl;
+		newNode.innerHTML = "\n\n" + imageToRemove[i].newPicUrl;
 		imageToRemove[i].parent.replaceChild(newNode, imageToRemove[i].current);
 	}
 	div.removeChild(elements[elements.length - 1]);
