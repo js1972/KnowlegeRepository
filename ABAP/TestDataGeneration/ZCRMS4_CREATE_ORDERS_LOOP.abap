@@ -1,8 +1,3 @@
-*&---------------------------------------------------------------------*
-*& Report ZCS_CREATE_SERVICE_ORDERS
-*&---------------------------------------------------------------------*
-*&
-*&---------------------------------------------------------------------*
 REPORT zcrms4_create_orders_loop.
 
 INCLUDE crm_direct.
@@ -41,10 +36,8 @@ DATA                gt_service_orgs        TYPE  hrtb_objkey.
 DATA                gt_matnr               TYPE STANDARD TABLE OF matnr.
 DATA                gt_partner_no          TYPE STANDARD TABLE OF bu_partner.
 DATA                gt_tvko                TYPE STANDARD TABLE OF tvko.
-DATA                ls_tvko                TYPE tvko.
 DATA                gt_tvta                TYPE STANDARD TABLE OF tvta.
-DATA                ls_tvta                TYPE tvta.
-DATA                ls_org_assignment      TYPE ty_org_assignment.
+
 DATA                gt_org_assignment      TYPE STANDARD TABLE OF ty_org_assignment.
 DATA                lv_date                TYPE i.
 DATA                gv_date_start          TYPE sydatum.
@@ -57,8 +50,6 @@ PARAMETERS          p_maxqu                TYPE i DEFAULT 100.
 SELECT-OPTIONS      s_matnr                FOR  mara-matnr.
 SELECT-OPTIONS      s_part                 FOR  but000-partner.
 SELECT-OPTIONS      s_date                 FOR  crmd_orderadm_h-posting_date.
-
-DATA                ls_date                LIKE LINE OF s_date.
 
 data(go_prng_no_items) = cl_abap_random_int=>create( min = 1 max = p_maxit ).
 
@@ -86,9 +77,9 @@ CALL METHOD cl_crm_org_management=>get_instance
 
 SELECT * FROM tvko INTO TABLE gt_tvko
   ORDER BY PRIMARY KEY.
-LOOP AT gt_tvko INTO ls_tvko.
-  CLEAR ls_org_assignment.
-  ls_org_assignment-s4_sales_org = ls_tvko-vkorg.
+LOOP AT gt_tvko INTO data(ls_tvko).
+  data(ls_org_assignment) = value ty_org_assignment( s4_sales_org = ls_tvko-vkorg ).
+
   CALL METHOD go_org_mgmt->get_sales_org_of_vkorg
     EXPORTING
       iv_vkorg            = ls_tvko-vkorg
@@ -104,7 +95,7 @@ ENDLOOP.
 
 SELECT * FROM tvta INTO TABLE gt_tvta
   ORDER BY PRIMARY KEY.
-LOOP AT gt_tvta INTO ls_tvta.
+LOOP AT gt_tvta INTO data(ls_tvta).
   READ TABLE gt_org_assignment
     TRANSPORTING NO FIELDS
     WITH KEY s4_sales_org = ls_tvta-vkorg.
@@ -116,9 +107,6 @@ DESCRIBE TABLE gt_tvta LINES data(lv_no_of_sales_areas).
 data(go_prng_sales_area) = cl_abap_random_int=>create( min = 1 max = lv_no_of_sales_areas ).
 
 CALL METHOD cl_crm_orgman_services=>list_service_orgs
-*  EXPORTING
-*    findings_only      = SPACE
-*    no_authority_check =
   IMPORTING
     service_orgs = gt_service_orgs.
 DESCRIBE TABLE gt_service_orgs LINES data(lv_no_of_service_orgs).
@@ -130,7 +118,7 @@ IF lv_date NE 1.
   MESSAGE i398(00) WITH 'Enter exactly one interval for the date' space space space.
   EXIT.
 ENDIF.
-READ TABLE s_date INTO ls_date INDEX 1.
+READ TABLE s_date INTO data(ls_date) INDEX 1.
 IF ls_date-sign NE 'I' OR ls_date-option NE 'BT'.
   MESSAGE i398(00) WITH 'Enter exactly one interval for the date' space space space.
   EXIT.
