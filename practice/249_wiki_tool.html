@@ -59,12 +59,13 @@ function myFunction(){
 	var r1 = div.getElementsByTagName("ac:image");
 	console.log("value: " + elements[elements.length - 1].data);
 	console.log("ac image length: " + r1.length);
+	var imageToRemove = [];
 	for( var i = 0; i < r1.length; i++){
-		var image = r1[i];
-		var parent = image.parentNode;
-		parent.removeChild(image);
-		image = null;
-		//image.parentNode.replaceChild(null, image);
+		imageToRemove.push(r1[i]);
+	}
+	for( var i = 0; i < imageToRemove.length;i++){
+		console.log("image to delete: " + imageToRemove[i]);
+		imageToRemove[i].remove();
 	}
 	console.log("converted:" + div.innerHTML);
 	var r2 = div.getElementsByTagName("ac:image");
