@@ -50,6 +50,26 @@ At Jerry.
 </textarea>
 <button onclick="myFunction()">Click me</button>
 <script>
+
+function getNodeTobeReplaced(current, parent, newPicUrl ){
+	return {
+		"current": current,
+		"parent": parent,
+		"newPicUrl": newPicUrl
+	};
+}
+
+function getNewPicture(index, picRepository){
+	var pictureIndex = index + 1;
+	var searchKey = "![clipboard" + pictureIndex + "](";
+	var searchKeyLength = searchKey.length;
+	var startIndex = picRepository.indexOf(searchKey);
+	console.assert( startIndex > -1);
+	var currentImage = picRepository.substring(startIndex);
+	var endIndex = currentImage.indexOf(")");
+	console.assert( endIndex > -1);
+	return newPic = currentImage.substring(0, endIndex+1);
+}
 function myFunction(){
 	var source = document.getElementById("raw");
 	var html = source.value;
@@ -57,32 +77,20 @@ function myFunction(){
 	div.innerHTML = html;
 	var elements = div.childNodes;
 	var r1 = div.getElementsByTagName("ac:image");
-	console.log("value: " + elements[elements.length - 1].data);
-	console.log("ac image length: " + r1.length);
 	var imageToRemove = [];
-	for( var i = 0; i < r1.length; i++){
-		imageToRemove.push(r1[i]);
-	}
 	var picRepository = elements[elements.length - 1].data;
+	for( var i = 0; i < r1.length; i++){
+		var record = getNodeTobeReplaced(r1[i], r1[i].parentNode,
+			getNewPicture(i, picRepository));
+		imageToRemove.push(record);
+	}
+	debugger;
 	for( var i = 0; i < imageToRemove.length;i++){
-		// image to delete: <ri:attachment ri:filename="clipboard1.png"></ri:attachment>
-		// to search: ![clipboard13](https://cloud.githubusercontent.com/assets/5669954/26531936/f0eb0bf6-43f4-11e7-8bcc-3bcf864c47bd.png)
-		var pictureIndex = i + 1;
-		var searchKey = "![clipboard" + pictureIndex + "](";
-		var searchKeyLength = searchKey.length;
-		console.log("image to delete: " + imageToRemove[i].innerHTML);
-		var startIndex = picRepository.indexOf(searchKey);
-		console.assert( startIndex > -1);
-		var currentImage = picRepository.substring(startIndex);
-		console.log("current Image: " + currentImage);
-		var endIndex = currentImage.indexOf(")");
-		console.assert( endIndex > -1);
-		var newPic = currentImage.substring(0, endIndex+1);
-		debugger;
-		imageToRemove[i].remove();
+		var newNode = document.createElement("div");
+		newNode.innerHTML = imageToRemove[i].newPicUrl;
+		imageToRemove[i].parent.replaceChild(newNode, imageToRemove[i].current);
 	}
 	console.log("converted:" + div.innerHTML);
-	var r2 = div.getElementsByTagName("ac:image");
 	debugger;
 }
 </script>
