@@ -51,14 +51,23 @@ At Jerry.
 <button onclick="myFunction()">Click me</button>
 <script>
 function myFunction(){
-	debugger;
 	var source = document.getElementById("raw");
 	var html = source.value;
 	var div = document.createElement('div');
 	div.innerHTML = html;
 	var elements = div.childNodes;
 	var r1 = div.getElementsByTagName("ac:image");
-	var r2 = div.getElementsByTagName("image");
+	console.log("value: " + elements[elements.length - 1].data);
+	console.log("ac image length: " + r1.length);
+	for( var i = 0; i < r1.length; i++){
+		var image = r1[i];
+		var parent = image.parentNode;
+		parent.removeChild(image);
+		image = null;
+		//image.parentNode.replaceChild(null, image);
+	}
+	console.log("converted:" + div.innerHTML);
+	var r2 = div.getElementsByTagName("ac:image");
 	debugger;
 }
 </script>
