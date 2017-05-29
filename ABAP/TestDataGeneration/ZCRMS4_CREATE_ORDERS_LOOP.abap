@@ -51,131 +51,126 @@ SELECT-OPTIONS      s_matnr                FOR  mara-matnr.
 SELECT-OPTIONS      s_part                 FOR  but000-partner.
 SELECT-OPTIONS      s_date                 FOR  crmd_orderadm_h-posting_date.
 
-data(go_prng_no_items) = cl_abap_random_int=>create( min = 1 max = p_maxit ).
+START-OF-SELECTION.
 
-SELECT matnr FROM mara
-  INTO TABLE gt_matnr
-  WHERE matnr IN s_matnr
-  ORDER BY PRIMARY KEY.
+  DATA(go_prng_no_items) = cl_abap_random_int=>create( min = 1 max = p_maxit ).
 
-DESCRIBE TABLE gt_matnr LINES data(lv_no_of_materials).
+  SELECT matnr FROM mara INTO TABLE gt_matnr WHERE matnr IN s_matnr
+    ORDER BY PRIMARY KEY.
 
-data(go_prng_material) = cl_abap_random_int=>create( min = 1 max = lv_no_of_materials ).
+  DESCRIBE TABLE gt_matnr LINES DATA(lv_no_of_materials).
 
-SELECT partner FROM but000
-  INTO TABLE gt_partner_no
-  WHERE partner IN s_part
-  ORDER BY PRIMARY KEY.
+  DATA(go_prng_material) = cl_abap_random_int=>create( min = 1 max = lv_no_of_materials ).
 
-DESCRIBE TABLE gt_partner_no LINES data(lv_no_of_partners).
+  SELECT partner FROM but000
+    INTO TABLE gt_partner_no
+    WHERE partner IN s_part
+    ORDER BY PRIMARY KEY.
 
-data(go_prng_partner) = cl_abap_random_int=>create( min = 1 max = lv_no_of_partners ).
+  DESCRIBE TABLE gt_partner_no LINES DATA(lv_no_of_partners).
 
-CALL METHOD cl_crm_org_management=>get_instance
-  IMPORTING
-    ev_instance = data(go_org_mgmt).
+  DATA(go_prng_partner) = cl_abap_random_int=>create( min = 1 max = lv_no_of_partners ).
 
-SELECT * FROM tvko INTO TABLE gt_tvko
-  ORDER BY PRIMARY KEY.
-LOOP AT gt_tvko INTO data(ls_tvko).
-  data(ls_org_assignment) = value ty_org_assignment( s4_sales_org = ls_tvko-vkorg ).
-
-  CALL METHOD go_org_mgmt->get_sales_org_of_vkorg
-    EXPORTING
-      iv_vkorg            = ls_tvko-vkorg
+  CALL METHOD cl_crm_org_management=>get_instance
     IMPORTING
-      ev_sales_org        = ls_org_assignment-crm_sales_org
-    EXCEPTIONS
-      crm_key_not_defined = 1
-      OTHERS              = 2.
-  IF sy-subrc EQ 0.
-    INSERT ls_org_assignment INTO TABLE gt_org_assignment.
+      ev_instance = DATA(go_org_mgmt).
+
+  SELECT * FROM tvko INTO TABLE gt_tvko ORDER BY PRIMARY KEY.
+  LOOP AT gt_tvko INTO DATA(ls_tvko).
+    DATA(ls_org_assignment) = VALUE ty_org_assignment( s4_sales_org = ls_tvko-vkorg ).
+
+    CALL METHOD go_org_mgmt->get_sales_org_of_vkorg
+      EXPORTING
+        iv_vkorg            = ls_tvko-vkorg
+      IMPORTING
+        ev_sales_org        = ls_org_assignment-crm_sales_org
+      EXCEPTIONS
+        crm_key_not_defined = 1
+        OTHERS              = 2.
+    IF sy-subrc EQ 0.
+      INSERT ls_org_assignment INTO TABLE gt_org_assignment.
+    ENDIF.
+  ENDLOOP.
+
+  SELECT * FROM tvta INTO TABLE gt_tvta ORDER BY PRIMARY KEY.
+  LOOP AT gt_tvta INTO DATA(ls_tvta).
+    READ TABLE gt_org_assignment
+      TRANSPORTING NO FIELDS
+      WITH KEY s4_sales_org = ls_tvta-vkorg.
+    IF sy-subrc NE 0.
+      DELETE gt_tvta.
+    ENDIF.
+  ENDLOOP.
+
+  DESCRIBE TABLE gt_tvta LINES DATA(lv_no_of_sales_areas).
+  DATA(go_prng_sales_area) = cl_abap_random_int=>create( min = 1 max = lv_no_of_sales_areas ).
+
+  CALL METHOD cl_crm_orgman_services=>list_service_orgs
+    IMPORTING
+      service_orgs = gt_service_orgs.
+  DESCRIBE TABLE gt_service_orgs LINES DATA(lv_no_of_service_orgs).
+  DATA(go_prng_service_org) = cl_abap_random_int=>create( min = 1 max = lv_no_of_service_orgs ).
+
+  DESCRIBE TABLE s_date LINES lv_date.
+  IF lv_date NE 1.
+    MESSAGE i398(00) WITH 'Enter exactly one interval for the date' space space space.
+    EXIT.
   ENDIF.
-ENDLOOP.
-
-SELECT * FROM tvta INTO TABLE gt_tvta
-  ORDER BY PRIMARY KEY.
-LOOP AT gt_tvta INTO data(ls_tvta).
-  READ TABLE gt_org_assignment
-    TRANSPORTING NO FIELDS
-    WITH KEY s4_sales_org = ls_tvta-vkorg.
-  IF sy-subrc NE 0.
-    DELETE gt_tvta.
+  READ TABLE s_date INTO DATA(ls_date) INDEX 1.
+  IF ls_date-sign NE 'I' OR ls_date-option NE 'BT'.
+    MESSAGE i398(00) WITH 'Enter exactly one interval for the date' space space space.
+    EXIT.
   ENDIF.
-ENDLOOP.
-DESCRIBE TABLE gt_tvta LINES data(lv_no_of_sales_areas).
-data(go_prng_sales_area) = cl_abap_random_int=>create( min = 1 max = lv_no_of_sales_areas ).
+  gv_date_start = ls_date-low.
+  DATA(lv_no_of_days) = ls_date-high - ls_date-low.
 
-CALL METHOD cl_crm_orgman_services=>list_service_orgs
-  IMPORTING
-    service_orgs = gt_service_orgs.
-DESCRIBE TABLE gt_service_orgs LINES data(lv_no_of_service_orgs).
-data(go_prng_service_org) = cl_abap_random_int=>create( min = 1 max = lv_no_of_service_orgs ).
+  DATA(go_prng_date) = cl_abap_random_int=>create( min = 1 max = lv_no_of_days ).
+
+  DATA(go_prng_quantity) = cl_abap_random_int=>create( min = 1 max = p_maxqu ).
+
+  SELECT * FROM crmc_proc_type INTO TABLE gt_proc_type
+    WHERE object_type = gc_object_type-service ORDER BY PRIMARY KEY.
+
+  DESCRIBE TABLE gt_proc_type LINES DATA(lv_no_of_proc_types).
+
+  DATA(go_prng_proc_type) = cl_abap_random_int=>create( min = 1 max = lv_no_of_proc_types ).
 
 
-DESCRIBE TABLE s_date LINES lv_date.
-IF lv_date NE 1.
-  MESSAGE i398(00) WITH 'Enter exactly one interval for the date' space space space.
-  EXIT.
-ENDIF.
-READ TABLE s_date INTO data(ls_date) INDEX 1.
-IF ls_date-sign NE 'I' OR ls_date-option NE 'BT'.
-  MESSAGE i398(00) WITH 'Enter exactly one interval for the date' space space space.
-  EXIT.
-ENDIF.
-gv_date_start = ls_date-low.
-data(lv_no_of_days) = ls_date-high - ls_date-low.
 
-data(go_prng_date) = cl_abap_random_int=>create( min = 1 max = lv_no_of_days ).
+FORM handle_order_with_number USING iv_num TYPE int4.
+  CLEAR: lv_handle, gt_orderadm_h, gt_partner, gt_orgman, gt_appointment.
+  DO iv_num TIMES.
 
-data(go_prng_quantity) = cl_abap_random_int=>create( min = 1 max = p_maxqu ).
+    lv_char10 = sy-index.
+    lv_description = p_title && lv_char10.
 
-SELECT * FROM crmc_proc_type
-  INTO TABLE gt_proc_type
-  WHERE object_type = gc_object_type-service
-  ORDER BY PRIMARY KEY.
+    ADD 1 TO lv_handle.
+    PERFORM orderadm_h_create USING    lv_description
+                              CHANGING lv_header_guid.
+    PERFORM partner_create    USING    lv_header_guid
+                                       gc_object_kind-orderadm_h.
+    PERFORM orgman_create     USING    lv_header_guid
+                                       gc_object_kind-orderadm_h.
+    PERFORM dates_create      USING    lv_header_guid
+                                       gc_object_kind-orderadm_h.
 
-DESCRIBE TABLE gt_proc_type LINES data(lv_no_of_proc_types).
+    DATA(lv_no_items) = go_prng_no_items->get_next( ).
 
-data(go_prng_proc_type) = cl_abap_random_int=>create( min = 1 max = lv_no_of_proc_types ).
-
-DO p_number TIMES.
-
-  lv_char10 = sy-index.
-  lv_description = p_title && lv_char10.
-
-  ADD 1 TO lv_handle.
-  PERFORM orderadm_h_create USING    lv_description
-                            CHANGING lv_header_guid.
-  PERFORM partner_create    USING    lv_header_guid
-                                     gc_object_kind-orderadm_h.
-  PERFORM orgman_create     USING    lv_header_guid
-                                     gc_object_kind-orderadm_h.
-  PERFORM dates_create      USING    lv_header_guid
-                                     gc_object_kind-orderadm_h.
-
-*    clear gv_prod_count.
-
-  data(lv_no_items) = go_prng_no_items->get_next( ).
-
-  DO lv_no_items TIMES.
-    PERFORM orderadm_i_create USING    lv_header_guid
-                              CHANGING lv_item_guid.
-    PERFORM schedlin_create   USING    lv_item_guid.
+    DO lv_no_items TIMES.
+      PERFORM orderadm_i_create USING    lv_header_guid
+                                CHANGING lv_item_guid.
+      PERFORM schedlin_create   USING    lv_item_guid.
+    ENDDO.
   ENDDO.
 
-ENDDO.
+  PERFORM create_orders.
 
-PERFORM create_orders.
+  PERFORM save_orders.
+ENDFORM.
 
-PERFORM save_orders.
-
-*&---------------------------------------------------------------------*
-*& Form ORDERADM_H_CREATE
-*&---------------------------------------------------------------------*
 FORM orderadm_h_create
   USING    iv_description       TYPE crmt_process_description
-  CHANGING cv_header_guid       TYPE crmt_object_guid.
+  CHANGING cv_header_guid       TYPE crmt_object_guid RAISING cx_uuid_error.
 
   DATA     ls_orderadm_h        TYPE  crmt_orderadm_h_com.
   DATA     ls_input_field       TYPE  crmt_input_field.
@@ -185,17 +180,11 @@ FORM orderadm_h_create
 
   ls_orderadm_h-mode         = gc_mode-create.
   lv_index = go_prng_proc_type->get_next( ).
-  READ TABLE gt_proc_type
-    INTO ls_proc_type
-    INDEX lv_index.
+  " READ TABLE gt_proc_type INTO ls_proc_type INDEX lv_index.
   ls_orderadm_h-process_type = 'SRVO'. "ls_proc_type-process_type.
   ls_orderadm_h-description  = iv_description.
-  TRY.
-      CALL METHOD cl_system_uuid=>if_system_uuid_static~create_uuid_x16
-        RECEIVING
-          uuid = ls_orderadm_h-guid.
-    CATCH cx_uuid_error .
-  ENDTRY.
+
+  ls_orderadm_h-guid = cl_system_uuid=>if_system_uuid_static~create_uuid_x16( ).
 
   INSERT ls_orderadm_h INTO TABLE gt_orderadm_h.
 
@@ -214,9 +203,6 @@ FORM orderadm_h_create
 
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form PARTNER_CREATE
-*&---------------------------------------------------------------------*
 FORM partner_create
   USING               iv_ref_guid           TYPE  crmt_object_guid
                       iv_ref_kind           TYPE  crmt_object_kind.
@@ -247,9 +233,7 @@ FORM partner_create
   ls_partner_com-no_type            = 'BP'.
   ls_partner_com-display_type       = 'BP'.
   lv_index = go_prng_partner->get_next( ).
-  READ TABLE gt_partner_no
-    INTO lv_partner_no
-    INDEX lv_index.
+  READ TABLE gt_partner_no INTO lv_partner_no INDEX lv_index.
   ls_partner_com-partner_no         = lv_partner_no.
 
   INSERT ls_partner_com INTO TABLE gt_partner.
@@ -279,14 +263,9 @@ FORM partner_create
 
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form DATES_CREATE
-*&---------------------------------------------------------------------*
 FORM dates_create
   USING  iv_ref_guid TYPE crmt_object_guid
          iv_ref_kind TYPE crmt_object_kind.
-
-
 
   DATA   ls_date              TYPE  crmt_appointment_com.
   DATA   ls_input_field       TYPE  crmt_input_field.
@@ -573,14 +552,6 @@ FORM save_orders .
 
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form ORGMAN_CREATE
-*&---------------------------------------------------------------------*
-*& text
-*&---------------------------------------------------------------------*
-*&      --> LV_HEADER_GUID
-*&      --> GC_OBJECT_KIND_ORDERADM_H
-*&---------------------------------------------------------------------*
 FORM orgman_create
     USING  iv_ref_guid TYPE crmt_object_guid
          iv_ref_kind TYPE crmt_object_kind.
@@ -589,25 +560,17 @@ FORM orgman_create
     ls_orgman_com        TYPE  crmt_orgman_com,
     ls_input_field       TYPE  crmt_input_field,
     ls_input_field_names TYPE  crmt_input_field_names.
-  DATA           lv_index_1 TYPE i.
-  DATA           lv_index_2 TYPE i.
+
   DATA           ls_tvta  TYPE tvta.
   DATA           ls_org_assignment TYPE ty_org_assignment.
   DATA           ls_service_org TYPE hrobject.
 
-  lv_index_1 = go_prng_sales_area->get_next( ).
-  READ TABLE gt_tvta
-    INTO ls_tvta
-    INDEX lv_index_1.
-  READ TABLE gt_org_assignment
-    INTO ls_org_assignment
-    WITH KEY s4_sales_org = ls_tvta-vkorg.
+  data(lv_index_1) = go_prng_sales_area->get_next( ).
+  READ TABLE gt_tvta INTO ls_tvta INDEX lv_index_1.
+  READ TABLE gt_org_assignment INTO ls_org_assignment WITH KEY s4_sales_org = ls_tvta-vkorg.
 
-  lv_index_2 = go_prng_service_org->get_next( ).
-  READ TABLE gt_service_orgs
-    INTO ls_service_org
-    INDEX lv_index_2.
-
+  data(lv_index_2) = go_prng_service_org->get_next( ).
+  READ TABLE gt_service_orgs INTO ls_service_org INDEX lv_index_2.
 
   ls_orgman_com-ref_guid          = iv_ref_guid.
   ls_orgman_com-ref_kind          = iv_ref_kind.
