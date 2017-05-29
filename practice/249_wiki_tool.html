@@ -63,8 +63,22 @@ function myFunction(){
 	for( var i = 0; i < r1.length; i++){
 		imageToRemove.push(r1[i]);
 	}
+	var picRepository = elements[elements.length - 1].data;
 	for( var i = 0; i < imageToRemove.length;i++){
-		console.log("image to delete: " + imageToRemove[i]);
+		// image to delete: <ri:attachment ri:filename="clipboard1.png"></ri:attachment>
+		// to search: ![clipboard13](https://cloud.githubusercontent.com/assets/5669954/26531936/f0eb0bf6-43f4-11e7-8bcc-3bcf864c47bd.png)
+		var pictureIndex = i + 1;
+		var searchKey = "![clipboard" + pictureIndex + "](";
+		var searchKeyLength = searchKey.length;
+		console.log("image to delete: " + imageToRemove[i].innerHTML);
+		var startIndex = picRepository.indexOf(searchKey);
+		console.assert( startIndex > -1);
+		var currentImage = picRepository.substring(startIndex);
+		console.log("current Image: " + currentImage);
+		var endIndex = currentImage.indexOf(")");
+		console.assert( endIndex > -1);
+		var newPic = currentImage.substring(0, endIndex+1);
+		debugger;
 		imageToRemove[i].remove();
 	}
 	console.log("converted:" + div.innerHTML);
