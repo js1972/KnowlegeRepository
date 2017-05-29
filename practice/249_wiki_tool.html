@@ -84,14 +84,15 @@ function myFunction(){
 			getNewPicture(i, picRepository));
 		imageToRemove.push(record);
 	}
-	debugger;
 	for( var i = 0; i < imageToRemove.length;i++){
 		var newNode = document.createElement("div");
 		newNode.innerHTML = imageToRemove[i].newPicUrl;
 		imageToRemove[i].parent.replaceChild(newNode, imageToRemove[i].current);
 	}
+	div.removeChild(elements[elements.length - 1]);
 	console.log("converted:" + div.innerHTML);
-	debugger;
+	var target = document.getElementById("result");
+	target.value = div.innerHTML;
 }
 </script>
 </html>
