@@ -73,6 +73,7 @@ function getNewPicture(index, picRepository){
 function myFunction(){
 	var source = document.getElementById("raw");
 	var html = source.value;
+	// Jerry 2017-05-29 14:50PM does not work, a line break is needed here
 	var div = document.createElement('div');
 	div.innerHTML = html;
 	var elements = div.childNodes;
@@ -90,9 +91,23 @@ function myFunction(){
 		imageToRemove[i].parent.replaceChild(newNode, imageToRemove[i].current);
 	}
 	div.removeChild(elements[elements.length - 1]);
-	console.log("converted:" + div.innerHTML);
 	var target = document.getElementById("result");
 	target.value = div.innerHTML;
+	copyToClipboard(target);
 }
+
+function copyToClipboard(node) {
+  node.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    alert('Copying text command was ' + msg);
+  } catch (err) {
+    alert('Oops, unable to copy: ' + msg);
+  }
+}
+
+
 </script>
 </html>
