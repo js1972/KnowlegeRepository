@@ -27,7 +27,6 @@ DATA                gt_doc_flow            TYPE  crmt_doc_flow_comt.
 DATA                gt_appointment         TYPE  crmt_appointment_comt.
 DATA                gt_product_i           TYPE  crmt_product_i_comt.
 DATA                gt_status              TYPE  crmt_status_comt.
-DATA                gs_orderadm_h          TYPE  crmt_orderadm_h_com.
 DATA                gt_obj_guids           TYPE  crmt_object_guid_tab.
 DATA                gt_proc_type           TYPE  STANDARD TABLE OF crmc_proc_type.
 DATA                gv_log_handle          TYPE  balloghndl.
@@ -50,6 +49,8 @@ PARAMETERS          p_maxqu                TYPE i DEFAULT 100.
 SELECT-OPTIONS      s_matnr                FOR  mara-matnr.
 SELECT-OPTIONS      s_part                 FOR  but000-partner.
 SELECT-OPTIONS      s_date                 FOR  crmd_orderadm_h-posting_date.
+
+CONSTANTS: cv_package_size TYPE int4 VALUE 1.
 
 START-OF-SELECTION.
 
@@ -135,10 +136,16 @@ START-OF-SELECTION.
 
   DATA(go_prng_proc_type) = cl_abap_random_int=>create( min = 1 max = lv_no_of_proc_types ).
 
+  DATA(left) = p_number.
 
-
+  WHILE left > 0.
+     data(num) = nmin( val1 = left val2 = cv_package_size ).
+     PERFORM handle_order_with_number USING num.
+     left = left - cv_package_size.
+  ENDWHILE.
 FORM handle_order_with_number USING iv_num TYPE int4.
-  CLEAR: lv_handle, gt_orderadm_h, gt_partner, gt_orgman, gt_appointment.
+  CLEAR: lv_handle, gt_orderadm_h, gt_partner, gt_orgman, gt_appointment, gt_orderadm_i,
+  gt_schedlin_i_com, gt_obj_guids, gt_input_fields.
   DO iv_num TIMES.
 
     lv_char10 = sy-index.
@@ -335,15 +342,9 @@ FORM dates_create
 
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form ORDERADM_I_CREATE
-*&---------------------------------------------------------------------*
 FORM orderadm_i_create
   USING    iv_header_guid TYPE crmt_object_guid
-  CHANGING cv_item_guid   TYPE crmt_object_guid.
-
-  DATA lv_index TYPE i.
-  DATA lv_matnr TYPE matnr.
+  CHANGING cv_item_guid   TYPE crmt_object_guid RAISING cx_uuid_error.
 
   DATA:
     ls_orderadm_i        TYPE  crmt_orderadm_i_com,
@@ -353,18 +354,12 @@ FORM orderadm_i_create
     lv_sdbm_2            TYPE  num03,
     lv_itm_handle        TYPE  i.
 
-  TRY.
-      CALL METHOD cl_system_uuid=>if_system_uuid_static~create_uuid_x16
-        RECEIVING
-          uuid = ls_orderadm_i-guid.
-    CATCH cx_uuid_error .
-  ENDTRY.
+  ls_orderadm_i-guid = cl_system_uuid=>if_system_uuid_static~create_uuid_x16( ).
+
   ls_orderadm_i-mode          = gc_mode-create.
   ls_orderadm_i-header        = iv_header_guid.
-  lv_index = go_prng_material->get_next( ).
-  READ TABLE gt_matnr
-    INTO lv_matnr
-    INDEX lv_index.
+  DATA(lv_index) = go_prng_material->get_next( ).
+  READ TABLE gt_matnr INTO DATA(lv_matnr) INDEX lv_index.
   ls_orderadm_i-ordered_prod  = lv_matnr.
 
   INSERT ls_orderadm_i INTO TABLE gt_orderadm_i.
@@ -381,10 +376,6 @@ FORM orderadm_i_create
 
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form SCHEDLIN_CREATE
-*&---------------------------------------------------------------------*
-
 FORM schedlin_create
   USING  iv_item_guid TYPE crmt_object_guid.
 
@@ -393,12 +384,11 @@ FORM schedlin_create
     ls_schedlin_com      TYPE  crmt_schedlin_extd,
     ls_input_field       TYPE  crmt_input_field,
     ls_input_field_names TYPE  crmt_input_field_names.
-  DATA      lv_quantity      TYPE  i.
 
   ls_schedlin_i_com-mode          = gc_mode-create.
   ls_schedlin_i_com-ref_guid      = iv_item_guid.
   ls_schedlin_com-logical_key      = ls_schedlin_i_com-ref_guid.
-  lv_quantity = go_prng_quantity->get_next( ).
+  DATA(lv_quantity) = go_prng_quantity->get_next( ).
 
   ls_schedlin_com-quantity         = lv_quantity.
   INSERT ls_schedlin_com INTO TABLE ls_schedlin_i_com-schedlines.
@@ -415,10 +405,6 @@ FORM schedlin_create
   INSERT ls_input_field  INTO TABLE  gt_input_fields.
 
 ENDFORM.
-
-*&---------------------------------------------------------------------*
-*& Form PRODUCT_I_CREATE
-*&---------------------------------------------------------------------*
 
 FORM product_i_create
   USING  iv_item_guid TYPE crmt_object_guid.
@@ -449,19 +435,7 @@ FORM product_i_create
 *  INSERT ls_input_field  INTO TABLE  gt_input_fields.
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form CREATE_ORDERS
-*&---------------------------------------------------------------------*
 FORM create_orders .
-
-*  DATA:
-*    ls_linno TYPE sylinno,
-*    ls_colno TYPE sycolno.
-*
-*  PERFORM write_time USING text-002.
-*
-*  ls_linno = sy-linno.
-*  ls_colno = sy-colno.
 
   CALL FUNCTION 'CRM_DIALOG_SET_NO_DIALOG'.
 
@@ -483,21 +457,13 @@ FORM create_orders .
 
   CALL FUNCTION 'CRM_DIALOG_SET_WITH_DIALOG'.
 
-*  sy-linno = ls_linno.
-*  sy-colno = ls_colno.
-
   REFRESH gt_obj_guids.
 
-* Get guids
-  LOOP AT gt_orderadm_h INTO gs_orderadm_h.
+  LOOP AT gt_orderadm_h INTO DATA(gs_orderadm_h).
     INSERT gs_orderadm_h-guid INTO TABLE gt_obj_guids.
   ENDLOOP.
-
 ENDFORM.
 
-*&---------------------------------------------------------------------*
-*& Form SAVE_ORDERS
-*&---------------------------------------------------------------------*
 FORM save_orders .
 
   DATA:
@@ -528,16 +494,9 @@ FORM save_orders .
     sy-colno = ls_colno.
   ENDIF.
 
-  WRITE: / 'The following orders have been created:'.
+  WRITE: / 'Orders have been created:', lines( gt_saved_objects ).
   SKIP.
 
-  LOOP AT gt_saved_objects INTO ls_saved_object.
-    INSERT ls_saved_object INTO TABLE lt_saved_objects.
-  ENDLOOP.
-  SORT lt_saved_objects BY object_id.
-  LOOP AT lt_saved_objects INTO ls_saved_object.
-    WRITE: / ls_saved_object-object_id.
-  ENDLOOP.
 *  LOOP AT gt_orderadm_h INTO gs_orderadm_h.
 **   Init IPC in any case! This is possible, because we
 **   know that we are calling the maintain a second time
@@ -548,7 +507,6 @@ FORM save_orders .
 *        iv_event         = space
 *        iv_header_guid   = gs_orderadm_h-guid.
 *  ENDLOOP.
-
 
 ENDFORM.
 
@@ -565,11 +523,11 @@ FORM orgman_create
   DATA           ls_org_assignment TYPE ty_org_assignment.
   DATA           ls_service_org TYPE hrobject.
 
-  data(lv_index_1) = go_prng_sales_area->get_next( ).
+  DATA(lv_index_1) = go_prng_sales_area->get_next( ).
   READ TABLE gt_tvta INTO ls_tvta INDEX lv_index_1.
   READ TABLE gt_org_assignment INTO ls_org_assignment WITH KEY s4_sales_org = ls_tvta-vkorg.
 
-  data(lv_index_2) = go_prng_service_org->get_next( ).
+  DATA(lv_index_2) = go_prng_service_org->get_next( ).
   READ TABLE gt_service_orgs INTO ls_service_org INDEX lv_index_2.
 
   ls_orgman_com-ref_guid          = iv_ref_guid.
