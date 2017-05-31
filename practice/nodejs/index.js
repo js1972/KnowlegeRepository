@@ -4,6 +4,7 @@ snippet above is very time-consuming. This is the reason why we usually pick a
 framework to work with for our projects. There are a lot you can pick from, 
 but these are the most popular ones:
 Express
+Jerry 2017-05-31 11:42AM - good document: https://blog.risingstack.com/your-first-node-js-http-server/
 
 Fast, unopinionated, minimalist web framework for Node.js - http://expressjs.com/
 */
@@ -17,6 +18,7 @@ const requestHandler = (request, response) => {
   response.end('Hello Node.js Server!')
 }
 
+/*
 app.get('/', (request, response) => {  
   response.send('Hello from Express!')
 });
@@ -25,6 +27,23 @@ app.get('/Jerry', (request, response) => {
   response.send('Hello Jerry!');
   console.log(request.headers);
 });
+*/
+app.use((request, response, next) => {  
+  console.log(request.headers)
+  next()
+})
+
+app.use((request, response, next) => {  
+  request.chance = Math.random()
+  next()
+})
+
+app.get('/', (request, response) => {  
+  response.json({
+    chance: request.chance
+  })
+})
+
 
 app.listen(port, (err) => {  
   if (err) {
