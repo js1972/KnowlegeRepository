@@ -28,6 +28,13 @@ app.get('/Jerry', (request, response) => {
   console.log(request.headers);
 });
 */
+
+// Jerry 2017-05-31 11:57AM:
+/* app.use: this is how you can define middlewares - 
+it takes a function with three parameters, the first being the request, 
+the second the response and the third one is the next callback. 
+Calling next signals Express that it can jump to the next middleware or route handler.*/
+
 app.use((request, response, next) => {  
   console.log(request.headers)
   next()
@@ -42,8 +49,20 @@ app.get('/', (request, response) => {
   response.json({
     chance: request.chance
   })
-})
+});
 
+app.get('/error', (request, response) => {  
+  throw new Error('Jerry oops')
+});
+/*
+The error handler function should be the last function added with app.use.
+The error handler has a next callback - it can be used to chain multiple error handlers.
+*/ 
+app.use((err, request, response, next) => {  
+  // log the error, for now just console.log
+  console.log(err)
+  response.status(500).send('Something broke!')
+});
 
 app.listen(port, (err) => {  
   if (err) {
