@@ -1,3 +1,12 @@
+/*
+The http module is very low-level - creating a complex web application using the 
+snippet above is very time-consuming. This is the reason why we usually pick a 
+framework to work with for our projects. There are a lot you can pick from, 
+but these are the most popular ones:
+Express
+
+Fast, unopinionated, minimalist web framework for Node.js - http://expressjs.com/
+*/
 const http = require('http')  
 const port = 3000
 
