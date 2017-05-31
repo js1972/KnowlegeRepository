@@ -83,3 +83,14 @@ server.listen(port, (err) => {
 // Jerry 2017-05-31 11:27AM - string template?
   console.log(`server is listening on ${port}`)
 })*/
+
+/*Jerry 2017-05-31 4:20PM - useful code to read file content
+var http = require('http');
+var fs = require('fs');
+var index = fs.readFileSync('index.html');
+
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end(index);
+}).listen(9615);
+*/
