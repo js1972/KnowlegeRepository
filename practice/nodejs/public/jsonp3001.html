@@ -1,0 +1,34 @@
+<html>
+<body>
+<form action="">
+  ID: <input type="text" id = "inumber" name="ID" value="I042416"><br>
+  <input type="submit" value="Submit">
+</form> 
+</body>
+<script src="jquery1.7.1.js"></script>
+
+<script>
+
+$(document).ready(function(){	
+     $("form").click(function(e){
+     	e.preventDefault();
+        var data = {
+            id: $("#inumber").val()
+        };
+        $.ajax({
+            type: 'GET',
+            data: data,
+            url: 'http://localhost:3001/request',
+            dataType: 'json',
+            success: function(data) {
+                alert(data.UserName);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('error ' + textStatus + ' ' + errorThrown);
+            }
+        }); // end of AJAX
+    });
+});
+
+</script>
+</html>
