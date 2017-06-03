@@ -21,7 +21,7 @@ $(document).ready(function(){
             url: 'http://localhost:3000/request',
             dataType: 'json',
             success: function(data) {
-                console.log(data)
+                alert(data.UserName);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log('error ' + textStatus + ' ' + errorThrown);
