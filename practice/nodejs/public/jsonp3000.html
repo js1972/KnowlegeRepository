@@ -1,7 +1,7 @@
 <html>
 <body>
 <form action="">
-  ID: <input type="text" name="ID" value="I042416"><br>
+  ID: <input type="text" id = "inumber" name="ID" value="I042416"><br>
   <input type="submit" value="Submit">
 </form> 
 </body>
@@ -10,8 +10,23 @@
 <script>
 
 $(document).ready(function(){	
-     $("form").submit(function(){
-        alert("Submitted");
+     $("form").click(function(e){
+     	e.preventDefault();
+        var data = {
+            id: $("#inumber").val()
+        };
+        $.ajax({
+            type: 'GET',
+            data: data,
+            url: 'http://localhost:3000/request',
+            dataType: 'json',
+            success: function(data) {
+                console.log(data)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('error ' + textStatus + ' ' + errorThrown);
+            }
+        }); // end of AJAX
     });
 });
 
