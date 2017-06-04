@@ -11,8 +11,7 @@ var repo = {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/request', (request, response) => {  
-  // console.log(request.headers);
-  console.log(request.query.id);
+  console.log("The employee ID sent from Client:" + request.query.id);
   response.json({
     UserName: repo[request.query.id] + " ( handled in port 3000 )"
   });

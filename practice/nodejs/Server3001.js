@@ -11,21 +11,20 @@ var repo = {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/request', (request, response) => {  
-  // console.log(request.headers);
-  console.log(request.query.id);
+  console.log("The employee ID sent from Client:" + request.query.id);
   response.json({
     UserName: repo[request.query.id] + " ( handled in port 3001 )"
   });
 });
 
 app.get('/request_jsonp', (request, response) => {  
-  // console.log(request.headers);
-  console.log(request.query.id);
+  console.log("This service supports JSONP now: " + request.query.id);
   var data = "{" + "UserName:'" + repo[request.query.id] + " ( handled in port 3001 )'"
   + "}";
   var callback = request.query.callback;
-  var jsonp = callback + '(' + data + ')';
-  console.log(jsonp);
+  var jsonp = callback + '(' + data + ');';
+  jsonp += "debugger;";
+  console.log("Jerry log for blog: " + jsonp);
   response.send(jsonp);
   response.end();
 });
