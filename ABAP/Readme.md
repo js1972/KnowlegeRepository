@@ -39,6 +39,10 @@ I learned how to create an initial reference to interface today: demo_create_ref
 cannot connect to SAP git today :(
 2017-05-22 16:40PM - changed a new version
 
+# 2017-06-04
+
+LET: define local variable in constructor expression
+
 # Useful links
 
 1. [good website](http://www.guidancetech.com/people/holland/sap/abap/) containing source code of ABAP ( most of them are basis )
