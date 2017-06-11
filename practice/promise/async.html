@@ -1,0 +1,24 @@
+<html>
+<script>
+
+function downloadData(url){
+	setTimeout(function(){
+            console.log("Jerry: " + url);
+        }, 2000);
+	
+}
+
+async function getProcessedData(url) {
+  let v;
+  try {
+    v = await downloadData(url); 
+  } catch(e) {
+    console.log("trouble");
+  }
+  // return processDataInWorker(v);
+  return "done";
+}
+
+getProcessedData();
+</script>
+</html>
