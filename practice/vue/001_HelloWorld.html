@@ -1,0 +1,19 @@
+<html>
+<script src="lib/vue.js"></script>
+<script>
+
+function init() {
+new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue.js!'
+  }
+});
+}
+</script>
+<body onload = "init();">
+<div id="app">
+  <p>{{ message }}</p>
+</div>
+</body>
+</html>
