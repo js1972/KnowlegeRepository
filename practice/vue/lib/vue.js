@@ -3866,7 +3866,11 @@ function initRender (vm) {
   vm._c = function (a, b, c, d) { return createElement(vm, a, b, c, d, false); };
   // normalization is always applied for the public version, used in
   // user-written render functions.
-  vm.$createElement = function (a, b, c, d) { return createElement(vm, a, b, c, d, true); };
+  vm.$createElement = function (a, b, c, d) { 
+    console.log("Jerry in $createElement");
+    console.log("argument a: " + a + " b: " + b + " c: " + c + " d: " + d);
+    return createElement(vm, a, b, c, d, true); 
+  };
 }
 
 function renderMixin (Vue) {
@@ -8847,6 +8851,7 @@ function generate (
   var code = ast ? genElement(ast) : '_c("div")';
   staticRenderFns = prevStaticRenderFns;
   onceCount = prevOnceCount;
+  debugger;
   return {
     render: ("with(this){return " + code + "}"),
     staticRenderFns: currentStaticRenderFns
@@ -8875,7 +8880,7 @@ function genElement (el) {
       var data = el.plain ? undefined : genData(el);
 
       var children = el.inlineTemplate ? null : genChildren(el, true);
-      code = "_c('" + (el.tag) + "'" + (data ? ("," + data) : '') + (children ? ("," + children) : '') + ")";
+      code = "_c('" + (el.tag) + "'" + (data ? (",\n" + data) : '') + (children ? (",\n" + children) : '') + ")";
     }
     // module transforms
     for (var i = 0; i < transforms$1.length; i++) {
@@ -8888,6 +8893,7 @@ function genElement (el) {
 // hoist static sub-trees out
 function genStatic (el) {
   el.staticProcessed = true;
+  debugger;
   staticRenderFns.push(("with(this){return " + (genElement(el)) + "}"));
   return ("_m(" + (staticRenderFns.length - 1) + (el.staticInFor ? ',true' : '') + ")")
 }
