@@ -35,6 +35,18 @@ function isPrimitive (value) {
   return typeof value === 'string' || typeof value === 'number'
 }
 
+// i042416 add for 2017-06-13 14:15PM
+function i042416Print(object){
+  var output = '';
+  for (var property in object) {
+    if( (typeof object[property] === "object") && (object[property] !== null) ) {
+       output += property + ': ' + i042416Print(object[property]) + '; ';
+    }
+    else
+      output += property + ': ' + object[property] + '; ';
+  }
+  return output;
+} 
 /**
  * Quick object check - this is primarily used to tell
  * Objects from primitive values when we know the value
@@ -1641,7 +1653,7 @@ var VNode = function VNode (
   context,
   componentOptions
 ) {
-  console.log("Jerry Virtual Node is created: " + " tag: " + tag + " data: " + data );
+  console.log("Jerry Virtual Node is created: " + " tag: " + tag + " data: " + i042416Print(data) );
   this.tag = tag;
   this.data = data;
   this.children = children;
@@ -3866,8 +3878,8 @@ function initRender (vm) {
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
   vm._c = function (a, b, c, d) { 
-    console.log("Jerry _c: " + " tag: " + a + " data: " + b + 
-       " children: " + c + " normalizationType: " + d);
+    console.log("Jerry _c: " + " tag: " + a + " data: " + i042416Print(b) + 
+       " children: " + i042416Print(c) + " normalizationType: " + d);
     debugger;
     return createElement(vm, a, b, c, d, false); 
   };
@@ -7580,6 +7592,7 @@ Vue$3.prototype.$mount = function (
 // Jerry 2017-06-13 2:09PM - temporarily comment it out
 // devtools global hook
 /* istanbul ignore next */
+/*
 setTimeout(function () {
   if (config.devtools) {
     if (devtools) {
@@ -7602,7 +7615,7 @@ setTimeout(function () {
     );
   }
 }, 0);
-
+*/
 /*  */
 
 // check whether current browser encodes a char inside attribute values
