@@ -9289,6 +9289,7 @@ function checkIdentifier (ident, type, text, errors) {
 
 function checkExpression (exp, text, errors) {
   try {
+    console.log("Jerry check expression: " + exp);
     new Function(("return " + exp));
   } catch (e) {
     var keywordMatch = exp.replace(stripStringRE, '').match(prohibitedKeywordRE);
