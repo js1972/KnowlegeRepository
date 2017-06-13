@@ -1641,6 +1641,7 @@ var VNode = function VNode (
   context,
   componentOptions
 ) {
+  console.log("Jerry Virtual Node is created: " + " tag: " + tag + " data: " + data );
   this.tag = tag;
   this.data = data;
   this.children = children;
@@ -1679,6 +1680,7 @@ var createEmptyVNode = function () {
 };
 
 function createTextVNode (val) {
+  console.log("Jerry create TextVNode: " + val);
   return new VNode(undefined, undefined, undefined, String(val))
 }
 
@@ -3863,7 +3865,12 @@ function initRender (vm) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
-  vm._c = function (a, b, c, d) { return createElement(vm, a, b, c, d, false); };
+  vm._c = function (a, b, c, d) { 
+    console.log("Jerry _c: " + " tag: " + a + " data: " + b + 
+       " children: " + c + " normalizationType: " + d);
+    debugger;
+    return createElement(vm, a, b, c, d, false); 
+  };
   // normalization is always applied for the public version, used in
   // user-written render functions.
   vm.$createElement = function (a, b, c, d) { 
@@ -7570,6 +7577,7 @@ Vue$3.prototype.$mount = function (
   return mountComponent(this, el, hydrating)
 };
 
+// Jerry 2017-06-13 2:09PM - temporarily comment it out
 // devtools global hook
 /* istanbul ignore next */
 setTimeout(function () {
