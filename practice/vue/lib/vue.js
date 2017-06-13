@@ -38,8 +38,16 @@ function isPrimitive (value) {
 // i042416 add for 2017-06-13 14:15PM
 function i042416Print(object){
   var output = '';
+  if( Array.isArray(object) ){
+    for( let i = 0; i < object.length; i++){
+      output += i042416Print(object[i]);
+    }
+    return output;
+  }
   for (var property in object) {
-    if( (typeof object[property] === "object") && (object[property] !== null) ) {
+    console.log("a:::::::::" + object);
+    if( (typeof object[property] === "object") && (object[property] !== null)
+     && object.hasOwnProperty(property)){
        output += property + ': ' + i042416Print(object[property]) + '; ';
     }
     else
