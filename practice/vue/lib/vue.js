@@ -62,6 +62,7 @@ function isRegExp (v) {
  * Convert a value to a string that is actually rendered.
  */
 function toString (val) {
+  console.log("Jerry's toString: " + val);
   return val == null
     ? ''
     : typeof val === 'object'
