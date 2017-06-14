@@ -38,6 +38,7 @@ function isPrimitive (value) {
 // i042416 add for 2017-06-13 14:15PM
 function i042416Print(object){
   var output = '';
+  try {
   if( Array.isArray(object) ){
     for( let i = 0; i < object.length; i++){
       output += i042416Print(object[i]);
@@ -52,6 +53,11 @@ function i042416Print(object){
     }
     else
       output += property + ': ' + object[property] + '; ';
+  }
+}
+  catch (e){
+    debugger;
+    alert("a");
   }
   return output;
 } 
@@ -3887,7 +3893,7 @@ function initRender (vm) {
   // internal version is used by render functions compiled from templates
   vm._c = function (a, b, c, d) { 
     console.log("Jerry _c: " + " tag: " + a + " data: " + i042416Print(b) + 
-       " children: " + i042416Print(c) + " normalizationType: " + d);
+       " children: " + c + " normalizationType: " + d);
     debugger;
     return createElement(vm, a, b, c, d, false); 
   };
