@@ -12,3 +12,6 @@ V8 使用 JavaScript 本身实现了 JavaScript 语言的大部分内置对象�
 * Object.getOwnPropertyNames(obj)：返回一个数组，包含对象自身的所有属性（不含 Symbol 类型的属性，不包含继承属性，但是包括不可枚举属性）
 
 * Object.getOwnPropertySymbols(console)：返回一个数组，包含对象自身的所有 Symbol 类型的属性（不包括继承的属性）
+
+https://stackoverflow.com/questions/11849562/how-to-save-the-output-of-a-console-logobject-to-a-file - Created by Jerry Wang, last modified on Jan 16, 2015
+
